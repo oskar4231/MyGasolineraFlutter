@@ -1,16 +1,22 @@
-# my_gasolinera
+# MyGasolinera
 
-A new Flutter project.
+<p align="center">
+  <img src="banner.png" alt="MyGasolinera" width="1000">
+</p>
 
-## Getting Started
+## Sobre el Proyecto
 
-This project is a starting point for a Flutter application.
+Una aplicación Flutter para gestionar información de gasolineras.
 
-A few resources to get you started if this is your first Flutter project:
+## Comenzando
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Este proyecto es un punto de partida para una aplicación Flutter.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Recursos útiles
+
+- [Lab: Escribe tu primera app Flutter](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Ejemplos útiles de Flutter](https://docs.flutter.dev/cookbook)
+
+Para ayuda con el desarrollo en Flutter, consulta la
+[documentación en línea](https://docs.flutter.dev/), que ofrece tutoriales,
+ejemplos, guía sobre desarrollo móvil y una referencia completa de la API.
