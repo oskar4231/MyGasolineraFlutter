@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/login/login.dart';
+import 'package:my_gasolinera/Inicio/crear_cuenta/crear.dart';
+import 'login/login.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
@@ -21,6 +22,17 @@ class Inicio extends StatelessWidget {
                 color: Color(0xFF492714), // Agregando 0xFF al inicio
               ),
             ),
+
+            Container(
+              margin: const EdgeInsets.only(bottom: 30.0),
+              child: Image.asset(
+                'lib/assets/logo.png',
+                height: 100,
+                width: 100,
+                fit: BoxFit.contain,
+              ),
+            ),
+
             const SizedBox(height: 20), // Espacio entre el título y el primer botón
             ElevatedButton(
               onPressed: () {
@@ -51,7 +63,12 @@ class Inicio extends StatelessWidget {
             const SizedBox(height: 10), // Espacio entre botones
             ElevatedButton(
               onPressed: () {
-                // Acción para el segundo botón
+                // Navegar a la pantalla de registro (RegisterScreen)
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CrearScreen(),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:  Color(0xFFFFCFB0),
