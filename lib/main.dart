@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Inicio/inicio.dart';
+import 'package:my_gasolinera/Inicio/inicio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mi Gasolinera',
+      title: 'MyGasolinera',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
