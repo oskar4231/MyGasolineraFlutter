@@ -36,7 +36,13 @@ class Inicio extends StatelessWidget {
             const SizedBox(height: 20), // Espacio entre el título y el primer botón
             ElevatedButton(
               onPressed: () {
-                // Acción para el primer botón
+                // Navegar a la pantalla de login
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
               },
               //Configuración Estilo Boton
               style: ElevatedButton.styleFrom(
