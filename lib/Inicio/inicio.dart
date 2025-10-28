@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/Inicio/crear_cuenta/crear.dart';
 import 'login/login.dart';
 
 class Inicio extends StatelessWidget {
@@ -59,7 +60,7 @@ class Inicio extends StatelessWidget {
                 // Navegar a la pantalla de registro (RegisterScreen)
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const RegisterScreen(),
+                    builder: (context) => const CrearScreen(),
                   ),
                 );
               },
