@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/crear_cuenta/crear.dart';
-import 'login/login.dart';
+import 'package:my_gasolinera/login/login.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});

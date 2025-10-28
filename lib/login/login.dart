@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/recover_password/recover_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -138,7 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
               // Enlace "¿Has olvidado la contraseña?"
               TextButton(
                 onPressed: () {
-                  // Acción para recuperar contraseña
+                  // Navegar a la pantalla de nueva contraseña
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RecoverPasswordScreen(),
+                    ),
+                  );
                 },
                 child: Text(
                   '¿Has olvidado la contraseña?',
