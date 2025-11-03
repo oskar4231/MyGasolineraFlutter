@@ -115,11 +115,18 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                       }
                     },
                     decoration: InputDecoration(
+                      labelText: 'e-mail',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16), // Aumentado
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10), // Aumentado de 8 a 10
+                        borderSide: const BorderSide(color: Color(0xFF492714)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xFF492714), width: 2),
                       ),
                     ),
                     validator: (value) {
