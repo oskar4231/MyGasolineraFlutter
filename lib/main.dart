@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/inicio.dart';
+// mapa moved to Inicio/homepage.dart; import removed to avoid unused import
 
 void main() {
   runApp(const MyApp());
@@ -30,8 +31,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  
-
   final String title;
 
   @override
@@ -43,25 +42,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-    
       _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
-       
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-       
         title: Text(widget.title),
       ),
       body: Center(
-        
         child: Column(
-         
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
@@ -80,3 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// HomePage moved to lib/Inicio/homepage.dart
+

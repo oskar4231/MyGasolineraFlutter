@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/crear_cuenta/crear.dart';
 import 'login/login.dart';
+import 'package:my_gasolinera/principal/homepage.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
@@ -84,6 +85,28 @@ class Inicio extends StatelessWidget {
                 )
               ),
               child: const Text('Crear Cuenta'),
+            ),
+            const SizedBox(height: 10),
+            // Botón adicional: HomePage (abre la pantalla HomePage situada en Inicio/homepage.dart)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFBEEAF5),
+                foregroundColor: const Color(0xFF492714),
+                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
+                side: const BorderSide(
+                  color: Color(0xFF492714),
+                  width: 2.0,
+                ),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text('HomePage'),
             ),
           ],
         ),
