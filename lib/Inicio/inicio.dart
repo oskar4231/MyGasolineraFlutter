@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/crear_cuenta/crear.dart';
 import 'login/login.dart';
-
+import 'principalmaps/principalmaps.dart';
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
 
@@ -83,8 +83,32 @@ class Inicio extends StatelessWidget {
                   wordSpacing: 2.0
                 )
               ),
-              child: const Text('Crear Cuenta'),
+              child: const Text('Crear cuenta'),
             ),
+            const SizedBox(height: 10), // Espacio entre botones
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const Principalmaps(), // ✅ va a principalmaps.dart
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFFFCFB0),
+                foregroundColor: Color(0xFF492714),
+                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 35),
+                side: const BorderSide(
+                  color: Color(0xFFFF9350),
+                  width: 2.0,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  wordSpacing: 2.0,
+                ),
+              ),
+              child: const Text('PrincipalMaps'),
+              ),
           ],
         ),
       ),
