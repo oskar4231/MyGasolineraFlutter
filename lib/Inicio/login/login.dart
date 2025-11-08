@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/inicio.dart';
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
+import 'package:my_gasolinera/principal/layouthome.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -137,6 +138,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ElevatedButton(
                     onPressed: () {
                       // Acción para iniciar sesión
+                      Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Layouthome(),
+                            ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFF9350),
