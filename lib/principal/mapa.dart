@@ -49,7 +49,7 @@ final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
 
   // Constante para limitar los resultados
-  static const int LIMIT_RESULTS = 20;
+  static const int LIMIT_RESULTS = 10;
 
   @override
   void initState() {

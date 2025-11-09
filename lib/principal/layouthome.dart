@@ -7,14 +7,14 @@ class Layouthome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 173, 101, 5),
+      backgroundColor: const Color(0xFFFFE2CE),
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange[100],
+                color: Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -24,7 +24,7 @@ class Layouthome extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Principal",
+                    "MyGasolinera",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
@@ -72,7 +72,7 @@ class Layouthome extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.orange[200],
+                color: Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -81,9 +81,9 @@ class Layouthome extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
-                  Icon(Icons.directions_car, size: 32),
-                  Icon(Icons.pin_drop, size: 32),
-                  Icon(Icons.settings, size: 32),
+                  Icon(Icons.directions_car, size: 40),
+                  Icon(Icons.pin_drop, size: 40),
+                  Icon(Icons.settings, size: 40),
                 ],
               ),
             ),

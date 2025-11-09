@@ -14,23 +14,29 @@ class Inicio extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Título en formato h1
-            const Text(
-              'MyGasolinera',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF492714), // Agregando 0xFF al inicio
-              ),
-            ),
-
+            // Título con logo a su izquierda
             Container(
               margin: const EdgeInsets.only(bottom: 30.0),
-              child: Image.asset(
-                'lib/assets/logo.png',
-                height: 100,
-                width: 100,
-                fit: BoxFit.contain,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'lib/assets/logo.png',
+                    height: 36,
+                    width: 36,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'MyGasolinera',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF492714),
+                    ),
+                  ),
+                ],
               ),
             ),
 
