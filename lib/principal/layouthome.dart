@@ -6,8 +6,25 @@ class Layouthome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: const Color(0xFFFFE2CE),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: const [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Color(0xFFFF9350)),
+              child: Text('Filtros', style: TextStyle(fontSize: 20, color: Colors.white)),
+            ),
+            ListTile(title: Text('Opción 1')),
+            ListTile(title: Text('Opción 2')),
+            ListTile(title: Text('Opción 3')),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -44,10 +61,15 @@ class Layouthome extends StatelessWidget {
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
-                      Icon(Icons.stars, size: 40),
-                      Icon(Icons.arrow_upward, size: 40),
-                      Icon(Icons.schedule, size: 40),
+                    children: [
+                      const Icon(Icons.stars, size: 40),
+                      const Icon(Icons.arrow_upward, size: 40),
+                      IconButton(
+                        icon: const Icon(Icons.add, size: 40),
+                        onPressed: () {
+                          scaffoldKey.currentState?.openDrawer();
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -61,10 +83,9 @@ class Layouthome extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                // Incrustar el mapa aquí
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const MapWidget(),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: MapWidget(),
                 ),
               ),
             ),

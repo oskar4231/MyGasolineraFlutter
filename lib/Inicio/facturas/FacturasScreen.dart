@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'CrearFacturaScreen.dart';
-import 'DetalleFacturaScreen.dart';
+import 'crearFacturaScreen.dart';
+import 'detalleFacturaScreen.dart';
 
-class FacturasScreen extends StatefulWidget {
-  const FacturasScreen({super.key});
+class facturasScreen extends StatefulWidget {
+  const facturasScreen({super.key});
 
   @override
-  State<FacturasScreen> createState() => _FacturasScreenState();
+  State<facturasScreen> createState() => _FacturasScreenState();
 }
 
-class _FacturasScreenState extends State<FacturasScreen> {
+class _FacturasScreenState extends State<facturasScreen> {
   // Lista de ejemplo de facturas
   final List<Map<String, dynamic>> _facturas = [
     {
@@ -33,7 +33,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
   void _navegarACrearFactura() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CrearFacturaScreen()),
+      MaterialPageRoute(builder: (context) => const crearFacturaScreen()),
     );
 
     if (result != null && result is Map<String, dynamic>) {
@@ -47,7 +47,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetalleFacturaScreen(factura: factura),
+        builder: (context) => detalleFacturaScreen(factura: factura),
       ),
     );
   }

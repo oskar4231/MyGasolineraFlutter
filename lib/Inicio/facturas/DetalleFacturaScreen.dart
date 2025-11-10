@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-class DetalleFacturaScreen extends StatelessWidget {
+class detalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;
 
-  const DetalleFacturaScreen({super.key, required this.factura});
+  const detalleFacturaScreen({super.key, required this.factura});
 
   @override
   Widget build(BuildContext context) {
