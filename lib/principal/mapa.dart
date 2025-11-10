@@ -109,62 +109,68 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
     }
   }
 
-  Marker _crearMarcador(Gasolinera gasolinera) {
-    // Formato de moneda para los precios con 3 decimales
-    final formatter = NumberFormat.currency(
-      locale: 'es_ES',
-      symbol: '€',
-      decimalDigits: 3,
-    );
+Marker _crearMarcador(Gasolinera gasolinera) {
+  final precio95 = formatPrecio(gasolinera.gasolina95);
+  final precio95E10 = formatPrecio(gasolinera.gasolina95E10);
+  final precio98 = formatPrecio(gasolinera.gasolina98);
+  final precioDiesel = formatPrecio(gasolinera.gasoleoA);
+  final precioDieselPremium = formatPrecio(gasolinera.gasoleoPremium);
+  final precioGLP = formatPrecio(gasolinera.glp);
+  final precioBiodiesel = formatPrecio(gasolinera.biodiesel);
+  final precioBioetanol = formatPrecio(gasolinera.bioetanol);
+  final precioEsterMetilico = formatPrecio(gasolinera.esterMetilico);
+  final precioHidrogeno = formatPrecio(gasolinera.hidrogeno);
 
-    // Valores numéricos de precio (guardando 0.0 si nulos)
-  final price95Val = gasolinera.precioGasolina95;
-  final priceDieselVal = gasolinera.precioGasoleoA;
+  final snippetText = '''
+⛽ G95: $precio95
+⛽ G95 E10: $precio95E10
+⛽ G98: $precio98
+🚚 Diésel: $precioDiesel
+🚚 Diésel Premium: $precioDieselPremium
+🔥 GLP: $precioGLP
+🌱 Biodiésel: $precioBiodiesel
+🍃 Bioetanol: $precioBioetanol
+🧪 Éster metílico: $precioEsterMetilico
+⚡ Hidrógeno: $precioHidrogeno
+''';
 
-    // Construir cadenas a mostrar (si no hay precio, mostrar N/A)
-    final precio95Str = price95Val > 0 ? formatter.format(price95Val) : 'N/A';
-    final precioDieselStr = priceDieselVal > 0 ? formatter.format(priceDieselVal) : 'N/A';
+  // Calcular precio medio para color del marcador
+  final precios = [
+    gasolinera.gasolina95,
+    gasolinera.gasoleoA,
+    gasolinera.gasolina98,
+    gasolinera.glp,
+    gasolinera.gasoleoPremium,
+  ];
+  final preciosValidos = precios.where((p) => p > 0).toList();
+  final avgPrice = preciosValidos.isNotEmpty
+      ? preciosValidos.reduce((a, b) => a + b) / preciosValidos.length
+      : 0.0;
 
-    final snippetText = '⛽ G95: $precio95Str\n'
-        '🚚 Diésel: $precioDieselStr';
-
-    // Calcular precio medio disponible para decidir color del marcador
-    double avgPrice = 0.0;
-    int count = 0;
-    if (price95Val > 0) {
-      avgPrice += price95Val;
-      count++;
-    }
-    if (priceDieselVal > 0) {
-      avgPrice += priceDieselVal;
-      count++;
-    }
-    avgPrice = count > 0 ? avgPrice / count : 0.0;
-
-    // Umbrales razonables (ajustables): barato <=1.50, medio <=1.90, caro >1.90
-    final double hue;
-    if (avgPrice == 0.0) {
-      // Sin datos -> violeta
-      hue = BitmapDescriptor.hueViolet;
-    } else if (avgPrice <= 1.50) {
-      hue = BitmapDescriptor.hueGreen;
-    } else if (avgPrice <= 1.90) {
-      hue = BitmapDescriptor.hueOrange;
-    } else {
-      hue = BitmapDescriptor.hueRed;
-    }
-
-    return Marker(
-      markerId: MarkerId('eess_${gasolinera.id}'),
-      position: gasolinera.position,
-      infoWindow: InfoWindow(
-        title: gasolinera.rotulo,
-        snippet: snippetText,
-      ),
-      // Usar icono personalizado si está cargado; si no, usar color según precio
-      icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
-    );
+  final double hue;
+  if (avgPrice == 0.0) {
+    hue = BitmapDescriptor.hueViolet;
+  } else if (avgPrice <= 1.50) {
+    hue = BitmapDescriptor.hueGreen;
+  } else if (avgPrice <= 1.90) {
+    hue = BitmapDescriptor.hueOrange;
+  } else {
+    hue = BitmapDescriptor.hueRed;
   }
+
+  return Marker(
+    markerId: MarkerId('eess_${gasolinera.id}'),
+    position: gasolinera.position,
+    infoWindow: InfoWindow(
+      title: gasolinera.rotulo,
+      snippet: snippetText,
+    ),
+    icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
+  );
+}
+String formatPrecio(double precio) {
+  return precio > 0 ? "${precio.toStringAsFixed(3)} €" : "No disponible";
+}
 
 
 
@@ -205,6 +211,7 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
           _markers.add(Marker(
             markerId: const MarkerId('yo'),
             position: LatLng(posicion.latitude, posicion.longitude),
+            
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           ));
         });
