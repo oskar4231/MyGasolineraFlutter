@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart'; // Necesario para formato de precios
 
@@ -121,18 +120,17 @@ Marker _crearMarcador(Gasolinera gasolinera) {
   final precioEsterMetilico = formatPrecio(gasolinera.esterMetilico);
   final precioHidrogeno = formatPrecio(gasolinera.hidrogeno);
 
-  final snippetText = '''
-⛽ G95: $precio95
-⛽ G95 E10: $precio95E10
-⛽ G98: $precio98
-🚚 Diésel: $precioDiesel
-🚚 Diésel Premium: $precioDieselPremium
-🔥 GLP: $precioGLP
-🌱 Biodiésel: $precioBiodiesel
-🍃 Bioetanol: $precioBioetanol
-🧪 Éster metílico: $precioEsterMetilico
-⚡ Hidrógeno: $precioHidrogeno
-''';
+String snippetText = '';
+if (precio95 != 'No disponible') snippetText += '⛽ G95: $precio95\n';
+if (precio95E10 != 'No disponible') snippetText += '⛽ G95 E10: $precio95E10\n';
+if (precio98 != 'No disponible') snippetText += '⛽ G98: $precio98\n';
+if (precioDiesel != 'No disponible') snippetText += '🚚 Diésel: $precioDiesel\n';
+if (precioDieselPremium != 'No disponible') snippetText += '🚚 Diésel Premium: $precioDieselPremium\n';
+if (precioGLP != 'No disponible') snippetText += '🔥 GLP: $precioGLP\n';
+if (precioBiodiesel != 'No disponible') snippetText += '🌱 Biodiésel: $precioBiodiesel\n';
+if (precioBioetanol != 'No disponible') snippetText += '🍃 Bioetanol: $precioBioetanol\n';
+if (precioEsterMetilico != 'No disponible') snippetText += '🧪 Éster metílico: $precioEsterMetilico\n';
+if (precioHidrogeno != 'No disponible') snippetText += '⚡ Hidrógeno: $precioHidrogeno\n';
 
   // Calcular precio medio para color del marcador
   final precios = [
