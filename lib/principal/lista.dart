@@ -25,8 +25,8 @@ class GasolineraListWidget extends StatelessWidget {
       separatorBuilder: (_, __) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final g = gasolineras[index];
-        final p95 = g.precioGasolina95 > 0 ? currencyFormatter.format(g.precioGasolina95) : 'N/A';
-        final pd = g.precioGasoleoA > 0 ? currencyFormatter.format(g.precioGasoleoA) : 'N/A';
+        final p95 = g.gasolina95 > 0 ? currencyFormatter.format(g.gasolina95) : 'N/A';
+        final pd = g.gasoleoA > 0 ? currencyFormatter.format(g.gasoleoA) : 'N/A';
 
         return ListTile(
           title: Text(g.rotulo),
@@ -34,7 +34,6 @@ class GasolineraListWidget extends StatelessWidget {
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
             onItemTap?.call();
-            // Future: centrar mapa en esta gasolinera mediante callback
           },
         );
       },

@@ -133,7 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
                   // Botón Iniciar sesión
                   ElevatedButton(
                     onPressed: () {

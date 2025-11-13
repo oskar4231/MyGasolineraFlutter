@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
-class MapaTiempoReal extends StatefulWidget {
+class MapaTiempoReal extends StatefulWidget {  
   const MapaTiempoReal({super.key});
 
   @override

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
+import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
 
 class Layouthome extends StatefulWidget {
@@ -10,6 +13,39 @@ class Layouthome extends StatefulWidget {
 
 class _LayouthomeState extends State<Layouthome> {
   bool _showMap = true;
+  List<Gasolinera> _gasolineras = [];
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarGasolineras();
+  }
+
+  Future<void> _cargarGasolineras() async {
+    if (_gasolineras.isNotEmpty) return;
+    
+    setState(() {
+      _loading = true;
+    });
+
+    try {
+      final lista = await fetchGasolineras();
+      if (mounted) {
+        setState(() {
+          _gasolineras = lista;
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+      print('Error cargando gasolineras: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +58,17 @@ class _LayouthomeState extends State<Layouthome> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: const [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFFF9350)),
-              child: Text('Filtros', style: TextStyle(fontSize: 20, color: Colors.white)),
+            SizedBox(
+              height: 60,
+              child: DrawerHeader(
+                decoration: BoxDecoration(color: Color(0xFFFF9350)),
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Filtros',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
             ),
             ListTile(title: Text('Opción 1')),
             ListTile(title: Text('Opción 2')),
@@ -136,9 +180,11 @@ class _LayouthomeState extends State<Layouthome> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: MapWidget(),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _showMap 
+                      ? MapWidget() 
+                      : _buildListContent(),
                 ),
               ),
             ),
@@ -164,5 +210,13 @@ class _LayouthomeState extends State<Layouthome> {
         ),
       ),
     );
+  }
+
+  Widget _buildListContent() {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    
+    return GasolineraListWidget(gasolineras: _gasolineras);
   }
 }
