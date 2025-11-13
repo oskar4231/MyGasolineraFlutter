@@ -37,14 +37,10 @@ class _MapWidgetState extends State<MapWidget> {
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
   final Set<Marker> _markers = {};
-
-  final Set<Marker> _gasolinerasMarkers = {}; 
-
+  final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
 
   static const int LIMIT_RESULTS = 10;
-
-  bool _isDialogOpen = false;
 
   @override
   void initState() {
@@ -64,27 +60,26 @@ class _MapWidgetState extends State<MapWidget> {
           _gasStationIcon = icon;
         });
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<void> _cargarGasolineras(double lat, double lng) async {
-    final listaGasolineras = await fetchGasolineras(); 
+    final listaGasolineras = await fetchGasolineras();
 
     final gasolinerasCercanas = listaGasolineras.map((g) {
-      final distance = Geolocator.distanceBetween(
-        lat, 
-        lng, 
-        g.lat, 
-        g.lng
-      );
+      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
-    })
-    .toList();
-    gasolinerasCercanas.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    final top20Gasolineras = gasolinerasCercanas.take(LIMIT_RESULTS).map((e) => e['gasolinera'] as Gasolinera).toList();
+    }).toList();
 
-    final newMarkers = top20Gasolineras.map((g) => _crearMarcador(g)).toSet();
+    gasolinerasCercanas.sort((a, b) =>
+        (a['distance'] as double).compareTo(b['distance'] as double));
+
+    final topGasolineras = gasolinerasCercanas
+        .take(LIMIT_RESULTS)
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
+
+    final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
     if (mounted) {
       setState(() {
@@ -122,63 +117,21 @@ class _MapWidgetState extends State<MapWidget> {
       markerId: MarkerId('eess_${gasolinera.id}'),
       position: gasolinera.position,
       icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
-      onTap: () => _mostrarDialogoPrecios(gasolinera),  
+      infoWindow: InfoWindow(
+        title: gasolinera.rotulo,
+        snippet: _buildSnippet(gasolinera),
+      ),
     );
   }
 
-  void _mostrarDialogoPrecios(Gasolinera gasolinera) {
-    if (_isDialogOpen) return;
-
-    final precio95 = formatPrecio(gasolinera.gasolina95);
-    final precio95E10 = formatPrecio(gasolinera.gasolina95E10);
-    final precio98 = formatPrecio(gasolinera.gasolina98);
-    final precioDiesel = formatPrecio(gasolinera.gasoleoA);
-    final precioDieselPremium = formatPrecio(gasolinera.gasoleoPremium);
-    final precioGLP = formatPrecio(gasolinera.glp);
-    final precioBiodiesel = formatPrecio(gasolinera.biodiesel);
-    final precioBioetanol = formatPrecio(gasolinera.bioetanol);
-    final precioEsterMetilico = formatPrecio(gasolinera.esterMetilico);
-    final precioHidrogeno = formatPrecio(gasolinera.hidrogeno);
-
-    _isDialogOpen = true;  
-
-    showDialog(
-      context: context,
-      barrierDismissible: false, 
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(gasolinera.rotulo),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Precios:', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                if (precio95 != 'No disponible') Text('- ⛽ G95: $precio95'),
-                if (precio95E10 != 'No disponible') Text('- ⛽ G95 E10: $precio95E10'),
-                if (precio98 != 'No disponible') Text('- ⛽ G98: $precio98'),
-                if (precioDiesel != 'No disponible') Text('- 🚚 Diésel: $precioDiesel'),
-                if (precioDieselPremium != 'No disponible') Text('- 🚚 Diésel Premium: $precioDieselPremium'),
-                if (precioGLP != 'No disponible') Text('- 🔥 GLP: $precioGLP'),
-                if (precioBiodiesel != 'No disponible') Text('- 🌱 Biodiésel: $precioBiodiesel'),
-                if (precioBioetanol != 'No disponible') Text('- 🍃 Bioetanol: $precioBioetanol'),
-                if (precioEsterMetilico != 'No disponible') Text('- 🧪 Éster metílico: $precioEsterMetilico'),
-                if (precioHidrogeno != 'No disponible') Text('- ⚡ Hidrógeno: $precioHidrogeno'),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                _isDialogOpen = false;  
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
-    );
+  String _buildSnippet(Gasolinera g) {
+    final precios = [
+      if (g.gasolina95 > 0) "⛽ G95: ${formatPrecio(g.gasolina95)}",
+      if (g.gasoleoA > 0) "🚚 Diésel: ${formatPrecio(g.gasoleoA)}",
+      if (g.gasolina98 > 0) "⛽ G98: ${formatPrecio(g.gasolina98)}",
+      if (g.glp > 0) "🔥 GLP: ${formatPrecio(g.glp)}",
+    ];
+    return precios.join("\n");
   }
 
   String formatPrecio(double precio) {
@@ -187,34 +140,18 @@ class _MapWidgetState extends State<MapWidget> {
 
   Future<void> _iniciarSeguimiento() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Servicio de ubicación deshabilitado')));
-      }
-      return;
-    }
-  
+    if (!serviceEnabled) return;
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Permiso de ubicación denegado')));
-        }
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Permiso de ubicación denegado permanentemente')));
-      }
-      return;
-    }
+    if (permission == LocationPermission.deniedForever) return;
 
     try {
-      Position posicion = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      Position posicion =
+          await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
       if (mounted) {
         setState(() {
           _ubicacionActual = posicion;
@@ -222,17 +159,16 @@ class _MapWidgetState extends State<MapWidget> {
           _markers.add(Marker(
             markerId: const MarkerId('yo'),
             position: LatLng(posicion.latitude, posicion.longitude),
-            
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           ));
         });
         _cargarGasolineras(posicion.latitude, posicion.longitude);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
 
     _positionStreamSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 5),
+      locationSettings:
+          const LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 5),
     ).listen((Position pos) {
       if (!mounted) return;
       setState(() {
@@ -246,52 +182,45 @@ class _MapWidgetState extends State<MapWidget> {
       });
 
       if (mapController != null) {
-        mapController!.animateCamera(CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
+        mapController!.animateCamera(
+            CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
       }
     });
   }
 
   @override
-Widget build(BuildContext context) {
-  if (_ubicacionActual == null) {
-    return const Center(child: CircularProgressIndicator());
+  Widget build(BuildContext context) {
+    if (_ubicacionActual == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final allMarkers = _markers.union(_gasolinerasMarkers);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        height: 300,
+        child: GoogleMap(
+          onMapCreated: (controller) {
+            mapController = controller;
+            if (_ubicacionActual != null) {
+              controller.animateCamera(CameraUpdate.newLatLng(
+                LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
+              ));
+            }
+          },
+          initialCameraPosition: CameraPosition(
+            target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
+            zoom: 15,
+          ),
+          markers: allMarkers,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+        ),
+      ),
+    );
   }
 
-  final allMarkers = _markers.union(_gasolinerasMarkers);
-
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(12),
-    child: SizedBox(
-      height: 300,
-      child: Stack(
-        children: [
-          GoogleMap(
-            onMapCreated: (controller) {
-              mapController = controller;
-              if (_ubicacionActual != null) {
-                controller.animateCamera(CameraUpdate.newLatLng(
-                  LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
-                ));
-              }
-            },
-            initialCameraPosition: CameraPosition(
-              target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
-              zoom: 15,
-            ),
-            markers: allMarkers,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-          ),
-          if (_isDialogOpen)
-            const ModalBarrier(
-              dismissible: false,
-              color: Colors.black26,
-            ),
-        ],
-      ),
-    ),
-  );
-}
   @override
   void dispose() {
     _positionStreamSub?.cancel();
