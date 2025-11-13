@@ -117,44 +117,23 @@ class _MapWidgetState extends State<MapWidget> {
       markerId: MarkerId('eess_${gasolinera.id}'),
       position: gasolinera.position,
       icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
-      onTap: () {
-        _mostrarBottomSheet(gasolinera);
-      },
+      infoWindow: InfoWindow(
+        title: gasolinera.rotulo,
+        snippet: _buildSnippet(gasolinera),
+      ),
     );
   }
-bool _isBottomSheetOpen = false;
 
-void _mostrarBottomSheet(Gasolinera gasolinera) {
-  if (_isBottomSheetOpen) return; // evita abrir otra
-
-  _isBottomSheetOpen = true;
-
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(gasolinera.rotulo,
-              style: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          if (gasolinera.gasolina95 > 0)
-            Text('⛽ G95: ${formatPrecio(gasolinera.gasolina95)}'),
-          if (gasolinera.gasoleoA > 0)
-            Text('🚚 Diésel: ${formatPrecio(gasolinera.gasoleoA)}'),
-          if (gasolinera.gasolina98 > 0)
-            Text('⛽ G98: ${formatPrecio(gasolinera.gasolina98)}'),
-          if (gasolinera.glp > 0)
-            Text('🔥 GLP: ${formatPrecio(gasolinera.glp)}'),
-        ],
-      );
-    },
-  ).whenComplete(() {
-    // cuando se cierra el bottom sheet, resetea el flag
-    _isBottomSheetOpen = false;
-  });
-}
+  String _buildSnippet(Gasolinera g) {
+    final precios = [
+      if (g.gasolina95 > 0) "⛽ G95: ${formatPrecio(g.gasolina95)}",
+      if (g.gasoleoA > 0) "🚚 Diésel: ${formatPrecio(g.gasoleoA)}",
+      if (g.gasolina98 > 0) "⛽ G98: ${formatPrecio(g.gasolina98)}",
+      if (g.glp > 0) "🔥 GLP: ${formatPrecio(g.glp)}",
+      if (g.gasoleoPremium > 0) "🚚 Diésel Premium: ${formatPrecio(g.gasoleoPremium)}",
+    ];
+    return precios.join("\n");
+  }
 
   String formatPrecio(double precio) {
     return precio > 0 ? "${precio.toStringAsFixed(3)} €" : "No disponible";
