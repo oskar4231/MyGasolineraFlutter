@@ -22,13 +22,42 @@ class _LayouthomeState extends State<Layouthome> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: const [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFFF9350)),
-              child: Text('Filtros', style: TextStyle(fontSize: 20, color: Colors.white)),
+   const SizedBox(
+  height: 80, // 🔹 Cambia este número para ajustar la altura
+  child: DrawerHeader(
+    decoration: BoxDecoration(color: Color(0xFFFF9350)),
+    margin: EdgeInsets.zero,
+    padding: EdgeInsets.all(16),
+    child: Align(
+      alignment: Alignment.centerLeft, // Puedes centrar el texto si quieres
+      child: Text(
+        'Filtros',
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      ),
+    ),
+  ),
+),
+
+            ListTile(
+              leading: Icon(Icons.attach_money, color: Colors.red),
+              title: Text('Precio+'),
             ),
-            ListTile(title: Text('Opción 1')),
-            ListTile(title: Text('Opción 2')),
-            ListTile(title: Text('Opción 3')),
+                   ListTile(
+              leading: Icon(Icons.attach_money, color: Colors.green),
+              title: Text('Precio-'),
+            ),
+            ListTile(
+              leading: Icon(Icons.local_gas_station, color: Colors.grey),
+              title: Text('Diesel'),
+            ),
+            ListTile(
+              leading: Icon(Icons.local_gas_station, color: Colors.orange),
+              title: Text('Gasolina 95'),
+            ),
+            ListTile(
+              leading: Icon(Icons.access_time, color: Colors.blue),
+              title: Text('Abierto'),
+            ),
           ],
         ),
       ),
@@ -77,7 +106,9 @@ class _LayouthomeState extends State<Layouthome> {
                             color: Colors.white,
                             fillColor: Colors.white70,
                             constraints: const BoxConstraints(
-                                minHeight: 36, minWidth: 100),
+                              minHeight: 36,
+                              minWidth: 100,
+                            ),
                             children: const [
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 8),
@@ -131,7 +162,10 @@ class _LayouthomeState extends State<Layouthome> {
             ),
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                margin: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -143,7 +177,8 @@ class _LayouthomeState extends State<Layouthome> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
