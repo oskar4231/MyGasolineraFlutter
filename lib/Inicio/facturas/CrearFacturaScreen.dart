@@ -4,14 +4,14 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 
 
-class CrearFacturaScreen extends StatefulWidget {
-  const CrearFacturaScreen({super.key});
+class crearFacturaScreen extends StatefulWidget {
+  const crearFacturaScreen({super.key});
 
   @override
-  State<CrearFacturaScreen> createState() => _CrearFacturaScreenState();
+  State<crearFacturaScreen> createState() => _CrearFacturaScreenState();
 }
 
-class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
+class _CrearFacturaScreenState extends State<crearFacturaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _tituloController = TextEditingController();
   final _costoController = TextEditingController();
