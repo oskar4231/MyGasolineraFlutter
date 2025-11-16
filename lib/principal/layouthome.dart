@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/lista.dart';
@@ -13,38 +14,187 @@ class Layouthome extends StatefulWidget {
 
 class _LayouthomeState extends State<Layouthome> {
   bool _showMap = true;
-  List<Gasolinera> _gasolineras = [];
+  List<Gasolinera> _allGasolineras = [];
+  List<Gasolinera> _gasolinerasCercanas = [];
   bool _loading = false;
+  Position? _currentPosition;
+    DateTime _lastUpdateTime = DateTime.now();
+  static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 180);
+  
 
   @override
   void initState() {
     super.initState();
-    _cargarGasolineras();
+    _initLocationAndGasolineras();
   }
 
-  Future<void> _cargarGasolineras() async {
-    if (_gasolineras.isNotEmpty) return;
-    
+  Future<void> _initLocationAndGasolineras() async {
     setState(() {
       _loading = true;
     });
 
     try {
+      // 1. Obtener ubicación
+      await _getCurrentLocation();
+      
+      // 2. Cargar todas las gasolineras
       final lista = await fetchGasolineras();
+      
       if (mounted) {
         setState(() {
-          _gasolineras = lista;
-          _loading = false;
+          _allGasolineras = lista;
         });
       }
+      
+      // 3. Calcular las 15 más cercanas
+      if (_currentPosition != null) {
+        _calcularGasolinerasCercanas();
+      }
+      
     } catch (e) {
+      print('Error: $e');
+    } finally {
       if (mounted) {
         setState(() {
           _loading = false;
         });
       }
-      print('Error cargando gasolineras: $e');
     }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Servicio de ubicación deshabilitado');
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print('Permiso de ubicación denegado');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print('Permiso de ubicación denegado permanentemente');
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+
+      if (mounted) {
+        setState(() {
+          _currentPosition = position;
+        });
+      }
+      print('Ubicación obtenida: ${position.latitude}, ${position.longitude}');
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+    }
+  }
+
+  void _calcularGasolinerasCercanas() {
+    if (_currentPosition == null || _allGasolineras.isEmpty) {
+      print('No hay ubicación o gasolineras para calcular');
+      return;
+    }
+
+    final lat = _currentPosition!.latitude;
+    final lng = _currentPosition!.longitude;
+
+    print('Calculando gasolineras cercanas para: $lat, $lng');
+    print('Total gasolineras disponibles: ${_allGasolineras.length}');
+
+    // Calcular distancia para cada gasolinera
+    final gasolinerasConDistancia = _allGasolineras.map((g) {
+      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
+      return {'gasolinera': g, 'distance': distance};
+    }).toList();
+
+    // Ordenar por distancia y tomar las 15 más cercanas
+    gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
+    
+    final top15 = gasolinerasConDistancia
+        .take(15)
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
+
+    if (mounted) {
+      setState(() {
+        _gasolinerasCercanas = top15;
+      });
+    }
+
+    // Debug
+    print('[Layouthome] Gasolineras cercanas calculadas: ${_gasolinerasCercanas.length}');
+    for (var g in _gasolinerasCercanas) {
+      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
+      print('  - ${g.rotulo} (${(distance / 1000).toStringAsFixed(1)} km)');
+    }
+  }
+
+  // Callback simplificado - solo recalcular gasolineras cercanas
+  void _onLocationUpdated(double lat, double lng) {
+  final now = DateTime.now();
+  final timeSinceLastUpdate = now.difference(_lastUpdateTime);
+  
+  // Solo procesar si ha pasado el tiempo mínimo
+  if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
+    print('📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s');
+    return;
+  }
+
+    print('Ubicación actualizada desde mapa: $lat, $lng');
+
+    _lastUpdateTime = now;
+    
+    if (mounted) {
+      // No necesitamos crear un Position manualmente
+      // Simplemente recalculamos las gasolineras cercanas con las nuevas coordenadas
+      _recalcularConNuevaUbicacion(lat, lng);
+    }
+  }
+
+  void _recalcularConNuevaUbicacion(double lat, double lng) {
+    if (_allGasolineras.isEmpty) return;
+
+    print('Recalculando gasolineras para nueva ubicación: $lat, $lng');
+
+    // Calcular distancia para cada gasolinera con las nuevas coordenadas
+    final gasolinerasConDistancia = _allGasolineras.map((g) {
+      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
+      return {'gasolinera': g, 'distance': distance};
+    }).toList();
+
+    // Ordenar por distancia y tomar las 15 más cercanas
+    gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
+    
+    final top15 = gasolinerasConDistancia
+        .take(15)
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
+
+    if (mounted) {
+      setState(() {
+        _gasolinerasCercanas = top15;
+      });
+    }
+
+    print('[Layouthome] Gasolineras recalculadas: ${_gasolinerasCercanas.length}');
+  }
+
+  // Método para forzar recarga
+  void _recargarDatos() {
+    setState(() {
+      _gasolinerasCercanas = [];
+    });
+    _initLocationAndGasolineras();
   }
 
   @override
@@ -163,10 +313,8 @@ class _LayouthomeState extends State<Layouthome> {
                       const Icon(Icons.stars, size: 40),
                       const Icon(Icons.arrow_upward, size: 40),
                       IconButton(
-                        icon: const Icon(Icons.add, size: 40),
-                        onPressed: () {
-                          scaffoldKey.currentState?.openDrawer();
-                        },
+                        icon: const Icon(Icons.refresh, size: 40),
+                        onPressed: _recargarDatos,
                       ),
                     ],
                   ),
@@ -183,7 +331,10 @@ class _LayouthomeState extends State<Layouthome> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _showMap 
-                      ? MapWidget() 
+                      ? MapWidget(
+                          externalGasolineras: _allGasolineras,
+                          onLocationUpdate: _onLocationUpdated,
+                        ) 
                       : _buildListContent(),
                 ),
               ),
@@ -217,6 +368,26 @@ class _LayouthomeState extends State<Layouthome> {
       return const Center(child: CircularProgressIndicator());
     }
     
-    return GasolineraListWidget(gasolineras: _gasolineras);
+    if (_gasolinerasCercanas.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.location_off, size: 50, color: Colors.grey),
+          const SizedBox(height: 10),
+          const Text(
+            'No hay gasolineras cercanas',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: _recargarDatos,
+            child: const Text('Reintentar'),
+          ),
+        ],
+      );
+    }
+    
+    return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }

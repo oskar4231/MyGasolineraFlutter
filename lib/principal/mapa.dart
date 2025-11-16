@@ -26,7 +26,14 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
 }
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  final List<Gasolinera>? externalGasolineras; // ✅ Agregar este parámetro
+  final Function(double lat, double lng)? onLocationUpdate; // ✅ Y este también
+
+  const MapWidget({
+    super.key, 
+    this.externalGasolineras, // ✅ Incluir en el constructor
+    this.onLocationUpdate // ✅ Incluir en el constructor
+  });
 
   @override
   _MapWidgetState createState() => _MapWidgetState();
@@ -39,8 +46,10 @@ class _MapWidgetState extends State<MapWidget> {
   final Set<Marker> _markers = {};
   final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
+  Timer? _debounceTimer;
 
-  static const int LIMIT_RESULTS = 10;
+
+  static const int LIMIT_RESULTS = 15;
 
   @override
   void initState() {
@@ -64,7 +73,14 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   Future<void> _cargarGasolineras(double lat, double lng) async {
-    final listaGasolineras = await fetchGasolineras();
+    List<Gasolinera> listaGasolineras;
+    
+    // ✅ Usar externalGasolineras si están disponibles
+    if (widget.externalGasolineras != null) {
+      listaGasolineras = widget.externalGasolineras!;
+    } else {
+      listaGasolineras = await fetchGasolineras();
+    }
 
     final gasolinerasCercanas = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
@@ -164,6 +180,10 @@ class _MapWidgetState extends State<MapWidget> {
           ));
         });
         _cargarGasolineras(posicion.latitude, posicion.longitude);
+
+        if (widget.onLocationUpdate != null) {
+          widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
+        }
       }
     } catch (e) {}
 
@@ -186,6 +206,15 @@ class _MapWidgetState extends State<MapWidget> {
         mapController!.animateCamera(
             CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
       }
+
+      if (widget.onLocationUpdate != null) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(seconds: 2), () {
+      if (mounted) {
+        widget.onLocationUpdate!(pos.latitude, pos.longitude);
+      }
+    });
+  }
     });
   }
 

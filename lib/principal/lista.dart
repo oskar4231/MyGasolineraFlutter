@@ -20,11 +20,13 @@ class GasolineraListWidget extends StatelessWidget {
       return const Center(child: Text('No hay gasolineras disponibles'));
     }
 
+    final gasolinerasLimitadas = gasolineras.take(15).toList();
+
     return ListView.separated(
-      itemCount: gasolineras.length,
+      itemCount: gasolinerasLimitadas.length,
       separatorBuilder: (_, __) => const Divider(height: 1),
       itemBuilder: (context, index) {
-        final g = gasolineras[index];
+        final g = gasolinerasLimitadas[index];
         final p95 = g.gasolina95 > 0 ? currencyFormatter.format(g.gasolina95) : 'N/A';
         final pd = g.gasoleoA > 0 ? currencyFormatter.format(g.gasoleoA) : 'N/A';
 
