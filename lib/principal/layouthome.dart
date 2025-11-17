@@ -4,6 +4,7 @@ import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
+import 'package:my_gasolinera/ajustes/ajustes.dart';
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -18,9 +19,8 @@ class _LayouthomeState extends State<Layouthome> {
   List<Gasolinera> _gasolinerasCercanas = [];
   bool _loading = false;
   Position? _currentPosition;
-    DateTime _lastUpdateTime = DateTime.now();
+  DateTime _lastUpdateTime = DateTime.now();
   static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 180);
-  
 
   @override
   void initState() {
@@ -36,21 +36,21 @@ class _LayouthomeState extends State<Layouthome> {
     try {
       // 1. Obtener ubicación
       await _getCurrentLocation();
-      
+     
       // 2. Cargar todas las gasolineras
       final lista = await fetchGasolineras();
-      
+     
       if (mounted) {
         setState(() {
           _allGasolineras = lista;
         });
       }
-      
+     
       // 3. Calcular las 15 más cercanas
       if (_currentPosition != null) {
         _calcularGasolinerasCercanas();
       }
-      
+     
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -119,7 +119,7 @@ class _LayouthomeState extends State<Layouthome> {
 
     // Ordenar por distancia y tomar las 15 más cercanas
     gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    
+   
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -141,19 +141,19 @@ class _LayouthomeState extends State<Layouthome> {
 
   // Callback simplificado - solo recalcular gasolineras cercanas
   void _onLocationUpdated(double lat, double lng) {
-  final now = DateTime.now();
-  final timeSinceLastUpdate = now.difference(_lastUpdateTime);
-  
-  // Solo procesar si ha pasado el tiempo mínimo
-  if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
-    print('📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s');
-    return;
-  }
+    final now = DateTime.now();
+    final timeSinceLastUpdate = now.difference(_lastUpdateTime);
+   
+    // Solo procesar si ha pasado el tiempo mínimo
+    if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
+      print('📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s');
+      return;
+    }
 
     print('Ubicación actualizada desde mapa: $lat, $lng');
 
     _lastUpdateTime = now;
-    
+   
     if (mounted) {
       // No necesitamos crear un Position manualmente
       // Simplemente recalculamos las gasolineras cercanas con las nuevas coordenadas
@@ -174,7 +174,7 @@ class _LayouthomeState extends State<Layouthome> {
 
     // Ordenar por distancia y tomar las 15 más cercanas
     gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    
+   
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -314,7 +314,7 @@ class _LayouthomeState extends State<Layouthome> {
                       const Icon(Icons.arrow_upward, size: 40),
                       IconButton(
                         icon: const Icon(Icons.add, size: 40),
-                         onPressed: () {
+                        onPressed: () {
                           scaffoldKey.currentState?.openDrawer();
                         },
                       ),
@@ -332,15 +332,16 @@ class _LayouthomeState extends State<Layouthome> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _showMap 
+                  child: _showMap
                       ? MapWidget(
                           externalGasolineras: _allGasolineras,
                           onLocationUpdate: _onLocationUpdated,
-                        ) 
+                        )
                       : _buildListContent(),
                 ),
               ),
             ),
+            // ✅ BARRA INFERIOR MEJORADA CON BOTONES FUNCIONALES
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
@@ -352,10 +353,33 @@ class _LayouthomeState extends State<Layouthome> {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  Icon(Icons.directions_car, size: 40),
-                  Icon(Icons.pin_drop, size: 40),
-                  Icon(Icons.settings, size: 40),
+                children: [
+                  // ✅ Botón coche funcional
+                  IconButton(
+                    onPressed: () {
+                      // Acción para el botón del coche
+                    },
+                    icon: const Icon(Icons.directions_car, size: 40),
+                  ),
+                 
+                  // ✅ Botón pin funcional
+                  IconButton(
+                    onPressed: () {
+                      // Acción para el botón del pin
+                    },
+                    icon: const Icon(Icons.pin_drop, size: 40),
+                  ),
+                 
+                  // ✅ BOTÓN AJUSTES FUNCIONAL (MEJORA DEL SEGUNDO CÓDIGO)
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AjustesScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.settings, size: 40),
+                  ),
                 ],
               ),
             ),
@@ -369,7 +393,7 @@ class _LayouthomeState extends State<Layouthome> {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+   
     if (_gasolinerasCercanas.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -389,7 +413,7 @@ class _LayouthomeState extends State<Layouthome> {
         ],
       );
     }
-    
+   
     return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }

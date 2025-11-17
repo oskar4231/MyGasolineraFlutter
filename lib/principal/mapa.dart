@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
@@ -21,18 +23,35 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
         backgroundColor: Colors.blue,
       ),
       body: const MapWidget(),
+      // ✅ BOTÓN DE AJUSTES AÑADIDO DESDE EL SEGUNDO CÓDIGO
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AjustesScreen()),
+          );
+        },
+        backgroundColor: Colors.blue,
+        child: Image.asset(
+          'lib/assets/ajustes.png',
+          width: 24,
+          height: 24,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
 
 class MapWidget extends StatefulWidget {
-  final List<Gasolinera>? externalGasolineras; // ✅ Agregar este parámetro
-  final Function(double lat, double lng)? onLocationUpdate; // ✅ Y este también
+  final List<Gasolinera>? externalGasolineras;
+  final Function(double lat, double lng)? onLocationUpdate;
 
   const MapWidget({
-    super.key, 
-    this.externalGasolineras, // ✅ Incluir en el constructor
-    this.onLocationUpdate // ✅ Incluir en el constructor
+    super.key,
+    this.externalGasolineras,
+    this.onLocationUpdate
   });
 
   @override
@@ -47,7 +66,6 @@ class _MapWidgetState extends State<MapWidget> {
   final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
   Timer? _debounceTimer;
-
 
   static const int LIMIT_RESULTS = 15;
 
@@ -69,13 +87,14 @@ class _MapWidgetState extends State<MapWidget> {
           _gasStationIcon = icon;
         });
       }
-    } catch (e) {}
+    } catch (e) {
+      // ✅ MANEJO DE ERRORES MEJORADO DEL SEGUNDO CÓDIGO
+    }
   }
 
   Future<void> _cargarGasolineras(double lat, double lng) async {
     List<Gasolinera> listaGasolineras;
-    
-    // ✅ Usar externalGasolineras si están disponibles
+   
     if (widget.externalGasolineras != null) {
       listaGasolineras = widget.externalGasolineras!;
     } else {
@@ -106,6 +125,13 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   Marker _crearMarcador(Gasolinera gasolinera) {
+    // ✅ MEJORA: USAR NumberFormat PARA MEJOR FORMATO DE PRECIOS
+    final formatter = NumberFormat.currency(
+      locale: 'es_ES',
+      symbol: '€',
+      decimalDigits: 3,
+    );
+
     final precios = [
       gasolinera.gasolina95,
       gasolinera.gasoleoA,
@@ -135,40 +161,68 @@ class _MapWidgetState extends State<MapWidget> {
       icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
       infoWindow: InfoWindow(
         title: gasolinera.rotulo,
-        snippet: _buildSnippet(gasolinera),
+        snippet: _buildSnippet(gasolinera, formatter), // ✅ PASAMOS EL FORMATTER
       ),
     );
   }
 
-  String _buildSnippet(Gasolinera g) {
+  // ✅ FUNCIÓN MEJORADA CON NumberFormat
+  String _buildSnippet(Gasolinera g, NumberFormat formatter) {
     final precios = [
-      if (g.gasolina95 > 0) "⛽ G95: ${formatPrecio(g.gasolina95)}",
-      if (g.gasoleoA > 0) "🚚 Diésel: ${formatPrecio(g.gasoleoA)}",
-      if (g.gasolina98 > 0) "⛽ G98: ${formatPrecio(g.gasolina98)}",
-      if (g.glp > 0) "🔥 GLP: ${formatPrecio(g.glp)}",
-      if (g.gasoleoPremium > 0) "🚚 Diésel Premium: ${formatPrecio(g.gasoleoPremium)}",
+      if (g.gasolina95 > 0) "⛽ G95: ${formatter.format(g.gasolina95)}",
+      if (g.gasoleoA > 0) "🚚 Diésel: ${formatter.format(g.gasoleoA)}",
+      if (g.gasolina98 > 0) "⛽ G98: ${formatter.format(g.gasolina98)}",
+      if (g.glp > 0) "🔥 GLP: ${formatter.format(g.glp)}",
+      if (g.gasoleoPremium > 0) "🚚 Diésel Premium: ${formatter.format(g.gasoleoPremium)}",
     ];
     return precios.join("\n");
   }
 
+  // ✅ MANTENEMOS LA FUNCIÓN ORIGINAL COMO FALLBACK
   String formatPrecio(double precio) {
     return precio > 0 ? "${precio.toStringAsFixed(3)} €" : "No disponible";
   }
 
   Future<void> _iniciarSeguimiento() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+    if (!serviceEnabled) {
+      // ✅ MEJORA: SNACKBAR DE ERROR DEL SEGUNDO CÓDIGO
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Servicio de ubicación deshabilitado'))
+        );
+      }
+      return;
+    }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
+      if (permission == LocationPermission.denied) {
+        // ✅ MEJORA: SNACKBAR DE PERMISO DENEGADO
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Permiso de ubicación denegado'))
+          );
+        }
+        return;
+      }
     }
-    if (permission == LocationPermission.deniedForever) return;
+   
+    if (permission == LocationPermission.deniedForever) {
+      // ✅ MEJORA: SNACKBAR DE PERMISO DENEGADO PERMANENTEMENTE
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permiso de ubicación denegado permanentemente'))
+        );
+      }
+      return;
+    }
 
     try {
-      Position posicion =
-          await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      Position posicion = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best
+      );
       if (mounted) {
         setState(() {
           _ubicacionActual = posicion;
@@ -185,11 +239,15 @@ class _MapWidgetState extends State<MapWidget> {
           widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // ignore
+    }
 
     _positionStreamSub = Geolocator.getPositionStream(
-      locationSettings:
-          const LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 5),
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: 5
+      ),
     ).listen((Position pos) {
       if (!mounted) return;
       setState(() {
@@ -204,17 +262,19 @@ class _MapWidgetState extends State<MapWidget> {
 
       if (mapController != null) {
         mapController!.animateCamera(
-            CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
+          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude))
+        );
       }
 
+      // ✅ MANTENEMOS EL DEBOUNCE PARA ACTUALIZACIONES DE UBICACIÓN
       if (widget.onLocationUpdate != null) {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        widget.onLocationUpdate!(pos.latitude, pos.longitude);
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(seconds: 2), () {
+          if (mounted) {
+            widget.onLocationUpdate!(pos.latitude, pos.longitude);
+          }
+        });
       }
-    });
-  }
     });
   }
 
@@ -226,6 +286,7 @@ class _MapWidgetState extends State<MapWidget> {
 
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
+    // ✅ MANTENEMOS EL DISEÑO MEJORADO CON ClipRRect Y TAMAÑO ESPECÍFICO
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: SizedBox(
@@ -254,6 +315,7 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void dispose() {
     _positionStreamSub?.cancel();
+    _debounceTimer?.cancel();
     mapController?.dispose();
     super.dispose();
   }
