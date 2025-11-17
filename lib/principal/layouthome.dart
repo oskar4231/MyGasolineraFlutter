@@ -36,21 +36,21 @@ class _LayouthomeState extends State<Layouthome> {
     try {
       // 1. Obtener ubicación
       await _getCurrentLocation();
-     
+      
       // 2. Cargar todas las gasolineras
       final lista = await fetchGasolineras();
-     
+      
       if (mounted) {
         setState(() {
           _allGasolineras = lista;
         });
       }
-     
+      
       // 3. Calcular las 15 más cercanas
       if (_currentPosition != null) {
         _calcularGasolinerasCercanas();
       }
-     
+      
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -119,7 +119,7 @@ class _LayouthomeState extends State<Layouthome> {
 
     // Ordenar por distancia y tomar las 15 más cercanas
     gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-   
+    
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -143,7 +143,7 @@ class _LayouthomeState extends State<Layouthome> {
   void _onLocationUpdated(double lat, double lng) {
     final now = DateTime.now();
     final timeSinceLastUpdate = now.difference(_lastUpdateTime);
-   
+    
     // Solo procesar si ha pasado el tiempo mínimo
     if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
       print('📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s');
@@ -153,7 +153,7 @@ class _LayouthomeState extends State<Layouthome> {
     print('Ubicación actualizada desde mapa: $lat, $lng');
 
     _lastUpdateTime = now;
-   
+    
     if (mounted) {
       // No necesitamos crear un Position manualmente
       // Simplemente recalculamos las gasolineras cercanas con las nuevas coordenadas
@@ -174,7 +174,7 @@ class _LayouthomeState extends State<Layouthome> {
 
     // Ordenar por distancia y tomar las 15 más cercanas
     gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-   
+    
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -332,11 +332,11 @@ class _LayouthomeState extends State<Layouthome> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _showMap
+                  child: _showMap 
                       ? MapWidget(
                           externalGasolineras: _allGasolineras,
                           onLocationUpdate: _onLocationUpdated,
-                        )
+                        ) 
                       : _buildListContent(),
                 ),
               ),
@@ -361,7 +361,7 @@ class _LayouthomeState extends State<Layouthome> {
                     },
                     icon: const Icon(Icons.directions_car, size: 40),
                   ),
-                 
+                  
                   // ✅ Botón pin funcional
                   IconButton(
                     onPressed: () {
@@ -369,7 +369,7 @@ class _LayouthomeState extends State<Layouthome> {
                     },
                     icon: const Icon(Icons.pin_drop, size: 40),
                   ),
-                 
+                  
                   // ✅ BOTÓN AJUSTES FUNCIONAL (MEJORA DEL SEGUNDO CÓDIGO)
                   IconButton(
                     onPressed: () {
@@ -393,7 +393,7 @@ class _LayouthomeState extends State<Layouthome> {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
-   
+    
     if (_gasolinerasCercanas.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -413,7 +413,7 @@ class _LayouthomeState extends State<Layouthome> {
         ],
       );
     }
-   
+    
     return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }

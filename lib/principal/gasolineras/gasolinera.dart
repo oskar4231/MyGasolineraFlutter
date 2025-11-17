@@ -1,4 +1,3 @@
-// gasolinera.dart
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Gasolinera {
@@ -7,8 +6,17 @@ class Gasolinera {
   final String direccion;
   final double lat;
   final double lng;
-  final double precioGasolina95;
-  final double precioGasoleoA;
+
+  final double gasolina95;
+  final double gasolina95E10;
+  final double gasolina98;
+  final double gasoleoA;
+  final double gasoleoPremium;
+  final double glp;
+  final double biodiesel;
+  final double bioetanol;
+  final double esterMetilico;
+  final double hidrogeno;
 
   Gasolinera({
     required this.id,
@@ -16,35 +24,45 @@ class Gasolinera {
     required this.direccion,
     required this.lat,
     required this.lng,
-    required this.precioGasolina95,
-    required this.precioGasoleoA,
+    required this.gasolina95,
+    required this.gasolina95E10,
+    required this.gasolina98,
+    required this.gasoleoA,
+    required this.gasoleoPremium,
+    required this.glp,
+    required this.biodiesel,
+    required this.bioetanol,
+    required this.esterMetilico,
+    required this.hidrogeno,
   });
 
-  // Función auxiliar para convertir String con coma a double
+  // 🔧 Conversión segura de precios con coma decimal
   static double _parsePrecio(String? precioStr) {
-    if (precioStr == null || precioStr.isEmpty) return 0.0;
-    // La API usa ',' como separador decimal.
-    final cleanStr = precioStr.replaceAll(',', '.');
-    return double.tryParse(cleanStr) ?? 0.0;
+    if (precioStr == null || precioStr.trim().isEmpty || precioStr.trim().toUpperCase() == 'N/A') return 0.0;
+    return double.tryParse(precioStr.replaceAll(',', '.')) ?? 0.0;
   }
 
-  // Constructor de fábrica para crear una Gasolinera a partir de un JSON
+  // 🏭 Constructor desde JSON oficial del Ministerio
   factory Gasolinera.fromJson(Map<String, dynamic> json) {
-    // 💡 La API del Gobierno usa estos nombres de campo exactos, incluyendo tildes y mayúsculas.
     return Gasolinera(
       id: json['IDEESS'].toString(),
       rotulo: json['Rótulo'] ?? 'Sin Rótulo',
       direccion: '${json['Dirección'] ?? ''}, ${json['Municipio'] ?? ''}',
-      // Las coordenadas también vienen como String con coma, pero la API las nombra así:
       lat: _parsePrecio(json['Latitud'] as String?),
       lng: _parsePrecio(json['Longitud (WGS84)'] as String?),
-      
-      // Precios comunes
-      precioGasolina95: _parsePrecio(json['Precio Gasolina 95 E5'] as String?),
-      precioGasoleoA: _parsePrecio(json['Precio Gasóleo A'] as String?),
+      gasolina95: _parsePrecio(json['Precio Gasolina 95 E5'] as String?),
+      gasolina95E10: _parsePrecio(json['Precio Gasolina 95 E10'] as String?),
+      gasolina98: _parsePrecio(json['Precio Gasolina 98 E5'] as String?),
+      gasoleoA: _parsePrecio(json['Precio Gasoleo A'] as String?),
+      gasoleoPremium: _parsePrecio(json['Precio Gasoleo Premium'] as String?),
+      glp: _parsePrecio(json['Precio Gases licuados del petróleo'] as String?),
+      biodiesel: _parsePrecio(json['Precio Biodiesel'] as String?),
+      bioetanol: _parsePrecio(json['Precio Bioetanol'] as String?),
+      esterMetilico: _parsePrecio(json['Precio Éster metílico'] as String?),
+      hidrogeno: _parsePrecio(json['Precio Hidrogeno'] as String?),
     );
   }
 
-  // Getter de conveniencia para las coordenadas
+  // 📍 Getter para usar en Google Maps
   LatLng get position => LatLng(lat, lng);
 }
