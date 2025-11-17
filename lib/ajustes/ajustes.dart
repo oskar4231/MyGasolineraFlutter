@@ -1,14 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-class AjustesScreen extends StatelessWidget {
+class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
+
+  @override
+  State<AjustesScreen> createState() => _AjustesScreenState();
+}
+
+class _AjustesScreenState extends State<AjustesScreen> {
+  File? _profileImage; // Para almacenar la imagen seleccionada
+
+  // Función para seleccionar imagen desde galería
+  Future<void> _pickImageFromGallery() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Función para tomar foto con cámara
+  Future<void> _pickImageFromCamera() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Diálogo para elegir entre cámara o galería
+  void _showImagePickerDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cambiar foto de perfil'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Selecciona de dónde quieres tomar la foto:'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _pickImageFromGallery();
+              },
+              child: const Text('Galería'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _pickImageFromCamera();
+              },
+              child: const Text('Cámara'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajustes'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Ajustes',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFFFF9350),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -24,12 +103,8 @@ class AjustesScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sección de Perfil
+          // Sección de Perfil (ahora con funcionalidad de cambiar imagen)
           _buildSeccionPerfil(),
-          const SizedBox(height: 24),
-          
-          // Sección de Estadísticas
-          _buildSeccionEstadisticas(),
           const SizedBox(height: 24),
           
           // Sección de Opciones
@@ -44,19 +119,48 @@ class AjustesScreen extends StatelessWidget {
   }
 
   Widget _buildSeccionPerfil() {
-    return const Card(
+    return Card(
       elevation: 2,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, color: Colors.white),
+            // CircleAvatar con funcionalidad de cambiar imagen
+            GestureDetector(
+              onTap: _showImagePickerDialog,
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: _profileImage != null 
+                        ? FileImage(_profileImage!) 
+                        : null,
+                    child: _profileImage == null
+                        ? const Icon(Icons.person, color: Colors.white)
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        size: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(width: 16),
-            Column(
+            const SizedBox(width: 16),
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -79,22 +183,6 @@ class AjustesScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSeccionEstadisticas() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _EstadisticaItem(
-          valor: '123,82€',
-          label: 'Dinero gastado\neste mes',
-        ),
-        _EstadisticaItem(
-          valor: '3',
-          label: 'Veces repostadas\neste mes',
-        ),
-      ],
     );
   }
 
@@ -179,9 +267,6 @@ class AjustesScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
                 // Aquí iría la lógica real de cierre de sesión
-                // Por ejemplo: 
-                // AuthService().signOut();
-                // Navigator.pushAndRemoveUntil(...);
               },
               child: const Text('Cerrar sesión'),
             ),
@@ -192,43 +277,7 @@ class AjustesScreen extends StatelessWidget {
   }
 }
 
-// Widget para items de estadísticas
-class _EstadisticaItem extends StatelessWidget {
-  final String valor;
-  final String label;
-
-  const _EstadisticaItem({
-    required this.valor,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          valor,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Widget para items de opciones
+// Widget para items de opciones (sin cambios)
 class _OpcionItem extends StatelessWidget {
   final IconData icono;
   final String texto;
