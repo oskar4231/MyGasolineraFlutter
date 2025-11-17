@@ -7,7 +7,7 @@ import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
-class MapaTiempoReal extends StatefulWidget {
+class MapaTiempoReal extends StatefulWidget {  
   const MapaTiempoReal({super.key});
 
   @override
@@ -23,6 +23,7 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
         backgroundColor: Colors.blue,
       ),
       body: const MapWidget(),
+      // ✅ BOTÓN DE AJUSTES AÑADIDO DESDE EL SEGUNDO CÓDIGO
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -33,9 +34,9 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
         backgroundColor: Colors.blue,
         child: Image.asset(
           'lib/assets/ajustes.png',
-          width: 24,  // Ajusta el tamaño según necesites
+          width: 24,
           height: 24,
-          color: Colors.white,  // Opcional: para cambiar el color
+          color: Colors.white,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -43,9 +44,15 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
   }
 }
 
-// El resto del código de MapWidget se mantiene igual...
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  final List<Gasolinera>? externalGasolineras;
+  final Function(double lat, double lng)? onLocationUpdate;
+
+  const MapWidget({
+    super.key,
+    this.externalGasolineras,
+    this.onLocationUpdate
+  });
 
   @override
   _MapWidgetState createState() => _MapWidgetState();
@@ -56,10 +63,11 @@ class _MapWidgetState extends State<MapWidget> {
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
   final Set<Marker> _markers = {};
-  final Set<Marker> _gasolinerasMarkers = {}; 
-
+  final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
-  static const int LIMIT_RESULTS = 10;
+  Timer? _debounceTimer;
+
+  static const int LIMIT_RESULTS = 15;
 
   @override
   void initState() {
@@ -80,28 +88,33 @@ class _MapWidgetState extends State<MapWidget> {
         });
       }
     } catch (e) {
-      // Si no existe o falla, dejamos el fallback por defecto.
+      // ✅ MANEJO DE ERRORES MEJORADO DEL SEGUNDO CÓDIGO
     }
   }
 
-Future<void> _cargarGasolineras(double lat, double lng) async {
-    final listaGasolineras = await fetchGasolineras(); 
+  Future<void> _cargarGasolineras(double lat, double lng) async {
+    List<Gasolinera> listaGasolineras;
+   
+    if (widget.externalGasolineras != null) {
+      listaGasolineras = widget.externalGasolineras!;
+    } else {
+      listaGasolineras = await fetchGasolineras();
+    }
 
     final gasolinerasCercanas = listaGasolineras.map((g) {
-      final distance = Geolocator.distanceBetween(
-        lat, 
-        lng, 
-        g.lat, 
-        g.lng
-      );
+      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
-    })
-    .toList();
+    }).toList();
 
-    gasolinerasCercanas.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    final top20Gasolineras = gasolinerasCercanas.take(LIMIT_RESULTS).map((e) => e['gasolinera'] as Gasolinera).toList();
+    gasolinerasCercanas.sort((a, b) =>
+        (a['distance'] as double).compareTo(b['distance'] as double));
 
-    final newMarkers = top20Gasolineras.map((g) => _crearMarcador(g)).toSet();
+    final topGasolineras = gasolinerasCercanas
+        .take(LIMIT_RESULTS)
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
+
+    final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
     if (mounted) {
       setState(() {
@@ -112,32 +125,24 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
   }
 
   Marker _crearMarcador(Gasolinera gasolinera) {
+    // ✅ MEJORA: USAR NumberFormat PARA MEJOR FORMATO DE PRECIOS
     final formatter = NumberFormat.currency(
       locale: 'es_ES',
       symbol: '€',
       decimalDigits: 3,
     );
 
-    final price95Val = gasolinera.precioGasolina95;
-    final priceDieselVal = gasolinera.precioGasoleoA;
-
-    final precio95Str = price95Val > 0 ? formatter.format(price95Val) : 'N/A';
-    final precioDieselStr = priceDieselVal > 0 ? formatter.format(priceDieselVal) : 'N/A';
-
-    final snippetText = '⛽ G95: $precio95Str\n'
-        '🚚 Diésel: $precioDieselStr';
-
-    double avgPrice = 0.0;
-    int count = 0;
-    if (price95Val > 0) {
-      avgPrice += price95Val;
-      count++;
-    }
-    if (priceDieselVal > 0) {
-      avgPrice += priceDieselVal;
-      count++;
-    }
-    avgPrice = count > 0 ? avgPrice / count : 0.0;
+    final precios = [
+      gasolinera.gasolina95,
+      gasolinera.gasoleoA,
+      gasolinera.gasolina98,
+      gasolinera.glp,
+      gasolinera.gasoleoPremium,
+    ];
+    final preciosValidos = precios.where((p) => p > 0).toList();
+    final avgPrice = preciosValidos.isNotEmpty
+        ? preciosValidos.reduce((a, b) => a + b) / preciosValidos.length
+        : 0.0;
 
     final double hue;
     if (avgPrice == 0.0) {
@@ -153,44 +158,71 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
     return Marker(
       markerId: MarkerId('eess_${gasolinera.id}'),
       position: gasolinera.position,
+      icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
       infoWindow: InfoWindow(
         title: gasolinera.rotulo,
-        snippet: snippetText,
+        snippet: _buildSnippet(gasolinera, formatter), // ✅ PASAMOS EL FORMATTER
       ),
-      icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
     );
+  }
+
+  // ✅ FUNCIÓN MEJORADA CON NumberFormat
+  String _buildSnippet(Gasolinera g, NumberFormat formatter) {
+    final precios = [
+      if (g.gasolina95 > 0) "⛽ G95: ${formatter.format(g.gasolina95)}",
+      if (g.gasoleoA > 0) "🚚 Diésel: ${formatter.format(g.gasoleoA)}",
+      if (g.gasolina98 > 0) "⛽ G98: ${formatter.format(g.gasolina98)}",
+      if (g.glp > 0) "🔥 GLP: ${formatter.format(g.glp)}",
+      if (g.gasoleoPremium > 0) "🚚 Diésel Premium: ${formatter.format(g.gasoleoPremium)}",
+    ];
+    return precios.join("\n");
+  }
+
+  // ✅ MANTENEMOS LA FUNCIÓN ORIGINAL COMO FALLBACK
+  String formatPrecio(double precio) {
+    return precio > 0 ? "${precio.toStringAsFixed(3)} €" : "No disponible";
   }
 
   Future<void> _iniciarSeguimiento() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      // ✅ MEJORA: SNACKBAR DE ERROR DEL SEGUNDO CÓDIGO
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Servicio de ubicación deshabilitado')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Servicio de ubicación deshabilitado'))
+        );
       }
       return;
     }
-  
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        // ✅ MEJORA: SNACKBAR DE PERMISO DENEGADO
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Permiso de ubicación denegado')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Permiso de ubicación denegado'))
+          );
         }
         return;
       }
     }
-
+   
     if (permission == LocationPermission.deniedForever) {
+      // ✅ MEJORA: SNACKBAR DE PERMISO DENEGADO PERMANENTEMENTE
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Permiso de ubicación denegado permanentemente')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permiso de ubicación denegado permanentemente'))
+        );
       }
       return;
     }
 
     try {
-      Position posicion = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      Position posicion = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best
+      );
       if (mounted) {
         setState(() {
           _ubicacionActual = posicion;
@@ -202,13 +234,20 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
           ));
         });
         _cargarGasolineras(posicion.latitude, posicion.longitude);
+
+        if (widget.onLocationUpdate != null) {
+          widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
+        }
       }
     } catch (e) {
       // ignore
     }
 
     _positionStreamSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.best, distanceFilter: 5),
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: 5
+      ),
     ).listen((Position pos) {
       if (!mounted) return;
       setState(() {
@@ -222,7 +261,19 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
       });
 
       if (mapController != null) {
-        mapController!.animateCamera(CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
+        mapController!.animateCamera(
+          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude))
+        );
+      }
+
+      // ✅ MANTENEMOS EL DEBOUNCE PARA ACTUALIZACIONES DE UBICACIÓN
+      if (widget.onLocationUpdate != null) {
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(seconds: 2), () {
+          if (mounted) {
+            widget.onLocationUpdate!(pos.latitude, pos.longitude);
+          }
+        });
       }
     });
   }
@@ -235,26 +286,36 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
 
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
-    return GoogleMap(
-      onMapCreated: (controller) {
-        mapController = controller;
-        if (_ubicacionActual != null) {
-          controller.animateCamera(CameraUpdate.newLatLng(LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude)));
-        }
-      },
-      initialCameraPosition: CameraPosition(
-        target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
-        zoom: 15,
+    // ✅ MANTENEMOS EL DISEÑO MEJORADO CON ClipRRect Y TAMAÑO ESPECÍFICO
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        height: 300,
+        child: GoogleMap(
+          onMapCreated: (controller) {
+            mapController = controller;
+            if (_ubicacionActual != null) {
+              controller.animateCamera(CameraUpdate.newLatLng(
+                LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
+              ));
+            }
+          },
+          initialCameraPosition: CameraPosition(
+            target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
+            zoom: 15,
+          ),
+          markers: allMarkers,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+        ),
       ),
-      markers: allMarkers,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
     );
   }
 
   @override
   void dispose() {
     _positionStreamSub?.cancel();
+    _debounceTimer?.cancel();
     mapController?.dispose();
     super.dispose();
   }
