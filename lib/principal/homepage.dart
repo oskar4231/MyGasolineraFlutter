@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/principal/layouthome.dart'; // Importar Layouthome
+import 'package:my_gasolinera/principal/mapa.dart';
 
+/// HomePage ahora abre el mapa en tiempo real automáticamente.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Devolver Layouthome que contiene el mapa + FAB
-    return const Layouthome();
+    // Devolver directamente el widget del mapa para que se muestre al navegar aquí.
+    return MapaTiempoReal();
   }
 }
