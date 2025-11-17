@@ -313,8 +313,10 @@ class _LayouthomeState extends State<Layouthome> {
                       const Icon(Icons.stars, size: 40),
                       const Icon(Icons.arrow_upward, size: 40),
                       IconButton(
-                        icon: const Icon(Icons.refresh, size: 40),
-                        onPressed: _recargarDatos,
+                        icon: const Icon(Icons.add, size: 40),
+                         onPressed: () {
+                          scaffoldKey.currentState?.openDrawer();
+                        },
                       ),
                     ],
                   ),
