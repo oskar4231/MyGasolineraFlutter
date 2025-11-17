@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'mapa.dart';
+import 'package:my_gasolinera/ajustes/ajustes.dart';
 
 class Layouthome extends StatelessWidget {
   const Layouthome({super.key});
@@ -61,14 +62,14 @@ class Layouthome extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                // Incrustar el mapa aquí
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const MapWidget(),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: MapWidget(),
                 ),
               ),
             ),
 
+            // BARRA INFERIOR CON BOTONES FUNCIONALES
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
@@ -80,10 +81,33 @@ class Layouthome extends StatelessWidget {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  Icon(Icons.directions_car, size: 40),
-                  Icon(Icons.pin_drop, size: 40),
-                  Icon(Icons.settings, size: 40),
+                children: [
+                  // Botón coche
+                  IconButton(
+                    onPressed: () {
+                      // Acción para el botón del coche
+                    },
+                    icon: const Icon(Icons.directions_car, size: 40),
+                  ),
+                  
+                  // Botón pin
+                  IconButton(
+                    onPressed: () {
+                      // Acción para el botón del pin
+                    },
+                    icon: const Icon(Icons.pin_drop, size: 40),
+                  ),
+                  
+                  // BOTÓN AJUSTES FUNCIONAL
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AjustesScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.settings, size: 40),
+                  ),
                 ],
               ),
             ),

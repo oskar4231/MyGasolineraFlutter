@@ -3,15 +3,14 @@ import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart'; // Necesario para formato de precios
-
+import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _MapaTiempoRealState createState() => _MapaTiempoRealState();
 }
 
@@ -24,16 +23,31 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
         backgroundColor: Colors.blue,
       ),
       body: const MapWidget(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AjustesScreen()),
+          );
+        },
+        backgroundColor: Colors.blue,
+        child: Image.asset(
+          'lib/assets/ajustes.png',
+          width: 24,  // Ajusta el tamaño según necesites
+          height: 24,
+          color: Colors.white,  // Opcional: para cambiar el color
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
 
-// Widget embebible que muestra el GoogleMap y mantiene el seguimiento de posición.
+// El resto del código de MapWidget se mantiene igual...
 class MapWidget extends StatefulWidget {
   const MapWidget({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _MapWidgetState createState() => _MapWidgetState();
 }
 
@@ -42,13 +56,9 @@ class _MapWidgetState extends State<MapWidget> {
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
   final Set<Marker> _markers = {};
+  final Set<Marker> _gasolinerasMarkers = {}; 
 
-final Set<Marker> _gasolinerasMarkers = {}; 
-
-  // Icono personalizado para marcadores de gasolinera (si existe en assets)
   BitmapDescriptor? _gasStationIcon;
-
-  // Constante para limitar los resultados
   static const int LIMIT_RESULTS = 10;
 
   @override
@@ -75,13 +85,8 @@ final Set<Marker> _gasolinerasMarkers = {};
   }
 
 Future<void> _cargarGasolineras(double lat, double lng) async {
-    // 1. Llamar al servicio con el filtro de ubicación.
-    // OJO: La API del gobierno no permite filtrar por lat/lng directamente, 
-    // así que obtenemos todas las gasolineras, pero luego las filtramos y limitamos localmente.
     final listaGasolineras = await fetchGasolineras(); 
 
-    // 2. Calcular la distancia y ordenar.
-    // Usamos el método `distanceBetween` de geolocator para ordenar por cercanía.
     final gasolinerasCercanas = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(
         lat, 
@@ -93,14 +98,11 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
     })
     .toList();
 
-    // 3. Ordenar por distancia y limitar al top 20.
     gasolinerasCercanas.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
     final top20Gasolineras = gasolinerasCercanas.take(LIMIT_RESULTS).map((e) => e['gasolinera'] as Gasolinera).toList();
 
-    // 4. Crear marcadores.
     final newMarkers = top20Gasolineras.map((g) => _crearMarcador(g)).toSet();
 
-    // 5. Actualizar el estado.
     if (mounted) {
       setState(() {
         _gasolinerasMarkers.clear();
@@ -110,25 +112,21 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
   }
 
   Marker _crearMarcador(Gasolinera gasolinera) {
-    // Formato de moneda para los precios con 3 decimales
     final formatter = NumberFormat.currency(
       locale: 'es_ES',
       symbol: '€',
       decimalDigits: 3,
     );
 
-    // Valores numéricos de precio (guardando 0.0 si nulos)
-  final price95Val = gasolinera.precioGasolina95;
-  final priceDieselVal = gasolinera.precioGasoleoA;
+    final price95Val = gasolinera.precioGasolina95;
+    final priceDieselVal = gasolinera.precioGasoleoA;
 
-    // Construir cadenas a mostrar (si no hay precio, mostrar N/A)
     final precio95Str = price95Val > 0 ? formatter.format(price95Val) : 'N/A';
     final precioDieselStr = priceDieselVal > 0 ? formatter.format(priceDieselVal) : 'N/A';
 
     final snippetText = '⛽ G95: $precio95Str\n'
         '🚚 Diésel: $precioDieselStr';
 
-    // Calcular precio medio disponible para decidir color del marcador
     double avgPrice = 0.0;
     int count = 0;
     if (price95Val > 0) {
@@ -141,10 +139,8 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
     }
     avgPrice = count > 0 ? avgPrice / count : 0.0;
 
-    // Umbrales razonables (ajustables): barato <=1.50, medio <=1.90, caro >1.90
     final double hue;
     if (avgPrice == 0.0) {
-      // Sin datos -> violeta
       hue = BitmapDescriptor.hueViolet;
     } else if (avgPrice <= 1.50) {
       hue = BitmapDescriptor.hueGreen;
@@ -161,12 +157,9 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
         title: gasolinera.rotulo,
         snippet: snippetText,
       ),
-      // Usar icono personalizado si está cargado; si no, usar color según precio
       icon: _gasStationIcon ?? BitmapDescriptor.defaultMarkerWithHue(hue),
     );
   }
-
-
 
   Future<void> _iniciarSeguimiento() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -242,26 +235,20 @@ Future<void> _cargarGasolineras(double lat, double lng) async {
 
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        height: 300,
-        child: GoogleMap(
-          onMapCreated: (controller) {
-            mapController = controller;
-            if (_ubicacionActual != null) {
-              controller.animateCamera(CameraUpdate.newLatLng(LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude)));
-            }
-          },
-          initialCameraPosition: CameraPosition(
-            target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
-            zoom: 15,
-          ),
-          markers: allMarkers,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-        ),
+    return GoogleMap(
+      onMapCreated: (controller) {
+        mapController = controller;
+        if (_ubicacionActual != null) {
+          controller.animateCamera(CameraUpdate.newLatLng(LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude)));
+        }
+      },
+      initialCameraPosition: CameraPosition(
+        target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
+        zoom: 15,
       ),
+      markers: allMarkers,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
     );
   }
 
