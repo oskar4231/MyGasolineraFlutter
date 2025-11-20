@@ -50,5 +50,9 @@
 	<string>La app necesita acceder a tu ubicación para mostrarla en el mapa.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>La app necesita acceder a tu ubicación en segundo plano para actualizaciones en tiempo real.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Para tomar fotos de perfil</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Para seleccionar fotos de perfil</string>
 </dict>
 </plist>
