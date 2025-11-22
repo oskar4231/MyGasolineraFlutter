@@ -5,6 +5,7 @@ import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
+import 'package:my_gasolinera/coches/coches.dart';
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -357,7 +358,10 @@ class _LayouthomeState extends State<Layouthome> {
                   // ✅ Botón coche funcional
                   IconButton(
                     onPressed: () {
-                      // Acción para el botón del coche
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CochesScreen()),
+                      );
                     },
                     icon: const Icon(Icons.directions_car, size: 40),
                   ),
