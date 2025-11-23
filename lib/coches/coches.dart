@@ -5,15 +5,33 @@ import 'package:my_gasolinera/services/auth_service.dart';
 
 // Modelo para representar un coche
 class Coche {
+  final int? idCoche; // ID del coche en la base de datos
   final String marca;
   final String modelo;
   final List<String> tiposCombustible;
 
   Coche({
+    this.idCoche,
     required this.marca,
     required this.modelo,
     required this.tiposCombustible,
   });
+
+  // Factory para crear un Coche desde JSON del backend
+  factory Coche.fromJson(Map<String, dynamic> json) {
+    // El backend envía combustible como string, lo convertimos a lista
+    List<String> combustibles = [];
+    if (json['combustible'] != null) {
+      combustibles = json['combustible'].toString().split(', ').map((e) => e.trim()).toList();
+    }
+    
+    return Coche(
+      idCoche: json['id_coche'],
+      marca: json['marca'] ?? '',
+      modelo: json['modelo'] ?? '',
+      tiposCombustible: combustibles,
+    );
+  }
 }
 
 class CochesScreen extends StatefulWidget {
@@ -45,6 +63,80 @@ class _CochesScreenState extends State<CochesScreen> {
     'Eléctrico': false,
     'Híbrido': false,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarCoches(); // Cargar coches al iniciar la pantalla
+  }
+
+  // Función para cargar los coches del usuario desde el backend
+  Future<void> _cargarCoches() async {
+    final token = AuthService.getToken();
+    
+    if (token == null || token.isEmpty) {
+      print('No hay token, usuario no autenticado');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final url = Uri.parse('http://localhost:3000/coches');
+      
+      print('Cargando coches desde: $url');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Respuesta status: ${response.statusCode}');
+      print('Respuesta body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> cochesJson = json.decode(response.body);
+        
+        setState(() {
+          _coches.clear();
+          _coches.addAll(cochesJson.map((json) => Coche.fromJson(json)).toList());
+        });
+        
+        print('✅ ${_coches.length} coches cargados');
+      } else {
+        print('Error al cargar coches: ${response.statusCode}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error al cargar los coches'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      print('Error de conexión al cargar coches: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error de conexión: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   Future<void> _crearCoche(String marca, String modelo, List<String> tiposCombustible) async {
     setState(() {
@@ -109,14 +201,8 @@ class _CochesScreenState extends State<CochesScreen> {
             ),
           );
           
-          // Agregar el coche a la lista local
-          setState(() {
-            _coches.add(Coche(
-              marca: marca,
-              modelo: modelo,
-              tiposCombustible: tiposCombustible,
-            ));
-          });
+          // Recargar la lista de coches desde el backend
+          await _cargarCoches();
         }
       } else {
         // Creación fallida (400, 401, 409, 500)
@@ -307,17 +393,122 @@ class _CochesScreenState extends State<CochesScreen> {
     );
   }
 
-  void _eliminarCoche(int index) {
-    setState(() {
-      _coches.removeAt(index);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coche eliminado'),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 2),
+  // Función para eliminar un coche del backend
+  Future<void> _eliminarCoche(int index) async {
+    final coche = _coches[index];
+    
+    // Verificar que el coche tenga ID
+    if (coche.idCoche == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: El coche no tiene ID'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Confirmar eliminación
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: Text('¿Estás seguro de que quieres eliminar ${coche.marca} ${coche.modelo}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('Eliminar'),
+          ),
+        ],
       ),
     );
+
+    if (confirmar != true) return;
+
+    final token = AuthService.getToken();
+    
+    if (token == null || token.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Debes iniciar sesión para eliminar coches'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final url = Uri.parse('http://localhost:3000/coches/${coche.idCoche}');
+      
+      print('Eliminando coche: ${coche.idCoche}');
+
+      final response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Respuesta status: ${response.statusCode}');
+      print('Respuesta body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Coche eliminado: ${coche.marca} ${coche.modelo}'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          
+          // Recargar la lista de coches desde el backend
+          await _cargarCoches();
+        }
+      } else {
+        final responseData = json.decode(response.body);
+        if (mounted) {
+          String errorMessage = responseData['message'] ?? 'Error al eliminar el coche';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      print('Error al eliminar coche: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error de conexión: $error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
