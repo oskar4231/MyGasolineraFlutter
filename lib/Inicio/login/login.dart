@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(
-                            labelText: 'e-mail',
+                            labelText: 'Email o Usuario',
                             labelStyle: const TextStyle(color: Color(0xFF492714)),
                             filled: true,
                             fillColor: Colors.white,
@@ -187,10 +187,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor ingresa tu email';
+                              return 'Por favor ingresa tu email o usuario';
                             }
-                            if (!value.contains('@')) {
-                              return 'Ingresa un email válido';
+                            if (value.contains('@')) {
+                                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                                if (!emailRegex.hasMatch(value)) {
+                                    return 'Ingresa un email válido';
+                                }
                             }
                             return null;
                           },
