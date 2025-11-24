@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:my_gasolinera/Inicio/inicio.dart';
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
+import 'package:my_gasolinera/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,6 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
         if (response.statusCode == 200) {
           // Login exitoso
           if (mounted) {
+            // Guardar el token del usuario
+            final token = responseData['token'];
+            if (token != null) {
+              AuthService.saveToken(token, _emailController.text.trim());
+              print('✅ Token guardado exitosamente');
+            }
+            
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Login exitoso'),
