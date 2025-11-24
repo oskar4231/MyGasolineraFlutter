@@ -142,27 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       // Logo
                       Image.asset(
-                        'assets/images/logo-mygasolinera.png',
-                        width: 200,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 20),
-                      // Título
-                      const Text(
-                        'MyGasolinera',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
-                        ),
-                        width: 1000,
-                        child: TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          decoration: InputDecoration(
-                            labelText: 'contraseña',
-                            labelStyle: const TextStyle(color: Color(0xFF492714)),
-                            filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
