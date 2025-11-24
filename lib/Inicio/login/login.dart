@@ -155,43 +155,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF492714),
                         ),
-                      ),
-                      const SizedBox(height: 40),
-
-                      // Campo de email
-                      SizedBox(
-                        width: 1000,
-                        child: TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: 'e-mail',
-                            labelStyle: const TextStyle(color: Color(0xFF492714)),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Color(0xFF492714)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Color(0xFF492714), width: 2),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor ingresa tu email';
-                            }
-                            if (!value.contains('@')) {
-                              return 'Ingresa un email válido';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Campo de contraseña
-                      SizedBox(
                         width: 1000,
                         child: TextFormField(
                           controller: _passwordController,
