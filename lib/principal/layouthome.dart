@@ -294,19 +294,6 @@ class _LayouthomeState extends State<Layouthome> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Slider(
-                          value: 100,
-                          min: 0,
-                          max: 100,
-                          onChanged: (value) {},
-                        ),
-                      ),
-                      const Text("100km"),
-                    ],
-                  ),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

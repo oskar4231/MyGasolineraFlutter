@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'dart:convert';
 import 'package:my_gasolinera/services/auth_service.dart';
 
@@ -182,7 +183,7 @@ class _CochesScreenState extends State<CochesScreen> {
         body: json.encode({
           'marca': marca,
           'modelo': modelo,
-          'combustible': combustibleString, // Backend espera un string, no un array
+          'combustible': combustibleString, 
         }),
       );
 
@@ -284,7 +285,6 @@ class _CochesScreenState extends State<CochesScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      
                       // Campo Modelo
                       TextFormField(
                         controller: _modeloController,
@@ -761,6 +761,11 @@ class _CochesScreenState extends State<CochesScreen> {
                   IconButton(
                     onPressed: () {
                       // Navegar a ajustes si existe
+                      Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AjustesScreen(),
+                      ),
+                    );
                     },
                     icon: const Icon(Icons.settings, size: 40),
                   ),
