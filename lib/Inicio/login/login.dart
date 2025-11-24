@@ -142,6 +142,67 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       // Logo
                       Image.asset(
+                        'assets/images/logo-mygasolinera.png',
+                        width: 200,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 20),
+                      // Título
+                      const Text(
+                        'MyGasolinera',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF492714),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // Campo de email
+                      SizedBox(
+                        width: 1000,
+                        child: TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email o Usuario',
+                            labelStyle: const TextStyle(color: Color(0xFF492714)),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Color(0xFF492714)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Color(0xFF492714), width: 2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingresa tu email o usuario';
+                            }
+                            if (value.contains('@')) {
+                                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                                if (!emailRegex.hasMatch(value)) {
+                                    return 'Ingresa un email válido';
+                                }
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Campo de contraseña
+                      SizedBox(
+                        width: 1000,
+                        child: TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            labelText: 'contraseña',
+                            labelStyle: const TextStyle(color: Color(0xFF492714)),
+                            filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
