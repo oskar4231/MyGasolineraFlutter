@@ -11,110 +11,112 @@ class Inicio extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFFFFE8DA),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Título con logo a su izquierda
-            Container(
-              margin: const EdgeInsets.only(bottom: 30.0),
-              child: Row(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Padding(
+              padding: const EdgeInsets.all(30),
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'lib/assets/logo.png',
-                    height: 36,
-                    width: 36,
-                    fit: BoxFit.contain,
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'MyGasolinera',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF492714),
+                  const SizedBox(height: 20),
+
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 30.0),
+                    child: const Text(
+                      'MyGasolinera',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF492714),
+                      ),
                     ),
                   ),
+
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 30.0),
+                    child: Image.asset(
+                      'lib/assets/logo.png',
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  
+                  // Botón Iniciar Sesión
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFF9350),
+                        foregroundColor: Color(0xFF492714),
+                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(
+                            color: Color(0xFF492714),
+                            width: 2.0
+                          ),
+                        ),
+                        elevation: 0,
+                        textStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        )
+                      ),
+                      child: const Text('Iniciar Sesión'),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 15),
+                  
+                  // Botón Crear Cuenta
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const CrearScreen(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFFCFB0),
+                        foregroundColor: Color(0xFF492714),
+                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(
+                            color: Color(0xFFFF9350),
+                            width: 2.0
+                          ),
+                        ),
+                        elevation: 0,
+                        textStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        )
+                      ),
+                      child: const Text('Crear Cuenta'),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
-
-            const SizedBox(height: 20), // Espacio entre el título y el primer botón
-            ElevatedButton(
-              onPressed: () {
-                // Navegar a la pantalla de login
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
-                  ),
-                );
-              },
-              //Configuración Estilo Boton
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFFF9350), //Color boton
-                foregroundColor: Color(0xFF492714), //Color del texto
-                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 35),
-                side: BorderSide(
-                  color: Color(0xFF492714),
-                  width: 2.0
-                ),
-                textStyle: TextStyle(
-                  fontSize: 18,
-                  wordSpacing: 2.0
-                )
-              ),
-              child: const Text('Iniciar Sesión'),
-            ),
-            const SizedBox(height: 10), // Espacio entre botones
-            ElevatedButton(
-              onPressed: () {
-                // Navegar a la pantalla de registro (RegisterScreen)
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const CrearScreen(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor:  Color(0xFFFFCFB0),
-                foregroundColor:  Color(0xFF492714),
-                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 35),
-                side: BorderSide(
-                  color: Color(0xFFFF9350),
-                  width: 2.0
-                ),
-                textStyle: TextStyle(
-                  fontSize: 18,
-                  wordSpacing: 2.0
-                )
-              ),
-              child: const Text('Crear Cuenta'),
-            ),
-            const SizedBox(height: 10),
-            // Botón adicional: HomePage (abre la pantalla HomePage situada en Inicio/homepage.dart)
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFBEEAF5),
-                foregroundColor: const Color(0xFF492714),
-                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 16),
-                side: const BorderSide(
-                  color: Color(0xFF492714),
-                  width: 2.0,
-                ),
-                textStyle: const TextStyle(fontSize: 16),
-              ),
-              child: const Text('HomePage'),
-            ),
-          ],
+          ),
         ),
       ),
     );
