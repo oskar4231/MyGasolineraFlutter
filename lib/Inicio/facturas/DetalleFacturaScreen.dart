@@ -73,7 +73,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                     // Costo Total
                     _buildInfoRow(
                       'Coste Total',
-                      '€${factura['coste'].toStringAsFixed(2)}',
+                      '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
                       isAmount: true,
                     ),
                     const SizedBox(height: 12),

@@ -212,7 +212,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          '€${(factura['coste'] ?? 0.0).toStringAsFixed(2)}',
+                          '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF492714),
