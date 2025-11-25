@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:my_gasolinera/services/factura_service.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
   const CrearFacturaScreen({super.key});
@@ -18,9 +18,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   final _fechaController = TextEditingController();
   final _horaController = TextEditingController();
   final _descripcionController = TextEditingController();
-  
+
   File? _imagenFactura;
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -40,41 +41,45 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   }
 
   Future<void> _seleccionarImagen() async {
-  // Solicitar permiso
-  final status = await Permission.photos.request();
-  
-  if (status.isGranted) {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _imagenFactura = File(image.path);
-      });
-    }
-  } else {
-    // Mostrar mensaje si no se concedió el permiso
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Se necesita permiso para acceder a la galería')),
-    );
-  }
-}
+    // Solicitar permiso
+    final status = await Permission.photos.request();
 
-void _tomarFoto() async {
-  // Solicitar permiso de cámara
-  final status = await Permission.camera.request();
-  
-  if (status.isGranted) {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
-      setState(() {
-        _imagenFactura = File(image.path);
-      });
+    if (status.isGranted) {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() {
+          _imagenFactura = File(image.path);
+        });
+      }
+    } else {
+      // Mostrar mensaje si no se concedió el permiso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Se necesita permiso para acceder a la galería'),
+        ),
+      );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Se necesita permiso para usar la cámara')),
-    );
   }
-}
+
+  void _tomarFoto() async {
+    // Solicitar permiso de cámara
+    final status = await Permission.camera.request();
+
+    if (status.isGranted) {
+      final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+      if (image != null) {
+        setState(() {
+          _imagenFactura = File(image.path);
+        });
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Se necesita permiso para usar la cámara'),
+        ),
+      );
+    }
+  }
 
   void _mostrarOpcionesImagen() {
     showModalBottomSheet(
@@ -84,8 +89,14 @@ void _tomarFoto() async {
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.photo_library, color: Color(0xFF492714)),
-              title: const Text('Galería', style: TextStyle(color: Color(0xFF492714))),
+              leading: const Icon(
+                Icons.photo_library,
+                color: Color(0xFF492714),
+              ),
+              title: const Text(
+                'Galería',
+                style: TextStyle(color: Color(0xFF492714)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _seleccionarImagen();
@@ -93,7 +104,10 @@ void _tomarFoto() async {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Color(0xFF492714)),
-              title: const Text('Cámara', style: TextStyle(color: Color(0xFF492714))),
+              title: const Text(
+                'Cámara',
+                style: TextStyle(color: Color(0xFF492714)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _tomarFoto();
@@ -105,19 +119,41 @@ void _tomarFoto() async {
     );
   }
 
-  void _guardarFactura() {
+  Future<void> _guardarFactura() async {
     if (_formKey.currentState!.validate()) {
-      final nuevaFactura = {
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-        'titulo': _tituloController.text,
-        'costoTotal': double.parse(_costoController.text),
-        'fecha': _fechaController.text,
-        'hora': _horaController.text,
-        'descripcion': _descripcionController.text,
-        'imagenPath': _imagenFactura?.path,
-      };
+      setState(() {
+        _isLoading = true;
+      });
 
-      Navigator.pop(context, nuevaFactura);
+      try {
+        await FacturaService.crearFactura(
+          titulo: _tituloController.text,
+          costoTotal: double.parse(_costoController.text),
+          fecha: _fechaController.text,
+          hora: _horaController.text,
+          descripcion: _descripcionController.text,
+          imagenPath: _imagenFactura?.path,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Factura creada correctamente')),
+          );
+          Navigator.pop(context, true); // Retornar true para indicar éxito
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error al crear factura: $e')));
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -150,246 +186,273 @@ void _tomarFoto() async {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // Campo Título
-              TextFormField(
-                controller: _tituloController,
-                decoration: InputDecoration(
-                  labelText: 'Título',
-                  labelStyle: const TextStyle(color: Color(0xFF492714)),
-                  filled: true,
-                  fillColor: const Color(0xFFFFCFB0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa un título';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Campo Coste Total
-              TextFormField(
-                controller: _costoController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Coste Total (€)',
-                  labelStyle: const TextStyle(color: Color(0xFF492714)),
-                  filled: true,
-                  fillColor: const Color(0xFFFFCFB0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa el coste total';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Por favor ingresa un número válido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Campos Fecha y Hora en fila
-              Row(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
                 children: [
-                  // Campo Fecha
-                  Expanded(
-                    child: TextFormField(
-                      controller: _fechaController,
-                      decoration: InputDecoration(
-                        labelText: 'Fecha',
-                        labelStyle: const TextStyle(color: Color(0xFF492714)),
-                        filled: true,
-                        fillColor: const Color(0xFFFFCFB0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                  // Campo Título
+                  TextFormField(
+                    controller: _tituloController,
+                    decoration: InputDecoration(
+                      labelText: 'Título',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa un título';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo Coste Total
+                  TextFormField(
+                    controller: _costoController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Coste Total (€)',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa el coste total';
+                      }
+                      if (double.tryParse(value) == null) {
+                        return 'Por favor ingresa un número válido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campos Fecha y Hora en fila
+                  Row(
+                    children: [
+                      // Campo Fecha
+                      Expanded(
+                        child: TextFormField(
+                          controller: _fechaController,
+                          decoration: InputDecoration(
+                            labelText: 'Fecha',
+                            labelStyle: const TextStyle(
+                              color: Color(0xFF492714),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFFFCFB0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          readOnly: true,
+                          onTap: () async {
+                            final DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              _fechaController.text = _formatDate(picked);
+                            }
+                          },
                         ),
                       ),
-                      readOnly: true,
-                      onTap: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (picked != null) {
-                          _fechaController.text = _formatDate(picked);
-                        }
-                      },
+                      const SizedBox(width: 16),
+
+                      // Campo Hora
+                      Expanded(
+                        child: TextFormField(
+                          controller: _horaController,
+                          decoration: InputDecoration(
+                            labelText: 'Hora',
+                            labelStyle: const TextStyle(
+                              color: Color(0xFF492714),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFFFCFB0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          readOnly: true,
+                          onTap: () async {
+                            final TimeOfDay? picked = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (picked != null) {
+                              _horaController.text =
+                                  '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Botón para agregar imagen
+                  Container(
+                    width: double.infinity,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFCFB0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: _imagenFactura == null
+                        ? TextButton(
+                            onPressed: _mostrarOpcionesImagen,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.add_photo_alternate,
+                                  size: 40,
+                                  color: Color(0xFF492714),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Agregar Imagen de Factura',
+                                  style: TextStyle(color: Color(0xFF492714)),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  _imagenFactura!,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.black54,
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _imagenFactura = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo Descripción
+                  TextFormField(
+                    controller: _descripcionController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: 'Descripción',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(height: 24),
 
-                  // Campo Hora
-                  Expanded(
-                    child: TextFormField(
-                      controller: _horaController,
-                      decoration: InputDecoration(
-                        labelText: 'Hora',
-                        labelStyle: const TextStyle(color: Color(0xFF492714)),
-                        filled: true,
-                        fillColor: const Color(0xFFFFCFB0),
-                        border: OutlineInputBorder(
+                  // Botón Guardar
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _guardarFactura,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF9350),
+                        foregroundColor: const Color(0xFF492714),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
                         ),
                       ),
-                      readOnly: true,
-                      onTap: () async {
-                        final TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-                        if (picked != null) {
-                          _horaController.text =
-                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                        }
-                      },
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF492714),
+                                ),
+                              ),
+                            )
+                          : const Text(
+                              'Guardar Factura',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Botón para agregar imagen
-              Container(
-                width: double.infinity,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFCFB0),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: _imagenFactura == null
-                    ? TextButton(
-                        onPressed: _mostrarOpcionesImagen,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.add_photo_alternate,
-                              size: 40,
-                              color: Color(0xFF492714),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Agregar Imagen de Factura',
-                              style: TextStyle(
-                                color: Color(0xFF492714),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              _imagenFactura!,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: IconButton(
-                                icon: const Icon(Icons.close, color: Colors.white),
-                                onPressed: () {
-                                  setState(() {
-                                    _imagenFactura = null;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
-              const SizedBox(height: 16),
-
-              // Campo Descripción
-              TextFormField(
-                controller: _descripcionController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  labelText: 'Descripción',
-                  labelStyle: const TextStyle(color: Color(0xFF492714)),
-                  filled: true,
-                  fillColor: const Color(0xFFFFCFB0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Botón Guardar
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _guardarFactura,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF9350),
-                    foregroundColor: const Color(0xFF492714),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Guardar Factura',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            Container(
+              color: Colors.black26,
+              child: const Center(
+                child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+              ),
+            ),
+        ],
       ),
     );
   }

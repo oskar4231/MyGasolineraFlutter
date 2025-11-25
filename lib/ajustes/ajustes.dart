@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:my_gasolinera/Inicio/facturas/FacturasScreen.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -392,7 +393,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.receipt,
           texto: 'Gasto/Facturas',
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FacturasScreen()),
+            );
+          },
         ),
         _OpcionItem(icono: Icons.speed, texto: 'Registro km', onTap: () {}),
       ],

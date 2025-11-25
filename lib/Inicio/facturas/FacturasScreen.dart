@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/services/factura_service.dart';
 import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
 
@@ -10,25 +11,36 @@ class FacturasScreen extends StatefulWidget {
 }
 
 class _FacturasScreenState extends State<FacturasScreen> {
-  // Lista de ejemplo de facturas
-  final List<Map<String, dynamic>> _facturas = [
-    {
-      'id': '1',
-      'titulo': 'Gasolina Regular',
-      'costoTotal': 45.50,
-      'fecha': '2024-01-15',
-      'hora': '14:30',
-      'descripcion': 'Llenado de tanque completo',
-    },
-    {
-      'id': '2',
-      'titulo': 'Aceite Motor',
-      'costoTotal': 25.00,
-      'fecha': '2024-01-10',
-      'hora': '10:15',
-      'descripcion': 'Cambio de aceite sintético',
-    },
-  ];
+  List<Map<String, dynamic>> _facturas = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarFacturas();
+  }
+
+  Future<void> _cargarFacturas() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final facturas = await FacturaService.obtenerFacturas();
+      setState(() {
+        _facturas = facturas;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error al cargar facturas: $e';
+        _isLoading = false;
+      });
+      print('Error cargando facturas: $e');
+    }
+  }
 
   void _navegarACrearFactura() async {
     final result = await Navigator.push(
@@ -36,10 +48,9 @@ class _FacturasScreenState extends State<FacturasScreen> {
       MaterialPageRoute(builder: (context) => const CrearFacturaScreen()),
     );
 
-    if (result != null && result is Map<String, dynamic>) {
-      setState(() {
-        _facturas.add(result);
-      });
+    if (result == true) {
+      // Si se creó una factura exitosamente, recargar la lista
+      _cargarFacturas();
     }
   }
 
@@ -52,10 +63,41 @@ class _FacturasScreenState extends State<FacturasScreen> {
     );
   }
 
-  void _eliminarFactura(String id) {
-    setState(() {
-      _facturas.removeWhere((factura) => factura['id'] == id);
-    });
+  Future<void> _eliminarFactura(int idFactura) async {
+    // Mostrar diálogo de confirmación
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: const Text(
+          '¿Estás seguro de que quieres eliminar esta factura?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar == true) {
+      try {
+        await FacturaService.eliminarFactura(idFactura);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Factura eliminada correctamente')),
+        );
+        _cargarFacturas(); // Recargar la lista
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al eliminar factura: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -73,37 +115,61 @@ class _FacturasScreenState extends State<FacturasScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color(0xFF492714),
-          ),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Color(0xFF492714)),
+            onPressed: _cargarFacturas,
+          ),
+        ],
       ),
-      body: _facturas.isEmpty
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+            )
+          : _errorMessage != null
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.receipt_long,
-                    size: 80,
-                    color: Color(0xFFFF9350),
+                  const Icon(Icons.error_outline, size: 80, color: Colors.red),
+                  const SizedBox(height: 20),
+                  Text(
+                    _errorMessage!,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF492714),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _cargarFacturas,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF9350),
+                    ),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
+            )
+          : _facturas.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.receipt_long, size: 80, color: Color(0xFFFF9350)),
                   SizedBox(height: 20),
                   Text(
                     'No hay facturas',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Color(0xFF492714),
-                    ),
+                    style: TextStyle(fontSize: 18, color: Color(0xFF492714)),
                   ),
                   SizedBox(height: 10),
                   Text(
                     'Presiona el botón + para agregar una factura',
-                    style: TextStyle(
-                      color: Color(0xFF492714),
-                    ),
+                    style: TextStyle(color: Color(0xFF492714)),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -135,7 +201,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
                       ),
                     ),
                     title: Text(
-                      factura['titulo'],
+                      factura['titulo'] ?? 'Sin título',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF492714),
@@ -146,26 +212,21 @@ class _FacturasScreenState extends State<FacturasScreen> {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          '€${factura['costoTotal'].toStringAsFixed(2)}',
+                          '€${(factura['costoTotal'] ?? 0.0).toStringAsFixed(2)}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF492714),
                           ),
                         ),
                         Text(
-                          '${factura['fecha']} - ${factura['hora']}',
-                          style: const TextStyle(
-                            color: Color(0xFF492714),
-                          ),
+                          '${factura['fecha'] ?? ''} - ${factura['hora'] ?? ''}',
+                          style: const TextStyle(color: Color(0xFF492714)),
                         ),
                       ],
                     ),
                     trailing: IconButton(
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Color(0xFF492714),
-                      ),
-                      onPressed: () => _eliminarFactura(factura['id']),
+                      icon: const Icon(Icons.delete, color: Color(0xFF492714)),
+                      onPressed: () => _eliminarFactura(factura['id_factura']),
                     ),
                     onTap: () => _verDetalleFactura(factura),
                   ),
