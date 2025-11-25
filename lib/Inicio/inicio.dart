@@ -19,33 +19,36 @@ class Inicio extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
 
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30.0),
-                    child: const Text(
-                      'MyGasolinera',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF492714),
-                      ),
-                    ),
-                  ),
-
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 30.0),
-                    child: Image.asset(
-                      'lib/assets/logo.png',
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+                  // Logo y texto en fila - GRANDES Y CENTRADOS
+Container(
+  padding: const EdgeInsets.fromLTRB(30, 80, 30, 30),
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Image.asset(
+        'lib/assets/logo.png', 
+        height: 120, 
+        width: 120
+      ),
+      SizedBox(height: 20),
+      Text(
+        'MyGasolinera',
+        style: TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF492714),
+        ),
+      ),
+    ],
+  ),
+),
 
                   const SizedBox(height: 20),
                   
-                  // Botón Iniciar Sesión
+                  // Botón Iniciar Sesión (ORIGINAL)
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -80,7 +83,7 @@ class Inicio extends StatelessWidget {
                   
                   const SizedBox(height: 15),
                   
-                  // Botón Crear Cuenta
+                  // Botón Crear Cuenta (ORIGINAL)
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -112,7 +115,7 @@ class Inicio extends StatelessWidget {
                     ),
                   ),
                   
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
