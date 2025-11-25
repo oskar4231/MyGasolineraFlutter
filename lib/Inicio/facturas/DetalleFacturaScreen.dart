@@ -69,15 +69,15 @@ class DetalleFacturaScreen extends StatelessWidget {
                     // Título
                     _buildInfoRow('Título', factura['titulo']),
                     const SizedBox(height: 12),
-                    
+
                     // Costo Total
                     _buildInfoRow(
                       'Coste Total',
-                      '€${factura['costoTotal'].toStringAsFixed(2)}',
+                      '€${factura['coste'].toStringAsFixed(2)}',
                       isAmount: true,
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Fecha y Hora
                     Row(
                       children: [
@@ -85,15 +85,14 @@ class DetalleFacturaScreen extends StatelessWidget {
                           child: _buildInfoRow('Fecha', factura['fecha']),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildInfoRow('Hora', factura['hora']),
-                        ),
+                        Expanded(child: _buildInfoRow('Hora', factura['hora'])),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Descripción
-                    if (factura['descripcion'] != null && factura['descripcion'].isNotEmpty)
+                    if (factura['descripcion'] != null &&
+                        factura['descripcion'].isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

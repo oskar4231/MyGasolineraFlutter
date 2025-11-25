@@ -36,7 +36,7 @@ class FacturaService {
   // Crear una nueva factura
   static Future<Map<String, dynamic>> crearFactura({
     required String titulo,
-    required double costoTotal,
+    required double coste,
     required String fecha,
     required String hora,
     String? descripcion,
@@ -50,7 +50,7 @@ class FacturaService {
 
       final body = {
         'titulo': titulo,
-        'costoTotal': costoTotal,
+        'coste': coste, // Cambiar a 'coste' para que coincida con el backend
         'fecha': fecha,
         'hora': hora,
         'descripcion': descripcion ?? '',

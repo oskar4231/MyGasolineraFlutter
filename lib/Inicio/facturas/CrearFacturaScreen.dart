@@ -128,7 +128,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       try {
         await FacturaService.crearFactura(
           titulo: _tituloController.text,
-          costoTotal: double.parse(_costoController.text),
+          coste: double.parse(_costoController.text),
           fecha: _fechaController.text,
           hora: _horaController.text,
           descripcion: _descripcionController.text,
