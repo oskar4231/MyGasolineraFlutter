@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:my_gasolinera/Inicio/login/login.dart';
 
 void main() {
   runApp(const Crear());
@@ -34,10 +35,16 @@ class _CrearScreenState extends State<CrearScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _nombreController = TextEditingController(); // Nuevo campo
+  final _nombreController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
+
+  // Focus nodes para manejar el foco entre campos
+  final _nombreFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _confirmPasswordFocus = FocusNode();
 
   @override
   void dispose() {
@@ -45,6 +52,10 @@ class _CrearScreenState extends State<CrearScreen> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _nombreController.dispose();
+    _nombreFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
@@ -57,9 +68,7 @@ class _CrearScreenState extends State<CrearScreen> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:3000/register'), //Chrome
-          // Uri.parse('http://10.0.2.2:3000/register'), // Android emulator
-          // Uri.parse('http://localhost:3000/register'), // iOS simulator
+          Uri.parse('http://localhost:3000/register'),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -81,9 +90,15 @@ class _CrearScreenState extends State<CrearScreen> {
             ),
           );
           
-          // Opcional: Navegar a login o home
-          print('Usuario registrado: ${responseData['user']['email']}');
-          print('Token: ${responseData['token']}');
+          // Navegar automáticamente a login después de 2 segundos
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+          });
           
           // Limpiar formulario
           _formKey.currentState!.reset();
@@ -111,6 +126,24 @@ class _CrearScreenState extends State<CrearScreen> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  // Función para manejar la acción "Siguiente" o "Enter"
+  void _handleFieldSubmit(String value) {
+    switch (value) {
+      case 'nombre':
+        FocusScope.of(context).requestFocus(_emailFocus);
+        break;
+      case 'email':
+        FocusScope.of(context).requestFocus(_passwordFocus);
+        break;
+      case 'password':
+        FocusScope.of(context).requestFocus(_confirmPasswordFocus);
+        break;
+      case 'confirmPassword':
+        _registrarUsuario(); // Al último campo, ejecutar el registro
+        break;
     }
   }
 
@@ -162,9 +195,12 @@ class _CrearScreenState extends State<CrearScreen> {
                       ),
                     ),
 
-                    // Campo de nombre (NUEVO)
+                    // Campo de nombre
                     TextFormField(
                       controller: _nombreController,
+                      focusNode: _nombreFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => _handleFieldSubmit('nombre'),
                       decoration: InputDecoration(
                         hintText: 'Nombre completo',
                         hintStyle: const TextStyle(
@@ -193,8 +229,11 @@ class _CrearScreenState extends State<CrearScreen> {
                     // Campo de email
                     TextFormField(
                       controller: _emailController,
+                      focusNode: _emailFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
-                        hintText: 'e-mail',
+                        hintText: 'E-mail',
                         hintStyle: const TextStyle(
                           color: Color(0xFF492714),
                         ),
@@ -225,9 +264,12 @@ class _CrearScreenState extends State<CrearScreen> {
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
+                      focusNode: _passwordFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => _handleFieldSubmit('password'),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'contraseña',
+                        hintText: 'Contraseña',
                         hintStyle: const TextStyle(
                           color: Color(0xFF492714),
                         ),
@@ -270,9 +312,12 @@ class _CrearScreenState extends State<CrearScreen> {
                     // Campo de confirmar contraseña
                     TextFormField(
                       controller: _confirmPasswordController,
+                      focusNode: _confirmPasswordFocus,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _handleFieldSubmit('confirmPassword'),
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
-                        hintText: 'confirmar contraseña',
+                        hintText: 'Confirmar contraseña',
                         hintStyle: const TextStyle(
                           color: Color(0xFF492714),
                         ),

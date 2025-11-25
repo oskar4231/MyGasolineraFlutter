@@ -21,10 +21,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  // Focus nodes para manejar el foco entre campos
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
@@ -114,6 +120,18 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Función para manejar la acción "Siguiente" o "Enter"
+  void _handleFieldSubmit(String value) {
+    switch (value) {
+      case 'email':
+        FocusScope.of(context).requestFocus(_passwordFocus);
+        break;
+      case 'password':
+        _login(); // Al último campo, ejecutar el login
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,6 +183,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Campo de email
                     TextFormField(
                       controller: _emailController,
+                      focusNode: _emailFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
                         hintText: 'Email o Usuario',
                         hintStyle: const TextStyle(
@@ -199,9 +220,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
+                      focusNode: _passwordFocus,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _handleFieldSubmit('password'),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'contraseña',
+                        hintText: 'Contraseña',
                         hintStyle: const TextStyle(
                           color: Color(0xFF492714),
                         ),
