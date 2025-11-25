@@ -56,10 +56,12 @@
 - **Shared Preferences** - Almacenamiento local
 - **HTTP** - Comunicación con el backend
 
-### Backend
-- **Java** - Servidor backend
+### Backend (Repositorio Separado)
+- **Node.js** - Servidor backend
+- **Express.js** - Framework web
 - **MariaDB** - Base de datos relacional
 - Puerto: `http://localhost:5001`
+- Repositorio: Separado del frontend
 
 ## 📁 Estructura del Proyecto
 
@@ -101,7 +103,7 @@ lib/
 - Flutter SDK 3.9.2 o superior
 - Dart SDK 3.9.2 o superior
 - Android Studio / VS Code con extensiones de Flutter
-- Java JDK (para el backend)
+- Node.js y npm (para el backend - repositorio separado)
 - MariaDB instalado y configurado
 
 ### Instalación
@@ -119,7 +121,7 @@ lib/
 
 3. **Configurar el backend**
    
-   Consulta el archivo [INSTRUCCIONES_DESARROLLO.md](INSTRUCCIONES_DESARROLLO.md) para configurar el backend Java.
+   El backend es un proyecto Node.js separado. Consulta el archivo [INSTRUCCIONES_DESARROLLO.md](INSTRUCCIONES_DESARROLLO.md) para más información sobre cómo configurar y ejecutar el servidor backend.
 
 4. **Ejecutar la aplicación**
    
@@ -141,13 +143,15 @@ lib/
 
 ## 📡 API Endpoints
 
-El backend proporciona los siguientes endpoints:
+El backend Node.js (repositorio separado) proporciona los siguientes endpoints:
 
 - `POST /register` - Registro de nuevos usuarios
 - `POST /login` - Autenticación de usuarios
 - `GET /gasolineras` - Obtener lista de gasolineras
 - `POST /facturas` - Crear nueva factura
 - `GET /facturas/:userId` - Obtener facturas del usuario
+
+> **Nota:** El backend se encuentra en un repositorio separado. Asegúrate de tenerlo ejecutándose en `http://localhost:5001` antes de usar la aplicación.
 
 ## 🎯 Uso de la Aplicación
 
