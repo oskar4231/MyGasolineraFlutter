@@ -64,7 +64,7 @@ class _MapWidgetState extends State<MapWidget> {
   Timer? _debounceTimer;
   Timer? _cameraDebounceTimer;
 
-  static const int LIMIT_RESULTS = 15;
+  static const int LIMIT_RESULTS = 50;
 
   @override
   void initState() {
