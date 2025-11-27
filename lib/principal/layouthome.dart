@@ -21,7 +21,7 @@ class _LayouthomeState extends State<Layouthome> {
   bool _loading = false;
   Position? _currentPosition;
   DateTime _lastUpdateTime = DateTime.now();
-  static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 180);
+  static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 15);
 
   @override
   void initState() {
@@ -37,21 +37,20 @@ class _LayouthomeState extends State<Layouthome> {
     try {
       // 1. Obtener ubicación
       await _getCurrentLocation();
-      
+
       // 2. Cargar todas las gasolineras
       final lista = await fetchGasolineras();
-      
+
       if (mounted) {
         setState(() {
           _allGasolineras = lista;
         });
       }
-      
+
       // 3. Calcular las 15 más cercanas
       if (_currentPosition != null) {
         _calcularGasolinerasCercanas();
       }
-      
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -119,8 +118,10 @@ class _LayouthomeState extends State<Layouthome> {
     }).toList();
 
     // Ordenar por distancia y tomar las 15 más cercanas
-    gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    
+    gasolinerasConDistancia.sort(
+      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+    );
+
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -133,7 +134,9 @@ class _LayouthomeState extends State<Layouthome> {
     }
 
     // Debug
-    print('[Layouthome] Gasolineras cercanas calculadas: ${_gasolinerasCercanas.length}');
+    print(
+      '[Layouthome] Gasolineras cercanas calculadas: ${_gasolinerasCercanas.length}',
+    );
     for (var g in _gasolinerasCercanas) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       print('  - ${g.rotulo} (${(distance / 1000).toStringAsFixed(1)} km)');
@@ -144,17 +147,19 @@ class _LayouthomeState extends State<Layouthome> {
   void _onLocationUpdated(double lat, double lng) {
     final now = DateTime.now();
     final timeSinceLastUpdate = now.difference(_lastUpdateTime);
-    
+
     // Solo procesar si ha pasado el tiempo mínimo
     if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
-      print('📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s');
+      print(
+        '📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s',
+      );
       return;
     }
 
     print('Ubicación actualizada desde mapa: $lat, $lng');
 
     _lastUpdateTime = now;
-    
+
     if (mounted) {
       // No necesitamos crear un Position manualmente
       // Simplemente recalculamos las gasolineras cercanas con las nuevas coordenadas
@@ -174,8 +179,10 @@ class _LayouthomeState extends State<Layouthome> {
     }).toList();
 
     // Ordenar por distancia y tomar las 15 más cercanas
-    gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    
+    gasolinerasConDistancia.sort(
+      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+    );
+
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -187,7 +194,9 @@ class _LayouthomeState extends State<Layouthome> {
       });
     }
 
-    print('[Layouthome] Gasolineras recalculadas: ${_gasolinerasCercanas.length}');
+    print(
+      '[Layouthome] Gasolineras recalculadas: ${_gasolinerasCercanas.length}',
+    );
   }
 
   // Método para forzar recarga
@@ -272,7 +281,9 @@ class _LayouthomeState extends State<Layouthome> {
                             color: Colors.white,
                             fillColor: Colors.white70,
                             constraints: const BoxConstraints(
-                                minHeight: 36, minWidth: 100),
+                              minHeight: 36,
+                              minWidth: 100,
+                            ),
                             children: const [
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 8),
@@ -290,7 +301,7 @@ class _LayouthomeState extends State<Layouthome> {
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -313,18 +324,21 @@ class _LayouthomeState extends State<Layouthome> {
             ),
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                margin: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _showMap 
+                  child: _showMap
                       ? MapWidget(
                           externalGasolineras: _allGasolineras,
                           onLocationUpdate: _onLocationUpdated,
-                        ) 
+                        )
                       : _buildListContent(),
                 ),
               ),
@@ -347,12 +361,14 @@ class _LayouthomeState extends State<Layouthome> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CochesScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const CochesScreen(),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.directions_car, size: 40),
                   ),
-                  
+
                   // ✅ Botón pin funcional
                   IconButton(
                     onPressed: () {
@@ -360,13 +376,15 @@ class _LayouthomeState extends State<Layouthome> {
                     },
                     icon: const Icon(Icons.pin_drop, size: 40),
                   ),
-                  
+
                   // ✅ BOTÓN AJUSTES FUNCIONAL (MEJORA DEL SEGUNDO CÓDIGO)
                   IconButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const AjustesScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const AjustesScreen(),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.settings, size: 40),
@@ -384,7 +402,7 @@ class _LayouthomeState extends State<Layouthome> {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     if (_gasolinerasCercanas.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -404,7 +422,7 @@ class _LayouthomeState extends State<Layouthome> {
         ],
       );
     }
-    
+
     return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }
