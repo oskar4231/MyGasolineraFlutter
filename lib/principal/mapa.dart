@@ -7,7 +7,7 @@ import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
-class MapaTiempoReal extends StatefulWidget {  
+class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
 
   @override
@@ -48,11 +48,7 @@ class MapWidget extends StatefulWidget {
   final List<Gasolinera>? externalGasolineras;
   final Function(double lat, double lng)? onLocationUpdate;
 
-  const MapWidget({
-    super.key,
-    this.externalGasolineras,
-    this.onLocationUpdate
-  });
+  const MapWidget({super.key, this.externalGasolineras, this.onLocationUpdate});
 
   @override
   _MapWidgetState createState() => _MapWidgetState();
@@ -66,8 +62,9 @@ class _MapWidgetState extends State<MapWidget> {
   final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
   Timer? _debounceTimer;
+  Timer? _cameraDebounceTimer;
 
-  static const int LIMIT_RESULTS = 15;
+  static const int LIMIT_RESULTS = 50;
 
   @override
   void initState() {
@@ -94,7 +91,7 @@ class _MapWidgetState extends State<MapWidget> {
 
   Future<void> _cargarGasolineras(double lat, double lng) async {
     List<Gasolinera> listaGasolineras;
-   
+
     if (widget.externalGasolineras != null) {
       listaGasolineras = widget.externalGasolineras!;
     } else {
@@ -106,8 +103,9 @@ class _MapWidgetState extends State<MapWidget> {
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    gasolinerasCercanas.sort((a, b) =>
-        (a['distance'] as double).compareTo(b['distance'] as double));
+    gasolinerasCercanas.sort(
+      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+    );
 
     final topGasolineras = gasolinerasCercanas
         .take(LIMIT_RESULTS)
@@ -173,7 +171,8 @@ class _MapWidgetState extends State<MapWidget> {
       if (g.gasoleoA > 0) "🚚 Diésel: ${formatter.format(g.gasoleoA)}",
       if (g.gasolina98 > 0) "⛽ G98: ${formatter.format(g.gasolina98)}",
       if (g.glp > 0) "🔥 GLP: ${formatter.format(g.glp)}",
-      if (g.gasoleoPremium > 0) "🚚 Diésel Premium: ${formatter.format(g.gasoleoPremium)}",
+      if (g.gasoleoPremium > 0)
+        "🚚 Diésel Premium: ${formatter.format(g.gasoleoPremium)}",
     ];
     return precios.join("\n");
   }
@@ -189,7 +188,7 @@ class _MapWidgetState extends State<MapWidget> {
       // ✅ MEJORA: SNACKBAR DE ERROR DEL SEGUNDO CÓDIGO
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Servicio de ubicación deshabilitado'))
+          const SnackBar(content: Text('Servicio de ubicación deshabilitado')),
         );
       }
       return;
@@ -202,18 +201,20 @@ class _MapWidgetState extends State<MapWidget> {
         // ✅ MEJORA: SNACKBAR DE PERMISO DENEGADO
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Permiso de ubicación denegado'))
+            const SnackBar(content: Text('Permiso de ubicación denegado')),
           );
         }
         return;
       }
     }
-   
+
     if (permission == LocationPermission.deniedForever) {
       // ✅ MEJORA: SNACKBAR DE PERMISO DENEGADO PERMANENTEMENTE
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Permiso de ubicación denegado permanentemente'))
+          const SnackBar(
+            content: Text('Permiso de ubicación denegado permanentemente'),
+          ),
         );
       }
       return;
@@ -221,17 +222,21 @@ class _MapWidgetState extends State<MapWidget> {
 
     try {
       Position posicion = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best
+        desiredAccuracy: LocationAccuracy.best,
       );
       if (mounted) {
         setState(() {
           _ubicacionActual = posicion;
           _markers.clear();
-          _markers.add(Marker(
-            markerId: const MarkerId('yo'),
-            position: LatLng(posicion.latitude, posicion.longitude),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          ));
+          _markers.add(
+            Marker(
+              markerId: const MarkerId('yo'),
+              position: LatLng(posicion.latitude, posicion.longitude),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueAzure,
+              ),
+            ),
+          );
         });
         _cargarGasolineras(posicion.latitude, posicion.longitude);
 
@@ -243,39 +248,44 @@ class _MapWidgetState extends State<MapWidget> {
       // ignore
     }
 
-    _positionStreamSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
-        distanceFilter: 5
-      ),
-    ).listen((Position pos) {
-      if (!mounted) return;
-      setState(() {
-        _ubicacionActual = pos;
-        _markers.clear();
-        _markers.add(Marker(
-          markerId: const MarkerId('yo'),
-          position: LatLng(pos.latitude, pos.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        ));
-      });
+    _positionStreamSub =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.best,
+            distanceFilter: 5,
+          ),
+        ).listen((Position pos) {
+          if (!mounted) return;
+          setState(() {
+            _ubicacionActual = pos;
+            _markers.clear();
+            _markers.add(
+              Marker(
+                markerId: const MarkerId('yo'),
+                position: LatLng(pos.latitude, pos.longitude),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueAzure,
+                ),
+              ),
+            );
+          });
 
-      if (mapController != null) {
-        mapController!.animateCamera(
-          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude))
-        );
-      }
+          if (mapController != null) {
+            mapController!.animateCamera(
+              CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
+            );
+          }
 
-      // ✅ MANTENEMOS EL DEBOUNCE PARA ACTUALIZACIONES DE UBICACIÓN
-      if (widget.onLocationUpdate != null) {
-        _debounceTimer?.cancel();
-        _debounceTimer = Timer(const Duration(seconds: 2), () {
-          if (mounted) {
-            widget.onLocationUpdate!(pos.latitude, pos.longitude);
+          // ✅ MANTENEMOS EL DEBOUNCE PARA ACTUALIZACIONES DE UBICACIÓN
+          if (widget.onLocationUpdate != null) {
+            _debounceTimer?.cancel();
+            _debounceTimer = Timer(const Duration(seconds: 2), () {
+              if (mounted) {
+                widget.onLocationUpdate!(pos.latitude, pos.longitude);
+              }
+            });
           }
         });
-      }
-    });
   }
 
   @override
@@ -295,13 +305,54 @@ class _MapWidgetState extends State<MapWidget> {
           onMapCreated: (controller) {
             mapController = controller;
             if (_ubicacionActual != null) {
-              controller.animateCamera(CameraUpdate.newLatLng(
-                LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
-              ));
+              controller.animateCamera(
+                CameraUpdate.newLatLng(
+                  LatLng(
+                    _ubicacionActual!.latitude,
+                    _ubicacionActual!.longitude,
+                  ),
+                ),
+              );
             }
           },
+          onCameraIdle: () async {
+            // Cancelar el timer anterior si existe
+            _cameraDebounceTimer?.cancel();
+
+            // Crear un nuevo timer con debounce de 500ms
+            _cameraDebounceTimer = Timer(
+              const Duration(milliseconds: 500),
+              () async {
+                if (mapController != null && mounted) {
+                  try {
+                    // Obtener la región visible del mapa
+                    final visibleRegion = await mapController!
+                        .getVisibleRegion();
+
+                    // Calcular el centro de la región visible
+                    final centerLat =
+                        (visibleRegion.northeast.latitude +
+                            visibleRegion.southwest.latitude) /
+                        2;
+                    final centerLng =
+                        (visibleRegion.northeast.longitude +
+                            visibleRegion.southwest.longitude) /
+                        2;
+
+                    // Recargar gasolineras basadas en el nuevo centro
+                    await _cargarGasolineras(centerLat, centerLng);
+                  } catch (e) {
+                    // Manejar errores silenciosamente
+                  }
+                }
+              },
+            );
+          },
           initialCameraPosition: CameraPosition(
-            target: LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude),
+            target: LatLng(
+              _ubicacionActual!.latitude,
+              _ubicacionActual!.longitude,
+            ),
             zoom: 15,
           ),
           markers: allMarkers,
@@ -316,6 +367,7 @@ class _MapWidgetState extends State<MapWidget> {
   void dispose() {
     _positionStreamSub?.cancel();
     _debounceTimer?.cancel();
+    _cameraDebounceTimer?.cancel();
     mapController?.dispose();
     super.dispose();
   }
