@@ -37,21 +37,20 @@ class _LayouthomeState extends State<Layouthome> {
     try {
       // 1. Obtener ubicación
       await _getCurrentLocation();
-      
+
       // 2. Cargar todas las gasolineras
       final lista = await fetchGasolineras();
-      
+
       if (mounted) {
         setState(() {
           _allGasolineras = lista;
         });
       }
-      
+
       // 3. Calcular las 15 más cercanas
       if (_currentPosition != null) {
         _calcularGasolinerasCercanas();
       }
-      
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -119,8 +118,10 @@ class _LayouthomeState extends State<Layouthome> {
     }).toList();
 
     // Ordenar por distancia y tomar las 15 más cercanas
-    gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    
+    gasolinerasConDistancia.sort(
+      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+    );
+
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -133,7 +134,9 @@ class _LayouthomeState extends State<Layouthome> {
     }
 
     // Debug
-    print('[Layouthome] Gasolineras cercanas calculadas: ${_gasolinerasCercanas.length}');
+    print(
+      '[Layouthome] Gasolineras cercanas calculadas: ${_gasolinerasCercanas.length}',
+    );
     for (var g in _gasolinerasCercanas) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       print('  - ${g.rotulo} (${(distance / 1000).toStringAsFixed(1)} km)');
@@ -144,17 +147,19 @@ class _LayouthomeState extends State<Layouthome> {
   void _onLocationUpdated(double lat, double lng) {
     final now = DateTime.now();
     final timeSinceLastUpdate = now.difference(_lastUpdateTime);
-    
+
     // Solo procesar si ha pasado el tiempo mínimo
     if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
-      print('📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s');
+      print(
+        '📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s',
+      );
       return;
     }
 
     print('Ubicación actualizada desde mapa: $lat, $lng');
 
     _lastUpdateTime = now;
-    
+
     if (mounted) {
       // No necesitamos crear un Position manualmente
       // Simplemente recalculamos las gasolineras cercanas con las nuevas coordenadas
@@ -174,8 +179,10 @@ class _LayouthomeState extends State<Layouthome> {
     }).toList();
 
     // Ordenar por distancia y tomar las 15 más cercanas
-    gasolinerasConDistancia.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    
+    gasolinerasConDistancia.sort(
+      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+    );
+
     final top15 = gasolinerasConDistancia
         .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
@@ -187,7 +194,9 @@ class _LayouthomeState extends State<Layouthome> {
       });
     }
 
-    print('[Layouthome] Gasolineras recalculadas: ${_gasolinerasCercanas.length}');
+    print(
+      '[Layouthome] Gasolineras recalculadas: ${_gasolinerasCercanas.length}',
+    );
   }
 
   // Método para forzar recarga
@@ -231,7 +240,10 @@ class _LayouthomeState extends State<Layouthome> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.04,
+                vertical: MediaQuery.of(context).size.height * 0.01,
+              ),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
@@ -240,68 +252,94 @@ class _LayouthomeState extends State<Layouthome> {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    "MyGasolinera",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF9350),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'lib/assets/logo.png',
+                        height: MediaQuery.of(context).size.width * 0.08,
+                        fit: BoxFit.contain,
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                      Text(
+                        "MyGasolinera",
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.045,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                  Center(
+                    child: ToggleButtons(
+                      isSelected: [_showMap, !_showMap],
+                      onPressed: (index) {
+                        setState(() {
+                          _showMap = index == 0;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      selectedColor: Colors.black,
+                      color: Colors.white,
+                      fillColor: Colors.white70,
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height * 0.04,
+                        minWidth: MediaQuery.of(context).size.width * 0.25,
+                      ),
                       children: [
-                        Center(
-                          child: ToggleButtons(
-                            isSelected: [_showMap, !_showMap],
-                            onPressed: (index) {
-                              setState(() {
-                                _showMap = index == 0;
-                              });
-                            },
-                            borderRadius: BorderRadius.circular(8),
-                            selectedColor: Colors.black,
-                            color: Colors.white,
-                            fillColor: Colors.white70,
-                            constraints: const BoxConstraints(
-                                minHeight: 36, minWidth: 100),
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  'Mapa',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                  'Lista',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.02,
                           ),
-                        )
+                          child: Text(
+                            'Mapa',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.035,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.02,
+                          ),
+                          child: Text(
+                            'Lista',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.035,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const Icon(Icons.stars, size: 40),
-                      const Icon(Icons.arrow_upward, size: 40),
+                      Icon(
+                        Icons.stars,
+                        size: MediaQuery.of(context).size.width * 0.07,
+                      ),
+                      Icon(
+                        Icons.arrow_upward,
+                        size: MediaQuery.of(context).size.width * 0.07,
+                      ),
                       IconButton(
-                        icon: const Icon(Icons.add, size: 40),
+                        icon: Icon(
+                          Icons.add,
+                          size: MediaQuery.of(context).size.width * 0.07,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                         onPressed: () {
                           scaffoldKey.currentState?.openDrawer();
                         },
@@ -313,25 +351,31 @@ class _LayouthomeState extends State<Layouthome> {
             ),
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                margin: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _showMap 
+                  child: _showMap
                       ? MapWidget(
                           externalGasolineras: _allGasolineras,
                           onLocationUpdate: _onLocationUpdated,
-                        ) 
+                        )
                       : _buildListContent(),
                 ),
               ),
             ),
             // ✅ BARRA INFERIOR MEJORADA CON BOTONES FUNCIONALES
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.01,
+              ),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
@@ -347,29 +391,42 @@ class _LayouthomeState extends State<Layouthome> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CochesScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const CochesScreen(),
+                        ),
                       );
                     },
-                    icon: const Icon(Icons.directions_car, size: 40),
+                    icon: Icon(
+                      Icons.directions_car,
+                      size: MediaQuery.of(context).size.width * 0.09,
+                    ),
                   ),
-                  
+
                   // ✅ Botón pin funcional
                   IconButton(
                     onPressed: () {
                       // Acción para el botón del pin
                     },
-                    icon: const Icon(Icons.pin_drop, size: 40),
+                    icon: Icon(
+                      Icons.pin_drop,
+                      size: MediaQuery.of(context).size.width * 0.09,
+                    ),
                   ),
-                  
+
                   // ✅ BOTÓN AJUSTES FUNCIONAL (MEJORA DEL SEGUNDO CÓDIGO)
                   IconButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const AjustesScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const AjustesScreen(),
+                        ),
                       );
                     },
-                    icon: const Icon(Icons.settings, size: 40),
+                    icon: Icon(
+                      Icons.settings,
+                      size: MediaQuery.of(context).size.width * 0.09,
+                    ),
                   ),
                 ],
               ),
@@ -384,7 +441,7 @@ class _LayouthomeState extends State<Layouthome> {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     if (_gasolinerasCercanas.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -404,7 +461,7 @@ class _LayouthomeState extends State<Layouthome> {
         ],
       );
     }
-    
+
     return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }
