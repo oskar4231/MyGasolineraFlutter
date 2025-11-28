@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:my_gasolinera/Inicio/inicio.dart';
+import 'package:my_gasolinera/Inicio/inicio.dart'; // Añade esta importación
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
@@ -142,7 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            // MODIFICACIÓN AQUÍ: Navegar a Inicio en lugar de pop
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const Inicio()),
+            );
+          },
         ),
       ),
       body: Center(

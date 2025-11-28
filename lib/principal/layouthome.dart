@@ -21,7 +21,7 @@ class _LayouthomeState extends State<Layouthome> {
   bool _loading = false;
   Position? _currentPosition;
   DateTime _lastUpdateTime = DateTime.now();
-  static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 180);
+  static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 15);
 
   @override
   void initState() {
@@ -254,68 +254,55 @@ class _LayouthomeState extends State<Layouthome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'lib/assets/logo.png',
-                        height: MediaQuery.of(context).size.width * 0.08,
-                        fit: BoxFit.contain,
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                      Text(
-                        "MyGasolinera",
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    "MyGasolinera",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
-                  Center(
-                    child: ToggleButtons(
-                      isSelected: [_showMap, !_showMap],
-                      onPressed: (index) {
-                        setState(() {
-                          _showMap = index == 0;
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      selectedColor: Colors.black,
-                      color: Colors.white,
-                      fillColor: Colors.white70,
-                      constraints: BoxConstraints(
-                        minHeight: MediaQuery.of(context).size.height * 0.04,
-                        minWidth: MediaQuery.of(context).size.width * 0.25,
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF9350),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
                       ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.02,
-                          ),
-                          child: Text(
-                            'Mapa',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.035,
+                        Center(
+                          child: ToggleButtons(
+                            isSelected: [_showMap, !_showMap],
+                            onPressed: (index) {
+                              setState(() {
+                                _showMap = index == 0;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(8),
+                            selectedColor: Colors.black,
+                            color: Colors.white,
+                            fillColor: Colors.white70,
+                            constraints: const BoxConstraints(
+                              minHeight: 36,
+                              minWidth: 100,
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.02,
-                          ),
-                          child: Text(
-                            'Lista',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.035,
-                            ),
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  'Mapa',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  'Lista',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

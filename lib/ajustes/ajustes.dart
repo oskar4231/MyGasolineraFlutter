@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:io';
 import 'package:my_gasolinera/Inicio/facturas/FacturasScreen.dart';
 
@@ -436,8 +437,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                // Aquí iría la lógica real de cierre de sesión
+                Navigator.of(context).pop(); // Cerrar el diálogo
+                
+                // Navegar a la pantalla de login y limpiar el stack
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (Route<dynamic> route) => false, // Elimina todas las rutas anteriores
+                );
               },
               child: const Text('Cerrar sesión'),
             ),
@@ -458,9 +465,9 @@ class _OpcionItem extends StatefulWidget {
   const _OpcionItem({
     required this.icono,
     required this.texto,
+    required this.onTap,
     this.tieneCheckbox = false,
     this.checkboxValue = false,
-    required this.onTap,
   });
 
   @override
