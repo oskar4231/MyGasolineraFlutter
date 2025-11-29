@@ -117,19 +117,19 @@ class _LayouthomeState extends State<Layouthome> {
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    // Ordenar por distancia y tomar las 15 más cercanas
+    // Ordenar por distancia y tomar las 50 más cercanas
     gasolinerasConDistancia.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final top15 = gasolinerasConDistancia
-        .take(15)
+    final top50 = gasolinerasConDistancia
+        .take(50)
         .map((e) => e['gasolinera'] as Gasolinera)
         .toList();
 
     if (mounted) {
       setState(() {
-        _gasolinerasCercanas = top15;
+        _gasolinerasCercanas = top50;
       });
     }
 
@@ -178,19 +178,19 @@ class _LayouthomeState extends State<Layouthome> {
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    // Ordenar por distancia y tomar las 15 más cercanas
+    // Ordenar por distancia y tomar las 50 más cercanas
     gasolinerasConDistancia.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final top15 = gasolinerasConDistancia
-        .take(15)
+    final top50 = gasolinerasConDistancia
+        .take(50)
         .map((e) => e['gasolinera'] as Gasolinera)
         .toList();
 
     if (mounted) {
       setState(() {
-        _gasolinerasCercanas = top15;
+        _gasolinerasCercanas = top50;
       });
     }
 
