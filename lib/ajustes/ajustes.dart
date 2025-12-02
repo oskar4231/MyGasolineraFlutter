@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:io';
 import 'package:my_gasolinera/Inicio/facturas/FacturasScreen.dart';
+import 'package:my_gasolinera/services/auth_service.dart';
+import 'package:my_gasolinera/services/usuario_service.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -16,8 +18,11 @@ class _AjustesScreenState extends State<AjustesScreen> {
   String _telefonoUsuario = "123-456-7890"; // Número por defecto
   String _nombre = "Nombre"; // Nombre por defecto
   String _apellido = "Apellido"; // Apellido por defecto
-  final String _emailUsuario =
-      "usuario@gmail.com"; // Este vendría de tu base de datos
+  String get _emailUsuario {
+  return AuthService.getUserEmail() ?? 'usuario@gmail.com';
+  }
+  final _usuarioService = UsuarioService();
+  bool _eliminandoCuenta = false; // Para mostrar loader
 
   // Función para seleccionar imagen desde galería
   Future<void> _pickImageFromGallery() async {
@@ -401,9 +406,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
             );
           },
         ),
-        _OpcionItem(icono: Icons.speed, texto: 'Registro km', onTap: () {}),
-      ],
-    );
+        _OpcionItem(
+          icono: Icons.speed,
+          texto: 'Borrar Cuenta',
+          onTap: () => _mostrarDialogoBorrarCuenta(),
+        ),
+          ],
+        );
   }
 
   Widget _buildBotonCerrarSesion(BuildContext context) {
@@ -449,6 +458,105 @@ class _AjustesScreenState extends State<AjustesScreen> {
               child: const Text('Cerrar sesión'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  /// Muestra diálogo de confirmación y ejecuta la eliminación de cuenta
+  void _mostrarDialogoBorrarCuenta() {
+    showDialog(
+      context: context,
+      barrierDismissible: !_eliminandoCuenta, // Evita cerrar mientras se procesa
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Borrar Cuenta'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
+                    'Esta acción no se puede deshacer.',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  if (_eliminandoCuenta) ...[
+                    const SizedBox(height: 16),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 8),
+                    const Text('Eliminando cuenta...'),
+                  ],
+                ],
+              ),
+              actions: [
+                if (!_eliminandoCuenta)
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancelar'),
+                  ),
+                if (!_eliminandoCuenta)
+                  ElevatedButton(
+                    onPressed: () async {
+                      setDialogState(() => _eliminandoCuenta = true);
+                      try {
+                        // Obtener email guardado
+                        final email =
+                            await _usuarioService.obtenerEmailGuardado();
+
+                        if (email.isEmpty) {
+                          throw Exception('No se encontró email del usuario');
+                        }
+
+                        // Llamar al servicio para eliminar la cuenta
+                        final exito =
+                            await _usuarioService.eliminarCuenta(email);
+
+                        if (exito) {
+                          // Limpiar datos locales
+                          await _usuarioService.limpiarDatosUsuario();
+
+                          if (mounted) {
+                            // Cerrar el diálogo
+                            Navigator.of(context).pop();
+
+                            // Navegar a login y limpiar stack
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        setDialogState(() => _eliminandoCuenta = false);
+                        if (mounted) {
+                          // Cerrar diálogo y mostrar error
+                          // ignore: use_build_context_synchronously
+                          Navigator.of(context).pop();
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Error al eliminar cuenta: ${e.toString()}',
+                              ),
+                              duration: const Duration(seconds: 4),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text('Eliminar'),
+                  ),
+              ],
+            );
+          },
         );
       },
     );
