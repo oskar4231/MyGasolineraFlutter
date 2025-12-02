@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:io';
-import 'package:my_gasolinera/Inicio/facturas/FacturasScreen.dart';
+import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 
