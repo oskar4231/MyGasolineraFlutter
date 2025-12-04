@@ -19,8 +19,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
   String _nombre = "Nombre"; // Nombre por defecto
   String _apellido = "Apellido"; // Apellido por defecto
   String get _emailUsuario {
-  return AuthService.getUserEmail() ?? 'usuario@gmail.com';
+    return AuthService.getUserEmail() ?? 'usuario@gmail.com';
   }
+
   final _usuarioService = UsuarioService();
   bool _eliminandoCuenta = false; // Para mostrar loader
 
@@ -411,8 +412,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
           texto: 'Borrar Cuenta',
           onTap: () => _mostrarDialogoBorrarCuenta(),
         ),
-          ],
-        );
+      ],
+    );
   }
 
   Widget _buildBotonCerrarSesion(BuildContext context) {
@@ -447,12 +448,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Cerrar el diálogo
-                
+
                 // Navegar a la pantalla de login y limpiar el stack
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false, // Elimina todas las rutas anteriores
+                  (Route<dynamic> route) =>
+                      false, // Elimina todas las rutas anteriores
                 );
               },
               child: const Text('Cerrar sesión'),
@@ -467,7 +469,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
   void _mostrarDialogoBorrarCuenta() {
     showDialog(
       context: context,
-      barrierDismissible: !_eliminandoCuenta, // Evita cerrar mientras se procesa
+      barrierDismissible:
+          !_eliminandoCuenta, // Evita cerrar mientras se procesa
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -501,16 +504,25 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
                         // Obtener email guardado
-                        final email =
-                            await _usuarioService.obtenerEmailGuardado();
+                        final email = await _usuarioService
+                            .obtenerEmailGuardado();
+
+                        // DEBUG: Imprimir el email obtenido
+                        print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
+                        print('🔍 DEBUG - Longitud del email: ${email.length}');
+                        print('🔍 DEBUG - Email está vacío: ${email.isEmpty}');
 
                         if (email.isEmpty) {
                           throw Exception('No se encontró email del usuario');
                         }
 
                         // Llamar al servicio para eliminar la cuenta
-                        final exito =
-                            await _usuarioService.eliminarCuenta(email);
+                        print(
+                          '🔍 DEBUG - Enviando email al servicio: "$email"',
+                        );
+                        final exito = await _usuarioService.eliminarCuenta(
+                          email,
+                        );
 
                         if (exito) {
                           // Limpiar datos locales
