@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
@@ -6,6 +7,7 @@ import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/coches/coches.dart';
+import 'favoritos.dart'; // Importar la nueva pantalla de favoritos
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -23,6 +25,12 @@ class _LayouthomeState extends State<Layouthome> {
   DateTime _lastUpdateTime = DateTime.now();
   static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 15);
 
+  // Filtros
+  double? _precioDesde;
+  double? _precioHasta;
+  String? _tipoCombustibleSeleccionado;
+  String? _tipoAperturaSeleccionado;
+
   @override
   void initState() {
     super.initState();
@@ -35,10 +43,7 @@ class _LayouthomeState extends State<Layouthome> {
     });
 
     try {
-      // 1. Obtener ubicación
       await _getCurrentLocation();
-
-      // 2. Cargar todas las gasolineras
       final lista = await fetchGasolineras();
 
       if (mounted) {
@@ -47,7 +52,6 @@ class _LayouthomeState extends State<Layouthome> {
         });
       }
 
-      // 3. Calcular las 15 más cercanas
       if (_currentPosition != null) {
         _calcularGasolinerasCercanas();
       }
@@ -73,16 +77,10 @@ class _LayouthomeState extends State<Layouthome> {
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          print('Permiso de ubicación denegado');
-          return;
-        }
+        if (permission == LocationPermission.denied) return;
       }
 
-      if (permission == LocationPermission.deniedForever) {
-        print('Permiso de ubicación denegado permanentemente');
-        return;
-      }
+      if (permission == LocationPermission.deniedForever) return;
 
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
@@ -93,76 +91,49 @@ class _LayouthomeState extends State<Layouthome> {
           _currentPosition = position;
         });
       }
-      print('Ubicación obtenida: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       debugPrint('Error getting location: $e');
     }
   }
 
   void _calcularGasolinerasCercanas() {
-    if (_currentPosition == null || _allGasolineras.isEmpty) {
-      print('No hay ubicación o gasolineras para calcular');
-      return;
-    }
+    if (_currentPosition == null || _allGasolineras.isEmpty) return;
 
     final lat = _currentPosition!.latitude;
     final lng = _currentPosition!.longitude;
 
-    print('Calculando gasolineras cercanas para: $lat, $lng');
-    print('Total gasolineras disponibles: ${_allGasolineras.length}');
+    List<Gasolinera> gasolinerasFiltradas = _aplicarFiltros(_allGasolineras);
 
-    // Calcular distancia para cada gasolinera
-    final gasolinerasConDistancia = _allGasolineras.map((g) {
+    final gasolinerasConDistancia = gasolinerasFiltradas.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    // Ordenar por distancia y tomar las 50 más cercanas
     gasolinerasConDistancia.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final top50 = gasolinerasConDistancia
-        .take(50)
+    final top15 = gasolinerasConDistancia
+        .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
         .toList();
 
     if (mounted) {
       setState(() {
-        _gasolinerasCercanas = top50;
+        _gasolinerasCercanas = top15;
       });
-    }
-
-    // Debug
-    print(
-      '[Layouthome] Gasolineras cercanas calculadas: ${_gasolinerasCercanas.length}',
-    );
-    for (var g in _gasolinerasCercanas) {
-      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
-      print('  - ${g.rotulo} (${(distance / 1000).toStringAsFixed(1)} km)');
     }
   }
 
-  // Callback simplificado - solo recalcular gasolineras cercanas
   void _onLocationUpdated(double lat, double lng) {
     final now = DateTime.now();
     final timeSinceLastUpdate = now.difference(_lastUpdateTime);
 
-    // Solo procesar si ha pasado el tiempo mínimo
-    if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) {
-      print(
-        '📍 Actualización ignorada - demasiado pronto: ${timeSinceLastUpdate.inSeconds}s',
-      );
-      return;
-    }
-
-    print('Ubicación actualizada desde mapa: $lat, $lng');
+    if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) return;
 
     _lastUpdateTime = now;
 
     if (mounted) {
-      // No necesitamos crear un Position manualmente
-      // Simplemente recalculamos las gasolineras cercanas con las nuevas coordenadas
       _recalcularConNuevaUbicacion(lat, lng);
     }
   }
@@ -170,41 +141,307 @@ class _LayouthomeState extends State<Layouthome> {
   void _recalcularConNuevaUbicacion(double lat, double lng) {
     if (_allGasolineras.isEmpty) return;
 
-    print('Recalculando gasolineras para nueva ubicación: $lat, $lng');
+    List<Gasolinera> gasolinerasFiltradas = _aplicarFiltros(_allGasolineras);
 
-    // Calcular distancia para cada gasolinera con las nuevas coordenadas
-    final gasolinerasConDistancia = _allGasolineras.map((g) {
+    final gasolinerasConDistancia = gasolinerasFiltradas.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    // Ordenar por distancia y tomar las 50 más cercanas
     gasolinerasConDistancia.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final top50 = gasolinerasConDistancia
-        .take(50)
+    final top15 = gasolinerasConDistancia
+        .take(15)
         .map((e) => e['gasolinera'] as Gasolinera)
         .toList();
 
     if (mounted) {
       setState(() {
-        _gasolinerasCercanas = top50;
+        _gasolinerasCercanas = top15;
       });
     }
-
-    print(
-      '[Layouthome] Gasolineras recalculadas: ${_gasolinerasCercanas.length}',
-    );
   }
 
-  // Método para forzar recarga
+  List<Gasolinera> _aplicarFiltros(List<Gasolinera> gasolineras) {
+    List<Gasolinera> resultado = gasolineras;
+
+    // Filtro de combustible y precio
+    if (_tipoCombustibleSeleccionado != null) {
+      resultado = resultado.where((g) {
+        double precio = _obtenerPrecioCombustible(g, _tipoCombustibleSeleccionado!);
+        
+        if (precio == 0.0) return false;
+
+        if (_precioDesde != null && precio < _precioDesde!) return false;
+        if (_precioHasta != null && precio > _precioHasta!) return false;
+
+        return true;
+      }).toList();
+    }
+
+    // ✅ FILTRO DE APERTURA IMPLEMENTADO
+    if (_tipoAperturaSeleccionado != null) {
+      resultado = resultado.where((g) {
+        switch (_tipoAperturaSeleccionado) {
+          case '24 Horas':
+            return g.es24Horas;
+          case 'Gasolineras atendidas por personal':
+            // Definición del usuario: Las que NO son 24 horas
+            return !g.es24Horas; 
+          case 'Gasolineras abiertas ahora':
+            return g.estaAbiertaAhora;
+          case 'Todas':
+            return true;
+          default:
+            return true;
+        }
+      }).toList();
+    }
+
+    return resultado;
+  }
+
+  double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
+    switch (tipoCombustible) {
+      case 'Gasolina 95': return g.gasolina95;
+      case 'Gasolina 98': return g.gasolina98;
+      case 'Diesel': return g.gasoleoA;
+      case 'Diesel Premium': return g.gasoleoPremium;
+      case 'Gas': return g.glp;
+      default: return 0.0;
+    }
+  }
+
   void _recargarDatos() {
     setState(() {
       _gasolinerasCercanas = [];
     });
     _initLocationAndGasolineras();
+  }
+
+  Widget _buildCheckboxOption(
+    String title,
+    String value,
+    String? currentValue,
+    Function(String?) onChanged,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: CheckboxListTile(
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        value: currentValue == value,
+        onChanged: (bool? checked) => onChanged(checked == true ? value : null),
+        activeColor: Colors.white,
+        checkColor: const Color(0xFFFF9350),
+        controlAffinity: ListTileControlAffinity.leading,
+      ),
+    );
+  }
+
+  void _mostrarDialogoFiltro({
+    required String titulo,
+    required List<String> opciones,
+    required String? valorActual,
+    required Function(String?) onAplicar,
+  }) {
+    String? valorTemporal = valorActual;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) => Dialog(
+          backgroundColor: const Color(0xFFFF9350),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 20),
+                ...opciones.map((opcion) => _buildCheckboxOption(
+                  opcion,
+                  opcion,
+                  valorTemporal,
+                  (valor) => setStateDialog(() => valorTemporal = valor),
+                )),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancelar', style: TextStyle(color: Colors.white)),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        onAplicar(valorTemporal);
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFFFF9350),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('Aplicar', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _mostrarFiltroApertura() {
+    _mostrarDialogoFiltro(
+      titulo: 'Apertura',
+      opciones: [
+        '24 Horas',
+        'Gasolineras atendidas por personal',
+        'Gasolineras abiertas ahora',
+        'Todas',
+      ],
+      valorActual: _tipoAperturaSeleccionado,
+      onAplicar: (valor) {
+        setState(() => _tipoAperturaSeleccionado = valor);
+        _calcularGasolinerasCercanas(); // Actualizar lista
+      },
+    );
+  }
+
+  void _mostrarFiltroCombustible() {
+    _mostrarDialogoFiltro(
+      titulo: 'Tipos de Combustible',
+      opciones: [
+        'Gasolina 95', 'Gasolina 98', 'Diesel', 'Diesel Premium', 'Gas',
+      ],
+      valorActual: _tipoCombustibleSeleccionado,
+      onAplicar: (valor) {
+        setState(() {
+          _tipoCombustibleSeleccionado = valor;
+          if (valor != _tipoCombustibleSeleccionado) {
+            _precioDesde = null;
+            _precioHasta = null;
+          }
+        });
+        _calcularGasolinerasCercanas();
+      },
+    );
+  }
+
+  void _mostrarFiltroPrecio() {
+    if (_tipoCombustibleSeleccionado == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Por favor, antes de filtrar por precio seleccione un tipo de combustible',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(0xFFFF9350), fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height * 0.4),
+          duration: const Duration(seconds: 3),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+    
+    final desdeController = TextEditingController(text: _precioDesde?.toString().replaceAll('.', ',') ?? '');
+    final hastaController = TextEditingController(text: _precioHasta?.toString().replaceAll('.', ',') ?? '');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: const Color(0xFFFF9350),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Filtrar por Precio', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                const SizedBox(height: 20),
+                const Text('Desde (€)', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: desdeController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*[,.]?\d{0,3}'))],
+                  decoration: InputDecoration(
+                    hintText: 'Ej: 1,50',
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Hasta (€)', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: hastaController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*[,.]?\d{0,3}'))],
+                  decoration: InputDecoration(
+                    hintText: 'Ej: 2,00',
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancelar', style: TextStyle(color: Colors.white))),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        final desdeText = desdeController.text.replaceAll(',', '.');
+                        final hastaText = hastaController.text.replaceAll(',', '.');
+                        setState(() {
+                          _precioDesde = desdeText.isNotEmpty ? double.tryParse(desdeText) : null;
+                          _precioHasta = hastaText.isNotEmpty ? double.tryParse(hastaText) : null;
+                        });
+                        _calcularGasolinerasCercanas();
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFFFF9350),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('Aplicar', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -217,33 +454,37 @@ class _LayouthomeState extends State<Layouthome> {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
-            SizedBox(
+          children: [
+            const SizedBox(
               height: 60,
               child: DrawerHeader(
                 decoration: BoxDecoration(color: Color(0xFFFF9350)),
                 margin: EdgeInsets.zero,
                 padding: EdgeInsets.all(16),
-                child: Text(
-                  'Filtros',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
+                child: Text('Filtros', style: TextStyle(fontSize: 20, color: Colors.white)),
               ),
             ),
-            ListTile(title: Text('Opción 1')),
-            ListTile(title: Text('Opción 2')),
-            ListTile(title: Text('Opción 3')),
+            ListTile(
+              title: const Text('Precio'),
+              onTap: () { Navigator.of(context).pop(); _mostrarFiltroPrecio(); },
+            ),
+            ListTile(
+              title: const Text('Combustible'),
+              onTap: () { Navigator.of(context).pop(); _mostrarFiltroCombustible(); },
+            ),
+            ListTile(
+              title: const Text('Apertura'),
+              onTap: () { Navigator.of(context).pop(); _mostrarFiltroApertura(); },
+            ),
           ],
         ),
       ),
       body: SafeArea(
         child: Column(
           children: [
+            // Header con logo y botones
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.04,
-                vertical: MediaQuery.of(context).size.height * 0.01,
-              ),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
@@ -252,7 +493,7 @@ class _LayouthomeState extends State<Layouthome> {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "MyGasolinera",
@@ -308,25 +549,32 @@ class _LayouthomeState extends State<Layouthome> {
                       ],
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.008),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Icon(
-                        Icons.stars,
-                        size: MediaQuery.of(context).size.width * 0.07,
-                      ),
-                      Icon(
-                        Icons.arrow_upward,
-                        size: MediaQuery.of(context).size.width * 0.07,
-                      ),
+                      // Botón de Favoritos (Estrella)
                       IconButton(
-                        icon: Icon(
-                          Icons.add,
-                          size: MediaQuery.of(context).size.width * 0.07,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                        icon: const Icon(Icons.stars, size: 40),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FavoritosScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      
+                      // Botón de filtro de precio (flecha arriba)
+                      IconButton(
+                        icon: const Icon(Icons.arrow_upward, size: 40),
+                        onPressed: _mostrarFiltroPrecio,
+                      ),
+                      
+                      // Botón para abrir el drawer de filtros (+)
+                      IconButton(
+                        icon: const Icon(Icons.add, size: 40),
                         onPressed: () {
                           scaffoldKey.currentState?.openDrawer();
                         },
@@ -336,12 +584,11 @@ class _LayouthomeState extends State<Layouthome> {
                 ],
               ),
             ),
+            
+            // Contenido principal (Mapa o Lista)
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 10,
-                ),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -352,17 +599,19 @@ class _LayouthomeState extends State<Layouthome> {
                       ? MapWidget(
                           externalGasolineras: _allGasolineras,
                           onLocationUpdate: _onLocationUpdated,
+                          combustibleSeleccionado: _tipoCombustibleSeleccionado,
+                          precioDesde: _precioDesde,
+                          precioHasta: _precioHasta,
+                          tipoAperturaSeleccionado: _tipoAperturaSeleccionado,
                         )
                       : _buildListContent(),
                 ),
               ),
             ),
-            // ✅ BARRA INFERIOR MEJORADA CON BOTONES FUNCIONALES
+            
+            // Barra inferior con botones
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-                vertical: MediaQuery.of(context).size.height * 0.01,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(
@@ -373,7 +622,7 @@ class _LayouthomeState extends State<Layouthome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // ✅ Botón coche funcional
+                  // Botón de Coches
                   IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -383,24 +632,19 @@ class _LayouthomeState extends State<Layouthome> {
                         ),
                       );
                     },
-                    icon: Icon(
-                      Icons.directions_car,
-                      size: MediaQuery.of(context).size.width * 0.09,
-                    ),
+                    icon: const Icon(Icons.directions_car, size: 40),
                   ),
-
-                  // ✅ Botón pin funcional
+                  
+                  // Botón de Ubicación (Pin)
                   IconButton(
                     onPressed: () {
-                      // Acción para el botón del pin
+                      // Acción para centrar en ubicación actual
+                      // Podrías añadir funcionalidad aquí si lo necesitas
                     },
-                    icon: Icon(
-                      Icons.pin_drop,
-                      size: MediaQuery.of(context).size.width * 0.09,
-                    ),
+                    icon: const Icon(Icons.pin_drop, size: 40),
                   ),
-
-                  // ✅ BOTÓN AJUSTES FUNCIONAL (MEJORA DEL SEGUNDO CÓDIGO)
+                  
+                  // Botón de Ajustes
                   IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -410,10 +654,7 @@ class _LayouthomeState extends State<Layouthome> {
                         ),
                       );
                     },
-                    icon: Icon(
-                      Icons.settings,
-                      size: MediaQuery.of(context).size.width * 0.09,
-                    ),
+                    icon: const Icon(Icons.settings, size: 40),
                   ),
                 ],
               ),
@@ -428,7 +669,7 @@ class _LayouthomeState extends State<Layouthome> {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
-
+    
     if (_gasolinerasCercanas.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -436,7 +677,7 @@ class _LayouthomeState extends State<Layouthome> {
           const Icon(Icons.location_off, size: 50, color: Colors.grey),
           const SizedBox(height: 10),
           const Text(
-            'No hay gasolineras cercanas',
+            'No hay gasolineras cercanas con estos filtros',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
@@ -448,7 +689,7 @@ class _LayouthomeState extends State<Layouthome> {
         ],
       );
     }
-
+    
     return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }
