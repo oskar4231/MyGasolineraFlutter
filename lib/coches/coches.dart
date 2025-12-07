@@ -60,8 +60,6 @@ class _CochesScreenState extends State<CochesScreen> {
     'Diésel': false,
     'Diésel Premium': false,
     'GLP (Autogas)': false,
-    'GNC (Gas Natural)': false,
-    'Eléctrico': false,
     'Híbrido': false,
   };
 
@@ -292,7 +290,7 @@ class _CochesScreenState extends State<CochesScreen> {
                           labelText: 'Modelo',
                           hintText: 'Ej: Corolla, Serie 3, León...',
                           border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.car_rental),
+                          prefixIcon: Icon(Icons.car_crash),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -415,18 +413,28 @@ class _CochesScreenState extends State<CochesScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmar eliminación'),
-        content: Text('¿Estás seguro de que quieres eliminar ${coche.marca} ${coche.modelo}?'),
+        content: Text('¿Estás seguro de que quieres eliminar ${coche.marca} ${coche.modelo}?', 
+                            style: TextStyle(
+                              fontSize:16,
+                            ),),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
+            child: const Text('Cancelar', 
+                            style: TextStyle(
+                              color: Colors.black
+                            ),),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Color(0xFFFF9350),
             ),
-            child: const Text('Eliminar'),
+            child: const Text('Eliminar', 
+                            style: TextStyle(
+                              color: Colors.black
+                            ),),
+
           ),
         ],
       ),
