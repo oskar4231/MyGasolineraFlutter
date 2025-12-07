@@ -393,8 +393,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
           onTap: () {},
         ),
         _OpcionItem(
-          icono: Icons.attach_money,
-          texto: 'Registro costo',
+          icono: Icons.query_stats,
+          texto: 'Estadísticas',
           onTap: () {},
         ),
         _OpcionItem(
@@ -482,7 +482,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   const Text(
                     '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
                     'Esta acción no se puede deshacer.',
-                    style: TextStyle(color: Colors.black87),
+                    style: TextStyle(color: Colors.black87, fontSize: 16),
                   ),
                   if (_eliminandoCuenta) ...[
                     const SizedBox(height: 16),
@@ -496,7 +496,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 if (!_eliminandoCuenta)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancelar'),
+                    child: const Text('Cancelar', 
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),),
                   ),
                 if (!_eliminandoCuenta)
                   ElevatedButton(
@@ -562,9 +565,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: Color(0xFFFF9350),
                     ),
-                    child: const Text('Eliminar'),
+                    child: const Text('Eliminar', 
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),),
                   ),
               ],
             );
