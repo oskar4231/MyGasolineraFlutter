@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:io';
 import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
+import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 
@@ -395,7 +396,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.query_stats,
           texto: 'Estadísticas',
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EstadisticasScreen()),
+            );
+          },
         ),
         _OpcionItem(
           icono: Icons.receipt,
