@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 
 class PasswordRequirements extends StatelessWidget {
   final String password;
+  final bool isVisible;
   final Color primaryColor;
   final Color successColor;
   final Color errorColor;
+  final Color? backgroundColor;
 
   const PasswordRequirements({
     super.key,
     required this.password,
+    required this.isVisible,
     this.primaryColor = const Color(0xFF492714),
     this.successColor = Colors.green,
     this.errorColor = Colors.red,
+    this.backgroundColor,
   });
 
   // Validaciones
@@ -27,32 +31,42 @@ class PasswordRequirements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Requisitos de contraseña:',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: primaryColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          _buildRequirementItem('Al menos 8 caracteres', hasMinLength),
-          _buildRequirementItem('Al menos un número (0-9)', hasNumber),
-          _buildRequirementItem('Al menos un carácter especial (#, \$, ?, ¿)',
-              hasSpecialChar),
-          _buildRequirementItem('Al menos una mayúscula (A-Z)', hasUppercase),
-        ],
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+      child: AnimatedOpacity(
+        opacity: isVisible ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 400),
+        child: isVisible
+            ? Container(
+                margin: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: backgroundColor ?? const Color(0xFFFFE8DA),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Requisitos de contraseña:',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildRequirementItem('Al menos 8 caracteres', hasMinLength),
+                    _buildRequirementItem('Al menos un número (0-9)', hasNumber),
+                    _buildRequirementItem('Al menos un carácter especial (#, \$, ?, ¿)',
+                        hasSpecialChar),
+                    _buildRequirementItem('Al menos una mayúscula (A-Z)', hasUppercase),
+                  ],
+                ),
+              )
+            : SizedBox.shrink(),
       ),
     );
   }

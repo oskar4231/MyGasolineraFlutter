@@ -5,7 +5,6 @@ import 'package:my_gasolinera/Inicio/inicio.dart'; // Añade esta importación
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
-import 'package:my_gasolinera/widgets/password_requirements.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,16 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailFocus.dispose();
     _passwordFocus.dispose();
     super.dispose();
-  }
-
-  bool _isPasswordValid() {
-    final password = _passwordController.text;
-    final hasMinLength = password.length >= 8;
-    final hasNumber = password.contains(RegExp(r'[0-9]'));
-    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
-    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
-
-    return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;
   }
 
   Future<void> _login() async {
@@ -241,7 +230,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       focusNode: _passwordFocus,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _handleFieldSubmit('password'),
-                      onChanged: (_) => setState(() {}),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
@@ -274,15 +262,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa tu contraseña';
                         }
-                        if (!_isPasswordValid()) {
-                          return 'La contraseña no cumple todos los requisitos';
-                        }
                         return null;
                       },
-                    ),
-                    PasswordRequirements(
-                      password: _passwordController.text,
-                      primaryColor: const Color(0xFF492714),
                     ),
                     const SizedBox(height: 15),
 
@@ -311,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: (_isLoading || !_isPasswordValid() || _emailController.text.isEmpty) ? null : _login,
+                        onPressed: _isLoading ? null : _login,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF9955),
                           padding: const EdgeInsets.symmetric(vertical: 20),

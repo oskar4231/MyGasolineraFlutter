@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_gasolinera/Inicio/login/login.dart';
+import 'package:my_gasolinera/widgets/password_requirements.dart';
 
 void main() {
   runApp(const Crear());
@@ -39,12 +40,24 @@ class _CrearScreenState extends State<CrearScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
+  bool _showPasswordRequirements = false;
 
   // Focus nodes para manejar el foco entre campos
   final _nombreFocus = FocusNode();
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Escuchar cambios del foco en el campo de contraseña
+    _passwordFocus.addListener(() {
+      setState(() {
+        _showPasswordRequirements = _passwordFocus.hasFocus;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -57,6 +70,16 @@ class _CrearScreenState extends State<CrearScreen> {
     _passwordFocus.dispose();
     _confirmPasswordFocus.dispose();
     super.dispose();
+  }
+
+  bool _isPasswordValid() {
+    final password = _passwordController.text;
+    final hasMinLength = password.length >= 8;
+    final hasNumber = password.contains(RegExp(r'[0-9]'));
+    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
+    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+
+    return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;
   }
 
   // Función para registrar usuario en el backend
@@ -267,6 +290,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       focusNode: _passwordFocus,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => _handleFieldSubmit('password'),
+                      onChanged: (_) => setState(() {}),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
@@ -301,11 +325,19 @@ class _CrearScreenState extends State<CrearScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa tu contraseña';
                         }
-                        if (value.length < 6) {
-                          return 'La contraseña debe tener al menos 6 caracteres';
+                        if (!_isPasswordValid()) {
+                          return 'La contraseña no cumple todos los requisitos';
                         }
                         return null;
                       },
+                    ),
+                    PasswordRequirements(
+                      password: _passwordController.text,
+                      isVisible: _showPasswordRequirements,
+                      primaryColor: const Color(0xFF492714),
+                      successColor: Colors.green,
+                      errorColor: Colors.red,
+                      backgroundColor: const Color(0xFFFFE8DA),
                     ),
                     const SizedBox(height: 15),
                     
@@ -361,7 +393,7 @@ class _CrearScreenState extends State<CrearScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _registrarUsuario,
+                        onPressed: (_isLoading || !_isPasswordValid() || _emailController.text.isEmpty || _nombreController.text.isEmpty) ? null : _registrarUsuario,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF9955),
                           padding: const EdgeInsets.symmetric(vertical: 20),

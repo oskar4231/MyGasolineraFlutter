@@ -17,13 +17,27 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
   final _tokenController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  final _passwordFocus = FocusNode();
   bool _isLoading = false;
+  bool _showPasswordRequirements = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Escuchar cambios del foco en el campo de contraseña
+    _passwordFocus.addListener(() {
+      setState(() {
+        _showPasswordRequirements = _passwordFocus.hasFocus;
+      });
+    });
+  }
 
   @override
   void dispose() {
     _tokenController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
@@ -215,6 +229,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   // Nueva contraseña
                   TextFormField(
                     controller: _passwordController,
+                    focusNode: _passwordFocus,
                     obscureText: true,
                     style: const TextStyle(fontSize: 16),
                     enabled: !_isLoading,
@@ -242,6 +257,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   ),
                   PasswordRequirements(
                     password: _passwordController.text,
+                    isVisible: _showPasswordRequirements,
                     primaryColor: const Color(0xFF492714),
                   ),
                   const SizedBox(height: 16),
