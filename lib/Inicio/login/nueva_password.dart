@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'package:my_gasolinera/widgets/password_requirements.dart';
 
 class NuevaPasswordScreen extends StatefulWidget {
   final String email;
@@ -16,14 +17,38 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
   final _tokenController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  final _passwordFocus = FocusNode();
   bool _isLoading = false;
+  bool _showPasswordRequirements = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Escuchar cambios del foco en el campo de contraseña
+    _passwordFocus.addListener(() {
+      setState(() {
+        _showPasswordRequirements = _passwordFocus.hasFocus;
+      });
+    });
+  }
 
   @override
   void dispose() {
     _tokenController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
+    _passwordFocus.dispose();
     super.dispose();
+  }
+
+  bool _isPasswordValid() {
+    final password = _passwordController.text;
+    final hasMinLength = password.length >= 8;
+    final hasNumber = password.contains(RegExp(r'[0-9]'));
+    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
+    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+
+    return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;
   }
 
   Future<void> _handleChangePassword() async {
@@ -204,9 +229,11 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   // Nueva contraseña
                   TextFormField(
                     controller: _passwordController,
+                    focusNode: _passwordFocus,
                     obscureText: true,
                     style: const TextStyle(fontSize: 16),
                     enabled: !_isLoading,
+                    onChanged: (_) => setState(() {}),
                     decoration: InputDecoration(
                       hintText: 'Nueva contraseña',
                       filled: true,
@@ -223,10 +250,15 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     validator: (v) {
                       if (v == null || v.isEmpty)
                         return 'Ingresa la nueva contraseña';
-                      if (v.length < 6)
-                        return 'La contraseña debe tener al menos 6 caracteres';
+                      if (!_isPasswordValid())
+                        return 'La contraseña no cumple todos los requisitos';
                       return null;
                     },
+                  ),
+                  PasswordRequirements(
+                    password: _passwordController.text,
+                    isVisible: _showPasswordRequirements,
+                    primaryColor: const Color(0xFF492714),
                   ),
                   const SizedBox(height: 16),
 
@@ -262,7 +294,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handleChangePassword,
+                      onPressed: (_isLoading || !_isPasswordValid() || _tokenController.text.isEmpty) ? null : _handleChangePassword,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF9955),
                         foregroundColor: const Color(0xFF492714),
