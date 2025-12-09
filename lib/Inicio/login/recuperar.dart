@@ -200,10 +200,12 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                     ),
                     validator: (value) {
                       // Comprueba que el campo del correo no esté vacio
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Introduce un correo';
-                      if (!value.contains('@'))
+                      }
+                      if (!value.contains('@')) {
                         return 'Introduce un correo válido';
+                      }
                       return null;
                     },
                   ),

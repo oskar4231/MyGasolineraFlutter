@@ -336,7 +336,7 @@ class _CochesScreenState extends State<CochesScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           dense: true,
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),
