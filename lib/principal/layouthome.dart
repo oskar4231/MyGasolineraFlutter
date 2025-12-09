@@ -482,7 +482,7 @@ class _LayouthomeState extends State<Layouthome> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
@@ -490,10 +490,10 @@ class _LayouthomeState extends State<Layouthome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("MyGasolinera", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
+                  const Text("MyGasolinera", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFF9350),
                       borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
@@ -509,23 +509,23 @@ class _LayouthomeState extends State<Layouthome> {
                             selectedColor: Colors.black,
                             color: Colors.white,
                             fillColor: Colors.white70,
-                            constraints: const BoxConstraints(minHeight: 36, minWidth: 100),
+                            constraints: const BoxConstraints(minHeight: 32, minWidth: 85),
                             children: const [
-                              Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Mapa', style: TextStyle(fontWeight: FontWeight.bold))),
-                              Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('Lista', style: TextStyle(fontWeight: FontWeight.bold))),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Text('Mapa', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Text('Lista', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const Icon(Icons.stars, size: 40),
-                      IconButton(icon: const Icon(Icons.arrow_upward, size: 40), onPressed: _mostrarFiltroPrecio),
-                      IconButton(icon: const Icon(Icons.add, size: 40), onPressed: () { scaffoldKey.currentState?.openDrawer(); }),
+                      const Icon(Icons.stars, size: 32),
+                      IconButton(icon: const Icon(Icons.arrow_upward, size: 32), onPressed: _mostrarFiltroPrecio, padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 32, minHeight: 32)),
+                      IconButton(icon: const Icon(Icons.add, size: 32), onPressed: () { scaffoldKey.currentState?.openDrawer(); }, padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 32, minHeight: 32)),
                     ],
                   ),
                 ],
@@ -551,7 +551,7 @@ class _LayouthomeState extends State<Layouthome> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -559,9 +559,9 @@ class _LayouthomeState extends State<Layouthome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const CochesScreen())); }, icon: const Icon(Icons.directions_car, size: 40)),
-                  IconButton(onPressed: () { }, icon: const Icon(Icons.pin_drop, size: 40)),
-                  IconButton(onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const AjustesScreen())); }, icon: const Icon(Icons.settings, size: 40)),
+                  IconButton(onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const CochesScreen())); }, icon: const Icon(Icons.directions_car, size: 37)),
+                  IconButton(onPressed: () { }, icon: const Icon(Icons.pin_drop, size: 37)),
+                  IconButton(onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const AjustesScreen())); }, icon: const Icon(Icons.settings, size: 37)),
                 ],
               ),
             ),
