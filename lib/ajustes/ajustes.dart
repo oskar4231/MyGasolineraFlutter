@@ -458,9 +458,9 @@ class _OpcionItem extends StatefulWidget {
   const _OpcionItem({
     required this.icono,
     required this.texto,
+    required this.onTap,
     this.tieneCheckbox = false,
     this.checkboxValue = false,
-    required this.onTap,
   });
 
   @override

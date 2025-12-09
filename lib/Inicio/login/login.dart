@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:my_gasolinera/Inicio/inicio.dart';
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
@@ -43,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         // Use http://10.0.2.2:3000/login for Android Emulator
         // Use http://localhost:3000/login for iOS Simulator or Web
-        final url = Uri.parse('http://localhost:3000/login'); 
-        
+        final url = Uri.parse('http://localhost:3000/login');
+
         print('Intentando login en: $url');
         print('Email: ${_emailController.text.trim()}');
 
@@ -71,26 +70,25 @@ class _LoginScreenState extends State<LoginScreen> {
               AuthService.saveToken(token, _emailController.text.trim());
               print('✅ Token guardado exitosamente');
             }
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Login exitoso'),
                 backgroundColor: Colors.green,
               ),
             );
-            
+
             // Navegar al mapa
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const Layouthome(),
-              ),
+              MaterialPageRoute(builder: (context) => const Layouthome()),
             );
           }
         } else {
           // Login fallido (400, 401, 500)
           if (mounted) {
-            String errorMessage = responseData['message'] ?? 'Error al iniciar sesión';
+            String errorMessage =
+                responseData['message'] ?? 'Error al iniciar sesión';
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
@@ -104,7 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error de conexión. Asegúrate de que el servidor esté corriendo. ($error)'),
+              content: Text(
+                'Error de conexión. Asegúrate de que el servidor esté corriendo. ($error)',
+              ),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 4),
             ),
@@ -188,9 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
                         hintText: 'Email o Usuario',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: const TextStyle(color: Color(0xFF492714)),
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -207,7 +205,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           return 'Por favor ingresa tu email o usuario';
                         }
                         if (value.contains('@')) {
-                          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                          final emailRegex = RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          );
                           if (!emailRegex.hasMatch(value)) {
                             return 'Ingresa un email válido';
                           }
@@ -216,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     const SizedBox(height: 15),
-                    
+
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
@@ -226,9 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: const TextStyle(color: Color(0xFF492714)),
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -277,14 +275,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const Text(
                           'Recuérdame',
-                          style: TextStyle(
-                            color: Color(0xFF492714),
-                          ),
+                          style: TextStyle(color: Color(0xFF492714)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 30),
-                    
+
                     // Botón Iniciar sesión
                     SizedBox(
                       width: double.infinity,
@@ -304,7 +300,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF492714)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFF492714),
+                                  ),
                                 ),
                               )
                             : const Text(
