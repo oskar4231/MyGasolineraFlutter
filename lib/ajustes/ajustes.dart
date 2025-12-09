@@ -399,7 +399,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const EstadisticasScreen()),
+              MaterialPageRoute(
+                builder: (context) => const EstadisticasScreen(),
+              ),
             );
           },
         ),
@@ -502,10 +504,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 if (!_eliminandoCuenta)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancelar', 
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),),
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                 if (!_eliminandoCuenta)
                   ElevatedButton(
@@ -573,10 +575,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFF9350),
                     ),
-                    child: const Text('Eliminar', 
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),),
+                    child: const Text(
+                      'Eliminar',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
               ],
             );
