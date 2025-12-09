@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
+import 'package:my_gasolinera/services/auth_service.dart';
 
 class NuevaPasswordScreen extends StatefulWidget {
-  const NuevaPasswordScreen({super.key});
+  final String email;
+
+  const NuevaPasswordScreen({super.key, required this.email});
 
   @override
   State<NuevaPasswordScreen> createState() => _NuevaPasswordScreenState();
@@ -10,27 +13,86 @@ class NuevaPasswordScreen extends StatefulWidget {
 
 class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _tokenController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
+    _tokenController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
     super.dispose();
   }
 
-  void _handleChangePassword() {
-    if (_formKey.currentState?.validate() ?? false) {
+  Future<void> _handleChangePassword() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Primero verificar el token
+      final verifyResponse = await AuthService.verifyToken(
+        _tokenController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      if (verifyResponse['status'] != 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              verifyResponse['message'] ?? 'Token inválido o expirado',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      // Si el token es válido, cambiar la contraseña
+      final resetResponse = await AuthService.resetPassword(
+        _tokenController.text.trim(),
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      if (resetResponse['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Contraseña actualizada correctamente'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navegar al login
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              resetResponse['message'] ?? 'Error al cambiar contraseña',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contraseña actualizada'), backgroundColor: Colors.green),
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -94,11 +156,57 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   ),
                   const SizedBox(height: 24),
 
+                  // Mostrar el email
+                  Text(
+                    'Código enviado a: ${widget.email}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF492714),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Campo para el código de 6 dígitos
+                  TextFormField(
+                    controller: _tokenController,
+                    keyboardType: TextInputType.number,
+                    maxLength: 6,
+                    style: const TextStyle(fontSize: 20, letterSpacing: 8),
+                    textAlign: TextAlign.center,
+                    enabled: !_isLoading,
+                    decoration: InputDecoration(
+                      hintText: '000000',
+                      hintStyle: const TextStyle(letterSpacing: 8),
+                      labelText: 'Código de recuperación',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 16,
+                      ),
+                      counterText: '',
+                    ),
+                    onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Ingresa el código';
+                      if (v.length != 6)
+                        return 'El código debe tener 6 dígitos';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
                   // Nueva contraseña
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
                     style: const TextStyle(fontSize: 16),
+                    enabled: !_isLoading,
                     decoration: InputDecoration(
                       hintText: 'Nueva contraseña',
                       filled: true,
@@ -106,12 +214,17 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 16,
+                      ),
                     ),
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Ingresa la nueva contraseña';
-                      if (v.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
+                      if (v == null || v.isEmpty)
+                        return 'Ingresa la nueva contraseña';
+                      if (v.length < 6)
+                        return 'La contraseña debe tener al menos 6 caracteres';
                       return null;
                     },
                   ),
@@ -122,6 +235,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     controller: _confirmController,
                     obscureText: true,
                     style: const TextStyle(fontSize: 16),
+                    enabled: !_isLoading,
                     decoration: InputDecoration(
                       hintText: 'Confirmar contraseña',
                       filled: true,
@@ -129,12 +243,17 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 16,
+                      ),
                     ),
                     onFieldSubmitted: (_) => _handleChangePassword(),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Confirma la contraseña';
-                      if (v != _passwordController.text) return 'Las contraseñas no coinciden';
+                      if (v == null || v.isEmpty)
+                        return 'Confirma la contraseña';
+                      if (v != _passwordController.text)
+                        return 'Las contraseñas no coinciden';
                       return null;
                     },
                   ),
@@ -143,16 +262,32 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _handleChangePassword,
+                      onPressed: _isLoading ? null : _handleChangePassword,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF9955),
                         foregroundColor: const Color(0xFF492714),
                         padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         elevation: 0,
-                        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      child: const Text('Cambiar contraseña'),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF492714),
+                                ),
+                              ),
+                            )
+                          : const Text('Cambiar contraseña'),
                     ),
                   ),
                 ],

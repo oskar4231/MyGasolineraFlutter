@@ -19,7 +19,7 @@ class GasolineraListWidget extends StatelessWidget {
       return const Center(child: Text('No hay gasolineras disponibles'));
     }
 
-    final gasolinerasLimitadas = gasolineras.take(15).toList();
+    final gasolinerasLimitadas = gasolineras.take(50).toList();
 
     return ListView.separated(
       itemCount: gasolinerasLimitadas.length,
