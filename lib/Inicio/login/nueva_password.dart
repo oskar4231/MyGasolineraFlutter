@@ -294,7 +294,12 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: (_isLoading || !_isPasswordValid() || _tokenController.text.isEmpty) ? null : _handleChangePassword,
+                      onPressed:
+                          (_isLoading ||
+                              !_isPasswordValid() ||
+                              _tokenController.text.isEmpty)
+                          ? null
+                          : _handleChangePassword,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF9955),
                         foregroundColor: const Color(0xFF492714),

@@ -206,6 +206,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                       if (!value.contains('@')) {
                         return 'Introduce un correo válido';
                       }
+
                       return null;
                     },
                   ),

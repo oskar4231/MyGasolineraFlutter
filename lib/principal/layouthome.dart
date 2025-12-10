@@ -7,6 +7,7 @@ import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/coches/coches.dart';
+import 'favoritos.dart'; // Importar la nueva pantalla de favoritos
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -169,8 +170,11 @@ class _LayouthomeState extends State<Layouthome> {
     // Filtro de combustible y precio
     if (_tipoCombustibleSeleccionado != null) {
       resultado = resultado.where((g) {
-        double precio = _obtenerPrecioCombustible(g, _tipoCombustibleSeleccionado!);
-        
+        double precio = _obtenerPrecioCombustible(
+          g,
+          _tipoCombustibleSeleccionado!,
+        );
+
         if (precio == 0.0) return false;
 
         if (_precioDesde != null && precio < _precioDesde!) return false;
@@ -188,7 +192,7 @@ class _LayouthomeState extends State<Layouthome> {
             return g.es24Horas;
           case 'Gasolineras atendidas por personal':
             // Definición del usuario: Las que NO son 24 horas
-            return !g.es24Horas; 
+            return !g.es24Horas;
           case 'Gasolineras abiertas ahora':
             return g.estaAbiertaAhora;
           case 'Todas':
@@ -204,12 +208,18 @@ class _LayouthomeState extends State<Layouthome> {
 
   double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
     switch (tipoCombustible) {
-      case 'Gasolina 95': return g.gasolina95;
-      case 'Gasolina 98': return g.gasolina98;
-      case 'Diesel': return g.gasoleoA;
-      case 'Diesel Premium': return g.gasoleoPremium;
-      case 'Gas': return g.glp;
-      default: return 0.0;
+      case 'Gasolina 95':
+        return g.gasolina95;
+      case 'Gasolina 98':
+        return g.gasolina98;
+      case 'Diesel':
+        return g.gasoleoA;
+      case 'Diesel Premium':
+        return g.gasoleoPremium;
+      case 'Gas':
+        return g.glp;
+      default:
+        return 0.0;
     }
   }
 
@@ -256,7 +266,9 @@ class _LayouthomeState extends State<Layouthome> {
       builder: (context) => StatefulBuilder(
         builder: (context, setStateDialog) => Dialog(
           backgroundColor: const Color(0xFFFF9350),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -265,22 +277,31 @@ class _LayouthomeState extends State<Layouthome> {
               children: [
                 Text(
                   titulo,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 20),
-                ...opciones.map((opcion) => _buildCheckboxOption(
-                  opcion,
-                  opcion,
-                  valorTemporal,
-                  (valor) => setStateDialog(() => valorTemporal = valor),
-                )),
+                ...opciones.map(
+                  (opcion) => _buildCheckboxOption(
+                    opcion,
+                    opcion,
+                    valorTemporal,
+                    (valor) => setStateDialog(() => valorTemporal = valor),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar', style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -291,9 +312,14 @@ class _LayouthomeState extends State<Layouthome> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color(0xFFFF9350),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text('Aplicar', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'Aplicar',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
@@ -326,7 +352,11 @@ class _LayouthomeState extends State<Layouthome> {
     _mostrarDialogoFiltro(
       titulo: 'Tipos de Combustible',
       opciones: [
-        'Gasolina 95', 'Gasolina 98', 'Diesel', 'Diesel Premium', 'Gas',
+        'Gasolina 95',
+        'Gasolina 98',
+        'Diesel',
+        'Diesel Premium',
+        'Gas',
       ],
       valorActual: _tipoCombustibleSeleccionado,
       onAplicar: (valor) {
@@ -349,79 +379,155 @@ class _LayouthomeState extends State<Layouthome> {
           content: const Text(
             'Por favor, antes de filtrar por precio seleccione un tipo de combustible',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Color(0xFFFF9350), fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(
+              color: Color(0xFFFF9350),
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
           backgroundColor: Colors.white,
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height * 0.4),
+          margin: EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: MediaQuery.of(context).size.height * 0.4,
+          ),
           duration: const Duration(seconds: 3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
     }
-    
-    final desdeController = TextEditingController(text: _precioDesde?.toString().replaceAll('.', ',') ?? '');
-    final hastaController = TextEditingController(text: _precioHasta?.toString().replaceAll('.', ',') ?? '');
+
+    final desdeController = TextEditingController(
+      text: _precioDesde?.toString().replaceAll('.', ',') ?? '',
+    );
+    final hastaController = TextEditingController(
+      text: _precioHasta?.toString().replaceAll('.', ',') ?? '',
+    );
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: const Color(0xFFFF9350),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Filtrar por Precio', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                const Text(
+                  'Filtrar por Precio',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
                 const SizedBox(height: 20),
-                const Text('Desde (€)', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                const Text(
+                  'Desde (€)',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: desdeController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*[,.]?\d{0,3}'))],
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*[,.]?\d{0,3}'),
+                    ),
+                  ],
                   decoration: InputDecoration(
                     hintText: 'Ej: 1,50',
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     filled: true,
                     fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text('Hasta (€)', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                const Text(
+                  'Hasta (€)',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: hastaController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*[,.]?\d{0,3}'))],
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*[,.]?\d{0,3}'),
+                    ),
+                  ],
                   decoration: InputDecoration(
                     hintText: 'Ej: 2,00',
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     filled: true,
                     fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancelar', style: TextStyle(color: Colors.white))),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        final desdeText = desdeController.text.replaceAll(',', '.');
-                        final hastaText = hastaController.text.replaceAll(',', '.');
+                        final desdeText = desdeController.text.replaceAll(
+                          ',',
+                          '.',
+                        );
+                        final hastaText = hastaController.text.replaceAll(
+                          ',',
+                          '.',
+                        );
                         setState(() {
-                          _precioDesde = desdeText.isNotEmpty ? double.tryParse(desdeText) : null;
-                          _precioHasta = hastaText.isNotEmpty ? double.tryParse(hastaText) : null;
+                          _precioDesde = desdeText.isNotEmpty
+                              ? double.tryParse(desdeText)
+                              : null;
+                          _precioHasta = hastaText.isNotEmpty
+                              ? double.tryParse(hastaText)
+                              : null;
                         });
                         _calcularGasolinerasCercanas();
                         Navigator.of(context).pop();
@@ -429,9 +535,14 @@ class _LayouthomeState extends State<Layouthome> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color(0xFFFF9350),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text('Aplicar', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'Aplicar',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
@@ -460,20 +571,32 @@ class _LayouthomeState extends State<Layouthome> {
                 decoration: BoxDecoration(color: Color(0xFFFF9350)),
                 margin: EdgeInsets.zero,
                 padding: EdgeInsets.all(16),
-                child: Text('Filtros', style: TextStyle(fontSize: 20, color: Colors.white)),
+                child: Text(
+                  'Filtros',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
               ),
             ),
             ListTile(
               title: const Text('Precio'),
-              onTap: () { Navigator.of(context).pop(); _mostrarFiltroPrecio(); },
+              onTap: () {
+                Navigator.of(context).pop();
+                _mostrarFiltroPrecio();
+              },
             ),
             ListTile(
               title: const Text('Combustible'),
-              onTap: () { Navigator.of(context).pop(); _mostrarFiltroCombustible(); },
+              onTap: () {
+                Navigator.of(context).pop();
+                _mostrarFiltroCombustible();
+              },
             ),
             ListTile(
               title: const Text('Apertura'),
-              onTap: () { Navigator.of(context).pop(); _mostrarFiltroApertura(); },
+              onTap: () {
+                Navigator.of(context).pop();
+                _mostrarFiltroApertura();
+              },
             ),
           ],
         ),
@@ -481,22 +604,32 @@ class _LayouthomeState extends State<Layouthome> {
       body: SafeArea(
         child: Column(
           children: [
+            // Header con logo y botones
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("MyGasolinera", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "MyGasolinera",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFF9350),
-                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,37 +637,93 @@ class _LayouthomeState extends State<Layouthome> {
                         Center(
                           child: ToggleButtons(
                             isSelected: [_showMap, !_showMap],
-                            onPressed: (index) { setState(() { _showMap = index == 0; }); },
+                            onPressed: (index) {
+                              setState(() {
+                                _showMap = index == 0;
+                              });
+                            },
                             borderRadius: BorderRadius.circular(8),
                             selectedColor: Colors.black,
                             color: Colors.white,
                             fillColor: Colors.white70,
-                            constraints: const BoxConstraints(minHeight: 32, minWidth: 85),
+                            constraints: const BoxConstraints(
+                              minHeight: 32,
+                              minWidth: 85,
+                            ),
                             children: const [
-                              Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Text('Mapa', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                              Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Text('Lista', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                child: Text(
+                                  'Mapa',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                child: Text(
+                                  'Lista',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const Icon(Icons.stars, size: 32),
-                      IconButton(icon: const Icon(Icons.arrow_upward, size: 32), onPressed: _mostrarFiltroPrecio, padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 32, minHeight: 32)),
-                      IconButton(icon: const Icon(Icons.add, size: 32), onPressed: () { scaffoldKey.currentState?.openDrawer(); }, padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 32, minHeight: 32)),
+                      // Botón de Favoritos (Estrella)
+                      IconButton(
+                        icon: const Icon(Icons.stars, size: 40),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FavoritosScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      // Botón de filtro de precio (flecha arriba)
+                      IconButton(
+                        icon: const Icon(Icons.arrow_upward, size: 40),
+                        onPressed: _mostrarFiltroPrecio,
+                      ),
+
+                      // Botón para abrir el drawer de filtros (+)
+                      IconButton(
+                        icon: const Icon(Icons.add, size: 40),
+                        onPressed: () {
+                          scaffoldKey.currentState?.openDrawer();
+                        },
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
+
+            // Contenido principal (Mapa o Lista)
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                margin: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _showMap
@@ -544,24 +733,60 @@ class _LayouthomeState extends State<Layouthome> {
                           combustibleSeleccionado: _tipoCombustibleSeleccionado,
                           precioDesde: _precioDesde,
                           precioHasta: _precioHasta,
-                          tipoAperturaSeleccionado: _tipoAperturaSeleccionado, // ✅ PASAMOS EL FILTRO AL MAPA
+                          tipoAperturaSeleccionado: _tipoAperturaSeleccionado,
                         )
                       : _buildListContent(),
                 ),
               ),
             ),
+
+            // Barra inferior con botones
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
                 color: const Color(0xFFFF9350),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const CochesScreen())); }, icon: const Icon(Icons.directions_car, size: 37)),
-                  IconButton(onPressed: () { }, icon: const Icon(Icons.pin_drop, size: 37)),
-                  IconButton(onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => const AjustesScreen())); }, icon: const Icon(Icons.settings, size: 37)),
+                  // Botón de Coches
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CochesScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.directions_car, size: 40),
+                  ),
+
+                  // Botón de Ubicación (Pin)
+                  IconButton(
+                    onPressed: () {
+                      // Acción para centrar en ubicación actual
+                      // Podrías añadir funcionalidad aquí si lo necesitas
+                    },
+                    icon: const Icon(Icons.pin_drop, size: 40),
+                  ),
+
+                  // Botón de Ajustes
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AjustesScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.settings, size: 40),
+                  ),
                 ],
               ),
             ),
@@ -572,19 +797,30 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   Widget _buildListContent() {
-    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (_gasolinerasCercanas.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.location_off, size: 50, color: Colors.grey),
           const SizedBox(height: 10),
-          const Text('No hay gasolineras cercanas con estos filtros', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Colors.grey)),
+          const Text(
+            'No hay gasolineras cercanas con estos filtros',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
           const SizedBox(height: 10),
-          ElevatedButton(onPressed: _recargarDatos, child: const Text('Reintentar')),
+          ElevatedButton(
+            onPressed: _recargarDatos,
+            child: const Text('Reintentar'),
+          ),
         ],
       );
     }
+
     return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }
