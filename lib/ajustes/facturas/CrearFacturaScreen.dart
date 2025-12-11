@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
@@ -33,7 +32,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 
   String _formatTime(DateTime time) {
@@ -41,43 +40,32 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   }
 
   Future<void> _seleccionarImagen() async {
-    // Solicitar permiso
-    final status = await Permission.photos.request();
-
-    if (status.isGranted) {
+    try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         setState(() {
           _imagenFactura = image;
         });
       }
-    } else {
-      // Mostrar mensaje si no se concedió el permiso
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Se necesita permiso para acceder a la galería'),
-        ),
+        SnackBar(content: Text('Error al seleccionar imagen: $e')),
       );
     }
   }
 
   void _tomarFoto() async {
-    // Solicitar permiso de cámara
-    final status = await Permission.camera.request();
-
-    if (status.isGranted) {
+    try {
       final XFile? image = await _picker.pickImage(source: ImageSource.camera);
       if (image != null) {
         setState(() {
           _imagenFactura = image;
         });
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Se necesita permiso para usar la cámara'),
-        ),
-      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al tomar foto: $e')));
     }
   }
 
