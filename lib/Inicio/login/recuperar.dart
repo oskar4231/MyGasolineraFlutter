@@ -176,8 +176,8 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                     // Añadir el manejador de teclas
                     onFieldSubmitted: (value) => _handleForgotPassword(),
                     decoration: InputDecoration(
-                      labelText: 'e-mail',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      hintText: 'e-mail',
+                      hintStyle: const TextStyle(color: Color(0xFF492714)),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(
