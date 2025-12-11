@@ -4,6 +4,7 @@ import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
+import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart'; // NUEVO IMPORT
@@ -490,6 +491,18 @@ class _AjustesScreenState extends State<AjustesScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const FacturasScreen()),
+            );
+          },
+        ),
+        _OpcionItem(
+          icono: Icons.accessibility_new,
+          texto: 'Accesibilidad',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AccesibilidadScreen(),
+              ),
             );
           },
         ),
