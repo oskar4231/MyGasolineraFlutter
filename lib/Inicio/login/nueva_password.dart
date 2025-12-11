@@ -219,8 +219,9 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Ingresa el código';
-                      if (v.length != 6)
+                      if (v.length != 6) {
                         return 'El código debe tener 6 dígitos';
+                      }
                       return null;
                     },
                   ),
@@ -248,10 +249,12 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     ),
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (v) {
-                      if (v == null || v.isEmpty)
+                      if (v == null || v.isEmpty) {
                         return 'Ingresa la nueva contraseña';
-                      if (!_isPasswordValid())
+                      }
+                      if (!_isPasswordValid()) {
                         return 'La contraseña no cumple todos los requisitos';
+                      }
                       return null;
                     },
                   ),
@@ -282,10 +285,12 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     ),
                     onFieldSubmitted: (_) => _handleChangePassword(),
                     validator: (v) {
-                      if (v == null || v.isEmpty)
+                      if (v == null || v.isEmpty) {
                         return 'Confirma la contraseña';
-                      if (v != _passwordController.text)
+                      }
+                      if (v != _passwordController.text) {
                         return 'Las contraseñas no coinciden';
+                      }
                       return null;
                     },
                   ),

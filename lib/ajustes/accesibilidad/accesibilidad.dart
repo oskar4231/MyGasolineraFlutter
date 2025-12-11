@@ -150,7 +150,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   style: TextStyle(color: Colors.black87, fontSize: 12),
                 ),
                 value: _altoContraste,
-                activeColor: const Color(0xFFFF9350),
+                activeThumbColor: const Color(0xFFFF9350),
                 onChanged: (bool value) {
                   setState(() {
                     _altoContraste = value;
@@ -182,7 +182,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   style: TextStyle(color: Colors.black87, fontSize: 12),
                 ),
                 value: _lectorPantalla,
-                activeColor: const Color(0xFFFF9350),
+                activeThumbColor: const Color(0xFFFF9350),
                 onChanged: (bool value) {
                   setState(() {
                     _lectorPantalla = value;

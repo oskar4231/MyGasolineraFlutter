@@ -677,7 +677,6 @@ class _OpcionItem extends StatefulWidget {
   final VoidCallback onTap;
 
   const _OpcionItem({
-    super.key,
     required this.icono,
     required this.texto,
     required this.onTap,

@@ -172,10 +172,12 @@ class _MapWidgetState extends State<MapWidget> {
 
         if (precio == 0.0) return false;
 
-        if (widget.precioDesde != null && precio < widget.precioDesde!)
+        if (widget.precioDesde != null && precio < widget.precioDesde!) {
           return false;
-        if (widget.precioHasta != null && precio > widget.precioHasta!)
+        }
+        if (widget.precioHasta != null && precio > widget.precioHasta!) {
           return false;
+        }
 
         return true;
       }).toList();

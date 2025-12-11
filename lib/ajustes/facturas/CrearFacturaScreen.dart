@@ -33,7 +33,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
   }
 
   String _formatTime(DateTime time) {

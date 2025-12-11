@@ -42,6 +42,34 @@ class _FacturasScreenState extends State<FacturasScreen> {
     }
   }
 
+  String _formatFecha(String? fecha) {
+    if (fecha == null || fecha.isEmpty) return '';
+
+    // Si viene en formato ISO (2025-12-10T23:00:00.000Z)
+    if (fecha.contains('T')) {
+      try {
+        DateTime dateTime = DateTime.parse(fecha);
+        return '${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
+      } catch (e) {
+        return fecha;
+      }
+    }
+
+    return fecha;
+  }
+
+  String _formatHora(String? hora) {
+    if (hora == null || hora.isEmpty) return '';
+
+    // Si contiene segundos (:00 al final), quitarlos
+    if (hora.split(':').length > 2) {
+      final partes = hora.split(':');
+      return '${partes[0]}:${partes[1]}';
+    }
+
+    return hora;
+  }
+
   void _navegarACrearFactura() async {
     final result = await Navigator.push(
       context,
@@ -219,7 +247,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
                           ),
                         ),
                         Text(
-                          '${factura['fecha'] ?? ''} - ${factura['hora'] ?? ''}',
+                          '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
                           style: const TextStyle(color: Color(0xFF492714)),
                         ),
                       ],
