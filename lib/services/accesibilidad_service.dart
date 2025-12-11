@@ -11,7 +11,7 @@ class AccesibilidadService {
   Future<bool> guardarConfiguracion({
     required String tamanoFuente,
     required bool altoContraste,
-    required bool lectorPantalla,
+    required bool modoOscuro,
     required String idioma,
     double? tamanoFuentePersonalizado,
   }) async {
@@ -34,7 +34,7 @@ class AccesibilidadService {
         'email': email,
         'tamanoFuente': tamanoFuente,
         'altoContraste': altoContraste,
-        'lectorPantalla': lectorPantalla,
+        'modoOscuro': modoOscuro,
         'idioma': idioma,
         if (tamanoFuentePersonalizado != null)
           'tamanoFuentePersonalizado': tamanoFuentePersonalizado,
@@ -67,7 +67,7 @@ class AccesibilidadService {
         await _guardarConfiguracionLocal(
           tamanoFuente: tamanoFuente,
           altoContraste: altoContraste,
-          lectorPantalla: lectorPantalla,
+          modoOscuro: modoOscuro,
           idioma: idioma,
           tamanoFuentePersonalizado: tamanoFuentePersonalizado,
         );
@@ -127,7 +127,7 @@ class AccesibilidadService {
           await _guardarConfiguracionLocal(
             tamanoFuente: config['tamanoFuente'] ?? 'Mediano',
             altoContraste: config['altoContraste'] ?? false,
-            lectorPantalla: config['lectorPantalla'] ?? false,
+            modoOscuro: config['modoOscuro'] ?? false,
             idioma: config['idioma'] ?? 'Español',
             tamanoFuentePersonalizado: config['tamanoFuentePersonalizado']
                 ?.toDouble(),
@@ -155,14 +155,14 @@ class AccesibilidadService {
   Future<void> _guardarConfiguracionLocal({
     required String tamanoFuente,
     required bool altoContraste,
-    required bool lectorPantalla,
+    required bool modoOscuro,
     required String idioma,
     double? tamanoFuentePersonalizado,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accesibilidad_tamanoFuente', tamanoFuente);
     await prefs.setBool('accesibilidad_altoContraste', altoContraste);
-    await prefs.setBool('accesibilidad_lectorPantalla', lectorPantalla);
+    await prefs.setBool('accesibilidad_modoOscuro', modoOscuro);
     await prefs.setString('accesibilidad_idioma', idioma);
     if (tamanoFuentePersonalizado != null) {
       await prefs.setDouble(
@@ -186,8 +186,7 @@ class AccesibilidadService {
       return {
         'tamanoFuente': tamanoFuente,
         'altoContraste': prefs.getBool('accesibilidad_altoContraste') ?? false,
-        'lectorPantalla':
-            prefs.getBool('accesibilidad_lectorPantalla') ?? false,
+        'modoOscuro': prefs.getBool('accesibilidad_modoOscuro') ?? false,
         'idioma': prefs.getString('accesibilidad_idioma') ?? 'Español',
         'tamanoFuentePersonalizado': prefs.getDouble(
           'accesibilidad_tamanoFuentePersonalizado',
@@ -204,7 +203,7 @@ class AccesibilidadService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('accesibilidad_tamanoFuente');
     await prefs.remove('accesibilidad_altoContraste');
-    await prefs.remove('accesibilidad_lectorPantalla');
+    await prefs.remove('accesibilidad_modoOscuro');
     await prefs.remove('accesibilidad_idioma');
     print('✅ Configuración local limpiada');
   }

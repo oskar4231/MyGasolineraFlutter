@@ -11,7 +11,7 @@ class AccesibilidadScreen extends StatefulWidget {
 class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   String _tamanoFuente = 'Mediano';
   bool _altoContraste = false;
-  bool _lectorPantalla = false;
+  bool _modoOscuro = false;
   String _idiomaSeleccionado = 'Español';
   final _accesibilidadService = AccesibilidadService();
   bool _cargando = true;
@@ -31,7 +31,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         setState(() {
           _tamanoFuente = config['tamanoFuente'] ?? 'Mediano';
           _altoContraste = config['altoContraste'] ?? false;
-          _lectorPantalla = config['lectorPantalla'] ?? false;
+          _modoOscuro = config['modoOscuro'] ?? false;
           _idiomaSeleccionado = config['idioma'] ?? 'Español';
           _cargando = false;
         });
@@ -160,17 +160,14 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Lector de pantalla
+            // Modo Oscuro
             Card(
               elevation: 2,
               color: const Color(0xFFFFE8DA),
               child: SwitchListTile(
-                secondary: const Icon(
-                  Icons.record_voice_over,
-                  color: Colors.black,
-                ),
+                secondary: const Icon(Icons.dark_mode, color: Colors.black),
                 title: const Text(
-                  'Soporte para Lector de Pantalla',
+                  'Modo Oscuro',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -178,14 +175,14 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   ),
                 ),
                 subtitle: const Text(
-                  'Optimiza la app para lectores de pantalla',
+                  'Reduce el brillo y mejora la visibilidad nocturna',
                   style: TextStyle(color: Colors.black87, fontSize: 12),
                 ),
-                value: _lectorPantalla,
+                value: _modoOscuro,
                 activeThumbColor: const Color(0xFFFF9350),
                 onChanged: (bool value) {
                   setState(() {
-                    _lectorPantalla = value;
+                    _modoOscuro = value;
                   });
                 },
               ),
@@ -257,7 +254,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                               .guardarConfiguracion(
                                 tamanoFuente: _tamanoFuente,
                                 altoContraste: _altoContraste,
-                                lectorPantalla: _lectorPantalla,
+                                modoOscuro: _modoOscuro,
                                 idioma: _idiomaSeleccionado,
                               );
 
