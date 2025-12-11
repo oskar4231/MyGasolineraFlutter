@@ -8,7 +8,7 @@ import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
 import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
-import 'package:my_gasolinera/services/perfil_service.dart'; // Para subir fotos
+import 'package:my_gasolinera/services/perfil_service.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -19,36 +19,57 @@ class AjustesScreen extends StatefulWidget {
 
 class _AjustesScreenState extends State<AjustesScreen> {
   Uint8List? _profileImageBytes;
-  String? _profileImageUrl; // Para URLs de imágenes
-  String _telefonoUsuario = "123-456-7890"; // Número por defecto
-  String _nombre = "Nombre"; // Nombre por defecto
-  String _apellido = "Apellido"; // Apellido por defecto
+  String? _profileImageUrl;
+  String _nombreUsuario = "Usuario"; // Nombre que se mostrará
+
   String get _emailUsuario {
     return AuthService.getUserEmail() ?? 'usuario@gmail.com';
   }
 
   final _usuarioService = UsuarioService();
-  final _perfilService = PerfilService(); // Para subir fotos
+  final _perfilService = PerfilService();
   bool _eliminandoCuenta = false;
-  bool _subiendoFoto = false; // Para mostrar loader al subir foto
+  bool _subiendoFoto = false;
 
   @override
   void initState() {
     super.initState();
-    _cargarFotoPerfil(); // NUEVO: Cargar foto al iniciar
+    _cargarFotoPerfil();
+    _cargarNombreUsuario();
   }
 
-  // Cargar foto de perfil desde el servidor usando UsuarioService
+  // Cargar el nombre del usuario desde el backend
+  Future<void> _cargarNombreUsuario() async {
+    try {
+      final nombre = await _usuarioService.obtenerNombreUsuario();
+      if (mounted) {
+        setState(() {
+          _nombreUsuario = nombre;
+        });
+        print('✅ Nombre de usuario cargado: $nombre');
+      }
+    } catch (e) {
+      print('❌ Error cargando nombre de usuario: $e');
+      // Fallback al email si falla
+      if (mounted) {
+        final emailFallback =
+            AuthService.getUserEmail()?.split('@')[0] ?? 'Usuario';
+        setState(() {
+          _nombreUsuario = emailFallback;
+        });
+      }
+    }
+  }
+
+  // Cargar foto de perfil desde el servidor
   Future<void> _cargarFotoPerfil() async {
     try {
       final fotoData = await _usuarioService.cargarImagenPerfil(_emailUsuario);
 
       if (fotoData != null && mounted) {
-        // Verificar si es base64 o URL
         if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-          // Es base64, decodificar
           final base64String = fotoData.contains(',')
-              ? fotoData.split(',')[1] // Remover prefijo data:image/...
+              ? fotoData.split(',')[1]
               : fotoData;
           final bytes = base64Decode(base64String);
           setState(() {
@@ -56,15 +77,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
           });
           print('📷 Foto de perfil cargada exitosamente (base64)');
         } else if (fotoData.startsWith('http')) {
-          // Es una URL, cargar la imagen desde la red
           print('📷 Cargando foto desde URL: $fotoData');
-          // Guardar la URL para usarla con NetworkImage
           setState(() {
             _profileImageUrl = fotoData;
           });
           print('📷 Foto de perfil cargada exitosamente (URL)');
         } else {
-          // Intentar decodificar como base64 sin prefijo
           try {
             final bytes = base64Decode(fotoData);
             setState(() {
@@ -83,7 +101,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
-  // MODIFICADO: Función para seleccionar imagen desde galería
+  // Función para seleccionar imagen desde galería
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -92,14 +110,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
         _profileImageBytes = bytes;
-        _subiendoFoto = true; // Mostrar loader
+        _subiendoFoto = true;
       });
 
-      // NUEVO: Subir la imagen al servidor
       final exito = await _perfilService.subirFotoPerfil(pickedFile);
 
       setState(() {
-        _subiendoFoto = false; // Ocultar loader
+        _subiendoFoto = false;
       });
 
       if (exito && mounted) {
@@ -118,7 +135,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
             duration: Duration(seconds: 2),
           ),
         );
-        // Revertir la imagen si falló la subida
         setState(() {
           _profileImageBytes = null;
         });
@@ -126,7 +142,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
-  // MODIFICADO: Función para tomar foto con cámara
+  // Función para tomar foto con cámara
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -135,14 +151,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
         _profileImageBytes = bytes;
-        _subiendoFoto = true; // Mostrar loader
+        _subiendoFoto = true;
       });
 
-      // NUEVO: Subir la imagen al servidor
       final exito = await _perfilService.subirFotoPerfil(pickedFile);
 
       setState(() {
-        _subiendoFoto = false; // Ocultar loader
+        _subiendoFoto = false;
       });
 
       if (exito && mounted) {
@@ -161,7 +176,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
             duration: Duration(seconds: 2),
           ),
         );
-        // Revertir la imagen si falló la subida
         setState(() {
           _profileImageBytes = null;
         });
@@ -201,110 +215,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancelar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Función para mostrar diálogo de edición de nombre
-  void _mostrarDialogoEditarNombre() {
-    TextEditingController nombreController = TextEditingController();
-    TextEditingController apellidoController = TextEditingController();
-    TextEditingController telefonoController = TextEditingController();
-
-    nombreController.text = _nombre;
-    apellidoController.text = _apellido;
-    telefonoController.text = _telefonoUsuario;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFFFFE8DA),
-          title: const Text(
-            'Editar Información',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: nombreController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ingresa tu nombre',
-                  labelStyle: TextStyle(color: Colors.black),
-                  hintStyle: TextStyle(color: Colors.black54),
-                ),
-                style: const TextStyle(color: Colors.black),
-                maxLength: 25,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: apellidoController,
-                decoration: const InputDecoration(
-                  labelText: 'Apellido',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ingresa tu apellido',
-                  labelStyle: TextStyle(color: Colors.black),
-                  hintStyle: TextStyle(color: Colors.black54),
-                ),
-                style: const TextStyle(color: Colors.black),
-                maxLength: 25,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: telefonoController,
-                decoration: const InputDecoration(
-                  labelText: 'Teléfono',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ingresa tu número de teléfono',
-                  prefixIcon: Icon(Icons.phone, color: Colors.black),
-                  labelStyle: TextStyle(color: Colors.black),
-                  hintStyle: TextStyle(color: Colors.black54),
-                ),
-                style: const TextStyle(color: Colors.black),
-                keyboardType: TextInputType.phone,
-                maxLength: 15,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nombreController.text.trim().isNotEmpty &&
-                    telefonoController.text.trim().isNotEmpty) {
-                  setState(() {
-                    _nombre = nombreController.text.trim();
-                    _apellido = apellidoController.text.trim();
-                    _telefonoUsuario = telefonoController.text.trim();
-                  });
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Información actualizada'),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF9350),
-              ),
-              child: const Text(
-                'Guardar',
-                style: TextStyle(color: Colors.white),
-              ),
             ),
           ],
         );
@@ -369,17 +279,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
       elevation: 2,
       color: const Color(0xFFFFE8DA),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
+            // Foto de perfil más grande con indicador de carga
             GestureDetector(
-              onTap: _subiendoFoto
-                  ? null
-                  : _showImagePickerDialog, // MODIFICADO: Deshabilitar si está subiendo
+              onTap: _subiendoFoto ? null : _showImagePickerDialog,
               child: Stack(
                 children: [
                   CircleAvatar(
-                    radius: 24,
+                    radius: 40, // Aumentado de 24 a 40
                     backgroundColor: Colors.grey,
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
@@ -388,10 +297,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         : null,
                     child:
                         _profileImageBytes == null && _profileImageUrl == null
-                        ? const Icon(Icons.person, color: Colors.black)
+                        ? const Icon(
+                            Icons.person,
+                            color: Colors.black,
+                            size: 40,
+                          )
                         : null,
                   ),
-                  // NUEVO: Mostrar loader mientras sube la foto
+                  // Loader mientras sube la foto
                   if (_subiendoFoto)
                     Positioned.fill(
                       child: Container(
@@ -401,10 +314,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         ),
                         child: const Center(
                           child: SizedBox(
-                            width: 20,
-                            height: 20,
+                            width: 30,
+                            height: 30,
                             child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                              strokeWidth: 3,
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 Colors.white,
                               ),
@@ -413,19 +326,20 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         ),
                       ),
                     ),
-                  if (!_subiendoFoto) // Solo mostrar icono de cámara si no está subiendo
+                  // Icono de cámara
+                  if (!_subiendoFoto)
                     Positioned(
                       bottom: 0,
                       right: 0,
                       child: Container(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(6),
                         decoration: const BoxDecoration(
                           color: Colors.black,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.camera_alt,
-                          size: 12,
+                          size: 16,
                           color: Colors.white,
                         ),
                       ),
@@ -433,55 +347,33 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 ],
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 20),
+            // Texto "Hola, [nombre]"
             Expanded(
-              child: GestureDetector(
-                onTap: _mostrarDialogoEditarNombre,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: Colors.black,
+                        fontFamily: 'Roboto',
+                      ),
                       children: [
-                        Expanded(
-                          child: Text(
-                            '$_nombre $_apellido',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        const TextSpan(
+                          text: 'Hola, ',
+                          style: TextStyle(fontWeight: FontWeight.normal),
                         ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.edit, size: 16, color: Colors.black),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(Icons.phone, size: 14, color: Colors.black),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            _telefonoUsuario,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        TextSpan(
+                          text: _nombreUsuario,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _emailUsuario,
-                      style: const TextStyle(color: Colors.black, fontSize: 14),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -543,7 +435,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           },
         ),
         _OpcionItem(
-          icono: Icons.speed,
+          icono: Icons.delete_outline,
           texto: 'Borrar Cuenta',
           onTap: () => _mostrarDialogoBorrarCuenta(),
         ),
@@ -685,7 +577,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFFF9350),
+                      backgroundColor: const Color(0xFFFF9350),
                     ),
                     child: const Text(
                       'Eliminar',

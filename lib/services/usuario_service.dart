@@ -7,6 +7,85 @@ class UsuarioService {
   static const String baseUrl =
       'http://localhost:3000'; // Cambia por tu URL real
 
+  /// Obtiene el nombre del usuario desde el backend
+  Future<String> obtenerNombreUsuario() async {
+    try {
+      // Obtener email del usuario
+      final email = AuthService.getUserEmail();
+      if (email == null || email.isEmpty) {
+        throw Exception('Usuario no autenticado');
+      }
+
+      // Obtener token si existe
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken') ?? '';
+
+      final url = '$baseUrl/usuarios/perfil/$email';
+      print('🔍 DEBUG - Obteniendo nombre de usuario desde: $url');
+
+      final response = await http
+          .get(
+            Uri.parse(url),
+            headers: {
+              'Content-Type': 'application/json',
+              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () =>
+                throw Exception('Timeout al conectar con el servidor'),
+          );
+
+      print('🔍 DEBUG - Status code: ${response.statusCode}');
+      print('🔍 DEBUG - Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // El backend puede retornar el nombre de diferentes formas
+        String nombre = 'Usuario';
+
+        if (data is Map) {
+          // Intentar obtener el nombre de diferentes campos posibles
+          nombre =
+              data['nombre'] ??
+              data['name'] ??
+              data['usuario']?['nombre'] ??
+              data['usuario']?['name'] ??
+              email.split('@')[0];
+        }
+
+        print('🔍 DEBUG - Nombre obtenido: $nombre');
+
+        // Guardar el nombre localmente
+        await prefs.setString('userName', nombre);
+
+        return nombre;
+      } else if (response.statusCode == 404) {
+        print('⚠️ Usuario no encontrado, usando email como nombre');
+        return email.split('@')[0];
+      } else {
+        throw Exception('Error al obtener nombre: ${response.statusCode}');
+      }
+    } on Exception catch (e) {
+      print('❌ Error obteniendo nombre de usuario: $e');
+
+      // Fallback: intentar obtener nombre guardado localmente
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final nombreLocal = prefs.getString('userName');
+        if (nombreLocal != null && nombreLocal.isNotEmpty) {
+          return nombreLocal;
+        }
+      } catch (_) {}
+
+      // Último fallback: usar parte del email
+      final email = AuthService.getUserEmail();
+      return email?.split('@')[0] ?? 'Usuario';
+    }
+  }
+
   /// Elimina la cuenta del usuario marcándola como inactiva
   Future<bool> eliminarCuenta(String email) async {
     try {
