@@ -4,7 +4,8 @@ import 'auth_service.dart';
 
 /// Servicio para obtener estadísticas de gastos de combustible
 class EstadisticasService {
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl =
+      'https://sean-insulation-grows-auburn.trycloudflare.com';
 
   /// Headers comunes con autenticación
   static Map<String, String> _getHeaders() {
@@ -173,7 +174,7 @@ class EstadisticasService {
   // ==================== MÉTODO COMPLETO (RECOMENDADO) ====================
 
   /// 🎯 Obtener todas las estadísticas en una sola llamada
-  /// 
+  ///
   /// Retorna un objeto con todas las estadísticas necesarias:
   /// - resumen: Gasto total, promedio por factura, etc.
   /// - mesActual: Gasto del mes en curso
@@ -184,14 +185,14 @@ class EstadisticasService {
     try {
       // Hacer todas las llamadas en paralelo para mejor rendimiento
       final results = await Future.wait([
-        obtenerGastoTotal(),           // 0
-        obtenerGastoMesActual(),       // 1
-        obtenerPromedioMensual(),      // 2
-        obtenerGastoAnual(),           // 3
-        obtenerComparacionMensual(),   // 4
-        obtenerGastosPorMes(),         // 5
-        obtenerPromedioFactura(),      // 6
-        obtenerProyeccionFinMes(),     // 7
+        obtenerGastoTotal(), // 0
+        obtenerGastoMesActual(), // 1
+        obtenerPromedioMensual(), // 2
+        obtenerGastoAnual(), // 3
+        obtenerComparacionMensual(), // 4
+        obtenerGastosPorMes(), // 5
+        obtenerPromedioFactura(), // 6
+        obtenerProyeccionFinMes(), // 7
       ]);
 
       // Cast explícito para evitar errores de tipado

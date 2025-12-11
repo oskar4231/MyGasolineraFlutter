@@ -15,9 +15,7 @@ class Crear extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Crear Cuenta MyGasolinera',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
+      theme: ThemeData(primarySwatch: Colors.orange),
       home: const CrearScreen(),
       debugShowCheckedModeBanner: false,
     );
@@ -91,10 +89,10 @@ class _CrearScreenState extends State<CrearScreen> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:3000/register'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          Uri.parse(
+            'https://sean-insulation-grows-auburn.trycloudflare.com/register',
+          ),
+          headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,
@@ -112,20 +110,17 @@ class _CrearScreenState extends State<CrearScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           // Navegar automáticamente a login después de 2 segundos
           Future.delayed(const Duration(seconds: 2), () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           });
-          
+
           // Limpiar formulario
           _formKey.currentState!.reset();
-          
         } else {
           // Error del servidor
           ScaffoldMessenger.of(context).showSnackBar(
@@ -226,9 +221,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('nombre'),
                       decoration: InputDecoration(
                         hintText: 'Nombre completo',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: const TextStyle(color: Color(0xFF492714)),
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -257,9 +250,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
                         hintText: 'E-mail',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: const TextStyle(color: Color(0xFF492714)),
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -283,7 +274,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 15),
-                    
+
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
@@ -294,9 +285,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: const TextStyle(color: Color(0xFF492714)),
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -340,19 +329,18 @@ class _CrearScreenState extends State<CrearScreen> {
                       backgroundColor: const Color(0xFFFFE8DA),
                     ),
                     const SizedBox(height: 15),
-                    
+
                     // Campo de confirmar contraseña
                     TextFormField(
                       controller: _confirmPasswordController,
                       focusNode: _confirmPasswordFocus,
                       textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _handleFieldSubmit('confirmPassword'),
+                      onFieldSubmitted: (_) =>
+                          _handleFieldSubmit('confirmPassword'),
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
                         hintText: 'Confirmar contraseña',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: const TextStyle(color: Color(0xFF492714)),
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -372,7 +360,8 @@ class _CrearScreenState extends State<CrearScreen> {
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
                             });
                           },
                         ),
@@ -388,12 +377,18 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 30),
-                    
+
                     // Botón de crear
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: (_isLoading || !_isPasswordValid() || _emailController.text.isEmpty || _nombreController.text.isEmpty) ? null : _registrarUsuario,
+                        onPressed:
+                            (_isLoading ||
+                                !_isPasswordValid() ||
+                                _emailController.text.isEmpty ||
+                                _nombreController.text.isEmpty)
+                            ? null
+                            : _registrarUsuario,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF9955),
                           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -408,7 +403,9 @@ class _CrearScreenState extends State<CrearScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF492714)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFF492714),
+                                  ),
                                 ),
                               )
                             : const Text(

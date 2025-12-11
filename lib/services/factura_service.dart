@@ -4,7 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'auth_service.dart';
 
 class FacturaService {
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl =
+      'https://sean-insulation-grows-auburn.trycloudflare.com';
 
   // Obtener todas las facturas del usuario
   static Future<List<Map<String, dynamic>>> obtenerFacturas() async {

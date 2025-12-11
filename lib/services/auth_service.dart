@@ -10,7 +10,8 @@ class AuthService {
   // IMPORTANTE: Cambia esta URL por la IP de tu servidor backend
   // Si usas emulador Android: 10.0.2.2
   // Si usas dispositivo físico: 10.2.1.158 (Tu IP actual)
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl =
+      'https://sean-insulation-grows-auburn.trycloudflare.com';
 
   // Guardar el token y email del usuario
   static Future<void> saveToken(String token, String email) async {

@@ -5,7 +5,7 @@ import 'package:my_gasolinera/services/auth_service.dart';
 
 class UsuarioService {
   static const String baseUrl =
-      'http://localhost:3000'; // Cambia por tu URL real
+      'https://sean-insulation-grows-auburn.trycloudflare.com'; // Cambia por tu URL real
 
   /// Obtiene el nombre del usuario desde el backend
   Future<String> obtenerNombreUsuario() async {

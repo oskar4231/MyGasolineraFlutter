@@ -87,7 +87,9 @@ class _CochesScreenState extends State<CochesScreen> {
     });
 
     try {
-      final url = Uri.parse('http://localhost:3000/coches');
+      final url = Uri.parse(
+        'https://sean-insulation-grows-auburn.trycloudflare.com/coches',
+      );
 
       print('Cargando coches desde: $url');
 
@@ -154,8 +156,10 @@ class _CochesScreenState extends State<CochesScreen> {
 
     try {
       // Use http://10.0.2.2:3000/insertCar for Android Emulator
-      // Use http://localhost:3000/insertCar for iOS Simulator or Web
-      final url = Uri.parse('http://localhost:3000/insertCar');
+      // Use https://sean-insulation-grows-auburn.trycloudflare.com/insertCar for iOS Simulator or Web
+      final url = Uri.parse(
+        'https://sean-insulation-grows-auburn.trycloudflare.com/insertCar',
+      );
 
       // Convertir el array de combustibles a un string separado por comas
       final combustibleString = tiposCombustible.join(', ');
@@ -479,7 +483,9 @@ class _CochesScreenState extends State<CochesScreen> {
     });
 
     try {
-      final url = Uri.parse('http://localhost:3000/coches/${coche.idCoche}');
+      final url = Uri.parse(
+        'https://sean-insulation-grows-auburn.trycloudflare.com/coches/${coche.idCoche}',
+      );
 
       print('Eliminando coche: ${coche.idCoche}');
 
