@@ -12,7 +12,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   String _tamanoFuente = 'Mediano';
   bool _altoContraste = false;
   bool _lectorPantalla = false;
-  String _idiomaSeleccionado = 'Español (España)';
+  String _idiomaSeleccionado = 'Español';
   final _accesibilidadService = AccesibilidadService();
   bool _cargando = true;
   double _tamanoFuentePersonalizado = 16.0; // Tamaño personalizado
@@ -32,7 +32,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           _tamanoFuente = config['tamanoFuente'] ?? 'Mediano';
           _altoContraste = config['altoContraste'] ?? false;
           _lectorPantalla = config['lectorPantalla'] ?? false;
-          _idiomaSeleccionado = config['idioma'] ?? 'Español (España)';
+          _idiomaSeleccionado = config['idioma'] ?? 'Español';
           _cargando = false;
         });
       } else {
@@ -528,44 +528,12 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   // Popup para selección de idioma
   void _mostrarPopupIdioma() {
     final Map<String, List<String>> idiomasConVariantes = {
-      'Español': [
-        'Español (España)',
-        'Español (Argentina)',
-        'Español (Chile)',
-        'Español (México)',
-        'Español (Colombia)',
-        'Español (Perú)',
-      ],
-      'English': [
-        'English (United States)',
-        'English (United Kingdom)',
-        'English (Australia)',
-        'English (Canada)',
-      ],
-      'Français': [
-        'Français (France)',
-        'Français (Canada)',
-        'Français (Belgique)',
-        'Français (Suisse)',
-      ],
-      'Deutsch': [
-        'Deutsch (Deutschland)',
-        'Deutsch (Österreich)',
-        'Deutsch (Schweiz)',
-      ],
-      'Italiano': ['Italiano (Italia)', 'Italiano (Svizzera)'],
-      'Português': ['Português (Brasil)', 'Português (Portugal)'],
+      'Español': ['Español'],
+      'Português': ['Português'],
+      'Deutsch': ['Deutsch'],
+      'Italiano': ['Italiano'],
+      'English': ['English'],
       'Valenciano': ['Valencià', 'Català'],
-      '中文': ['中文 (简体)', '中文 (繁體)'],
-      '日本語': ['日本語'],
-      '한국어': ['한국어'],
-      'العربية': ['العربية'],
-      'Русский': ['Русский'],
-      'हिन्दी': ['हिन्दी'],
-      'Nederlands': ['Nederlands'],
-      'Svenska': ['Svenska'],
-      'Polski': ['Polski'],
-      'Türkçe': ['Türkçe'],
     };
 
     showDialog(

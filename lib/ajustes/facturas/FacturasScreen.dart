@@ -70,6 +70,11 @@ class _FacturasScreenState extends State<FacturasScreen> {
     return hora;
   }
 
+  String _buildImageUrl(String path) {
+    final normalizedPath = path.replaceAll('\\', '/');
+    return '${FacturaService.baseUrl}/$normalizedPath';
+  }
+
   void _navegarACrearFactura() async {
     final result = await Navigator.push(
       context,
@@ -223,10 +228,20 @@ class _FacturasScreenState extends State<FacturasScreen> {
                         color: const Color(0xFFFF9955),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(
-                        Icons.receipt,
-                        color: Color(0xFF492714),
-                      ),
+                      child: factura['imagenPath'] != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                _buildImageUrl(factura['imagenPath']),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(
+                                      Icons.receipt,
+                                      color: Color(0xFF492714),
+                                    ),
+                              ),
+                            )
+                          : const Icon(Icons.receipt, color: Color(0xFF492714)),
                     ),
                     title: Text(
                       factura['titulo'] ?? 'Sin título',

@@ -128,7 +128,7 @@ class AccesibilidadService {
             tamanoFuente: config['tamanoFuente'] ?? 'Mediano',
             altoContraste: config['altoContraste'] ?? false,
             lectorPantalla: config['lectorPantalla'] ?? false,
-            idioma: config['idioma'] ?? 'Español (España)',
+            idioma: config['idioma'] ?? 'Español',
             tamanoFuentePersonalizado: config['tamanoFuentePersonalizado']
                 ?.toDouble(),
           );
@@ -188,7 +188,7 @@ class AccesibilidadService {
         'altoContraste': prefs.getBool('accesibilidad_altoContraste') ?? false,
         'lectorPantalla':
             prefs.getBool('accesibilidad_lectorPantalla') ?? false,
-        'idioma': prefs.getString('accesibilidad_idioma') ?? 'Español (España)',
+        'idioma': prefs.getString('accesibilidad_idioma') ?? 'Español',
         'tamanoFuentePersonalizado': prefs.getDouble(
           'accesibilidad_tamanoFuentePersonalizado',
         ),
