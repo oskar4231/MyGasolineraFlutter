@@ -21,7 +21,7 @@ class DetalleFacturaScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 2, 1, 1)),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
