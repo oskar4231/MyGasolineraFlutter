@@ -67,37 +67,6 @@ class DetalleFacturaScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen de la factura
-            if (factura['imagenPath'] != null)
-              Container(
-                width: double.infinity,
-                height: 200,
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    _buildImageUrl(factura['imagenPath']),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.broken_image, size: 50),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
             // Información de la factura
             Card(
               color: const Color(0xFFFFCFB0),
@@ -154,6 +123,90 @@ class DetalleFacturaScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            const SizedBox(height: 20),
+
+            // Imagen de la factura
+            if (factura['imagenPath'] != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 8),
+                    child: Text(
+                      'Comprobante:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF492714),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 300,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                backgroundColor: Colors.black,
+                                appBar: AppBar(
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                  iconTheme: const IconThemeData(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                body: Center(
+                                  child: InteractiveViewer(
+                                    minScale: 0.5,
+                                    maxScale: 4.0,
+                                    child: Image.network(
+                                      _buildImageUrl(factura['imagenPath']),
+                                      fit: BoxFit.contain,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(
+                                                Icons.broken_image,
+                                                color: Colors.white,
+                                                size: 100,
+                                              ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Image.network(
+                          _buildImageUrl(factura['imagenPath']),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.broken_image, size: 50),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
