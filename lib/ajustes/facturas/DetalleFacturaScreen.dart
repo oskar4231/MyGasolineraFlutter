@@ -6,6 +6,34 @@ class DetalleFacturaScreen extends StatelessWidget {
 
   const DetalleFacturaScreen({super.key, required this.factura});
 
+  String _formatFecha(String? fecha) {
+    if (fecha == null || fecha.isEmpty) return '';
+
+    // Si viene en formato ISO (2025-12-10T23:00:00.000Z)
+    if (fecha.contains('T')) {
+      try {
+        DateTime dateTime = DateTime.parse(fecha);
+        return '${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
+      } catch (e) {
+        return fecha;
+      }
+    }
+
+    return fecha;
+  }
+
+  String _formatHora(String? hora) {
+    if (hora == null || hora.isEmpty) return '';
+
+    // Si contiene segundos (:00 al final), quitarlos
+    if (hora.split(':').length > 2) {
+      final partes = hora.split(':');
+      return '${partes[0]}:${partes[1]}';
+    }
+
+    return hora;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +49,10 @@ class DetalleFacturaScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 2, 1, 1)),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromARGB(255, 2, 1, 1),
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -82,10 +113,18 @@ class DetalleFacturaScreen extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInfoRow('Fecha', factura['fecha']),
+                          child: _buildInfoRow(
+                            'Fecha',
+                            _formatFecha(factura['fecha']),
+                          ),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(child: _buildInfoRow('Hora', factura['hora'])),
+                        Expanded(
+                          child: _buildInfoRow(
+                            'Hora',
+                            _formatHora(factura['hora']),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
