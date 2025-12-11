@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
 
@@ -19,7 +19,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   final _horaController = TextEditingController();
   final _descripcionController = TextEditingController();
 
-  File? _imagenFactura;
+  XFile? _imagenFactura;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
 
@@ -48,7 +48,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         setState(() {
-          _imagenFactura = File(image.path);
+          _imagenFactura = image;
         });
       }
     } else {
@@ -69,7 +69,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       final XFile? image = await _picker.pickImage(source: ImageSource.camera);
       if (image != null) {
         setState(() {
-          _imagenFactura = File(image.path);
+          _imagenFactura = image;
         });
       }
     } else {
@@ -132,7 +132,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
           fecha: _fechaController.text,
           hora: _horaController.text,
           descripcion: _descripcionController.text,
-          imagenPath: _imagenFactura?.path,
+          imagenFile: _imagenFactura,
         );
 
         if (mounted) {
@@ -357,11 +357,21 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
-                                  _imagenFactura!,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
+                                child: FutureBuilder(
+                                  future: _imagenFactura!.readAsBytes(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Image.memory(
+                                        snapshot.data as Uint8List,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
                                 ),
                               ),
                               Positioned(
