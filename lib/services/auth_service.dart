@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Servicio para gestionar el token de autenticación y recuperación de contraseña
 class AuthService {
@@ -12,9 +13,15 @@ class AuthService {
   static const String baseUrl = 'http://localhost:3000';
 
   // Guardar el token y email del usuario
-  static void saveToken(String token, String email) {
+  static Future<void> saveToken(String token, String email) async {
     _token = token;
     _userEmail = email;
+
+    // Guardar también en SharedPreferences para persistencia
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('authToken', token);
+    await prefs.setString('userEmail', email);
+
     print('Token guardado para: $email');
   }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
@@ -7,7 +8,7 @@ import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
 import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
-import 'package:my_gasolinera/services/perfil_service.dart'; // NUEVO IMPORT
+import 'package:my_gasolinera/services/perfil_service.dart'; // Para subir fotos
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -18,6 +19,7 @@ class AjustesScreen extends StatefulWidget {
 
 class _AjustesScreenState extends State<AjustesScreen> {
   Uint8List? _profileImageBytes;
+  String? _profileImageUrl; // Para URLs de imágenes
   String _telefonoUsuario = "123-456-7890"; // Número por defecto
   String _nombre = "Nombre"; // Nombre por defecto
   String _apellido = "Apellido"; // Apellido por defecto
@@ -26,9 +28,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   final _usuarioService = UsuarioService();
-  final _perfilService = PerfilService(); // NUEVO SERVICIO
+  final _perfilService = PerfilService(); // Para subir fotos
   bool _eliminandoCuenta = false;
-  bool _subiendoFoto = false; // NUEVO: Para mostrar loader al subir foto
+  bool _subiendoFoto = false; // Para mostrar loader al subir foto
 
   @override
   void initState() {
@@ -36,14 +38,45 @@ class _AjustesScreenState extends State<AjustesScreen> {
     _cargarFotoPerfil(); // NUEVO: Cargar foto al iniciar
   }
 
-  // NUEVO: Cargar foto de perfil desde el servidor
+  // Cargar foto de perfil desde el servidor usando UsuarioService
   Future<void> _cargarFotoPerfil() async {
     try {
-      final fotoUrl = await _perfilService.obtenerFotoPerfil();
-      if (fotoUrl != null && mounted) {
-        // Aquí podrías cargar la imagen desde la URL
-        // Por ahora, solo la guardamos para mostrar después
-        print('📷 Foto de perfil cargada: $fotoUrl');
+      final fotoData = await _usuarioService.cargarImagenPerfil(_emailUsuario);
+
+      if (fotoData != null && mounted) {
+        // Verificar si es base64 o URL
+        if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
+          // Es base64, decodificar
+          final base64String = fotoData.contains(',')
+              ? fotoData.split(',')[1] // Remover prefijo data:image/...
+              : fotoData;
+          final bytes = base64Decode(base64String);
+          setState(() {
+            _profileImageBytes = bytes;
+          });
+          print('📷 Foto de perfil cargada exitosamente (base64)');
+        } else if (fotoData.startsWith('http')) {
+          // Es una URL, cargar la imagen desde la red
+          print('📷 Cargando foto desde URL: $fotoData');
+          // Guardar la URL para usarla con NetworkImage
+          setState(() {
+            _profileImageUrl = fotoData;
+          });
+          print('📷 Foto de perfil cargada exitosamente (URL)');
+        } else {
+          // Intentar decodificar como base64 sin prefijo
+          try {
+            final bytes = base64Decode(fotoData);
+            setState(() {
+              _profileImageBytes = bytes;
+            });
+            print(
+              '📷 Foto de perfil cargada exitosamente (base64 sin prefijo)',
+            );
+          } catch (e) {
+            print('⚠️ No se pudo decodificar la imagen: $e');
+          }
+        }
       }
     } catch (e) {
       print('Error cargando foto de perfil: $e');
@@ -350,8 +383,11 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundColor: Colors.grey,
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
+                        : _profileImageUrl != null
+                        ? NetworkImage(_profileImageUrl!) as ImageProvider
                         : null,
-                    child: _profileImageBytes == null
+                    child:
+                        _profileImageBytes == null && _profileImageUrl == null
                         ? const Icon(Icons.person, color: Colors.black)
                         : null,
                   ),
