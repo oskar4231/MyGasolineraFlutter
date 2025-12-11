@@ -15,6 +15,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   String _idiomaSeleccionado = 'Español (España)';
   final _accesibilidadService = AccesibilidadService();
   bool _cargando = true;
+  double _tamanoFuentePersonalizado = 16.0; // Tamaño personalizado
 
   @override
   void initState() {
@@ -109,12 +110,19 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Column(
                       children: [
-                        _buildOpcionTamano('Pequeño'),
-                        _buildOpcionTamano('Mediano'),
-                        _buildOpcionTamano('Grande'),
+                        Row(
+                          children: [
+                            Expanded(child: _buildOpcionTamano('Pequeño')),
+                            const SizedBox(width: 8),
+                            Expanded(child: _buildOpcionTamano('Mediano')),
+                            const SizedBox(width: 8),
+                            Expanded(child: _buildOpcionTamano('Grande')),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        _buildOpcionPersonalizada(),
                       ],
                     ),
                   ],
@@ -327,7 +335,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFFF9350) : Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -343,8 +351,177 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 14,
           ),
+          textAlign: TextAlign.center,
         ),
       ),
+    );
+  }
+
+  Widget _buildOpcionPersonalizada() {
+    final isSelected = _tamanoFuente == 'Personalizada';
+    return GestureDetector(
+      onTap: () => _mostrarSliderTamanoFuente(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFF9350) : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? const Color(0xFFFF9350) : Colors.black26,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.tune,
+              color: isSelected ? Colors.white : Colors.black,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Personalizado',
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 14,
+              ),
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                '(${_tamanoFuentePersonalizado.round()}px)',
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Popup para ajustar tamaño de fuente personalizado
+  void _mostrarSliderTamanoFuente() {
+    double tempTamano = _tamanoFuentePersonalizado;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFFFFE8DA),
+              title: Row(
+                children: const [
+                  Icon(Icons.format_size, color: Colors.black),
+                  SizedBox(width: 8),
+                  Text(
+                    'Tamaño Personalizado',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Texto de ejemplo que cambia de tamaño
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Este es un ejemplo',
+                        style: TextStyle(
+                          fontSize: tempTamano,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Slider
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.text_fields,
+                        size: 16,
+                        color: Colors.black54,
+                      ),
+                      Expanded(
+                        child: Slider(
+                          value: tempTamano,
+                          min: 10.0,
+                          max: 32.0,
+                          divisions: 22,
+                          activeColor: const Color(0xFFFF9350),
+                          inactiveColor: Colors.black12,
+                          label: tempTamano.round().toString(),
+                          onChanged: (double value) {
+                            setDialogState(() {
+                              tempTamano = value;
+                            });
+                          },
+                        ),
+                      ),
+                      const Icon(
+                        Icons.text_fields,
+                        size: 24,
+                        color: Colors.black54,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    'Tamaño: ${tempTamano.round()}px',
+                    style: const TextStyle(color: Colors.black87, fontSize: 14),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _tamanoFuente = 'Personalizada';
+                      _tamanoFuentePersonalizado = tempTamano;
+                    });
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Tamaño personalizado: ${tempTamano.round()}px',
+                        ),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF9350),
+                  ),
+                  child: const Text(
+                    'Aplicar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

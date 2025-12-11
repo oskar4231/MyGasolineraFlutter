@@ -13,6 +13,7 @@ class AccesibilidadService {
     required bool altoContraste,
     required bool lectorPantalla,
     required String idioma,
+    double? tamanoFuentePersonalizado,
   }) async {
     try {
       // Obtener email del usuario
@@ -35,6 +36,8 @@ class AccesibilidadService {
         'altoContraste': altoContraste,
         'lectorPantalla': lectorPantalla,
         'idioma': idioma,
+        if (tamanoFuentePersonalizado != null)
+          'tamanoFuentePersonalizado': tamanoFuentePersonalizado,
       };
 
       print('🔍 DEBUG - Body: ${jsonEncode(body)}');
@@ -66,6 +69,7 @@ class AccesibilidadService {
           altoContraste: altoContraste,
           lectorPantalla: lectorPantalla,
           idioma: idioma,
+          tamanoFuentePersonalizado: tamanoFuentePersonalizado,
         );
 
         return data['success'] == true || response.statusCode == 201;
@@ -125,6 +129,8 @@ class AccesibilidadService {
             altoContraste: config['altoContraste'] ?? false,
             lectorPantalla: config['lectorPantalla'] ?? false,
             idioma: config['idioma'] ?? 'Español (España)',
+            tamanoFuentePersonalizado: config['tamanoFuentePersonalizado']
+                ?.toDouble(),
           );
         }
 
@@ -151,12 +157,19 @@ class AccesibilidadService {
     required bool altoContraste,
     required bool lectorPantalla,
     required String idioma,
+    double? tamanoFuentePersonalizado,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('accesibilidad_tamanoFuente', tamanoFuente);
     await prefs.setBool('accesibilidad_altoContraste', altoContraste);
     await prefs.setBool('accesibilidad_lectorPantalla', lectorPantalla);
     await prefs.setString('accesibilidad_idioma', idioma);
+    if (tamanoFuentePersonalizado != null) {
+      await prefs.setDouble(
+        'accesibilidad_tamanoFuentePersonalizado',
+        tamanoFuentePersonalizado,
+      );
+    }
     print('✅ Configuración guardada localmente');
   }
 
@@ -176,6 +189,9 @@ class AccesibilidadService {
         'lectorPantalla':
             prefs.getBool('accesibilidad_lectorPantalla') ?? false,
         'idioma': prefs.getString('accesibilidad_idioma') ?? 'Español (España)',
+        'tamanoFuentePersonalizado': prefs.getDouble(
+          'accesibilidad_tamanoFuentePersonalizado',
+        ),
       };
     } catch (e) {
       print('❌ Error obteniendo configuración local: $e');
