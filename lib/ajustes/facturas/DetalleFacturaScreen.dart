@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:my_gasolinera/services/factura_service.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;
@@ -32,6 +32,12 @@ class DetalleFacturaScreen extends StatelessWidget {
     }
 
     return hora;
+  }
+
+  String _buildImageUrl(String path) {
+    // Normalizar ruta (reemplazar backslashes con slashes para URL)
+    final normalizedPath = path.replaceAll('\\', '/');
+    return '${FacturaService.baseUrl}/$normalizedPath';
   }
 
   @override
@@ -79,9 +85,15 @@ class DetalleFacturaScreen extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.file(
-                    File(factura['imagenPath']),
+                  child: Image.network(
+                    _buildImageUrl(factura['imagenPath']),
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, size: 50),
+                      );
+                    },
                   ),
                 ),
               ),
