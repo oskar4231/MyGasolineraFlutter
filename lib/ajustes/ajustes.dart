@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
@@ -7,7 +8,7 @@ import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
 import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
-import 'package:my_gasolinera/services/perfil_service.dart'; // NUEVO IMPORT
+import 'package:my_gasolinera/services/perfil_service.dart'; // Para subir fotos
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -26,9 +27,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   final _usuarioService = UsuarioService();
-  final _perfilService = PerfilService(); // NUEVO SERVICIO
+  final _perfilService = PerfilService(); // Para subir fotos
   bool _eliminandoCuenta = false;
-  bool _subiendoFoto = false; // NUEVO: Para mostrar loader al subir foto
+  bool _subiendoFoto = false; // Para mostrar loader al subir foto
 
   @override
   void initState() {
@@ -36,14 +37,17 @@ class _AjustesScreenState extends State<AjustesScreen> {
     _cargarFotoPerfil(); // NUEVO: Cargar foto al iniciar
   }
 
-  // NUEVO: Cargar foto de perfil desde el servidor
+  // Cargar foto de perfil desde el servidor usando UsuarioService
   Future<void> _cargarFotoPerfil() async {
     try {
-      final fotoUrl = await _perfilService.obtenerFotoPerfil();
-      if (fotoUrl != null && mounted) {
-        // Aquí podrías cargar la imagen desde la URL
-        // Por ahora, solo la guardamos para mostrar después
-        print('📷 Foto de perfil cargada: $fotoUrl');
+      final fotoBase64 = await _usuarioService.cargarImagenPerfil();
+      if (fotoBase64 != null && mounted) {
+        // Convertir base64 a bytes y mostrar la imagen
+        final bytes = base64Decode(fotoBase64);
+        setState(() {
+          _profileImageBytes = bytes;
+        });
+        print('📷 Foto de perfil cargada exitosamente');
       }
     } catch (e) {
       print('Error cargando foto de perfil: $e');

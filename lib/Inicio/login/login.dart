@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // Guardar el token del usuario
             final token = responseData['token'];
             if (token != null) {
-              AuthService.saveToken(token, _emailController.text.trim());
+              await AuthService.saveToken(token, _emailController.text.trim());
               print('✅ Token guardado exitosamente');
             }
 

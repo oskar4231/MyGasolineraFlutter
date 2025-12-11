@@ -99,4 +99,59 @@ class UsuarioService {
     await prefs.remove('userPhone');
     await prefs.remove('userId');
   }
+
+  /// Obtiene la foto de perfil del usuario desde el backend
+  Future<String?> cargarImagenPerfil() async {
+    try {
+      // Obtener el token de autenticación
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken') ?? '';
+
+      if (token.isEmpty) {
+        throw Exception('No hay sesión activa');
+      }
+
+      final url = '$baseUrl/cargarImagen';
+      print('🔍 DEBUG - Cargando imagen de perfil desde: $url');
+
+      final response = await http
+          .get(
+            Uri.parse(url),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () =>
+                throw Exception('Timeout al conectar con el servidor'),
+          );
+
+      print('🔍 DEBUG - Status code: ${response.statusCode}');
+      print('🔍 DEBUG - Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        // El backend retorna un array con un objeto que contiene foto_perfil
+        if (data is List && data.isNotEmpty) {
+          final fotoPerfil = data[0]['foto_perfil'];
+          print(
+            '🔍 DEBUG - Foto de perfil obtenida: ${fotoPerfil != null ? "Sí" : "No"}',
+          );
+          return fotoPerfil;
+        }
+
+        return null;
+      } else if (response.statusCode == 404) {
+        throw Exception('Usuario no encontrado');
+      } else {
+        throw Exception('Error al cargar imagen: ${response.statusCode}');
+      }
+    } on Exception catch (e) {
+      print('❌ Error cargando imagen de perfil: $e');
+      rethrow;
+    }
+  }
 }
