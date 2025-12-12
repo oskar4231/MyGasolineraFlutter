@@ -5,7 +5,7 @@ import 'package:my_gasolinera/services/auth_service.dart';
 
 class AccesibilidadService {
   static const String baseUrl =
-      'https://sean-insulation-grows-auburn.trycloudflare.com'; // Cambia por tu URL real
+      'https://computers-louise-underlying-bride.trycloudflare.com'; // Cambia por tu URL real
 
   /// Guarda las configuraciones de accesibilidad en el backend
   Future<bool> guardarConfiguracion({

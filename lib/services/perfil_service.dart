@@ -7,7 +7,7 @@ import 'package:my_gasolinera/services/auth_service.dart';
 class PerfilService {
   // Cambia esta URL a la dirección de tu backend
   static const String baseUrl =
-      'https://sean-insulation-grows-auburn.trycloudflare.com/api/perfil';
+      'https://computers-louise-underlying-bride.trycloudflare.com/api/perfil';
 
   /// Sube una foto de perfil al servidor
   ///

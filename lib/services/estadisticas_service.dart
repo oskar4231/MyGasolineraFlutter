@@ -5,7 +5,7 @@ import 'auth_service.dart';
 /// Servicio para obtener estadísticas de gastos de combustible
 class EstadisticasService {
   static const String baseUrl =
-      'https://sean-insulation-grows-auburn.trycloudflare.com';
+      'https://computers-louise-underlying-bride.trycloudflare.com';
 
   /// Headers comunes con autenticación
   static Map<String, String> _getHeaders() {
