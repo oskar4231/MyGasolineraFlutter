@@ -42,9 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       try {
         // Use http://10.0.2.2:3000/login for Android Emulator
-        // Use https://computers-louise-underlying-bride.trycloudflare.com/login for iOS Simulator or Web
+        // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/login for iOS Simulator or Web
         final url = Uri.parse(
-          'https://computers-louise-underlying-bride.trycloudflare.com/login',
+          'https://unsubscribe-doom-onion-submitting.trycloudflare.com/login',
         );
 
         print('Intentando login en: $url');

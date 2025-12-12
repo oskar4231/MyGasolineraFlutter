@@ -90,7 +90,7 @@ class _CrearScreenState extends State<CrearScreen> {
       try {
         final response = await http.post(
           Uri.parse(
-            'https://computers-louise-underlying-bride.trycloudflare.com/register',
+            'https://unsubscribe-doom-onion-submitting.trycloudflare.com/register',
           ),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({

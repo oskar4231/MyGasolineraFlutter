@@ -88,7 +88,7 @@ class _CochesScreenState extends State<CochesScreen> {
 
     try {
       final url = Uri.parse(
-        'https://computers-louise-underlying-bride.trycloudflare.com/coches',
+        'https://unsubscribe-doom-onion-submitting.trycloudflare.com/coches',
       );
 
       print('Cargando coches desde: $url');
@@ -156,9 +156,9 @@ class _CochesScreenState extends State<CochesScreen> {
 
     try {
       // Use http://10.0.2.2:3000/insertCar for Android Emulator
-      // Use https://computers-louise-underlying-bride.trycloudflare.com/insertCar for iOS Simulator or Web
+      // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/insertCar for iOS Simulator or Web
       final url = Uri.parse(
-        'https://computers-louise-underlying-bride.trycloudflare.com/insertCar',
+        'https://unsubscribe-doom-onion-submitting.trycloudflare.com/insertCar',
       );
 
       // Convertir el array de combustibles a un string separado por comas
@@ -484,7 +484,7 @@ class _CochesScreenState extends State<CochesScreen> {
 
     try {
       final url = Uri.parse(
-        'https://computers-louise-underlying-bride.trycloudflare.com/coches/${coche.idCoche}',
+        'https://unsubscribe-doom-onion-submitting.trycloudflare.com/coches/${coche.idCoche}',
       );
 
       print('Eliminando coche: ${coche.idCoche}');

@@ -5,7 +5,7 @@ import 'auth_service.dart';
 
 class FacturaService {
   static const String baseUrl =
-      'https://computers-louise-underlying-bride.trycloudflare.com';
+      'https://unsubscribe-doom-onion-submitting.trycloudflare.com';
 
   // Obtener todas las facturas del usuario
   static Future<List<Map<String, dynamic>>> obtenerFacturas() async {
