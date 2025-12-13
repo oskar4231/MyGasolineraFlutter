@@ -1,26 +1,38 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'dart:convert';
-import 'package:my_gasolinera/services/auth_service.dart';
 
-// Modelo para representar un coche
+import 'package:flutter/material.dart';
+import 'package:my_gasolinera/ajustes/ajustes.dart';
+import 'package:my_gasolinera/services/coche_service.dart';
+
+// Modelo para representar un coche (MANTENIDO EN EL MISMO ARCHIVO)
 class Coche {
-  final int? idCoche; // ID del coche en la base de datos
+  final int? idCoche;
   final String marca;
   final String modelo;
   final List<String> tiposCombustible;
+  final int? kilometrajeInicial;
+  final double? capacidadTanque;
+  final double? consumoTeorico;
+  final String? fechaUltimoCambioAceite;
+  final int? kmUltimoCambioAceite;
+  final int intervaloCambioAceiteKm;
+  final int intervaloCambioAceiteMeses;
 
   Coche({
     this.idCoche,
     required this.marca,
     required this.modelo,
     required this.tiposCombustible,
+    this.kilometrajeInicial,
+    this.capacidadTanque,
+    this.consumoTeorico,
+    this.fechaUltimoCambioAceite,
+    this.kmUltimoCambioAceite,
+    this.intervaloCambioAceiteKm = 15000,
+    this.intervaloCambioAceiteMeses = 12,
   });
 
   // Factory para crear un Coche desde JSON del backend
   factory Coche.fromJson(Map<String, dynamic> json) {
-    // El backend envía combustible como string, lo convertimos a lista
     List<String> combustibles = [];
     if (json['combustible'] != null) {
       combustibles = json['combustible']
@@ -35,6 +47,13 @@ class Coche {
       marca: json['marca'] ?? '',
       modelo: json['modelo'] ?? '',
       tiposCombustible: combustibles,
+      kilometrajeInicial: json['kilometraje_inicial'] != null ? int.tryParse(json['kilometraje_inicial'].toString()) : null,
+      capacidadTanque: json['capacidad_tanque'] != null ? double.tryParse(json['capacidad_tanque'].toString()) : null,
+      consumoTeorico: json['consumo_teorico'] != null ? double.tryParse(json['consumo_teorico'].toString()) : null,
+      fechaUltimoCambioAceite: json['fecha_ultimo_cambio_aceite'],
+      kmUltimoCambioAceite: json['km_ultimo_cambio_aceite'] != null ? int.tryParse(json['km_ultimo_cambio_aceite'].toString()) : null,
+      intervaloCambioAceiteKm: json['intervalo_cambio_aceite_km'] != null ? int.tryParse(json['intervalo_cambio_aceite_km'].toString()) ?? 15000 : 15000,
+      intervaloCambioAceiteMeses: json['intervalo_cambio_aceite_meses'] != null ? int.tryParse(json['intervalo_cambio_aceite_meses'].toString()) ?? 12 : 12,
     );
   }
 }
@@ -50,14 +69,17 @@ class _CochesScreenState extends State<CochesScreen> {
   final _formKey = GlobalKey<FormState>();
   final _marcaController = TextEditingController();
   final _modeloController = TextEditingController();
+  final _kilometrajeInicialController = TextEditingController();
+  final _capacidadTanqueController = TextEditingController();
+  final _consumoTeoricoController = TextEditingController();
+  final _fechaUltimoCambioAceiteController = TextEditingController(); // NUEVO
+  final _kmUltimoCambioAceiteController = TextEditingController();
+  final _intervaloKmController = TextEditingController(text: '15000');
+  final _intervaloMesesController = TextEditingController(text: '12');
 
-  // Lista de coches guardados
   final List<Coche> _coches = [];
-
-  // Estado de carga
   bool _isLoading = false;
 
-  // Tipos de combustible disponibles en España
   final Map<String, bool> _tiposCombustible = {
     'Gasolina 95': false,
     'Gasolina 98': false,
@@ -70,66 +92,33 @@ class _CochesScreenState extends State<CochesScreen> {
   @override
   void initState() {
     super.initState();
-    _cargarCoches(); // Cargar coches al iniciar la pantalla
+    _cargarCoches();
   }
 
-  // Función para cargar los coches del usuario desde el backend
+  // Función para cargar los coches usando el servicio
   Future<void> _cargarCoches() async {
-    final token = AuthService.getToken();
-
-    if (token == null || token.isEmpty) {
-      print('No hay token, usuario no autenticado');
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final url = Uri.parse('http://localhost:3000/coches');
+      final cochesJson = await CocheService.obtenerCoches();
 
-      print('Cargando coches desde: $url');
+       final List<Map<String, dynamic>> cochesList = List<Map<String, dynamic>>.from(cochesJson);
 
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      setState(() {
+        _coches.clear();
+        _coches.addAll(
+        cochesList.map((json) => Coche.fromJson(json)).toList(),
       );
-
-      print('Respuesta status: ${response.statusCode}');
-      print('Respuesta body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final List<dynamic> cochesJson = json.decode(response.body);
-
-        setState(() {
-          _coches.clear();
-          _coches.addAll(
-            cochesJson.map((json) => Coche.fromJson(json)).toList(),
-          );
-        });
-
-        print('✅ ${_coches.length} coches cargados');
-      } else {
-        print('Error al cargar coches: ${response.statusCode}');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Error al cargar los coches'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
+      });
+      print('✅ ${_coches.length} coches cargados');
     } catch (error) {
-      print('Error de conexión al cargar coches: $error');
+      print('Error al cargar coches: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error de conexión: $error'),
+            content: Text('Error al cargar los coches: $error'),
             backgroundColor: Colors.red,
           ),
         );
@@ -143,99 +132,60 @@ class _CochesScreenState extends State<CochesScreen> {
     }
   }
 
-  Future<void> _crearCoche(
-    String marca,
-    String modelo,
-    List<String> tiposCombustible,
-  ) async {
+  // Función para crear un coche usando el servicio
+  Future<void> _crearCoche() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // Use http://10.0.2.2:3000/insertCar for Android Emulator
-      // Use http://localhost:3000/insertCar for iOS Simulator or Web
-      final url = Uri.parse('http://localhost:3000/insertCar');
+      // Obtener los combustibles seleccionados
+      final combustiblesSeleccionados = _tiposCombustible.entries
+          .where((entry) => entry.value)
+          .map((entry) => entry.key)
+          .toList();
 
-      // Convertir el array de combustibles a un string separado por comas
-      final combustibleString = tiposCombustible.join(', ');
-
-      print('Intentando crear coche en: $url');
-      print('Marca: $marca');
-      print('Modelo: $modelo');
-      print('Combustible: $combustibleString');
-
-      // TODO: Obtener el token del almacenamiento local (SharedPreferences)
-      // Por ahora, necesitas iniciar sesión primero para obtener el token
-      final token =
-          AuthService.getToken() ?? ''; // Obtener el token guardado del login
-
-      if (token.isEmpty) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Debes iniciar sesión primero para añadir coches'),
-              backgroundColor: Colors.orange,
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-        return;
-      }
-
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer $token', // Token JWT requerido por el backend
-        },
-        body: json.encode({
-          'marca': marca,
-          'modelo': modelo,
-          'combustible': combustibleString,
-        }),
+      await CocheService.crearCoche(
+        marca: _marcaController.text,
+        modelo: _modeloController.text,
+        tiposCombustible: combustiblesSeleccionados,
+        kilometrajeInicial: _kilometrajeInicialController.text.isNotEmpty
+          ? int.tryParse(_kilometrajeInicialController.text)
+          : null,
+      capacidadTanque: _capacidadTanqueController.text.isNotEmpty
+          ? double.tryParse(_capacidadTanqueController.text)
+          : null,
+      consumoTeorico: _consumoTeoricoController.text.isNotEmpty
+          ? double.tryParse(_consumoTeoricoController.text)
+          : null,
+      fechaUltimoCambioAceite: _fechaUltimoCambioAceiteController.text.isNotEmpty
+          ? _fechaUltimoCambioAceiteController.text
+          : null,
+      kmUltimoCambioAceite: _kmUltimoCambioAceiteController.text.isNotEmpty
+          ? int.tryParse(_kmUltimoCambioAceiteController.text)
+          : null,
+      intervaloCambioAceiteKm: int.tryParse(_intervaloKmController.text) ?? 15000,
+      intervaloCambioAceiteMeses: int.tryParse(_intervaloMesesController.text) ?? 12,
       );
 
-      print('Respuesta status: ${response.statusCode}');
-      print('Respuesta body: ${response.body}');
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = json.decode(response.body);
-
-        // Creación exitosa
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Coche creado exitosamente: $marca $modelo'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          // Recargar la lista de coches desde el backend
-          await _cargarCoches();
-        }
-      } else {
-        // Creación fallida (400, 401, 409, 500)
-        final responseData = json.decode(response.body);
-        if (mounted) {
-          String errorMessage =
-              responseData['message'] ?? 'Error al crear el coche';
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-          );
-        }
-      }
-    } catch (error) {
-      print('Error de conexión: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Error de conexión. Asegúrate de que el servidor esté corriendo. ($error)',
-            ),
+            content:
+                Text('Coche creado exitosamente: ${_marcaController.text} ${_modeloController.text}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        await _cargarCoches();
+      }
+    } catch (error) {
+      print('Error al crear coche: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al crear coche: $error'),
             backgroundColor: Colors.red,
-            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -252,14 +202,27 @@ class _CochesScreenState extends State<CochesScreen> {
   void dispose() {
     _marcaController.dispose();
     _modeloController.dispose();
+    _kilometrajeInicialController.dispose();
+    _capacidadTanqueController.dispose();
+    _consumoTeoricoController.dispose();
+    _fechaUltimoCambioAceiteController.dispose();
+    _kmUltimoCambioAceiteController.dispose();
+    _intervaloKmController.text='15000';
+    _intervaloMesesController.text='12';
     super.dispose();
   }
 
   void _mostrarModalFormulario() {
-    // Resetear el formulario
     _marcaController.clear();
     _modeloController.clear();
     _tiposCombustible.updateAll((key, value) => false);
+    _kilometrajeInicialController.clear();
+    _capacidadTanqueController.clear();
+    _consumoTeoricoController.clear();
+    _fechaUltimoCambioAceiteController.clear();
+    _kmUltimoCambioAceiteController.clear();
+    _intervaloKmController.text='15000';
+    _intervaloMesesController.text='12';
 
     showDialog(
       context: context,
@@ -278,7 +241,6 @@ class _CochesScreenState extends State<CochesScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Campo Marca
                       TextFormField(
                         controller: _marcaController,
                         decoration: const InputDecoration(
@@ -295,7 +257,7 @@ class _CochesScreenState extends State<CochesScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
-                      // Campo Modelo
+                      
                       TextFormField(
                         controller: _modeloController,
                         decoration: const InputDecoration(
@@ -313,7 +275,6 @@ class _CochesScreenState extends State<CochesScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Tipo de Combustible
                       const Text(
                         'Tipo de Combustible:',
                         style: TextStyle(
@@ -323,7 +284,6 @@ class _CochesScreenState extends State<CochesScreen> {
                       ),
                       const SizedBox(height: 8),
 
-                      // Checkboxes para tipos de combustible
                       ..._tiposCombustible.keys.map((tipo) {
                         return CheckboxListTile(
                           title: Text(tipo),
@@ -336,16 +296,65 @@ class _CochesScreenState extends State<CochesScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           dense: true,
                         );
-                      }),
+                      }).toList(),
+
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _kilometrajeInicialController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Kilometraje Inicial',
+                          hintText: 'Ej: 50000',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _capacidadTanqueController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Capacidad del Tanque (L)',
+                          hintText: 'Ej: 50',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _consumoTeoricoController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Consumo Teórico (L/100km)',
+                          hintText: 'Ej: 5.5',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _intervaloKmController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Intervalo de Kilometros',
+                          hintText: 'Ej: 15000',
+                          border: OutlineInputBorder(),   
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _intervaloMesesController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Intervalo de Meses',
+                          hintText: 'Ej: 12',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                  onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Cancelar'),
                 ),
                 ElevatedButton(
@@ -353,7 +362,6 @@ class _CochesScreenState extends State<CochesScreen> {
                       ? null
                       : () async {
                           if (_formKey.currentState!.validate()) {
-                            // Verificar que al menos un tipo de combustible esté seleccionado
                             bool alMenosUnoCombustible = _tiposCombustible
                                 .values
                                 .any((v) => v);
@@ -370,22 +378,8 @@ class _CochesScreenState extends State<CochesScreen> {
                               return;
                             }
 
-                            // Obtener los combustibles seleccionados
-                            List<String> combustiblesSeleccionados =
-                                _tiposCombustible.entries
-                                    .where((entry) => entry.value)
-                                    .map((entry) => entry.key)
-                                    .toList();
-
-                            // Cerrar el modal primero
                             Navigator.of(context).pop();
-
-                            // Llamar a la función para crear el coche en el backend
-                            await _crearCoche(
-                              _marcaController.text,
-                              _modeloController.text,
-                              combustiblesSeleccionados,
-                            );
+                            await _crearCoche();
                           }
                         },
                   style: ElevatedButton.styleFrom(
@@ -412,11 +406,10 @@ class _CochesScreenState extends State<CochesScreen> {
     );
   }
 
-  // Función para eliminar un coche del backend
+  // Función para eliminar un coche usando el servicio
   Future<void> _eliminarCoche(int index) async {
     final coche = _coches[index];
 
-    // Verificar que el coche tenga ID
     if (coche.idCoche == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -429,7 +422,6 @@ class _CochesScreenState extends State<CochesScreen> {
       return;
     }
 
-    // Confirmar eliminación
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -460,68 +452,29 @@ class _CochesScreenState extends State<CochesScreen> {
 
     if (confirmar != true) return;
 
-    final token = AuthService.getToken();
-
-    if (token == null || token.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Debes iniciar sesión para eliminar coches'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final url = Uri.parse('http://localhost:3000/coches/${coche.idCoche}');
+      await CocheService.eliminarCoche(coche.idCoche!);
 
-      print('Eliminando coche: ${coche.idCoche}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Coche eliminado: ${coche.marca} ${coche.modelo}'),
+            backgroundColor: Colors.green,
+          ),
+        );
 
-      final response = await http.delete(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      print('Respuesta status: ${response.statusCode}');
-      print('Respuesta body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Coche eliminado: ${coche.marca} ${coche.modelo}'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          // Recargar la lista de coches desde el backend
-          await _cargarCoches();
-        }
-      } else {
-        final responseData = json.decode(response.body);
-        if (mounted) {
-          String errorMessage =
-              responseData['message'] ?? 'Error al eliminar el coche';
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-          );
-        }
+        await _cargarCoches();
       }
     } catch (error) {
       print('Error al eliminar coche: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error de conexión: $error'),
+            content: Text('Error al eliminar coche: $error'),
             backgroundColor: Colors.red,
           ),
         );
@@ -542,7 +495,6 @@ class _CochesScreenState extends State<CochesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header con título "Coches"
             Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
@@ -565,7 +517,6 @@ class _CochesScreenState extends State<CochesScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Botón "+" que ocupa todo el ancho
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -599,7 +550,6 @@ class _CochesScreenState extends State<CochesScreen> {
               ),
             ),
 
-            // Lista de coches
             Expanded(
               child: _coches.isEmpty
                   ? Center(
@@ -691,7 +641,23 @@ class _CochesScreenState extends State<CochesScreen> {
                                                 color: Colors.grey,
                                               ),
                                             ),
-                                          ],
+                                              if (coche.kilometrajeInicial != null)
+                                                Text(
+                                                  'Kilometraje: ${coche.kilometrajeInicial} km',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              if (coche.capacidadTanque != null)
+                                                Text(
+                                                  'Tanque: ${coche.capacidadTanque}L',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ],
                                         ),
                                       ),
                                       IconButton(
@@ -758,7 +724,6 @@ class _CochesScreenState extends State<CochesScreen> {
                     ),
             ),
 
-            // Barra de navegación inferior
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: const BoxDecoration(
@@ -771,30 +736,20 @@ class _CochesScreenState extends State<CochesScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // Botón coche (ya estamos en esta pantalla)
                   IconButton(
-                    onPressed: () {
-                      // Ya estamos en la pantalla de coches
-                    },
+                    onPressed: () {},
                     icon: const Icon(
                       Icons.directions_car,
                       size: 40,
                       color: Color(0xFF492714),
                     ),
                   ),
-
-                  // Botón pin (volver a home)
                   IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.pin_drop, size: 40),
                   ),
-
-                  // Botón ajustes
                   IconButton(
                     onPressed: () {
-                      // Navegar a ajustes si existe
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => const AjustesScreen(),

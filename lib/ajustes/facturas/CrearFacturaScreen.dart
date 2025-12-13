@@ -17,6 +17,21 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   final _fechaController = TextEditingController();
   final _horaController = TextEditingController();
   final _descripcionController = TextEditingController();
+  final _litrosController = TextEditingController();
+  final _precioLitroController = TextEditingController();
+  final _kilometrajeController = TextEditingController();
+
+  String? _tipoCombustibleSeleccionado;
+  int? _cocheSeleccionado;
+  List<Map<String, dynamic>> _coches = [];
+  
+  final List<String> _tiposCombustible = [
+    'Gasolina 95',
+    'Gasolina 98',
+    'Diésel',
+    'Diésel Premium',
+    'GLP (Autogas)',
+  ];
 
   XFile? _imagenFactura;
   final ImagePicker _picker = ImagePicker();
@@ -29,6 +44,14 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
     final now = DateTime.now();
     _fechaController.text = _formatDate(now);
     _horaController.text = _formatTime(now);
+
+    _cargarCoches();
+  }
+
+  Future<void> _cargarCoches() async {
+    // Llamar al servicio para obtener coches del usuario
+    // final coches = await CocheService.obtenerCoches();
+    // setState(() => _coches = coches);
   }
 
   String _formatDate(DateTime date) {
@@ -121,13 +144,18 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
           hora: _horaController.text,
           descripcion: _descripcionController.text,
           imagenFile: _imagenFactura,
+          litrosRepostados: _litrosController.text.isNotEmpty ? double.parse(_litrosController.text) : null,
+          precioPorLitro: _precioLitroController.text.isNotEmpty ? double.parse(_precioLitroController.text) : null,
+          kilometrajeActual: _kilometrajeController.text.isNotEmpty ? int.parse(_kilometrajeController.text) : null,
+          tipoCombustible: _tipoCombustibleSeleccionado,
+          idCoche: _cocheSeleccionado,
         );
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Factura creada correctamente')),
           );
-          Navigator.pop(context, true); // Retornar true para indicar éxito
+          Navigator.pop(context, true);
         }
       } catch (e) {
         if (mounted) {
@@ -314,6 +342,179 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                   ),
                   const SizedBox(height: 16),
 
+                  // NUEVA SECCIÓN: Información del Repostaje
+                  const Text(
+                    'Información del Repostaje',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF492714),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(color: Color(0xFF492714), thickness: 1),
+                  const SizedBox(height: 16),
+
+                  // Dropdown Coche
+                  DropdownButtonFormField<int>(
+                    value: _cocheSeleccionado,
+                    decoration: InputDecoration(
+                      labelText: 'Coche',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    items: _coches.map((coche) {
+                      return DropdownMenuItem<int>(
+                        value: coche['id_coche'],
+                        child: Text(
+                          '${coche['marca']} ${coche['modelo']}',
+                          style: const TextStyle(color: Color(0xFF492714)),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() => _cocheSeleccionado = value);
+                    },
+                    dropdownColor: const Color(0xFFFFCFB0),
+                    borderRadius: BorderRadius.circular(10),
+                    icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF492714)),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo Litros Repostados
+                  TextFormField(
+                    controller: _litrosController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Litros Repostados',
+                      hintText: 'Ej: 45.5',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      hintStyle: const TextStyle(color: Color(0x99492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo Precio por Litro
+                  TextFormField(
+                    controller: _precioLitroController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Precio por Litro (€)',
+                      hintText: 'Ej: 1.459',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      hintStyle: const TextStyle(color: Color(0x99492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Campo Kilometraje Actual
+                  TextFormField(
+                    controller: _kilometrajeController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Kilometraje Actual',
+                      hintText: 'Ej: 45230',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      hintStyle: const TextStyle(color: Color(0x99492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 300,  // Ancho mínimo
+                      maxWidth: 400,  // Ancho máximo
+                    ),
+                  // Dropdown Tipo de Combustible 
+                  child:DropdownButtonFormField<String>(
+                    value: _tipoCombustibleSeleccionado,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: 'Tipo de Combustible',
+                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      filled: true,
+                      fillColor: const Color(0xFFFFCFB0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    items: _tiposCombustible.map((tipo) {
+                      return DropdownMenuItem<String>(
+                        value: tipo,
+                        child: Text(
+                          tipo,
+                          style: const TextStyle(color: Color(0xFF492714)),
+                          
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() => _tipoCombustibleSeleccionado = value);
+                    },
+                    dropdownColor: const Color(0xFFFFCFB0),
+                    borderRadius: BorderRadius.circular(10),
+                    icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF492714)),
+                  ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // NUEVA SECCIÓN: Imagen de Factura
+                  const Text(
+                    'Imagen de Factura',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF492714),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(color: Color(0xFF492714), thickness: 1),
+                  const SizedBox(height: 16),
+
                   // Botón para agregar imagen
                   Container(
                     width: double.infinity,
@@ -336,7 +537,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                 SizedBox(height: 8),
                                 Text(
                                   'Agregar Imagen de Factura',
-                                  style: TextStyle(color: Color(0xFF492714)),
+                                  style: TextStyle(
+                                    color: Color(0xFF492714),
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ],
                             ),
@@ -357,7 +561,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                       );
                                     }
                                     return const Center(
-                                      child: CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(
+                                        color: Color(0xFFFF9350),
+                                      ),
                                     );
                                   },
                                 ),
@@ -365,12 +571,16 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                               Positioned(
                                 top: 8,
                                 right: 8,
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.black54,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black54,
+                                  ),
                                   child: IconButton(
                                     icon: const Icon(
                                       Icons.close,
                                       color: Colors.white,
+                                      size: 20,
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -390,7 +600,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _descripcionController,
                     maxLines: 4,
                     decoration: InputDecoration(
-                      labelText: 'Descripción',
+                      labelText: 'Descripción (Opcional)',
                       labelStyle: const TextStyle(color: Color(0xFF492714)),
                       filled: true,
                       fillColor: const Color(0xFFFFCFB0),
@@ -400,11 +610,11 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        vertical: 12,
+                        vertical: 16,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
                   // Botón Guardar
                   SizedBox(
@@ -414,17 +624,19 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF9350),
                         foregroundColor: const Color(0xFF492714),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
+                        elevation: 4,
+                        shadowColor: const Color(0xFF492714).withOpacity(0.3),
                       ),
                       child: _isLoading
                           ? const SizedBox(
-                              height: 20,
-                              width: 20,
+                              height: 24,
+                              width: 24,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
+                                strokeWidth: 3,
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   Color(0xFF492714),
                                 ),
@@ -433,12 +645,13 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                           : const Text(
                               'Guardar Factura',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                     ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
