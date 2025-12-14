@@ -10,28 +10,34 @@ class ConsumoTab extends StatefulWidget {
 }
 
 class _ConsumoTabState extends State<ConsumoTab> {
-  late Future<Map<String, dynamic>> _consumoData;
+  late Future<Map<String, dynamic>> _costoKmData;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _consumoData = _cargarConsumo();
+    _costoKmData = _cargarCostoPorKm();
   }
 
-  Future<Map<String, dynamic>> _cargarConsumo() async {
+  Future<Map<String, dynamic>> _cargarCostoPorKm() async {
     try {
-      return await EstadisticasAvanzadasService.obtenerConsumoReal();
+      return await EstadisticasAvanzadasService.obtenerCostoPorKm();
     } catch (e) {
-      // Si hay error, devolver mapa vacío
-      print('Error cargando consumo: $e');
-      return {};
+      print('Error cargando costo por km: $e');
+      return {'costos_por_coche': [], 'total_coches': 0};
     }
   }
 
   Future<void> _recargar() async {
     setState(() {
-      _consumoData = _cargarConsumo();
+      _isLoading = true;
     });
+    await _cargarCostoPorKm();
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -40,9 +46,9 @@ class _ConsumoTabState extends State<ConsumoTab> {
       onRefresh: _recargar,
       color: const Color(0xFFFF9350),
       child: FutureBuilder<Map<String, dynamic>>(
-        future: _consumoData,
+        future: _costoKmData,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting || _isLoading) {
             return const Center(child: CircularProgressIndicator(color: Color(0xFFFF9350)));
           }
           
@@ -50,67 +56,494 @@ class _ConsumoTabState extends State<ConsumoTab> {
             return _buildError(snapshot.error.toString());
           }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          final data = snapshot.data ?? {'costos_por_coche': [], 'total_coches': 0};
+          final costosPorCoche = data['costos_por_coche'] as List<dynamic>;
+          final totalCoches = data['total_coches'] as int;
+          
+          if (totalCoches == 0) {
             return _buildEmptyState();
           }
-
-          final data = snapshot.data!;
           
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Título principal
                 const Text(
-                  'Análisis de Consumo',
+                  'Costo por Kilómetro',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF492714),
                   ),
                 ),
-                const SizedBox(height: 12),
-
-                if (data.containsKey('consumo_promedio'))
-                  EstadisticasWidgets.buildStatCard(
-                    title: 'Consumo Promedio',
-                    value: '${_formatNumber(data['consumo_promedio'])} L/100km',
-                    subtitle: 'Eficiencia promedio de tu vehículo',
-                    icon: Icons.speed,
-                    color: Color(0xFFFF9350),
+                const SizedBox(height: 8),
+                Text(
+                  'Análisis detallado por vehículo',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF492714).withOpacity(0.7),
                   ),
-                const SizedBox(height: 12),
+                ),
+                const SizedBox(height: 16),
 
-                if (data.containsKey('costo_por_km'))
-                  EstadisticasWidgets.buildStatCard(
-                    title: 'Costo por Kilómetro',
-                    value: '€${_formatNumber(data['costo_por_km'])}/km',
-                    subtitle: 'Incluye combustible y mantenimiento',
-                    icon: Icons.attach_money,
-                    color: Colors.green,
+                // Resumen general
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF9350).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFFF9350).withOpacity(0.3),
+                      width: 1,
+                    ),
                   ),
-                const SizedBox(height: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          const Text(
+                            'Total Coches',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '$totalCoches',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF492714),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text(
+                            'Facturas Totales',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${_calcularTotalFacturas(costosPorCoche)}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF492714),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-                if (data.containsKey('mejor_eficiencia'))
-                  _buildMejorEficienciaCard(data['mejor_eficiencia']),
+                // Lista de coches
+                const Text(
+                  'Análisis por Vehículo',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF492714),
+                  ),
+                ),
                 const SizedBox(height: 12),
-
-                if (data.containsKey('peor_eficiencia'))
-                  _buildPeorEficienciaCard(data['peor_eficiencia']),
-                const SizedBox(height: 12),
-
-                if (data.containsKey('ultimo_consumo'))
-                  _buildUltimoConsumoCard(data['ultimo_consumo']),
-                const SizedBox(height: 12),
-
+                
+                ...costosPorCoche.map((cocheData) {
+                  final coche = cocheData as Map<String, dynamic>;
+                  return _buildCocheCard(coche);
+                }).toList(),
+                
                 // Información adicional
-                if (data.containsKey('consejos'))
-                  _buildConsejosCard(data['consejos']),
+                const SizedBox(height: 24),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info, color: Colors.blue, size: 24),
+                          SizedBox(width: 12),
+                          Text(
+                            '¿Qué es el costo por kilómetro?',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF492714),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        'El costo por kilómetro incluye el gasto en combustible dividido por la distancia recorrida '
+                        'entre repostajes. Es una métrica útil para comparar la eficiencia de diferentes '
+                        'vehículos y hábitos de conducción.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildCocheCard(Map<String, dynamic> coche) {
+    final costoProm = double.tryParse(coche['costo_promedio_por_km']?.toString() ?? '0') ?? 0;
+    final costoMin = double.tryParse(coche['costo_minimo_por_km']?.toString() ?? '0') ?? 0;
+    final costoMax = double.tryParse(coche['costo_maximo_por_km']?.toString() ?? '0') ?? 0;
+    final kmTotales = int.tryParse(coche['km_totales']?.toString() ?? '0') ?? 0;
+    final gastoTotal = double.tryParse(coche['gasto_total']?.toString() ?? '0') ?? 0;
+    final numFacturas = int.tryParse(coche['num_facturas']?.toString() ?? '0') ?? 0;
+    final numFacturasValidas = int.tryParse(coche['num_facturas_validas']?.toString() ?? '0') ?? 0;
+    
+    // Determinar color basado en el costo (más barato = mejor)
+    Color getCostoColor(double costo) {
+      if (costo < 0.08) return Color(0xFFFF9350);
+      if (costo < 0.12) return Colors.orange;
+      return Colors.red;
+    }
+    
+    final costoColor = getCostoColor(costoProm);
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Encabezado con marca y modelo
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF9350).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.directions_car,
+                    color: Color(0xFFFF9350),
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${coche['marca']} ${coche['modelo']}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF492714),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.local_gas_station,
+                            color: Colors.grey.shade600,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$numFacturasValidas/${numFacturas} recargas válidas',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Costo promedio (destacado)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: costoColor.withOpacity(0.1),
+              border: Border.symmetric(
+                horizontal: BorderSide(
+                  color: Colors.grey.shade200,
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Costo promedio por km:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF492714),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: costoColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '€${_formatNumber(costoProm)}/km',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Estadísticas detalladas
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Estadísticas Detalladas',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF492714),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                
+                // Rango de costos
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Costo mínimo',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Text(
+                          '€${_formatNumber(costoMin)}/km',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: (costoMin * 1000).round(),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: ((costoMax - costoMin) * 1000).round(),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          '← Mín    Máx →',
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Text(
+                          'Costo máximo',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Text(
+                          '€${_formatNumber(costoMax)}/km',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                
+                // Totales
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildStatItem(
+                      icon: Icons.car_crash,
+                      label: 'Kilómetros',
+                      value: '$kmTotales km',
+                      color: Color(0xFFFF9350),
+                    ),
+                    _buildStatItem(
+                      icon: Icons.euro,
+                      label: 'Gasto total',
+                      value: '€${_formatNumber(gastoTotal)}',
+                      color: const Color(0xFFFF9350),
+                    ),
+                    _buildStatItem(
+                      icon: Icons.attach_money,
+                      label: 'Costo/100km',
+                      value: '€${_formatNumber(costoProm * 100)}',
+                      color: Color(0xFFFF9350),
+                    ),
+                  ],
+                ),
+                
+                // Eficiencia relativa
+                if (costoProm > 0) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _getEficienciaColor(costoProm).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: _getEficienciaColor(costoProm).withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getEficienciaIcon(costoProm),
+                          color: _getEficienciaColor(costoProm),
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _getEficienciaMensaje(costoProm),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _getEficienciaColor(costoProm),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 
@@ -122,7 +555,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
           const Icon(Icons.error_outline, size: 80, color: Colors.red),
           const SizedBox(height: 20),
           Text(
-            'Error: $error',
+            'Error al cargar datos: $error',
             style: const TextStyle(fontSize: 16, color: Color(0xFF492714)),
             textAlign: TextAlign.center,
           ),
@@ -144,7 +577,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.local_gas_station, size: 80, color: Colors.grey),
+          const Icon(Icons.directions_car_outlined, size: 80, color: Colors.grey),
           const SizedBox(height: 20),
           const Text(
             'No hay datos de consumo disponibles',
@@ -152,7 +585,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Agrega facturas con kilometraje para calcular consumo',
+            'Agrega facturas con kilometraje para calcular costos',
             style: TextStyle(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
@@ -169,258 +602,31 @@ class _ConsumoTabState extends State<ConsumoTab> {
     );
   }
 
-  Widget _buildMejorEficienciaCard(Map<String, dynamic> data) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.emoji_events, color: Colors.green, size: 32),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Text(
-                  'Mejor Eficiencia',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '${_formatNumber(data['valor'])} L/100km',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.green,
-            ),
-          ),
-          if (data.containsKey('fecha'))
-            Text(
-              'Fecha: ${data['fecha']}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          if (data.containsKey('coche'))
-            Text(
-              'Vehículo: ${data['coche']}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-        ],
-      ),
-    );
+  // Helper methods
+  int _calcularTotalFacturas(List<dynamic> costosPorCoche) {
+    int total = 0;
+    for (final coche in costosPorCoche) {
+      total += int.tryParse(coche['num_facturas']?.toString() ?? '0') ?? 0;
+    }
+    return total;
   }
 
-  Widget _buildPeorEficienciaCard(Map<String, dynamic> data) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.warning, color: Colors.red, size: 32),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Text(
-                  'Peor Eficiencia',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '${_formatNumber(data['valor'])} L/100km',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
-            ),
-          ),
-          if (data.containsKey('fecha'))
-            Text(
-              'Fecha: ${data['fecha']}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          if (data.containsKey('coche'))
-            Text(
-              'Vehículo: ${data['coche']}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-        ],
-      ),
-    );
+  Color _getEficienciaColor(double costoPorKm) {
+    if (costoPorKm < 0.08) return Colors.green;
+    if (costoPorKm < 0.12) return Colors.orange;
+    return Colors.red;
   }
 
-  Widget _buildUltimoConsumoCard(Map<String, dynamic> data) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.history, color: Colors.blue, size: 32),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Text(
-                  'Último Consumo',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '${_formatNumber(data['valor'])} L/100km',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF492714),
-            ),
-          ),
-          if (data.containsKey('fecha'))
-            Text(
-              'Última recarga: ${data['fecha']}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-        ],
-      ),
-    );
+  IconData _getEficienciaIcon(double costoPorKm) {
+    if (costoPorKm < 0.08) return Icons.emoji_events;
+    if (costoPorKm < 0.12) return Icons.check_circle;
+    return Icons.warning;
   }
 
-  Widget _buildConsejosCard(List<dynamic> consejos) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.lightbulb, color: Colors.amber, size: 32),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Text(
-                  'Consejos para Ahorrar',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: consejos.map((consejo) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        consejo.toString(),
-                        style: const TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+  String _getEficienciaMensaje(double costoPorKm) {
+    if (costoPorKm < 0.08) return '¡Excelente eficiencia!';
+    if (costoPorKm < 0.12) return 'Eficiencia normal';
+    return 'Eficiencia baja - Considera optimizar';
   }
 
   String _formatNumber(dynamic number) {

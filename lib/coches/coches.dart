@@ -328,26 +328,6 @@ class _CochesScreenState extends State<CochesScreen> {
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _intervaloKmController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Intervalo de Kilometros',
-                          hintText: 'Ej: 15000',
-                          border: OutlineInputBorder(),   
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _intervaloMesesController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Intervalo de Meses',
-                          hintText: 'Ej: 12',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
                     ],
                   ),
                 ),

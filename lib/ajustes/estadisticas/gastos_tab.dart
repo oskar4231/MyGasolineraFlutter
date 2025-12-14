@@ -151,31 +151,8 @@ class _GastosTabState extends State<GastosTab> {
           const SizedBox(height: 24),
 
           // 📈 GRÁFICAS (Próximamente)
-          const Text(
-            'Gráficas',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF492714),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Text(
-                '📊 Gráficas próximamente...',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-          ),
+          
+          
         ],
       ),
     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/services/factura_service.dart';
+import 'package:my_gasolinera/services/coche_service.dart';
+
 
 class CrearFacturaScreen extends StatefulWidget {
   const CrearFacturaScreen({super.key});
@@ -49,9 +51,22 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   }
 
   Future<void> _cargarCoches() async {
-    // Llamar al servicio para obtener coches del usuario
-    // final coches = await CocheService.obtenerCoches();
-    // setState(() => _coches = coches);
+    try {
+      final coches = await CocheService.obtenerCoches();
+      if (mounted) {
+        setState(() {
+          _coches = coches.cast<Map<String, dynamic>>();
+          print('✅ ${_coches.length} coches cargados en el formulario');
+        });
+      }
+    } catch (e) {
+      print('❌ Error cargando coches: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cargar coches: $e')),
+        );
+      }
+    }
   }
 
   String _formatDate(DateTime date) {
