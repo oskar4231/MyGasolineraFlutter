@@ -20,7 +20,7 @@ class AjustesScreen extends StatefulWidget {
 class _AjustesScreenState extends State<AjustesScreen> {
   Uint8List? _profileImageBytes;
   String? _profileImageUrl;
-  String _nombreUsuario = "Usuario"; // Nombre que se mostrará
+  String _nombreUsuario = "Usuario";
 
   String get _emailUsuario {
     return AuthService.getUserEmail() ?? 'usuario@gmail.com';
@@ -38,7 +38,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     _cargarNombreUsuario();
   }
 
-  // Cargar el nombre del usuario desde el backend
   Future<void> _cargarNombreUsuario() async {
     try {
       final nombre = await _usuarioService.obtenerNombreUsuario();
@@ -46,11 +45,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
         setState(() {
           _nombreUsuario = nombre;
         });
-        print('✅ Nombre de usuario cargado: $nombre');
       }
     } catch (e) {
       print('❌ Error cargando nombre de usuario: $e');
-      // Fallback al email si falla
       if (mounted) {
         final emailFallback =
             AuthService.getUserEmail()?.split('@')[0] ?? 'Usuario';
@@ -61,7 +58,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
-  // Cargar foto de perfil desde el servidor
   Future<void> _cargarFotoPerfil() async {
     try {
       final fotoData = await _usuarioService.cargarImagenPerfil(_emailUsuario);
@@ -75,22 +71,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
           setState(() {
             _profileImageBytes = bytes;
           });
-          print('📷 Foto de perfil cargada exitosamente (base64)');
         } else if (fotoData.startsWith('http')) {
-          print('📷 Cargando foto desde URL: $fotoData');
           setState(() {
             _profileImageUrl = fotoData;
           });
-          print('📷 Foto de perfil cargada exitosamente (URL)');
         } else {
           try {
             final bytes = base64Decode(fotoData);
             setState(() {
               _profileImageBytes = bytes;
             });
-            print(
-              '📷 Foto de perfil cargada exitosamente (base64 sin prefijo)',
-            );
           } catch (e) {
             print('⚠️ No se pudo decodificar la imagen: $e');
           }
@@ -101,52 +91,19 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
-  // Función para seleccionar imagen desde galería
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      final bytes = await pickedFile.readAsBytes();
-      setState(() {
-        _profileImageBytes = bytes;
-        _subiendoFoto = true;
-      });
-
-      final exito = await _perfilService.subirFotoPerfil(pickedFile);
-
-      setState(() {
-        _subiendoFoto = false;
-      });
-
-      if (exito && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Foto de perfil actualizada'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ Error al subir la foto'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 2),
-          ),
-        );
-        setState(() {
-          _profileImageBytes = null;
-        });
-      }
-    }
+    await _procesarImagen(pickedFile);
   }
 
-  // Función para tomar foto con cámara
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    await _procesarImagen(pickedFile);
+  }
 
+  Future<void> _procesarImagen(XFile? pickedFile) async {
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
@@ -183,7 +140,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
-  // Diálogo para elegir entre cámara o galería
   void _showImagePickerDialog() {
     showDialog(
       context: context,
@@ -224,32 +180,44 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // --- LÓGICA DE COLORES EXACTA ---
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Si es oscuro: Negro Suave (0xFF121212). 
+    // Si es claro: TU NARANJA ORIGINAL (0xFFFF9350).
+    final backgroundColor = isDark ? const Color(0xFF121212) : const Color(0xFFFF9350);
+    
+    // Texto blanco en oscuro, negro en claro
+    final textColor = isDark ? Colors.white : Colors.black; 
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFF9350),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Ajustes',
           style: TextStyle(
             fontFamily: 'Roboto',
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: textColor,
           ),
         ),
-        backgroundColor: const Color(0xFFFF9350),
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: backgroundColor, // Se mantiene el color de fondo
+        iconTheme: IconThemeData(color: textColor),
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: _buildAjustesContent(context),
+      // Pasamos las variables de color a los widgets hijos
+      body: _buildAjustesContent(context, backgroundColor, textColor, isDark),
     );
   }
 
-  Widget _buildAjustesContent(BuildContext context) {
+  Widget _buildAjustesContent(BuildContext context, Color bgColor, Color textColor, bool isDark) {
     return Container(
-      color: const Color(0xFFFF9350),
+      color: bgColor, 
       child: Column(
         children: [
           Expanded(
@@ -258,57 +226,58 @@ class _AjustesScreenState extends State<AjustesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSeccionPerfil(),
+                  _buildSeccionPerfil(context, isDark, textColor),
                   const SizedBox(height: 24),
-                  _buildSeccionOpciones(context),
+                  _buildSeccionOpciones(context, textColor, isDark),
                 ],
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildBotonCerrarSesion(context),
+            child: _buildBotonCerrarSesion(context, isDark),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSeccionPerfil() {
+  Widget _buildSeccionPerfil(BuildContext context, bool isDark, Color textColor) {
+    // Tarjeta: Si es oscuro (Gris), Si es claro (TU COLOR CREMA ORIGINAL: 0xFFFFE8DA)
+    final cardColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFFFE8DA);
+
     return Card(
       elevation: 2,
-      color: const Color(0xFFFFE8DA),
+      color: cardColor, 
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
-            // Foto de perfil más grande con indicador de carga
+            // Foto de perfil
             GestureDetector(
               onTap: _subiendoFoto ? null : _showImagePickerDialog,
               child: Stack(
                 children: [
                   CircleAvatar(
-                    radius: 40, // Aumentado de 24 a 40
+                    radius: 40,
                     backgroundColor: Colors.grey,
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
                         ? NetworkImage(_profileImageUrl!) as ImageProvider
                         : null,
-                    child:
-                        _profileImageBytes == null && _profileImageUrl == null
-                        ? const Icon(
+                    child: _profileImageBytes == null && _profileImageUrl == null
+                        ? Icon(
                             Icons.person,
-                            color: Colors.black,
+                            color: isDark ? Colors.white : Colors.black,
                             size: 40,
                           )
                         : null,
                   ),
-                  // Loader mientras sube la foto
                   if (_subiendoFoto)
                     Positioned.fill(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.black54,
                           shape: BoxShape.circle,
                         ),
@@ -318,23 +287,21 @@ class _AjustesScreenState extends State<AjustesScreen> {
                             height: 30,
                             child: CircularProgressIndicator(
                               strokeWidth: 3,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  // Icono de cámara
                   if (!_subiendoFoto)
                     Positioned(
                       bottom: 0,
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
+                        decoration: BoxDecoration(
+                          // Icono cámara: Negro en claro, Naranja en oscuro para resaltar
+                          color: isDark ? const Color(0xFFFF9350) : Colors.black, 
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -348,7 +315,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
               ),
             ),
             const SizedBox(width: 20),
-            // Texto "Hola, [nombre]"
+            // Texto nombre
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,9 +323,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
-                        color: Colors.black,
+                        color: textColor, // Dinámico
                         fontFamily: 'Roboto',
                       ),
                       children: [
@@ -382,27 +349,29 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  Widget _buildSeccionOpciones(BuildContext context) {
+  Widget _buildSeccionOpciones(BuildContext context, Color textColor, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Opciones',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: textColor,
           ),
         ),
         const SizedBox(height: 16),
         _OpcionItem(
           icono: Icons.local_gas_station,
           texto: 'Combustible',
+          textColor: textColor,
           onTap: () {},
         ),
         _OpcionItem(
           icono: Icons.query_stats,
           texto: 'Estadísticas',
+          textColor: textColor,
           onTap: () {
             Navigator.push(
               context,
@@ -415,6 +384,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.receipt,
           texto: 'Gasto/Facturas',
+          textColor: textColor,
           onTap: () {
             Navigator.push(
               context,
@@ -425,6 +395,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.accessibility_new,
           texto: 'Accesibilidad',
+          textColor: textColor,
           onTap: () {
             Navigator.push(
               context,
@@ -437,21 +408,23 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.delete_outline,
           texto: 'Borrar Cuenta',
+          textColor: Colors.redAccent, // Rojo siempre
           onTap: () => _mostrarDialogoBorrarCuenta(),
         ),
       ],
     );
   }
 
-  Widget _buildBotonCerrarSesion(BuildContext context) {
+  Widget _buildBotonCerrarSesion(BuildContext context, bool isDark) {
     return Center(
       child: ElevatedButton.icon(
         onPressed: () {
           _mostrarDialogoCerrarSesion(context);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          // Botón Cerrar Sesión: Blanco en oscuro, Negro en claro
+          backgroundColor: isDark ? Colors.white : Colors.black, 
+          foregroundColor: isDark ? Colors.black : Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),
@@ -501,10 +474,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
+                  Text(
                     '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
                     'Esta acción no se puede deshacer.',
-                    style: TextStyle(color: Colors.black87, fontSize: 16),
+                    style: TextStyle(
+                      // Color de texto del diálogo
+                      color: Theme.of(context).textTheme.bodyMedium?.color, 
+                      fontSize: 16
+                    ),
                   ),
                   if (_eliminandoCuenta) ...[
                     const SizedBox(height: 16),
@@ -518,37 +495,21 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 if (!_eliminandoCuenta)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Cancelar',
-                      style: TextStyle(color: Colors.black),
-                    ),
+                    child: const Text('Cancelar'),
                   ),
                 if (!_eliminandoCuenta)
                   ElevatedButton(
                     onPressed: () async {
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
-                        final email = await _usuarioService
-                            .obtenerEmailGuardado();
-
-                        print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
-                        print('🔍 DEBUG - Longitud del email: ${email.length}');
-                        print('🔍 DEBUG - Email está vacío: ${email.isEmpty}');
-
+                        final email = await _usuarioService.obtenerEmailGuardado();
                         if (email.isEmpty) {
                           throw Exception('No se encontró email del usuario');
                         }
-
-                        print(
-                          '🔍 DEBUG - Enviando email al servicio: "$email"',
-                        );
-                        final exito = await _usuarioService.eliminarCuenta(
-                          email,
-                        );
+                        final exito = await _usuarioService.eliminarCuenta(email);
 
                         if (exito) {
                           await _usuarioService.limpiarDatosUsuario();
-
                           if (mounted) {
                             Navigator.of(context).pop();
                             Navigator.pushAndRemoveUntil(
@@ -566,10 +527,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                'Error al eliminar cuenta: ${e.toString()}',
-                              ),
-                              duration: const Duration(seconds: 4),
+                              content: Text('Error: ${e.toString()}'),
                               backgroundColor: Colors.red,
                             ),
                           );
@@ -577,12 +535,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF9350),
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
                     ),
-                    child: const Text(
-                      'Eliminar',
-                      style: TextStyle(color: Colors.black),
-                    ),
+                    child: const Text('Eliminar'),
                   ),
               ],
             );
@@ -593,19 +549,18 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 }
 
+// Widget auxiliar para los items de opciones (Efecto Hover incluido)
 class _OpcionItem extends StatefulWidget {
   final IconData icono;
   final String texto;
-  final bool tieneCheckbox;
-  final bool checkboxValue;
+  final Color textColor;
   final VoidCallback onTap;
 
   const _OpcionItem({
     required this.icono,
     required this.texto,
+    required this.textColor,
     required this.onTap,
-    this.tieneCheckbox = false,
-    this.checkboxValue = false,
   });
 
   @override
@@ -617,28 +572,24 @@ class __OpcionItemState extends State<_OpcionItem> {
 
   @override
   Widget build(BuildContext context) {
+    // Ajustar el color de hover según el modo
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hoverColor = isDark ? Colors.white12 : Colors.black12;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
         decoration: BoxDecoration(
-          color: _isHovered ? Colors.black12 : Colors.transparent,
+          color: _isHovered ? hoverColor : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: ListTile(
-          leading: Icon(widget.icono, color: Colors.black),
+          leading: Icon(widget.icono, color: widget.textColor),
           title: Text(
             widget.texto,
-            style: const TextStyle(color: Colors.black),
+            style: TextStyle(color: widget.textColor),
           ),
-          trailing: widget.tieneCheckbox
-              ? Checkbox(
-                  value: widget.checkboxValue,
-                  onChanged: (bool? value) {
-                    widget.onTap();
-                  },
-                )
-              : null,
           onTap: widget.onTap,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,

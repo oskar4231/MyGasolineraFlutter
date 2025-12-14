@@ -28,27 +28,42 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
 
   @override
   Widget build(BuildContext context) {
+    // --- VARIABLES DE TEMA DINÁMICO ---
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Fondo: Crema en claro, Negro en oscuro
+    final scaffoldBg = isDark ? const Color(0xFF121212) : const Color(0xFFFFE2CE);
+    
+    // AppBar Background: Naranja en claro, Gris oscuro en oscuro
+    final appBarBg = isDark ? const Color(0xFF1F1F1F) : const Color(0xFFFF9350);
+    
+    // Textos e Iconos: Marrón en claro, Blanco en oscuro
+    final contentColor = isDark ? Colors.white : const Color(0xFF492714);
+    
+    // Color de items no seleccionados en el TabBar
+    final unselectedColor = isDark ? Colors.white60 : const Color(0xFF492714).withOpacity(0.6);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE2CE),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Estadísticas',
           style: TextStyle(
-            color: Color(0xFF492714),
+            color: contentColor,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color(0xFFFF9350),
+        backgroundColor: appBarBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back, color: contentColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFF492714),
-          labelColor: const Color(0xFF492714),
-          unselectedLabelColor: const Color(0xFF492714).withOpacity(0.6),
+          indicatorColor: contentColor,
+          labelColor: contentColor,
+          unselectedLabelColor: unselectedColor,
           tabs: const [
             Tab(text: 'Gastos', icon: Icon(Icons.euro)),
             Tab(text: 'Consumo', icon: Icon(Icons.local_gas_station)),
@@ -58,7 +73,8 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
+        // CORRECCIÓN AQUÍ: Quitamos 'const' porque los widgets son dinámicos
+        children: [
           GastosTab(),
           ConsumoTab(),
           MantenimientoTab(),

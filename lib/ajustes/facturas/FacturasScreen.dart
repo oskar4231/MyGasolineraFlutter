@@ -45,7 +45,6 @@ class _FacturasScreenState extends State<FacturasScreen> {
   String _formatFecha(String? fecha) {
     if (fecha == null || fecha.isEmpty) return '';
 
-    // Si viene en formato ISO (2025-12-10T23:00:00.000Z)
     if (fecha.contains('T')) {
       try {
         DateTime dateTime = DateTime.parse(fecha);
@@ -61,7 +60,6 @@ class _FacturasScreenState extends State<FacturasScreen> {
   String _formatHora(String? hora) {
     if (hora == null || hora.isEmpty) return '';
 
-    // Si contiene segundos (:00 al final), quitarlos
     if (hora.split(':').length > 2) {
       final partes = hora.split(':');
       return '${partes[0]}:${partes[1]}';
@@ -82,7 +80,6 @@ class _FacturasScreenState extends State<FacturasScreen> {
     );
 
     if (result == true) {
-      // Si se creó una factura exitosamente, recargar la lista
       _cargarFacturas();
     }
   }
@@ -97,18 +94,23 @@ class _FacturasScreenState extends State<FacturasScreen> {
   }
 
   Future<void> _eliminarFactura(int idFactura) async {
-    // Mostrar diálogo de confirmación
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = isDark ? const Color(0xFF2C2C2C) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
-        content: const Text(
+        backgroundColor: dialogBg,
+        title: Text('Confirmar eliminación', style: TextStyle(color: textColor)),
+        content: Text(
           '¿Estás seguro de que quieres eliminar esta factura?',
+          style: TextStyle(color: textColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text('Cancelar', style: TextStyle(color: textColor)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -121,165 +123,193 @@ class _FacturasScreenState extends State<FacturasScreen> {
     if (confirmar == true) {
       try {
         await FacturaService.eliminarFactura(idFactura);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Factura eliminada correctamente')),
-        );
-        _cargarFacturas(); // Recargar la lista
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Factura eliminada correctamente')),
+          );
+        }
+        _cargarFacturas();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al eliminar factura: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al eliminar factura: $e')),
+          );
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // --- LÓGICA DE COLORES DINÁMICA ---
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Background: Crema en claro, Negro en oscuro
+    final scaffoldBg = isDark ? const Color(0xFF121212) : const Color(0xFFFFE2CE);
+    
+    // Header Text/Icons: Marrón en claro, Blanco en oscuro
+    final headerColor = isDark ? Colors.white : const Color(0xFF492714);
+    
+    // Loading color
+    final loadingColor = isDark ? Colors.white : const Color(0xFFFF9350);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Mis Facturas',
           style: TextStyle(
-            color: Color(0xFF492714),
+            color: headerColor,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back, color: headerColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF492714)),
+            icon: Icon(Icons.refresh, color: headerColor),
             onPressed: _cargarFacturas,
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+          ? Center(
+              child: CircularProgressIndicator(color: loadingColor),
             )
           : _errorMessage != null
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 80, color: Colors.red),
-                  const SizedBox(height: 20),
-                  Text(
-                    _errorMessage!,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF492714),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _cargarFacturas,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF9350),
-                    ),
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
-            )
-          : _facturas.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.receipt_long, size: 80, color: Color(0xFFFF9350)),
-                  SizedBox(height: 20),
-                  Text(
-                    'No hay facturas',
-                    style: TextStyle(fontSize: 18, color: Color(0xFF492714)),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Presiona el botón + para agregar una factura',
-                    style: TextStyle(color: Color(0xFF492714)),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _facturas.length,
-              itemBuilder: (context, index) {
-                final factura = _facturas[index];
-                return Card(
-                  color: const Color(0xFFFFCFB0),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF9955),
-                        borderRadius: BorderRadius.circular(10),
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 80, color: Colors.red),
+                      const SizedBox(height: 20),
+                      Text(
+                        _errorMessage!,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: headerColor,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      child: factura['imagenPath'] != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                _buildImageUrl(factura['imagenPath']),
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(
-                                      Icons.receipt,
-                                      color: Color(0xFF492714),
-                                    ),
-                              ),
-                            )
-                          : const Icon(Icons.receipt, color: Color(0xFF492714)),
-                    ),
-                    title: Text(
-                      factura['titulo'] ?? 'Sin título',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF492714),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _cargarFacturas,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF9350),
+                        ),
+                        child: const Text('Reintentar', style: TextStyle(color: Colors.white)),
                       ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4),
-                        Text(
-                          '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF492714),
+                    ],
+                  ),
+                )
+              : _facturas.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.receipt_long,
+                            size: 80,
+                            color: isDark ? Colors.grey : const Color(0xFFFF9350),
                           ),
-                        ),
-                        Text(
-                          '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
-                          style: const TextStyle(color: Color(0xFF492714)),
-                        ),
-                      ],
+                          const SizedBox(height: 20),
+                          Text(
+                            'No hay facturas',
+                            style: TextStyle(fontSize: 18, color: headerColor),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Presiona el botón + para agregar una factura',
+                            style: TextStyle(color: headerColor.withOpacity(0.7)),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _facturas.length,
+                      itemBuilder: (context, index) {
+                        final factura = _facturas[index];
+                        
+                        // Configuración de la tarjeta
+                        final cardColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFFFCFB0);
+                        final cardTitleColor = isDark ? Colors.white : const Color(0xFF492714);
+                        final cardSubtitleColor = isDark ? Colors.white70 : const Color(0xFF492714);
+                        final iconBgColor = isDark ? const Color(0xFFFF9350) : const Color(0xFFFF9955); // Naranja en ambos para resaltar
+
+                        return Card(
+                          color: cardColor,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: iconBgColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: factura['imagenPath'] != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        _buildImageUrl(factura['imagenPath']),
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) =>
+                                            const Icon(
+                                          Icons.receipt,
+                                          color: Colors.white, // Icono blanco sobre fondo naranja
+                                        ),
+                                      ),
+                                    )
+                                  : const Icon(Icons.receipt, color: Colors.white),
+                            ),
+                            title: Text(
+                              factura['titulo'] ?? 'Sin título',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: cardTitleColor,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: cardTitleColor,
+                                  ),
+                                ),
+                                Text(
+                                  '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
+                                  style: TextStyle(color: cardSubtitleColor),
+                                ),
+                              ],
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: isDark ? Colors.redAccent : const Color(0xFF492714)),
+                              onPressed: () => _eliminarFactura(factura['id_factura']),
+                            ),
+                            onTap: () => _verDetalleFactura(factura),
+                          ),
+                        );
+                      },
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Color(0xFF492714)),
-                      onPressed: () => _eliminarFactura(factura['id_factura']),
-                    ),
-                    onTap: () => _verDetalleFactura(factura),
-                  ),
-                );
-              },
-            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navegarACrearFactura,
-        backgroundColor: const Color(0xFFFF9350),
-        foregroundColor: const Color(0xFF492714),
+        // Botón FAB: Naranja en claro, Blanco en oscuro (para contraste sobre fondo negro)
+        backgroundColor: isDark ? Colors.white : const Color(0xFFFF9350),
+        foregroundColor: isDark ? Colors.black : const Color(0xFF492714),
         child: const Icon(Icons.add),
       ),
     );

@@ -48,20 +48,26 @@ class _GastosTabState extends State<GastosTab> {
 
   @override
   Widget build(BuildContext context) {
+    // Detectar tema oscuro
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final loadingColor = isDark ? Colors.white : const Color(0xFFFF9350);
+
     return RefreshIndicator(
       onRefresh: _cargarEstadisticas,
-      color: const Color(0xFFFF9350),
+      color: loadingColor,
       child: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+          ? Center(
+              child: CircularProgressIndicator(color: loadingColor),
             )
           : _errorMessage != null
-              ? _buildError()
-              : _buildEstadisticas(),
+              ? _buildError(isDark)
+              : _buildEstadisticas(isDark),
     );
   }
 
-  Widget _buildError() {
+  Widget _buildError(bool isDark) {
+    final textColor = isDark ? Colors.white : const Color(0xFF492714);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +76,7 @@ class _GastosTabState extends State<GastosTab> {
           const SizedBox(height: 20),
           Text(
             _errorMessage!,
-            style: const TextStyle(fontSize: 16, color: Color(0xFF492714)),
+            style: TextStyle(fontSize: 16, color: textColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -79,16 +85,21 @@ class _GastosTabState extends State<GastosTab> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFF9350),
             ),
-            child: const Text('Reintentar'),
+            child: const Text('Reintentar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildEstadisticas() {
+  Widget _buildEstadisticas(bool isDark) {
     if (_estadisticas == null) {
-      return const Center(child: Text('No hay datos disponibles'));
+      return Center(
+        child: Text(
+          'No hay datos disponibles',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
+      );
     }
 
     final resumen = _estadisticas!['resumen'];
@@ -96,18 +107,21 @@ class _GastosTabState extends State<GastosTab> {
     final comparativa = _estadisticas!['comparativa'];
     final proyeccion = _estadisticas!['proyeccion'];
 
+    // Colores dinámicos para los textos
+    final titleColor = isDark ? Colors.white : const Color(0xFF492714);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 📊 RESUMEN GENERAL
-          const Text(
+          Text(
             'Resumen General',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF492714),
+              color: titleColor,
             ),
           ),
           const SizedBox(height: 12),
@@ -119,6 +133,9 @@ class _GastosTabState extends State<GastosTab> {
             subtitle: '${resumen['total_facturas']} repostajes',
             icon: Icons.account_balance_wallet,
             color: const Color(0xFFFF9350),
+            // Asegúrate de que tu buildStatCard acepte un parámetro de contexto o tema, 
+            // o que use Theme.of(context) internamente. Si no, necesitarás modificar ese widget también.
+            // Por ahora, asumiremos que EstadisticasWidgets ya maneja el tema o que lo modificarás después.
           ),
           const SizedBox(height: 12),
 
@@ -149,10 +166,6 @@ class _GastosTabState extends State<GastosTab> {
           // Card: Proyección
           _buildProyeccionCard(proyeccion),
           const SizedBox(height: 24),
-
-          // 📈 GRÁFICAS (Próximamente)
-          
-          
         ],
       ),
     );

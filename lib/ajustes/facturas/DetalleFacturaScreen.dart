@@ -9,7 +9,6 @@ class DetalleFacturaScreen extends StatelessWidget {
   String _formatFecha(String? fecha) {
     if (fecha == null || fecha.isEmpty) return '';
 
-    // Si viene en formato ISO (2025-12-10T23:00:00.000Z)
     if (fecha.contains('T')) {
       try {
         DateTime dateTime = DateTime.parse(fecha);
@@ -25,7 +24,6 @@ class DetalleFacturaScreen extends StatelessWidget {
   String _formatHora(String? hora) {
     if (hora == null || hora.isEmpty) return '';
 
-    // Si contiene segundos (:00 al final), quitarlos
     if (hora.split(':').length > 2) {
       final partes = hora.split(':');
       return '${partes[0]}:${partes[1]}';
@@ -35,29 +33,46 @@ class DetalleFacturaScreen extends StatelessWidget {
   }
 
   String _buildImageUrl(String path) {
-    // Normalizar ruta (reemplazar backslashes con slashes para URL)
     final normalizedPath = path.replaceAll('\\', '/');
     return '${FacturaService.baseUrl}/$normalizedPath';
   }
 
   @override
   Widget build(BuildContext context) {
+    // --- VARIABLES DINÁMICAS DE TEMA ---
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Background: Crema en claro, Negro en oscuro
+    final scaffoldBg = isDark ? const Color(0xFF121212) : const Color(0xFFFFE8DA);
+    
+    // Header/Iconos: Marrón en claro, Blanco en oscuro
+    final headerColor = isDark ? Colors.white : const Color(0xFF492714);
+    
+    // Tarjeta de información
+    final cardColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFFFCFB0);
+    
+    // Textos dentro de la tarjeta
+    // Label (título pequeño): Marrón en claro, Gris claro en oscuro
+    final labelColor = isDark ? Colors.white70 : const Color(0xFF492714);
+    // Value (texto grande): Marrón en claro, Blanco en oscuro
+    final valueColor = isDark ? Colors.white : const Color(0xFF492714);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Detalle Factura',
           style: TextStyle(
-            color: Color(0xFF492714),
+            color: headerColor,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 2, 1, 1),
+            color: headerColor,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -69,7 +84,7 @@ class DetalleFacturaScreen extends StatelessWidget {
           children: [
             // Información de la factura
             Card(
-              color: const Color(0xFFFFCFB0),
+              color: cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -79,13 +94,15 @@ class DetalleFacturaScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Título
-                    _buildInfoRow('Título', factura['titulo']),
+                    _buildInfoRow('Título', factura['titulo'], labelColor, valueColor),
                     const SizedBox(height: 12),
 
                     // Costo Total
                     _buildInfoRow(
                       'Coste Total',
                       '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
+                      labelColor,
+                      valueColor,
                       isAmount: true,
                     ),
                     const SizedBox(height: 12),
@@ -97,6 +114,8 @@ class DetalleFacturaScreen extends StatelessWidget {
                           child: _buildInfoRow(
                             'Fecha',
                             _formatFecha(factura['fecha']),
+                            labelColor,
+                            valueColor,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -104,6 +123,8 @@ class DetalleFacturaScreen extends StatelessWidget {
                           child: _buildInfoRow(
                             'Hora',
                             _formatHora(factura['hora']),
+                            labelColor,
+                            valueColor,
                           ),
                         ),
                       ],
@@ -116,7 +137,12 @@ class DetalleFacturaScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildInfoRow('Descripción', factura['descripcion']),
+                          _buildInfoRow(
+                            'Descripción', 
+                            factura['descripcion'],
+                            labelColor,
+                            valueColor,
+                          ),
                         ],
                       ),
                   ],
@@ -131,14 +157,14 @@ class DetalleFacturaScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4, bottom: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 8),
                     child: Text(
                       'Comprobante:',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF492714),
+                        color: headerColor,
                       ),
                     ),
                   ),
@@ -181,10 +207,10 @@ class DetalleFacturaScreen extends StatelessWidget {
                                       errorBuilder:
                                           (context, error, stackTrace) =>
                                               const Icon(
-                                                Icons.broken_image,
-                                                color: Colors.white,
-                                                size: 100,
-                                              ),
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                        size: 100,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -213,15 +239,15 @@ class DetalleFacturaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value, {bool isAmount = false}) {
+  Widget _buildInfoRow(String label, String value, Color labelColor, Color valueColor, {bool isAmount = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Color(0xFF492714),
+            color: labelColor,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -230,7 +256,7 @@ class DetalleFacturaScreen extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: isAmount ? 20 : 16,
-            color: const Color(0xFF492714),
+            color: valueColor,
             fontWeight: isAmount ? FontWeight.bold : FontWeight.normal,
           ),
         ),

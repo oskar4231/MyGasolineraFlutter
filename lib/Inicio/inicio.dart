@@ -7,8 +7,31 @@ class Inicio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // --- LÓGICA DE COLORES DINÁMICOS ---
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Colores de Fondo
+    final scaffoldBg = isDark ? const Color(0xFF121212) : const Color(0xFFFFE8DA);
+    
+    // Colores de Texto
+    final titleColor = isDark ? Colors.white : const Color(0xFF492714);
+
+    // Botón 1: Iniciar Sesión
+    // Dark: Fondo Blanco, Texto Negro (Alto contraste)
+    // Light: Tu Naranja original, Texto Marrón
+    final btn1Bg = isDark ? Colors.white : const Color(0xFFFF9350);
+    final btn1Fg = isDark ? Colors.black : const Color(0xFF492714);
+    final btn1Border = isDark ? Colors.white : const Color(0xFF492714);
+
+    // Botón 2: Crear Cuenta
+    // Dark: Fondo Gris Oscuro, Texto Blanco
+    // Light: Tu Melocotón original, Texto Marrón
+    final btn2Bg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFCFB0);
+    final btn2Fg = isDark ? Colors.white : const Color(0xFF492714);
+    final btn2Border = const Color(0xFFFF9350); // Mantenemos borde naranja en ambos para identidad
+
     return Scaffold(
-      backgroundColor: Color(0xFFFFE8DA),
+      backgroundColor: scaffoldBg, // Dinámico
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -31,14 +54,17 @@ class Inicio extends StatelessWidget {
                           'lib/assets/logo.png',
                           height: 120,
                           width: 120,
+                          // Si tu logo es negro transparente, necesitamos invertirlo en dark mode
+                          // Si es una imagen colorida, quita esta línea de 'color'
+                          // color: isDark ? Colors.white : null, 
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Text(
                           'MyGasolinera',
                           style: TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF492714),
+                            color: titleColor, // Dinámico
                           ),
                         ),
                       ],
@@ -47,7 +73,7 @@ class Inicio extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // Botón Iniciar Sesión (ORIGINAL)
+                  // Botón Iniciar Sesión
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -60,18 +86,18 @@ class Inicio extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF9350),
-                        foregroundColor: Color(0xFF492714),
+                        backgroundColor: btn1Bg, // Dinámico
+                        foregroundColor: btn1Fg, // Dinámico
                         padding: const EdgeInsets.symmetric(vertical: 30),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                           side: BorderSide(
-                            color: Color(0xFF492714),
+                            color: btn1Border, // Dinámico
                             width: 2.0,
                           ),
                         ),
                         elevation: 0,
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -82,7 +108,7 @@ class Inicio extends StatelessWidget {
 
                   const SizedBox(height: 15),
 
-                  // Botón Crear Cuenta (ORIGINAL)
+                  // Botón Crear Cuenta
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -94,18 +120,18 @@ class Inicio extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFCFB0),
-                        foregroundColor: Color(0xFF492714),
+                        backgroundColor: btn2Bg, // Dinámico
+                        foregroundColor: btn2Fg, // Dinámico
                         padding: const EdgeInsets.symmetric(vertical: 30),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                           side: BorderSide(
-                            color: Color(0xFFFF9350),
+                            color: btn2Border, // Siempre Naranja
                             width: 2.0,
                           ),
                         ),
                         elevation: 0,
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),

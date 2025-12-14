@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
@@ -18,10 +17,17 @@ class MapaTiempoReal extends StatefulWidget {
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Ubicación en Tiempo Real'),
-        backgroundColor: Colors.blue,
+        title: Text(
+          'Mapa de Gasolineras',
+          style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        ),
+        backgroundColor: primaryColor,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: const MapWidget(),
       floatingActionButton: FloatingActionButton(
@@ -31,7 +37,7 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
           );
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: primaryColor,
         child: Image.asset(
           'lib/assets/ajustes.png',
           width: 24,
@@ -47,8 +53,6 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
 class MapWidget extends StatefulWidget {
   final List<Gasolinera>? externalGasolineras;
   final Function(double lat, double lng)? onLocationUpdate;
-
-  // Parámetros para filtros
   final String? combustibleSeleccionado;
   final double? precioDesde;
   final double? precioHasta;
@@ -68,44 +72,155 @@ class MapWidget extends StatefulWidget {
   _MapWidgetState createState() => _MapWidgetState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
+class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin {
   GoogleMapController? mapController;
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
+  
+  // --- MEMORIA PERSISTENTE ---
+  // Esta variable estática sobrevive al cambio de tema (reconstrucción del widget)
+  // Así evitamos que el mapa vuelva a Madrid al cambiar a modo oscuro
+  static Position? _memoriaUbicacion; 
+
   final Set<Marker> _markers = {};
   final Set<Marker> _gasolinerasMarkers = {};
   BitmapDescriptor? _gasStationIcon;
   BitmapDescriptor? _favoriteGasStationIcon;
-  Timer? _debounceTimer;
-  Timer? _cameraDebounceTimer;
   List<String> _favoritosIds = [];
   bool _isBottomSheetOpen = false;
+  
+  Timer? _debounceTimer;
+
+  // Ubicación por defecto (Madrid) - Solo se usa si no hay NADA en memoria
+  final LatLng _defaultPos = const LatLng(40.416775, -3.703790); 
+  bool _isLocating = true;
 
   static const int LIMIT_RESULTS = 50;
+
+  final String _darkMapStyle = '''
+  [
+    {
+      "elementType": "geometry",
+      "stylers": [{"color": "#242f3e"}]
+    },
+    {
+      "elementType": "labels.text.stroke",
+      "stylers": [{"color": "#242f3e"}]
+    },
+    {
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#746855"}]
+    },
+    {
+      "featureType": "administrative.locality",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#d59563"}]
+    },
+    {
+      "featureType": "poi",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#d59563"}]
+    },
+    {
+      "featureType": "poi.park",
+      "elementType": "geometry",
+      "stylers": [{"color": "#263c3f"}]
+    },
+    {
+      "featureType": "poi.park",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#6b9a76"}]
+    },
+    {
+      "featureType": "road",
+      "elementType": "geometry",
+      "stylers": [{"color": "#38414e"}]
+    },
+    {
+      "featureType": "road",
+      "elementType": "geometry.stroke",
+      "stylers": [{"color": "#212a37"}]
+    },
+    {
+      "featureType": "road",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#9ca5b3"}]
+    },
+    {
+      "featureType": "road.highway",
+      "elementType": "geometry",
+      "stylers": [{"color": "#746855"}]
+    },
+    {
+      "featureType": "road.highway",
+      "elementType": "geometry.stroke",
+      "stylers": [{"color": "#1f2835"}]
+    },
+    {
+      "featureType": "road.highway",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#f3d19c"}]
+    },
+    {
+      "featureType": "transit",
+      "elementType": "geometry",
+      "stylers": [{"color": "#2f3948"}]
+    },
+    {
+      "featureType": "transit.station",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#d59563"}]
+    },
+    {
+      "featureType": "water",
+      "elementType": "geometry",
+      "stylers": [{"color": "#17263c"}]
+    },
+    {
+      "featureType": "water",
+      "elementType": "labels.text.fill",
+      "stylers": [{"color": "#515c6d"}]
+    },
+    {
+      "featureType": "water",
+      "elementType": "labels.text.stroke",
+      "stylers": [{"color": "#17263c"}]
+    }
+  ]
+  ''';
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
+    
+    // 1. CARGA INMEDIATA DE MEMORIA (Para evitar el salto a Madrid)
+    if (_memoriaUbicacion != null) {
+      _ubicacionActual = _memoriaUbicacion;
+      _isLocating = false;
+      // Actualizamos marcadores inmediatamente con la memoria
+      _actualizarMarcadorUsuario(_ubicacionActual!.latitude, _ubicacionActual!.longitude);
+    }
+
     _loadGasStationIcon();
-    _iniciarSeguimiento();
     _cargarFavoritos();
+    _iniciarSeguimiento();
   }
 
   @override
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    // Si cambiaron los filtros o la lista externa, recargar gasolineras
     if (oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
         oldWidget.externalGasolineras != widget.externalGasolineras) {
       if (_ubicacionActual != null) {
-        _cargarGasolineras(
-          _ubicacionActual!.latitude,
-          _ubicacionActual!.longitude,
-        );
+        _cargarGasolineras(_ubicacionActual!.latitude, _ubicacionActual!.longitude);
+      } else {
+        _cargarGasolineras(_defaultPos.latitude, _defaultPos.longitude);
       }
     }
   }
@@ -113,106 +228,146 @@ class _MapWidgetState extends State<MapWidget> {
   Future<void> _cargarFavoritos() async {
     final prefs = await SharedPreferences.getInstance();
     final ids = prefs.getStringList('favoritas_ids') ?? [];
-    if (mounted) {
-      setState(() {
-        _favoritosIds = ids;
-      });
-    }
+    if (mounted) setState(() => _favoritosIds = ids);
   }
 
   Future<void> _loadGasStationIcon() async {
     try {
-      final BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
-        'lib/assets/location_9351238.png',
-      );
-      final BitmapDescriptor favIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
-        'lib/assets/localizacion_favs.png',
-      );
+      final icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(48, 48)), 'lib/assets/location_9351238.png');
+      final favIcon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(48, 48)), 'lib/assets/localizacion_favs.png');
+      if (mounted) setState(() { _gasStationIcon = icon; _favoriteGasStationIcon = favIcon; });
+    } catch (e) {}
+  }
 
+  Future<void> _iniciarSeguimiento() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (_ubicacionActual == null) _usarUbicacionPorDefecto();
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        if (_ubicacionActual == null) _usarUbicacionPorDefecto();
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      if (_ubicacionActual == null) _usarUbicacionPorDefecto();
+      return;
+    }
+
+    // Si no tenemos ni memoria ni ubicación actual, intentamos Caché del sistema
+    if (_ubicacionActual == null) {
+      try {
+        final lastPosition = await Geolocator.getLastKnownPosition();
+        if (lastPosition != null && mounted) {
+          _actualizarPosicion(lastPosition, animar: true);
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+
+    // Buscamos ubicación precisa
+    try {
+      Position posicion = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high, 
+        timeLimit: const Duration(seconds: 10),
+      );
       if (mounted) {
-        setState(() {
-          _gasStationIcon = icon;
-          _favoriteGasStationIcon = favIcon;
-        });
+        _actualizarPosicion(posicion, animar: true);
       }
     } catch (e) {
-      // Manejo de errores
+      // Si falla GPS pero tenemos memoria o caché, NO hacemos nada (nos quedamos ahí).
+      // Solo si es null total vamos a Madrid.
+      if (_ubicacionActual == null) {
+        _usarUbicacionPorDefecto();
+      } else {
+        if (mounted) setState(() => _isLocating = false);
+      }
     }
+
+    // Stream para cambios
+    _positionStreamSub = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high, 
+        distanceFilter: 20, 
+      ),
+    ).listen((Position pos) {
+      if (mounted) {
+        _actualizarPosicion(pos, animar: false);
+      }
+    });
   }
 
-  double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
-    switch (tipoCombustible) {
-      case 'Gasolina 95':
-        return g.gasolina95;
-      case 'Gasolina 98':
-        return g.gasolina98;
-      case 'Diesel':
-        return g.gasoleoA;
-      case 'Diesel Premium':
-        return g.gasoleoPremium;
-      case 'Gas':
-        return g.glp;
-      default:
-        return 0.0;
+  void _actualizarPosicion(Position pos, {bool animar = true}) {
+    // GUARDAMOS EN MEMORIA ESTÁTICA
+    _memoriaUbicacion = pos;
+
+    setState(() {
+      _ubicacionActual = pos;
+      _isLocating = false;
+      _actualizarMarcadorUsuario(pos.latitude, pos.longitude);
+    });
+    
+    if (animar) {
+      mapController?.animateCamera(CameraUpdate.newLatLng(
+        LatLng(pos.latitude, pos.longitude)
+      ));
     }
+    _cargarGasolineras(pos.latitude, pos.longitude);
+    
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    _debounceTimer = Timer(const Duration(seconds: 1), () {
+        widget.onLocationUpdate?.call(pos.latitude, pos.longitude);
+    });
   }
 
-  List<Gasolinera> _aplicarFiltros(List<Gasolinera> gasolineras) {
-    List<Gasolinera> resultado = gasolineras;
+  void _usarUbicacionPorDefecto() {
+    if (!mounted) return;
+    
+    // Si ya tenemos una ubicación válida en memoria, NO usamos Madrid
+    if (_memoriaUbicacion != null) return;
 
-    // 1. Filtro de combustible y precio
-    if (widget.combustibleSeleccionado != null) {
-      resultado = resultado.where((g) {
-        double precio = _obtenerPrecioCombustible(
-          g,
-          widget.combustibleSeleccionado!,
-        );
+    final defaultPosition = Position(
+      latitude: _defaultPos.latitude,
+      longitude: _defaultPos.longitude,
+      timestamp: DateTime.now(),
+      accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0
+    );
 
-        if (precio == 0.0) return false;
+    setState(() {
+      _ubicacionActual = defaultPosition;
+      _isLocating = false;
+      _actualizarMarcadorUsuario(_defaultPos.latitude, _defaultPos.longitude);
+    });
 
-        if (widget.precioDesde != null && precio < widget.precioDesde!) {
-          return false;
-        }
-        if (widget.precioHasta != null && precio > widget.precioHasta!) {
-          return false;
-        }
+    _cargarGasolineras(_defaultPos.latitude, _defaultPos.longitude);
+    mapController?.moveCamera(CameraUpdate.newLatLng(_defaultPos));
+  }
 
-        return true;
-      }).toList();
-    }
-
-    // 2. Filtro de Apertura (Horario)
-    if (widget.tipoAperturaSeleccionado != null) {
-      resultado = resultado.where((g) {
-        switch (widget.tipoAperturaSeleccionado) {
-          case '24 Horas':
-            return g.es24Horas;
-          case 'Gasolineras atendidas por personal':
-            return !g.es24Horas;
-          case 'Gasolineras abiertas ahora':
-            return g.estaAbiertaAhora;
-          case 'Todas':
-            return true;
-          default:
-            return true;
-        }
-      }).toList();
-    }
-
-    return resultado;
+  void _actualizarMarcadorUsuario(double lat, double lng) {
+    _markers.removeWhere((m) => m.markerId.value == 'yo');
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('yo'),
+        position: LatLng(lat, lng),
+        icon: BitmapDescriptor.defaultMarker,
+        zIndex: 2.0,
+        infoWindow: const InfoWindow(title: "Mi Ubicación"),
+      ),
+    );
   }
 
   Future<void> _cargarGasolineras(double lat, double lng) async {
-    List<Gasolinera> listaGasolineras;
-
-    if (widget.externalGasolineras != null &&
-        widget.externalGasolineras!.isNotEmpty) {
-      listaGasolineras = widget.externalGasolineras!;
-    } else {
-      listaGasolineras = await fetchGasolineras();
-    }
+    List<Gasolinera> listaGasolineras = (widget.externalGasolineras != null && widget.externalGasolineras!.isNotEmpty)
+        ? widget.externalGasolineras!
+        : await fetchGasolineras();
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
 
@@ -221,15 +376,9 @@ class _MapWidgetState extends State<MapWidget> {
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    gasolinerasCercanas.sort(
-      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
-    );
+    gasolinerasCercanas.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
 
-    final topGasolineras = gasolinerasCercanas
-        .take(LIMIT_RESULTS)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
-
+    final topGasolineras = gasolinerasCercanas.take(LIMIT_RESULTS).map((e) => e['gasolinera'] as Gasolinera).toList();
     final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
     if (mounted) {
@@ -240,53 +389,71 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
-  Marker _crearMarcador(Gasolinera gasolinera) {
-    bool esFavorita = _favoritosIds.contains(gasolinera.id);
+  double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
+    switch (tipoCombustible) {
+      case 'Gasolina 95': return g.gasolina95;
+      case 'Gasolina 98': return g.gasolina98;
+      case 'Diesel': return g.gasoleoA;
+      case 'Diesel Premium': return g.gasoleoPremium;
+      case 'Gas': return g.glp;
+      default: return 0.0;
+    }
+  }
 
-    // Logic for price color removed as we now use static icons
-    // final formatter is still used for snippet
+  List<Gasolinera> _aplicarFiltros(List<Gasolinera> lista) {
+    List<Gasolinera> res = lista;
+    if (widget.combustibleSeleccionado != null) {
+      res = res.where((g) {
+        double p = _obtenerPrecioCombustible(g, widget.combustibleSeleccionado!);
+        if (p == 0.0) return false;
+        if (widget.precioDesde != null && p < widget.precioDesde!) return false;
+        if (widget.precioHasta != null && p > widget.precioHasta!) return false;
+        return true;
+      }).toList();
+    }
+    if (widget.tipoAperturaSeleccionado != null) {
+      res = res.where((g) {
+        switch (widget.tipoAperturaSeleccionado) {
+          case '24 Horas': return g.es24Horas;
+          case 'Gasolineras atendidas por personal': return !g.es24Horas;
+          case 'Gasolineras abiertas ahora': return g.estaAbiertaAhora;
+          case 'Todas': return true;
+          default: return true;
+        }
+      }).toList();
+    }
+    return res;
+  }
 
+  Marker _crearMarcador(Gasolinera g) {
+    bool fav = _favoritosIds.contains(g.id);
     BitmapDescriptor icon;
-
-    // 1. Si es favorita y tenemos el icono de favoritos cargado, usamos ese
-    if (esFavorita && _favoriteGasStationIcon != null) {
-      icon = _favoriteGasStationIcon!;
-    }
-    // 2. Para el resto de gasolineras, usar el icono "location_9351238"
-    else if (_gasStationIcon != null) {
-      icon = _gasStationIcon!;
-    }
-    // 3. Fallback solo si falla la carga de assets
-    else {
-      icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
-    }
+    if (fav && _favoriteGasStationIcon != null) icon = _favoriteGasStationIcon!;
+    else if (_gasStationIcon != null) icon = _gasStationIcon!;
+    else icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
 
     return Marker(
-      markerId: MarkerId('eess_${gasolinera.id}'),
-      position: gasolinera.position,
+      markerId: MarkerId('eess_${g.id}'),
+      position: g.position,
       icon: icon,
-      onTap: () {
-        _mostrarInfoGasolinera(gasolinera, esFavorita);
-      },
+      zIndex: 1.0,
+      onTap: () => _mostrarInfoGasolinera(g, fav),
     );
   }
 
-  // Nuevo método para mostrar el bocadillo con la estrella
-  Future<void> _mostrarInfoGasolinera(
-    Gasolinera gasolinera,
-    bool esFavorita,
-  ) async {
+  Future<void> _mostrarInfoGasolinera(Gasolinera gasolinera, bool esFavorita) async {
     if (_isBottomSheetOpen) return;
+    setState(() => _isBottomSheetOpen = true);
 
-    setState(() {
-      _isBottomSheetOpen = true;
-    });
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF2C2C2C) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subtitleColor = isDark ? Colors.white70 : Colors.grey[600];
 
     await showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: bgColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(20),
@@ -294,77 +461,13 @@ class _MapWidgetState extends State<MapWidget> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    gasolinera.rotulo,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await _toggleFavorito(gasolinera.id);
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      esFavorita ? Icons.star : Icons.star_border,
-                      color: esFavorita ? Colors.amber : Colors.grey,
-                      size: 32,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              Text(
-                gasolinera.direccion,
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-              ),
-
+              Text(gasolinera.rotulo, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
+              const SizedBox(height: 10),
+              Text(gasolinera.direccion, style: TextStyle(color: subtitleColor)),
               const SizedBox(height: 20),
-
-              // Precios
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (gasolinera.gasolina95 > 0)
-                    _buildPrecioItem(
-                      'Gasolina 95',
-                      gasolinera.gasolina95,
-                      Icons.local_gas_station,
-                      Colors.green,
-                    ),
-                  if (gasolinera.gasoleoA > 0)
-                    _buildPrecioItem(
-                      'Diesel',
-                      gasolinera.gasoleoA,
-                      Icons.directions_car,
-                      Colors.black,
-                    ),
-                  if (gasolinera.gasolina98 > 0)
-                    _buildPrecioItem(
-                      'Gasolina 98',
-                      gasolinera.gasolina98,
-                      Icons.local_gas_station,
-                      Colors.blue,
-                    ),
-                  if (gasolinera.glp > 0)
-                    _buildPrecioItem(
-                      'GLP',
-                      gasolinera.glp,
-                      Icons.local_fire_department,
-                      Colors.orange,
-                    ),
-                ],
-              ),
-
+              if (gasolinera.gasolina95 > 0) _buildPrecioItem("Gasolina 95", gasolinera.gasolina95, Icons.local_gas_station, Colors.green, textColor, subtitleColor!),
+              if (gasolinera.gasoleoA > 0) _buildPrecioItem("Diesel", gasolinera.gasoleoA, Icons.directions_car, Colors.black, textColor, subtitleColor!),
               const SizedBox(height: 24),
-
-              // Botón para añadir/eliminar de favoritos
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -372,22 +475,12 @@ class _MapWidgetState extends State<MapWidget> {
                     await _toggleFavorito(gasolinera.id);
                     Navigator.pop(context);
                   },
-                  icon: Icon(
-                    esFavorita ? Icons.star : Icons.star_border,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    esFavorita ? 'Eliminar de favoritos' : 'Añadir a favoritos',
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  icon: Icon(esFavorita ? Icons.star : Icons.star_border, color: Colors.white),
+                  label: Text(esFavorita ? 'Eliminar de favoritos' : 'Añadir a favoritos', style: const TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: esFavorita
-                        ? Colors.red
-                        : const Color(0xFFFF9350),
+                    backgroundColor: esFavorita ? Colors.red : (isDark ? Colors.grey[800] : const Color(0xFFFF9350)),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
@@ -397,136 +490,44 @@ class _MapWidgetState extends State<MapWidget> {
         );
       },
     );
-
-    if (mounted) {
-      setState(() {
-        _isBottomSheetOpen = false;
-      });
-    }
+    if (mounted) setState(() => _isBottomSheetOpen = false);
   }
 
-  Future<void> _toggleFavorito(String gasolineraId) async {
+  Future<void> _toggleFavorito(String id) async {
     final prefs = await SharedPreferences.getInstance();
-    final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
-
-    if (idsFavoritos.contains(gasolineraId)) {
-      idsFavoritos.remove(gasolineraId);
-    } else {
-      idsFavoritos.add(gasolineraId);
-    }
-
-    await prefs.setStringList('favoritas_ids', idsFavoritos);
-
-    if (mounted) {
-      setState(() {
-        _favoritosIds = idsFavoritos;
-      });
-    }
+    final ids = prefs.getStringList('favoritas_ids') ?? [];
+    if (ids.contains(id)) ids.remove(id); else ids.add(id);
+    await prefs.setStringList('favoritas_ids', ids);
+    if (mounted) setState(() => _favoritosIds = ids);
   }
 
-  Widget _buildPrecioItem(
-    String nombre,
-    double precio,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildPrecioItem(String n, double p, IconData i, Color ic, Color tc, Color sc) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: color),
-          const SizedBox(width: 8),
-          Text(
-            '$nombre: ',
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-          ),
-          const Spacer(),
-          Text(
-            '${precio.toStringAsFixed(3)}€',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
+      child: Row(children: [
+        Icon(i, size: 20, color: ic),
+        const SizedBox(width: 8),
+        Text('$n: ', style: TextStyle(fontSize: 16, color: sc)),
+        const Spacer(),
+        Text('${p.toStringAsFixed(3)}€', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: tc)),
+      ]),
     );
-  }
-
-  Future<void> _iniciarSeguimiento() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
-    if (permission == LocationPermission.deniedForever) return;
-
-    try {
-      Position posicion = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-      );
-      if (mounted) {
-        setState(() {
-          _ubicacionActual = posicion;
-          _markers.clear();
-          _markers.add(
-            Marker(
-              markerId: const MarkerId('yo'),
-              position: LatLng(posicion.latitude, posicion.longitude),
-              icon: BitmapDescriptor.defaultMarker,
-            ),
-          );
-        });
-        _cargarGasolineras(posicion.latitude, posicion.longitude);
-
-        if (widget.onLocationUpdate != null) {
-          widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    _positionStreamSub =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.best,
-            distanceFilter: 5,
-          ),
-        ).listen((Position pos) {
-          if (!mounted) return;
-          setState(() {
-            _ubicacionActual = pos;
-            _markers.clear();
-            _markers.add(
-              Marker(
-                markerId: const MarkerId('yo'),
-                position: LatLng(pos.latitude, pos.longitude),
-                icon: BitmapDescriptor.defaultMarker,
-              ),
-            );
-          });
-
-          if (widget.onLocationUpdate != null) {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(const Duration(seconds: 2), () {
-              if (mounted) {
-                widget.onLocationUpdate!(pos.latitude, pos.longitude);
-              }
-            });
-          }
-        });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_ubicacionActual == null) {
-      return const Center(child: CircularProgressIndicator());
+    super.build(context);
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    if (mapController != null) {
+      mapController!.setMapStyle(isDark ? _darkMapStyle : "[]");
     }
+
+    // AQUÍ ESTÁ EL TRUCO: Si tenemos memoria, usamos memoria. Si no, default.
+    final LatLng targetPosition = _ubicacionActual != null
+        ? LatLng(_ubicacionActual!.latitude, _ubicacionActual!.longitude)
+        : _defaultPos;
 
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
@@ -534,53 +535,43 @@ class _MapWidgetState extends State<MapWidget> {
       borderRadius: BorderRadius.circular(12),
       child: SizedBox(
         height: 300,
-        child: GoogleMap(
-          onMapCreated: (controller) {
-            mapController = controller;
-            if (_ubicacionActual != null) {
-              controller.animateCamera(
-                CameraUpdate.newLatLng(
-                  LatLng(
-                    _ubicacionActual!.latitude,
-                    _ubicacionActual!.longitude,
-                  ),
-                ),
-              );
-            }
-          },
-          onCameraIdle: () async {
-            _cameraDebounceTimer?.cancel();
-            _cameraDebounceTimer = Timer(
-              const Duration(milliseconds: 500),
-              () async {
-                if (mapController != null && mounted) {
-                  try {
-                    final visibleRegion = await mapController!
-                        .getVisibleRegion();
-                    final centerLat =
-                        (visibleRegion.northeast.latitude +
-                            visibleRegion.southwest.latitude) /
-                        2;
-                    final centerLng =
-                        (visibleRegion.northeast.longitude +
-                            visibleRegion.southwest.longitude) /
-                        2;
-                    await _cargarGasolineras(centerLat, centerLng);
-                  } catch (e) {}
+        child: Stack(
+          children: [
+            GoogleMap(
+              onMapCreated: (c) {
+                mapController = c;
+                c.setMapStyle(isDark ? _darkMapStyle : "[]");
+                
+                // Si tenemos ubicación (de memoria o GPS), vamos a ella directo
+                if (_ubicacionActual != null) {
+                  c.moveCamera(CameraUpdate.newLatLng(targetPosition));
                 }
               },
-            );
-          },
-          initialCameraPosition: CameraPosition(
-            target: LatLng(
-              _ubicacionActual!.latitude,
-              _ubicacionActual!.longitude,
+              initialCameraPosition: CameraPosition(
+                target: targetPosition,
+                zoom: 15,
+              ),
+              markers: allMarkers,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
             ),
-            zoom: 15,
-          ),
-          markers: allMarkers,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
+            
+            // Solo mostramos loader si NO tenemos ubicación NI en memoria
+            if (_isLocating && _ubicacionActual == null)
+              Positioned(
+                bottom: 20, left: 20,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
+                  child: Row(children: const [
+                    CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    SizedBox(width: 10),
+                    Text("Buscando GPS...", style: TextStyle(color: Colors.white))
+                  ]),
+                ),
+              )
+          ],
         ),
       ),
     );
@@ -590,16 +581,6 @@ class _MapWidgetState extends State<MapWidget> {
   void dispose() {
     _positionStreamSub?.cancel();
     _debounceTimer?.cancel();
-    _cameraDebounceTimer?.cancel();
-
-    // ✅ CORRECCIÓN: Soluciona el error "Maps cannot be retrieved before calling buildView!" en Flutter Web
-    // Posponemos el dispose para evitar el conflicto del ciclo de vida.
-    if (mapController != null) {
-      Future.delayed(Duration.zero, () {
-        mapController!.dispose();
-      });
-    }
-
     super.dispose();
   }
 }

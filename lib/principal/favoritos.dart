@@ -32,19 +32,14 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     });
 
     try {
-      // 1. Cargar todas las gasolineras
       _todasLasGasolineras = await fetchGasolineras();
-
-      // 2. Cargar IDs de favoritos desde SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
 
-      // 3. Filtrar gasolineras favoritas
       _gasolinerasFavoritas = _todasLasGasolineras
           .where((g) => idsFavoritos.contains(g.id))
           .toList();
 
-      // 4. Aplicar orden inicial
       _aplicarOrden();
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');
@@ -91,7 +86,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       }
     }
 
-    // Si no hay tipo seleccionado, usar promedio de todos los combustibles
     final precios = [
       g.gasolina95,
       g.gasolina98,
@@ -105,15 +99,19 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   void _mostrarFiltros() {
-    // Valores temporales para el diálogo
     String combustibleTemp = _tipoCombustibleSeleccionado ?? 'Todos';
     String ordenTemp = _ordenSeleccionado == 'nombre'
         ? 'Nombre'
         : _ordenSeleccionado == 'precio_asc'
-        ? 'Precio Ascendente'
-        : _ordenSeleccionado == 'precio_desc'
-        ? 'Precio Descendente'
-        : 'Nombre';
+            ? 'Precio Ascendente'
+            : _ordenSeleccionado == 'precio_desc'
+                ? 'Precio Descendente'
+                : 'Nombre';
+
+    // Colores dinámicos para el diálogo
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = Theme.of(context).primaryColor;
+    final textColor = Colors.white;
 
     showDialog(
       context: context,
@@ -121,7 +119,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return Dialog(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: dialogBg, // Dinámico
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -136,24 +134,20 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Título "Filtros" en negro
-                      const Text(
+                      Text(
                         'Filtros',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: textColor, // Blanco siempre en este diálogo
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
-                      // Tipo de Combustible
-                      const Text(
+                      Text(
                         'TIPO DE COMBUSTIBLE',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.black,
+                          color: textColor,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -162,79 +156,55 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ), // 🔧 Más redondeado
-                          boxShadow: [
-                            // 🔧 Añadida sombra sutil
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 4,
-                        ), // 🔧 Padding añadido
+                        ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: combustibleTemp,
                             isExpanded: true,
                             icon: const Icon(
-                              Icons
-                                  .keyboard_arrow_down_rounded, // 🔧 Icono más moderno
+                              Icons.keyboard_arrow_down_rounded,
                               color: Color(0xFFFF9350),
                               size: 28,
                             ),
                             style: const TextStyle(
-                              color: Colors.black,
+                              color: Colors.black, // Texto dentro del dropdown siempre negro
                               fontSize: 16,
-                              fontWeight: FontWeight.w500, // 🔧 Más peso
+                              fontWeight: FontWeight.w500,
                             ),
-                            dropdownColor: Colors.white, // 🔧 Fondo del menú
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // 🔧 Menú redondeado
+                            dropdownColor: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
                             onChanged: (String? nuevoValor) {
                               setStateDialog(() {
                                 combustibleTemp = nuevoValor!;
                               });
                             },
-                            items:
-                                [
-                                  'Todos',
-                                  'Gasolina 95',
-                                  'Gasolina 98',
-                                  'Diesel',
-                                  'Diesel Premium',
-                                  'Gas',
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
+                            items: [
+                              'Todos',
+                              'Gasolina 95',
+                              'Gasolina 98',
+                              'Diesel',
+                              'Diesel Premium',
+                              'Gas',
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
-                      // Filtrar Por
-                      const Text(
+                      Text(
                         'FILTRAR POR',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.black,
+                          color: textColor,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -243,92 +213,54 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ), // 🔧 Más redondeado
-                          boxShadow: [
-                            // 🔧 Añadida sombra sutil
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 4,
-                        ), // 🔧 Padding añadido
+                        ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: ordenTemp,
                             isExpanded: true,
                             icon: const Icon(
-                              Icons
-                                  .keyboard_arrow_down_rounded, // 🔧 Icono más moderno
+                              Icons.keyboard_arrow_down_rounded,
                               color: Color(0xFFFF9350),
                               size: 28,
                             ),
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
-                              fontWeight: FontWeight.w500, // 🔧 Más peso
+                              fontWeight: FontWeight.w500,
                             ),
-                            dropdownColor: Colors.white, // 🔧 Fondo del menú
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // 🔧 Menú redondeado
+                            dropdownColor: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
                             onChanged: (String? nuevoValor) {
                               setStateDialog(() {
                                 ordenTemp = nuevoValor!;
                               });
                             },
                             items: const [
-                              DropdownMenuItem<String>(
+                              DropdownMenuItem(
                                 value: 'Nombre',
-                                child: Text(
-                                  'Nombre',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                                child: Text('Nombre'),
                               ),
-                              DropdownMenuItem<String>(
+                              DropdownMenuItem(
                                 value: 'Precio Ascendente',
-                                child: Text(
-                                  'Precio Ascendente',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                                child: Text('Precio Ascendente'),
                               ),
-                              DropdownMenuItem<String>(
+                              DropdownMenuItem(
                                 value: 'Precio Descendente',
-                                child: Text(
-                                  'Precio Descendente',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                                child: Text('Precio Descendente'),
                               ),
                             ],
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
-                      // Botones
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          // Botón Cancelar en negro 🔧
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
@@ -339,25 +271,23 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 vertical: 12,
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Cancelar',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: textColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Botón Aplicar
                           ElevatedButton(
                             onPressed: () {
-                              // Aplicar filtros
                               setState(() {
                                 _tipoCombustibleSeleccionado =
                                     (combustibleTemp == 'Todos')
-                                    ? null
-                                    : combustibleTemp;
+                                        ? null
+                                        : combustibleTemp;
 
                                 if (ordenTemp == 'Nombre') {
                                   _ordenSeleccionado = 'nombre';
@@ -374,11 +304,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: const Color(0xFFFF9350),
-                              elevation: 2, // 🔧 Añadida elevación
+                              elevation: 2,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  12,
-                                ), // 🔧 Más redondeado
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -413,23 +341,49 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       decimalDigits: 3,
     );
 
+    // --- Colores Dinámicos para la Tarjeta ---
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Fondo de la tarjeta: Blanco degradado en claro, Gris oscuro en dark
+    final cardDecoration = isDark
+        ? BoxDecoration(
+            color: const Color(0xFF2C2C2C),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          )
+        : BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              colors: [Colors.white, Color(0xFFFFF5EE)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF492714).withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          );
+
+    final textColor = isDark ? Colors.white : const Color(0xFF492714);
+    final subtitleColor = isDark ? Colors.white70 : Colors.grey[600];
+    final iconBgColor = isDark ? Colors.white10 : const Color(0xFFFF9350);
+    final iconColor = isDark ? Colors.white : Colors.white; // Icono siempre blanco si el fondo es naranja, pero en dark el fondo es transparente
+
+    // Contenedor de precios (parte inferior)
+    final pricesContainerColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFF0E6);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [Colors.white, const Color(0xFFFFF5EE)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF492714).withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: cardDecoration,
       child: Column(
         children: [
           Padding(
@@ -439,7 +393,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF9350),
+                    color: isDark ? const Color(0xFFFF9350) : const Color(0xFFFF9350), // Mantenemos el acento naranja
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(
@@ -455,10 +409,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     children: [
                       Text(
                         gasolinera.rotulo,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -466,7 +420,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         gasolinera.direccion,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: subtitleColor,
                           height: 1.2,
                         ),
                         maxLines: 2,
@@ -477,14 +431,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    // Eliminar de favoritos con confirmación visual
                     final prefs = await SharedPreferences.getInstance();
                     final idsFavoritos =
                         prefs.getStringList('favoritas_ids') ?? [];
                     idsFavoritos.remove(gasolinera.id);
                     await prefs.setStringList('favoritas_ids', idsFavoritos);
 
-                    // Actualizar lista
                     if (mounted) {
                       setState(() {
                         _gasolinerasFavoritas.removeWhere(
@@ -503,28 +455,27 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       );
                     }
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.star_rounded,
-                    color: Color(0xFFFF9350),
+                    color: isDark ? Colors.amber : const Color(0xFFFF9350), // Ámbar destaca mejor en dark
                     size: 32,
                   ),
                 ),
               ],
             ),
           ),
-
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFF0E6),
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              color: pricesContainerColor,
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: _buildPreciosPremium(gasolinera, formatter),
+              children: _buildPreciosPremium(gasolinera, formatter, isDark),
             ),
           ),
         ],
@@ -532,11 +483,18 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     );
   }
 
-  List<Widget> _buildPreciosPremium(Gasolinera g, NumberFormat formatter) {
+  List<Widget> _buildPreciosPremium(Gasolinera g, NumberFormat formatter, bool isDark) {
     final preciosWidgets = <Widget>[];
+    // Texto de las etiquetas (G95, Diesel...)
+    final labelColor = isDark ? Colors.white70 : Colors.grey[700];
 
-    // Helper para crear widgets de precio
     Widget buildPrice(String label, double price, Color color) {
+      // Ajustamos el color del precio en modo oscuro para que sea legible
+      // Si el color original es negro (diesel), lo pasamos a blanco
+      final displayColor = (isDark && color == const Color(0xFF000000)) 
+          ? Colors.white 
+          : color;
+
       return Column(
         children: [
           Text(
@@ -544,7 +502,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: labelColor,
             ),
           ),
           const SizedBox(height: 4),
@@ -553,7 +511,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: color,
+              color: displayColor,
             ),
           ),
         ],
@@ -578,7 +536,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       );
     }
 
-    // Si solo hay uno o dos, añadir GLP o Premium si existen para llenar visualmente
     if (preciosWidgets.length < 3 && g.glp > 0) {
       preciosWidgets.add(buildPrice('GLP', g.glp, const Color(0xFFFF5722)));
     }
@@ -588,140 +545,155 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // --- VARIABLES DE TEMA ---
+    final primaryColor = Theme.of(context).primaryColor;
+    final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Iconos de la AppBar (Blanco en dark, Negro en light)
+    final appBarIconColor = isDark ? Colors.white : Colors.black;
+    final appBarTextColor = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE2CE),
+      backgroundColor: scaffoldBackgroundColor, // Dinámico
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Gasolineras favoritas',
           style: TextStyle(
-            color: Colors.black,
+            color: appBarTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
-        backgroundColor: const Color(0xFFFF9350),
+        backgroundColor: primaryColor, // Dinámico
         centerTitle: true,
+        iconTheme: IconThemeData(color: appBarIconColor), // Para la flecha de volver
         actions: [
           IconButton(
             onPressed: _mostrarFiltros,
-            icon: const Icon(Icons.filter_list, color: Colors.black, size: 28),
+            icon: Icon(Icons.filter_list, color: appBarIconColor, size: 28),
           ),
         ],
       ),
       body: _loading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+          ? Center(
+              child: CircularProgressIndicator(color: primaryColor),
             )
           : _gasolinerasFavoritas.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.star_border, size: 80, color: Colors.grey[400]),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'No hay gasolineras favoritas en tu lista',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Selecciona gasolineras en el mapa para añadirlas aquí',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 30),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.map),
+                          label: const Text('Ver mapa'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Column(
                   children: [
-                    Icon(Icons.star_border, size: 80, color: Colors.grey[400]),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No hay gasolineras favoritas en tu lista',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Selecciona gasolineras en el mapa para añadirlas aquí',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 30),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.map),
-                      label: const Text('Ver mapa'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF9350),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    // FILA DE FILTROS ACTIVOS
+                    if (_tipoCombustibleSeleccionado != null || _ordenSeleccionado != null)
+                      Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                          horizontal: 16,
+                          vertical: 8,
                         ),
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white, // Fondo de la barra de filtros
+                        child: Row(
+                          children: [
+                            if (_tipoCombustibleSeleccionado != null)
+                              Chip(
+                                label: Text(
+                                  _tipoCombustibleSeleccionado!,
+                                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                                ),
+                                backgroundColor: isDark 
+                                    ? Colors.white24 
+                                    : const Color(0xFFFF9350).withOpacity(0.2),
+                                deleteIconColor: isDark ? Colors.white70 : Colors.black54,
+                                onDeleted: () {
+                                  setState(() {
+                                    _tipoCombustibleSeleccionado = null;
+                                    _aplicarOrden();
+                                  });
+                                },
+                              ),
+                            if (_ordenSeleccionado != null)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Chip(
+                                  label: Text(
+                                    _ordenSeleccionado == 'nombre'
+                                        ? 'Orden: Nombre'
+                                        : _ordenSeleccionado == 'precio_asc'
+                                            ? 'Orden: Precio ↑'
+                                            : 'Orden: Precio ↓',
+                                    style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                                  ),
+                                  backgroundColor: isDark 
+                                      ? Colors.white24 
+                                      : const Color(0xFFFF9350).withOpacity(0.2),
+                                  deleteIconColor: isDark ? Colors.white70 : Colors.black54,
+                                  onDeleted: () {
+                                    setState(() {
+                                      _ordenSeleccionado = null;
+                                      _aplicarOrden();
+                                    });
+                                  },
+                                ),
+                              ),
+                            const Spacer(),
+                          ],
+                        ),
+                      ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemCount: _gasolinerasFavoritas.length,
+                        itemBuilder: (context, index) {
+                          return _buildGasolineraItem(_gasolinerasFavoritas[index]);
+                        },
                       ),
                     ),
                   ],
                 ),
-              ),
-            )
-          : Column(
-              children: [
-                // FILA DE FILTROS ACTIVOS
-                if (_tipoCombustibleSeleccionado != null ||
-                    _ordenSeleccionado != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        if (_tipoCombustibleSeleccionado != null)
-                          Chip(
-                            label: Text(_tipoCombustibleSeleccionado!),
-                            backgroundColor: const Color(
-                              0xFFFF9350,
-                            ).withOpacity(0.2),
-                            onDeleted: () {
-                              setState(() {
-                                _tipoCombustibleSeleccionado = null;
-                                _aplicarOrden();
-                              });
-                            },
-                          ),
-                        if (_ordenSeleccionado != null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Chip(
-                              label: Text(
-                                _ordenSeleccionado == 'nombre'
-                                    ? 'Orden: Nombre'
-                                    : _ordenSeleccionado == 'precio_asc'
-                                    ? 'Orden: Precio ↑'
-                                    : 'Orden: Precio ↓',
-                              ),
-                              backgroundColor: const Color(
-                                0xFFFF9350,
-                              ).withOpacity(0.2),
-                              onDeleted: () {
-                                setState(() {
-                                  _ordenSeleccionado = null;
-                                  _aplicarOrden();
-                                });
-                              },
-                            ),
-                          ),
-                        const Spacer(),
-                      ],
-                    ),
-                  ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: _gasolinerasFavoritas.length,
-                    itemBuilder: (context, index) {
-                      return _buildGasolineraItem(_gasolinerasFavoritas[index]);
-                    },
-                  ),
-                ),
-              ],
-            ),
     );
   }
 }

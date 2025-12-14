@@ -7,7 +7,7 @@ import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/coches/coches.dart';
-import 'favoritos.dart'; // Importar la nueva pantalla de favoritos
+import 'favoritos.dart';
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -68,11 +68,18 @@ class _LayouthomeState extends State<Layouthome> {
 
   Future<void> _getCurrentLocation() async {
     try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        print('Servicio de ubicación deshabilitado');
-        return;
+      // Intentar obtener la última ubicación conocida primero (Más rápido)
+      Position? lastKnown = await Geolocator.getLastKnownPosition();
+      if (lastKnown != null && mounted) {
+        setState(() {
+          _currentPosition = lastKnown;
+        });
+        _calcularGasolinerasCercanas();
       }
+
+      // Luego obtener la precisa
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -90,6 +97,7 @@ class _LayouthomeState extends State<Layouthome> {
         setState(() {
           _currentPosition = position;
         });
+        _calcularGasolinerasCercanas();
       }
     } catch (e) {
       debugPrint('Error getting location: $e');
@@ -134,6 +142,21 @@ class _LayouthomeState extends State<Layouthome> {
     _lastUpdateTime = now;
 
     if (mounted) {
+      setState(() {
+        // Actualizamos la posición local para que la Lista se ordene correctamente si nos movemos
+        _currentPosition = Position(
+          longitude: lng,
+          latitude: lat,
+          timestamp: now,
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0, 
+          altitudeAccuracy: 0, 
+          headingAccuracy: 0
+        );
+      });
       _recalcularConNuevaUbicacion(lat, lng);
     }
   }
@@ -167,7 +190,6 @@ class _LayouthomeState extends State<Layouthome> {
   List<Gasolinera> _aplicarFiltros(List<Gasolinera> gasolineras) {
     List<Gasolinera> resultado = gasolineras;
 
-    // Filtro de combustible y precio
     if (_tipoCombustibleSeleccionado != null) {
       resultado = resultado.where((g) {
         double precio = _obtenerPrecioCombustible(
@@ -176,7 +198,6 @@ class _LayouthomeState extends State<Layouthome> {
         );
 
         if (precio == 0.0) return false;
-
         if (_precioDesde != null && precio < _precioDesde!) return false;
         if (_precioHasta != null && precio > _precioHasta!) return false;
 
@@ -184,14 +205,12 @@ class _LayouthomeState extends State<Layouthome> {
       }).toList();
     }
 
-    // ✅ FILTRO DE APERTURA IMPLEMENTADO
     if (_tipoAperturaSeleccionado != null) {
       resultado = resultado.where((g) {
         switch (_tipoAperturaSeleccionado) {
           case '24 Horas':
             return g.es24Horas;
           case 'Gasolineras atendidas por personal':
-            // Definición del usuario: Las que NO son 24 horas
             return !g.es24Horas;
           case 'Gasolineras abiertas ahora':
             return g.estaAbiertaAhora;
@@ -208,18 +227,12 @@ class _LayouthomeState extends State<Layouthome> {
 
   double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
     switch (tipoCombustible) {
-      case 'Gasolina 95':
-        return g.gasolina95;
-      case 'Gasolina 98':
-        return g.gasolina98;
-      case 'Diesel':
-        return g.gasoleoA;
-      case 'Diesel Premium':
-        return g.gasoleoPremium;
-      case 'Gas':
-        return g.glp;
-      default:
-        return 0.0;
+      case 'Gasolina 95': return g.gasolina95;
+      case 'Gasolina 98': return g.gasolina98;
+      case 'Diesel': return g.gasoleoA;
+      case 'Diesel Premium': return g.gasoleoPremium;
+      case 'Gas': return g.glp;
+      default: return 0.0;
     }
   }
 
@@ -247,7 +260,7 @@ class _LayouthomeState extends State<Layouthome> {
         value: currentValue == value,
         onChanged: (bool? checked) => onChanged(checked == true ? value : null),
         activeColor: Colors.white,
-        checkColor: const Color(0xFFFF9350),
+        checkColor: Theme.of(context).primaryColor,
         controlAffinity: ListTileControlAffinity.leading,
       ),
     );
@@ -260,12 +273,13 @@ class _LayouthomeState extends State<Layouthome> {
     required Function(String?) onAplicar,
   }) {
     String? valorTemporal = valorActual;
+    final primaryColor = Theme.of(context).primaryColor;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setStateDialog) => Dialog(
-          backgroundColor: const Color(0xFFFF9350),
+          backgroundColor: primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -311,7 +325,7 @@ class _LayouthomeState extends State<Layouthome> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFFFF9350),
+                        foregroundColor: primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -343,7 +357,7 @@ class _LayouthomeState extends State<Layouthome> {
       valorActual: _tipoAperturaSeleccionado,
       onAplicar: (valor) {
         setState(() => _tipoAperturaSeleccionado = valor);
-        _calcularGasolinerasCercanas(); // Actualizar lista
+        _calcularGasolinerasCercanas();
       },
     );
   }
@@ -373,14 +387,16 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroPrecio() {
+    final primaryColor = Theme.of(context).primaryColor;
+
     if (_tipoCombustibleSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
+          content: Text(
             'Por favor, antes de filtrar por precio seleccione un tipo de combustible',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFFFF9350),
+              color: primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -411,7 +427,7 @@ class _LayouthomeState extends State<Layouthome> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: const Color(0xFFFF9350),
+          backgroundColor: primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -513,14 +529,8 @@ class _LayouthomeState extends State<Layouthome> {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        final desdeText = desdeController.text.replaceAll(
-                          ',',
-                          '.',
-                        );
-                        final hastaText = hastaController.text.replaceAll(
-                          ',',
-                          '.',
-                        );
+                        final desdeText = desdeController.text.replaceAll(',', '.');
+                        final hastaText = hastaController.text.replaceAll(',', '.');
                         setState(() {
                           _precioDesde = desdeText.isNotEmpty
                               ? double.tryParse(desdeText)
@@ -534,7 +544,7 @@ class _LayouthomeState extends State<Layouthome> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFFFF9350),
+                        foregroundColor: primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -557,21 +567,29 @@ class _LayouthomeState extends State<Layouthome> {
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
+    
+    // --- VARIABLES DE TEMA DINÁMICO ---
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryColor = theme.primaryColor;
+    final scaffoldBackgroundColor = theme.scaffoldBackgroundColor;
+    final cardColor = theme.cardColor;
+    final iconColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFFFE2CE),
+      backgroundColor: scaffoldBackgroundColor,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const SizedBox(
+             SizedBox(
               height: 60,
               child: DrawerHeader(
-                decoration: BoxDecoration(color: Color(0xFFFF9350)),
+                decoration: BoxDecoration(color: primaryColor),
                 margin: EdgeInsets.zero,
-                padding: EdgeInsets.all(16),
-                child: Text(
+                padding: const EdgeInsets.all(16),
+                child: const Text(
                   'Filtros',
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
@@ -608,7 +626,7 @@ class _LayouthomeState extends State<Layouthome> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF9350),
+                color: primaryColor,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -619,13 +637,13 @@ class _LayouthomeState extends State<Layouthome> {
                 children: [
                   const Text(
                     "MyGasolinera",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF9350),
+                      color: primaryColor,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20),
@@ -644,30 +662,33 @@ class _LayouthomeState extends State<Layouthome> {
                             },
                             borderRadius: BorderRadius.circular(8),
                             selectedColor: Colors.black,
-                            color: Colors.white,
+                            color: Colors.black,
                             fillColor: Colors.white70,
                             constraints: const BoxConstraints(
                               minHeight: 32,
                               minWidth: 85,
                             ),
-                            children: const [
+                            children: [
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
                                 child: Text(
                                   'Mapa',
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
                                     fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    // Blanco en oscuro si no seleccionado, para contraste
+                                    color: isDark && !_showMap ? Colors.white : Colors.black,
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
                                 child: Text(
                                   'Lista',
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
                                     fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark && _showMap ? Colors.white : Colors.black,
                                   ),
                                 ),
                               ),
@@ -681,9 +702,8 @@ class _LayouthomeState extends State<Layouthome> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // Botón de Favoritos (Estrella)
                       IconButton(
-                        icon: const Icon(Icons.stars, size: 40),
+                        icon: Icon(Icons.stars, size: 40, color: iconColor),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -693,16 +713,12 @@ class _LayouthomeState extends State<Layouthome> {
                           );
                         },
                       ),
-
-                      // Botón de filtro de precio (flecha arriba)
                       IconButton(
-                        icon: const Icon(Icons.arrow_upward, size: 40),
+                        icon: Icon(Icons.arrow_upward, size: 40, color: iconColor),
                         onPressed: _mostrarFiltroPrecio,
                       ),
-
-                      // Botón para abrir el drawer de filtros (+)
                       IconButton(
-                        icon: const Icon(Icons.add, size: 40),
+                        icon: Icon(Icons.add, size: 40, color: iconColor),
                         onPressed: () {
                           scaffoldKey.currentState?.openDrawer();
                         },
@@ -721,21 +737,29 @@ class _LayouthomeState extends State<Layouthome> {
                   horizontal: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _showMap
-                      ? MapWidget(
-                          externalGasolineras: _allGasolineras,
-                          onLocationUpdate: _onLocationUpdated,
-                          combustibleSeleccionado: _tipoCombustibleSeleccionado,
-                          precioDesde: _precioDesde,
-                          precioHasta: _precioHasta,
-                          tipoAperturaSeleccionado: _tipoAperturaSeleccionado,
-                        )
-                      : _buildListContent(),
+                  // 🔥 AQUÍ ESTÁ EL CAMBIO IMPORTANTE: IndexedStack
+                  // Mantiene el mapa vivo (índice 0) incluso si estás viendo la lista (índice 1)
+                  child: IndexedStack(
+                    index: _showMap ? 0 : 1,
+                    children: [
+                      // Índice 0: Mapa
+                      MapWidget(
+                        externalGasolineras: _allGasolineras,
+                        onLocationUpdate: _onLocationUpdated,
+                        combustibleSeleccionado: _tipoCombustibleSeleccionado,
+                        precioDesde: _precioDesde,
+                        precioHasta: _precioHasta,
+                        tipoAperturaSeleccionado: _tipoAperturaSeleccionado,
+                      ),
+                      // Índice 1: Lista
+                      _buildListContent(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -744,7 +768,7 @@ class _LayouthomeState extends State<Layouthome> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF9350),
+                color: primaryColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -753,7 +777,6 @@ class _LayouthomeState extends State<Layouthome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // Botón de Coches
                   IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -763,19 +786,14 @@ class _LayouthomeState extends State<Layouthome> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.directions_car, size: 40),
+                    icon: Icon(Icons.directions_car, size: 40, color: iconColor),
                   ),
-
-                  // Botón de Ubicación (Pin)
                   IconButton(
                     onPressed: () {
                       // Acción para centrar en ubicación actual
-                      // Podrías añadir funcionalidad aquí si lo necesitas
                     },
-                    icon: const Icon(Icons.pin_drop, size: 40),
+                    icon: Icon(Icons.pin_drop, size: 40, color: iconColor),
                   ),
-
-                  // Botón de Ajustes
                   IconButton(
                     onPressed: () {
                       Navigator.push(
@@ -785,7 +803,7 @@ class _LayouthomeState extends State<Layouthome> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.settings, size: 40),
+                    icon: Icon(Icons.settings, size: 40, color: iconColor),
                   ),
                 ],
               ),
