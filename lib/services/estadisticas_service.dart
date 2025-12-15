@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'auth_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 
 /// Servicio para obtener estadísticas de gastos de combustible
 class EstadisticasService {
-  static const String baseUrl =
-      'https://unsubscribe-doom-onion-submitting.trycloudflare.com';
-
   /// Headers comunes con autenticación
   static Map<String, String> _getHeaders() {
     final token = AuthService.getToken();
@@ -22,7 +20,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerGastoTotal() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/total'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/total'),
         headers: _getHeaders(),
       );
 
@@ -41,7 +39,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerGastoMesActual() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/mes-actual'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/mes-actual'),
         headers: _getHeaders(),
       );
 
@@ -60,7 +58,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerPromedioMensual() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/promedio-mensual'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/promedio-mensual'),
         headers: _getHeaders(),
       );
 
@@ -79,7 +77,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerGastoAnual() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/anual'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/anual'),
         headers: _getHeaders(),
       );
 
@@ -98,7 +96,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerComparacionMensual() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/mes-comparacion'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/mes-comparacion'),
         headers: _getHeaders(),
       );
 
@@ -117,7 +115,7 @@ class EstadisticasService {
   static Future<List<Map<String, dynamic>>> obtenerGastosPorMes() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/por-mes'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/por-mes'),
         headers: _getHeaders(),
       );
 
@@ -137,7 +135,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerPromedioFactura() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/promedio-factura'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/promedio-factura'),
         headers: _getHeaders(),
       );
 
@@ -156,7 +154,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerProyeccionFinMes() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/estadisticas/proyeccion-fin-mes'),
+        Uri.parse('${ApiConfig.estadisticasUrl}/proyeccion-fin-mes'),
         headers: _getHeaders(),
       );
 

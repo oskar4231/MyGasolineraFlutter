@@ -5,6 +5,7 @@ import 'package:my_gasolinera/Inicio/inicio.dart'; // Añade esta importación
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -43,9 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         // Use http://10.0.2.2:3000/login for Android Emulator
         // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/login for iOS Simulator or Web
-        final url = Uri.parse(
-          'https://unsubscribe-doom-onion-submitting.trycloudflare.com/login',
-        );
+        final url = Uri.parse(ApiConfig.loginUrl);
 
         print('Intentando login en: $url');
         print('Email: ${_emailController.text.trim()}');

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;
@@ -37,7 +38,7 @@ class DetalleFacturaScreen extends StatelessWidget {
   String _buildImageUrl(String path) {
     // Normalizar ruta (reemplazar backslashes con slashes para URL)
     final normalizedPath = path.replaceAll('\\', '/');
-    return '${FacturaService.baseUrl}/$normalizedPath';
+    return '${ApiConfig.baseUrl}/$normalizedPath';
   }
 
   @override

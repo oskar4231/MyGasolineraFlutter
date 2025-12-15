@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 
 void main() {
   runApp(const Crear());
@@ -89,9 +90,7 @@ class _CrearScreenState extends State<CrearScreen> {
 
       try {
         final response = await http.post(
-          Uri.parse(
-            'https://unsubscribe-doom-onion-submitting.trycloudflare.com/register',
-          ),
+          Uri.parse(ApiConfig.registerUrl),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'email': _emailController.text.trim(),

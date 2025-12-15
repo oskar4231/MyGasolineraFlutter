@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
 
@@ -72,7 +73,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
 
   String _buildImageUrl(String path) {
     final normalizedPath = path.replaceAll('\\', '/');
-    return '${FacturaService.baseUrl}/$normalizedPath';
+    return '${ApiConfig.baseUrl}/$normalizedPath';
   }
 
   void _navegarACrearFactura() async {

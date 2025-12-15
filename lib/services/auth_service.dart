@@ -1,17 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'api_config.dart';
 
 // Servicio para gestionar el token de autenticación y recuperación de contraseña
 class AuthService {
   static String? _token;
   static String? _userEmail;
-
-  // IMPORTANTE: Cambia esta URL por la IP de tu servidor backend
-  // Si usas emulador Android: 10.0.2.2
-  // Si usas dispositivo físico: 10.2.1.158 (Tu IP actual)
-  static const String baseUrl =
-      'https://unsubscribe-doom-onion-submitting.trycloudflare.com';
 
   // Guardar el token y email del usuario
   static Future<void> saveToken(String token, String email) async {
@@ -54,7 +49,7 @@ class AuthService {
   static Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/forgot-password'),
+        Uri.parse(ApiConfig.forgotPasswordUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email}),
       );
@@ -72,7 +67,7 @@ class AuthService {
   static Future<Map<String, dynamic>> verifyToken(String token) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/verify-token'),
+        Uri.parse(ApiConfig.verifyTokenUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'token': token}),
       );
@@ -93,7 +88,7 @@ class AuthService {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/reset-password'),
+        Uri.parse(ApiConfig.resetPasswordUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'token': token, 'newPassword': newPassword}),
       );

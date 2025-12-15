@@ -3,12 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 
 class PerfilService {
-  // Cambia esta URL a la dirección de tu backend
-  static const String baseUrl =
-      'https://unsubscribe-doom-onion-submitting.trycloudflare.com/api/perfil';
-
   /// Sube una foto de perfil al servidor
   ///
   /// [imageFile] - El archivo de imagen seleccionado (XFile para soporte web)
@@ -26,7 +23,7 @@ class PerfilService {
       // Crear la petición multipart
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/upload-photo'),
+        Uri.parse('${ApiConfig.perfilUrl}/upload-photo'),
       );
 
       // Agregar el token en los headers
@@ -62,7 +59,7 @@ class PerfilService {
 
       // Enviar la petición
       print('📤 Subiendo foto de perfil...');
-      print('🔗 URL: $baseUrl/upload-photo');
+      print('🔗 URL: ${ApiConfig.perfilUrl}/upload-photo');
       print('🔑 Token presente: ${token.isNotEmpty}');
 
       var response = await request.send();
@@ -108,7 +105,7 @@ class PerfilService {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/profile'),
+        Uri.parse('${ApiConfig.perfilUrl}/profile'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -138,8 +135,6 @@ class PerfilService {
   /// [photoPath] - La ruta relativa de la foto (ej: "uploads/profile-photos/foto.jpg")
   /// Retorna la URL completa para cargar la imagen
   String obtenerUrlCompletaFoto(String photoPath) {
-    // Remover "api/perfil" del baseUrl y agregar la ruta de la foto
-    final baseUrlSinApi = baseUrl.replaceAll('/api/perfil', '');
-    return '$baseUrlSinApi/$photoPath';
+    return '${ApiConfig.baseUrl}/$photoPath';
   }
 }

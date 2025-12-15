@@ -2,11 +2,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'api_config.dart';
 
 class UsuarioService {
-  static const String baseUrl =
-      'https://unsubscribe-doom-onion-submitting.trycloudflare.com'; // Cambia por tu URL real
-
   /// Obtiene el nombre del usuario desde el backend
   Future<String> obtenerNombreUsuario() async {
     try {
@@ -20,7 +18,7 @@ class UsuarioService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
-      final url = '$baseUrl/usuarios/perfil/$email';
+      final url = ApiConfig.getUrl('/usuarios/perfil/$email');
       print('🔍 DEBUG - Obteniendo nombre de usuario desde: $url');
 
       final response = await http
@@ -106,7 +104,7 @@ class UsuarioService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
-      final url = '$baseUrl/usuarios/$emailFormateado';
+      final url = ApiConfig.getUrl('/usuarios/$emailFormateado');
       print('🔍 DEBUG - URL construida: $url');
 
       final response = await http
@@ -190,7 +188,7 @@ class UsuarioService {
         throw Exception('No hay sesión activa');
       }
 
-      final url = '$baseUrl/cargarImagen/$email';
+      final url = ApiConfig.getUrl('/cargarImagen/$email');
       print('🔍 DEBUG - Cargando imagen de perfil desde: $url');
 
       final response = await http
@@ -239,7 +237,7 @@ class UsuarioService {
           // Es una ruta de archivo, retornar la URL completa
           final imageUrl = fotoPerfil.toString().startsWith('http')
               ? fotoPerfil
-              : '$baseUrl/$fotoPerfil';
+              : '${ApiConfig.baseUrl}/$fotoPerfil';
           print('🔍 DEBUG - URL de imagen: $imageUrl');
           return imageUrl;
         } else {
