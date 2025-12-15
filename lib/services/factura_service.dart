@@ -43,6 +43,11 @@ class FacturaService {
     required String hora,
     String? descripcion,
     XFile? imagenFile,
+    double? litrosRepostados,
+    double? precioPorLitro,
+    int? kilometrajeActual,
+    String? tipoCombustible,
+    int? idCoche,
   }) async {
     try {
       final token = AuthService.getToken();
@@ -65,6 +70,11 @@ class FacturaService {
       request.fields['fecha'] = fecha;
       request.fields['hora'] = hora;
       request.fields['descripcion'] = descripcion ?? '';
+      request.fields['litros_repostados'] = litrosRepostados?.toString() ?? '';
+      request.fields['precio_por_litro'] = precioPorLitro?.toString() ?? '';
+      request.fields['kilometraje_actual'] = kilometrajeActual?.toString() ?? '';
+      request.fields['tipo_combustible'] = tipoCombustible ?? '';
+      request.fields['id_coche'] = idCoche?.toString() ?? '';
 
       // Agregar la imagen si existe
       if (imagenFile != null) {
