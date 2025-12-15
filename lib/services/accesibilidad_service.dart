@@ -2,11 +2,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'api_config.dart';
 
 class AccesibilidadService {
-  static const String baseUrl =
-      'https://unsubscribe-doom-onion-submitting.trycloudflare.com'; // Cambia por tu URL real
-
   /// Guarda las configuraciones de accesibilidad en el backend
   Future<bool> guardarConfiguracion({
     required String tamanoFuente,
@@ -26,7 +24,7 @@ class AccesibilidadService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
-      final url = '$baseUrl/accesibilidad';
+      final url = ApiConfig.accesibilidadUrl;
       print('🔍 DEBUG - Guardando configuración de accesibilidad');
       print('🔍 DEBUG - URL: $url');
 
@@ -97,23 +95,20 @@ class AccesibilidadService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
-      final url = '$baseUrl/accesibilidad/$email';
+      final url = '${ApiConfig.accesibilidadUrl}/$email';
       print('🔍 DEBUG - Obteniendo configuración de accesibilidad');
       print('🔍 DEBUG - URL: $url');
 
-      final response = await http
-          .get(
-            Uri.parse(url),
-            headers: {
-              'Content-Type': 'application/json',
-              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () =>
-                throw Exception('Timeout al conectar con el servidor'),
-          );
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
+      );
 
       print('🔍 DEBUG - Status code: ${response.statusCode}');
       print('🔍 DEBUG - Response body: ${response.body}');
@@ -129,8 +124,8 @@ class AccesibilidadService {
             altoContraste: config['altoContraste'] ?? false,
             modoOscuro: config['modoOscuro'] ?? false,
             idioma: config['idioma'] ?? 'Español',
-            tamanoFuentePersonalizado: config['tamanoFuentePersonalizado']
-                ?.toDouble(),
+            tamanoFuentePersonalizado:
+                config['tamanoFuentePersonalizado']?.toDouble(),
           );
         }
 

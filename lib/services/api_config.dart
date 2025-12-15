@@ -14,7 +14,7 @@ class ApiConfig {
   /// Esta URL se actualiza dinámicamente al iniciar la app usando ConfigService
   /// No incluyas la barra final (/)
   static String baseUrl =
-      'https://unsubscribe-doom-onion-submitting.trycloudflare.com';
+      'https://arizona-islamic-representatives-care.trycloudflare.com';
 
   /// Actualiza la URL base dinámicamente
   static void setBaseUrl(String newUrl) {
@@ -69,5 +69,8 @@ class ApiConfig {
   static String get estadisticasUrl => getUrl('/estadisticas');
 
   /// URL para el endpoint de perfil
-  static String get perfilUrl => getUrl('/api/perfil');
+  static String get perfilUrl => getUrl('/perfil');
+
+  /// URL para el endpoint de accesibilidad
+  static String get accesibilidadUrl => getUrl('/accesibilidad');
 }
