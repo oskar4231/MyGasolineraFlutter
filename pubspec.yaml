@@ -1,0 +1,41 @@
+name: my_gasolinera
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  # Se actualiza el SDK para que sea compatible con las últimas versiones de las dependencias.
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Dependencias Actualizadas a las versiones más recientes (Diciembre 2024)
+  image_picker: ^1.2.1
+  permission_handler: ^12.0.1
+  google_maps_flutter: ^2.14.0
+  geolocator: ^14.0.2
+  http: ^1.6.0
+  intl: ^0.20.2
+  shared_preferences: ^2.5.4
+  package_info_plus: ^8.3.1
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Se actualiza a la última versión de los lints
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - lib/assets/logo.png
+    - lib/assets/location_9351238.png
+    - lib/assets/localizacion_favs.png
