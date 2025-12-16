@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -120,16 +122,29 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
   Future<void> _loadGasStationIcon() async {
     try {
-      final BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
+      final Uint8List iconBytes = await getBytesFromAsset(
         'lib/assets/location_9351238.png',
+        100,
       );
-      final BitmapDescriptor favIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
+      final Uint8List favIconBytes = await getBytesFromAsset(
         'lib/assets/localizacion_favs.png',
+        100,
       );
+
+      final BitmapDescriptor icon = BitmapDescriptor.fromBytes(iconBytes);
+      final BitmapDescriptor favIcon = BitmapDescriptor.fromBytes(favIconBytes);
 
       if (mounted) {
         setState(() {
@@ -139,6 +154,7 @@ class _MapWidgetState extends State<MapWidget> {
       }
     } catch (e) {
       // Manejo de errores
+      print('Error cargando iconos: $e');
     }
   }
 
@@ -297,11 +313,13 @@ class _MapWidgetState extends State<MapWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    gasolinera.rotulo,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      gasolinera.rotulo,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -381,9 +399,8 @@ class _MapWidgetState extends State<MapWidget> {
                     style: const TextStyle(fontSize: 16),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: esFavorita
-                        ? Colors.red
-                        : const Color(0xFFFF9350),
+                    backgroundColor:
+                        esFavorita ? Colors.red : const Color(0xFFFF9350),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -491,35 +508,34 @@ class _MapWidgetState extends State<MapWidget> {
       // ignore
     }
 
-    _positionStreamSub =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.best,
-            distanceFilter: 5,
+    _positionStreamSub = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: 5,
+      ),
+    ).listen((Position pos) {
+      if (!mounted) return;
+      setState(() {
+        _ubicacionActual = pos;
+        _markers.clear();
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('yo'),
+            position: LatLng(pos.latitude, pos.longitude),
+            icon: BitmapDescriptor.defaultMarker,
           ),
-        ).listen((Position pos) {
-          if (!mounted) return;
-          setState(() {
-            _ubicacionActual = pos;
-            _markers.clear();
-            _markers.add(
-              Marker(
-                markerId: const MarkerId('yo'),
-                position: LatLng(pos.latitude, pos.longitude),
-                icon: BitmapDescriptor.defaultMarker,
-              ),
-            );
-          });
+        );
+      });
 
-          if (widget.onLocationUpdate != null) {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(const Duration(seconds: 2), () {
-              if (mounted) {
-                widget.onLocationUpdate!(pos.latitude, pos.longitude);
-              }
-            });
+      if (widget.onLocationUpdate != null) {
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(seconds: 2), () {
+          if (mounted) {
+            widget.onLocationUpdate!(pos.latitude, pos.longitude);
           }
         });
+      }
+    });
   }
 
   @override
@@ -555,14 +571,12 @@ class _MapWidgetState extends State<MapWidget> {
               () async {
                 if (mapController != null && mounted) {
                   try {
-                    final visibleRegion = await mapController!
-                        .getVisibleRegion();
-                    final centerLat =
-                        (visibleRegion.northeast.latitude +
+                    final visibleRegion =
+                        await mapController!.getVisibleRegion();
+                    final centerLat = (visibleRegion.northeast.latitude +
                             visibleRegion.southwest.latitude) /
                         2;
-                    final centerLng =
-                        (visibleRegion.northeast.longitude +
+                    final centerLng = (visibleRegion.northeast.longitude +
                             visibleRegion.southwest.longitude) /
                         2;
                     await _cargarGasolineras(centerLat, centerLng);
