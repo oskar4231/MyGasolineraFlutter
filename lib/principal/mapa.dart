@@ -138,10 +138,11 @@ class _MapWidgetState extends State<MapWidget> {
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-        oldWidget.precioHasta != widget.precioHasta ||
-        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
         oldWidget.externalGasolineras != widget.externalGasolineras ||
         oldWidget.radiusKm != widget.radiusKm) {
+      print(
+          '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
+
       if (_ubicacionActual != null) {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
@@ -306,6 +307,9 @@ class _MapWidgetState extends State<MapWidget> {
     }
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
+
+    print(
+        '📍 Filtrando ${listaGasolineras.length} gasolineras por radio de ${widget.radiusKm} km');
 
     // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
