@@ -281,17 +281,19 @@ class _AjustesScreenState extends State<AjustesScreen> {
       child: Column(
         children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSeccionPerfil(),
-                  const SizedBox(height: 24),
-                  _buildSeccionConexion(context),
-                  const SizedBox(height: 24),
-                  _buildSeccionOpciones(context),
-                ],
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSeccionPerfil(),
+                    const SizedBox(height: 24),
+                    _buildSeccionConexion(context),
+                    const SizedBox(height: 24),
+                    _buildSeccionOpciones(context),
+                  ],
+                ),
               ),
             ),
           ),

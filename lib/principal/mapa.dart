@@ -146,6 +146,7 @@ class _MapWidgetState extends State<MapWidget> {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
           _ubicacionActual!.longitude,
+          isInitialLoad: false,
         );
       }
     }
@@ -259,7 +260,8 @@ class _MapWidgetState extends State<MapWidget> {
     return resultado;
   }
 
-  Future<void> _cargarGasolineras(double lat, double lng) async {
+  Future<void> _cargarGasolineras(double lat, double lng,
+      {bool isInitialLoad = false}) async {
     List<Gasolinera> listaGasolineras;
 
     if (widget.externalGasolineras != null &&
@@ -326,8 +328,10 @@ class _MapWidgetState extends State<MapWidget> {
     print(
         'Mapa: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${widget.radiusKm}km');
 
-    // Carga progresiva: primero mostrar las 10 más cercanas
-    if (!_isLoadingProgressively && gasolinerasEnRadio.length > 10) {
+    // Carga progresiva: SOLO en carga inicial para dar feedback rápido
+    if (isInitialLoad &&
+        !_isLoadingProgressively &&
+        gasolinerasEnRadio.length > 10) {
       setState(() {
         _isLoadingProgressively = true;
       });
@@ -613,7 +617,8 @@ class _MapWidgetState extends State<MapWidget> {
             ),
           );
         });
-        _cargarGasolineras(posicion.latitude, posicion.longitude);
+        _cargarGasolineras(posicion.latitude, posicion.longitude,
+            isInitialLoad: true);
 
         if (widget.onLocationUpdate != null) {
           widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
@@ -694,7 +699,8 @@ class _MapWidgetState extends State<MapWidget> {
                     final centerLng = (visibleRegion.northeast.longitude +
                             visibleRegion.southwest.longitude) /
                         2;
-                    await _cargarGasolineras(centerLat, centerLng);
+                    await _cargarGasolineras(centerLat, centerLng,
+                        isInitialLoad: false);
                   } catch (e) {}
                 }
               },
