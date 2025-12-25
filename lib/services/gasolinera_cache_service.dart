@@ -9,7 +9,8 @@ class GasolinerasCacheService {
   final AppDatabase _db;
 
   /// Tiempo máximo de frescura del cache en minutos
-  static const int cacheFreshnessMinutes = 20;
+  /// Reducido a 10 minutos para actualizaciones más frecuentes
+  static const int cacheFreshnessMinutes = 10;
 
   GasolinerasCacheService(this._db);
 

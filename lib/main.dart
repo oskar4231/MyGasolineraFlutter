@@ -12,6 +12,10 @@ import 'package:my_gasolinera/bbdd_intermedia/ParaApk/baseDatosApk.dart'
 late AppDatabase database;
 late BackgroundRefreshService backgroundRefreshService;
 
+// Global key para mostrar SnackBars desde cualquier lugar
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -22,6 +26,17 @@ Future<void> main() async {
 
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
+
+  // Configurar callback de cambio de URL
+  ConfigService.onUrlChanged = () {
+    rootScaffoldMessengerKey.currentState?.showSnackBar(
+      const SnackBar(
+        content: Text('🔄 Conexión actualizada automáticamente'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 4),
+      ),
+    );
+  };
 
   // Inicializar base de datos (APK o Web según configuración)
   database = AppDatabase();
@@ -41,6 +56,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       title: 'MyGasolinera',
       theme: ThemeData(

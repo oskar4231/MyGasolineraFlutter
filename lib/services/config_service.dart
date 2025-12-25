@@ -17,11 +17,14 @@ class ConfigService {
   /// Timer para actualización periódica
   static Timer? _refreshTimer;
 
+  /// Callback para notificar cambios de URL
+  static Function()? onUrlChanged;
+
   /// Inicializa la configuración de la aplicación
   ///
   /// 1. Intenta cargar URL desde caché para inicio rápido
   /// 2. Intenta obtener nueva URL desde el Gist en segundo plano
-  /// 3. Inicia actualización periódica cada 5 minutos
+  /// 3. Inicia actualización periódica cada 15 segundos (Gist es muy rápido)
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -35,16 +38,17 @@ class ConfigService {
     // 2. Intentar actualizar desde el Gist con reintentos
     await _fetchWithRetry(prefs, maxRetries: 3);
 
-    // 3. Iniciar actualización periódica cada 5 minutos
+    // 3. Iniciar actualización periódica cada 15 segundos (Gist es rápido ~100-300ms)
     startPeriodicRefresh();
   }
 
   /// Inicia actualización periódica de la URL del backend
+  /// Chequea el Gist cada 15 segundos para detectar cambios rápidamente
   static void startPeriodicRefresh(
-      {Duration interval = const Duration(minutes: 5)}) {
+      {Duration interval = const Duration(seconds: 15)}) {
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(interval, (timer) async {
-      print('ConfigService: Actualización periódica de URL...');
+      print('ConfigService: Chequeando Gist para cambios de URL...');
       final prefs = await SharedPreferences.getInstance();
       await _fetchWithRetry(prefs, maxRetries: 1);
     });
@@ -82,22 +86,26 @@ class ConfigService {
   }
 
   /// Obtiene la URL del Gist y la guarda si es válida
+  /// Si detecta un cambio de URL, notifica para hacer refresh
   static Future<void> _fetchAndSaveUrl(SharedPreferences prefs) async {
     if (_gistUrl.contains('PLACEHOLDER')) {
       print('ConfigService: ⚠️ URL del Gist no configurada. Saltando fetch.');
       return;
     }
 
-    // Timeout de 10 segundos para la petición
-    final response = await http
-        .get(Uri.parse(_gistUrl))
-        .timeout(const Duration(seconds: 10));
+    // Timeout de 5 segundos (Gist es rápido, no necesita 10s)
+    final response =
+        await http.get(Uri.parse(_gistUrl)).timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final String? newUrl = data['backend_url'];
 
       if (newUrl != null && newUrl.isNotEmpty) {
+        // Verificar si la URL cambió
+        final oldUrl = prefs.getString(_prefsKeyBackendUrl);
+        final urlChanged = oldUrl != null && oldUrl != newUrl;
+
         // Guardar en caché
         await prefs.setString(_prefsKeyBackendUrl, newUrl);
         await prefs.setInt(
@@ -105,8 +113,17 @@ class ConfigService {
 
         // Actualizar configuración
         ApiConfig.setBaseUrl(newUrl);
-        print(
-            'ConfigService: URL actualizada exitosamente desde Gist: $newUrl');
+
+        if (urlChanged) {
+          print(
+              'ConfigService: 🔄 URL CAMBIÓ de "$oldUrl" a "$newUrl" - Notificando para refresh...');
+          // Notificar cambio para que la app haga refresh
+          if (onUrlChanged != null) {
+            onUrlChanged!();
+          }
+        } else {
+          print('ConfigService: URL verificada (sin cambios): $newUrl');
+        }
       } else {
         throw Exception('El JSON del Gist no contiene "backend_url"');
       }

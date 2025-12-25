@@ -21,6 +21,24 @@ class MapaTiempoReal extends StatefulWidget {
 }
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
+  double _radiusKm = 25.0;
+  Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarPreferencias();
+  }
+
+  Future<void> _cargarPreferencias() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _radiusKm = prefs.getDouble('radius_km') ?? 25.0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +46,19 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
         title: const Text('Mi Ubicación en Tiempo Real'),
         backgroundColor: Colors.blue,
       ),
-      body: const MapWidget(),
+      body: MapWidget(
+        key: _mapKey,
+        radiusKm: _radiusKm,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
-          );
+          ).then((_) {
+            // Recargar preferencias al volver de ajustes
+            _cargarPreferencias();
+          });
         },
         backgroundColor: Colors.blue,
         child: Image.asset(
@@ -58,6 +82,7 @@ class MapWidget extends StatefulWidget {
   final double? precioDesde;
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
+  final double radiusKm; // Nuevo parámetro
 
   const MapWidget({
     super.key,
@@ -67,6 +92,7 @@ class MapWidget extends StatefulWidget {
     this.precioDesde,
     this.precioHasta,
     this.tipoAperturaSeleccionado,
+    this.radiusKm = 25.0, // Valor por defecto
   });
 
   @override
@@ -91,7 +117,8 @@ class _MapWidgetState extends State<MapWidget> {
   String? _currentProvinciaId;
   bool _isLoadingFromCache = false;
 
-  static const int LIMIT_RESULTS = 50;
+  // Para carga progresiva
+  bool _isLoadingProgressively = false;
 
   @override
   void initState() {
@@ -111,7 +138,10 @@ class _MapWidgetState extends State<MapWidget> {
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-        oldWidget.externalGasolineras != widget.externalGasolineras) {
+        oldWidget.precioHasta != widget.precioHasta ||
+        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
+        oldWidget.externalGasolineras != widget.externalGasolineras ||
+        oldWidget.radiusKm != widget.radiusKm) {
       if (_ubicacionActual != null) {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
@@ -275,19 +305,61 @@ class _MapWidgetState extends State<MapWidget> {
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
 
+    // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
+    }).where((item) {
+      // Filtrar por radio (convertir metros a km)
+      final distanceKm = (item['distance'] as double) / 1000;
+      return distanceKm <= widget.radiusKm;
     }).toList();
 
+    // Ordenar por distancia
     gasolinerasCercanas.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final topGasolineras = gasolinerasCercanas
-        .take(LIMIT_RESULTS)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
+    final gasolinerasEnRadio =
+        gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
+
+    print(
+        'Mapa: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${widget.radiusKm}km');
+
+    // Carga progresiva: primero mostrar las 10 más cercanas
+    if (!_isLoadingProgressively && gasolinerasEnRadio.length > 10) {
+      setState(() {
+        _isLoadingProgressively = true;
+      });
+
+      // Mostrar primero las 10 más cercanas
+      final primeras10 = gasolinerasEnRadio.take(10).toList();
+      final newMarkers = primeras10.map((g) => _crearMarcador(g)).toSet();
+
+      if (mounted) {
+        setState(() {
+          _gasolinerasMarkers.clear();
+          _gasolinerasMarkers.addAll(newMarkers);
+        });
+      }
+
+      // Cargar el resto en segundo plano
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          final resto = gasolinerasEnRadio.skip(10).toList();
+          final restoMarkers = resto.map((g) => _crearMarcador(g)).toSet();
+
+          setState(() {
+            _gasolinerasMarkers.addAll(restoMarkers);
+            _isLoadingProgressively = false;
+          });
+        }
+      });
+
+      return;
+    }
+
+    final topGasolineras = gasolinerasEnRadio;
 
     final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
