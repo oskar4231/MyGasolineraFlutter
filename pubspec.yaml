@@ -21,6 +21,13 @@ dependencies:
   intl: ^0.20.2
   shared_preferences: ^2.5.4
   package_info_plus: ^8.3.1
+  
+  # Database para cache local
+  drift: ^2.20.3
+  drift_flutter: ^0.2.1
+  sqlite3_flutter_libs: ^0.5.24
+  path_provider: ^2.1.5
+  path: ^1.9.0
 
   cupertino_icons: ^1.0.8
 
@@ -30,6 +37,10 @@ dev_dependencies:
   
   # Se actualiza a la última versión de los lints
   flutter_lints: ^6.0.0
+  
+  # Code generation para Drift
+  build_runner: ^2.4.13
+  drift_dev: ^2.20.3
 
 flutter:
   uses-material-design: true
