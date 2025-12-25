@@ -9,6 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/main.dart' as app;
+import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/services/provincia_service.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -83,11 +86,17 @@ class _MapWidgetState extends State<MapWidget> {
   List<String> _favoritosIds = [];
   bool _isBottomSheetOpen = false;
 
+  // Cache service y provincia
+  late GasolinerasCacheService _cacheService;
+  String? _currentProvinciaId;
+  bool _isLoadingFromCache = false;
+
   static const int LIMIT_RESULTS = 50;
 
   @override
   void initState() {
     super.initState();
+    _cacheService = GasolinerasCacheService(app.database);
     _loadGasStationIcon();
     _iniciarSeguimiento();
     _cargarFavoritos();
@@ -227,7 +236,41 @@ class _MapWidgetState extends State<MapWidget> {
         widget.externalGasolineras!.isNotEmpty) {
       listaGasolineras = widget.externalGasolineras!;
     } else {
-      listaGasolineras = await fetchGasolineras();
+      // Usar cache service con detección de provincia
+      setState(() {
+        _isLoadingFromCache = true;
+      });
+
+      try {
+        // Detectar provincia actual
+        final provinciaInfo =
+            await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+        _currentProvinciaId = provinciaInfo.id;
+
+        print(
+            'Mapa: Cargando gasolineras para provincia ${provinciaInfo.nombre}');
+
+        // Cargar gasolineras de la provincia actual y vecinas
+        final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
+        final provinciasToLoad = [provinciaInfo.id, ...vecinas.take(2)];
+
+        listaGasolineras = await _cacheService.getGasolinerasMultiProvincia(
+          provinciasToLoad,
+          forceRefresh: false,
+        );
+
+        print(
+            'Mapa: Cargadas ${listaGasolineras.length} gasolineras desde cache');
+      } catch (e) {
+        print('Mapa: Error al cargar desde cache, usando API: $e');
+        listaGasolineras = await fetchGasolineras();
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoadingFromCache = false;
+          });
+        }
+      }
     }
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);

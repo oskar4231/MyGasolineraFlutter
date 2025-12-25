@@ -1,0 +1,49 @@
+﻿Running Gradle task 'assembleRelease'...                        
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 9552 bytes (99.4% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+flutter : 
+En línea: 1 Carácter: 1
++ flutter build apk 
+--release 2>&1 | Out-File 
+-FilePath build_log.txt - 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (:Stri  
+  ng) [], RemoteException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+FAILURE: Build failed with 
+an exception.
+
+* What went wrong:
+Execution failed for task 
+':app:packageRelease'.
+> A failure occurred while 
+executing com.android.build.
+gradle.tasks.PackageAndroidA
+rtifact$IncrementalSplitterR
+unnable
+   > SigningConfig 
+"release" is missing 
+required property 
+"storeFile".
+
+* Try:
+> Run with --stacktrace 
+option to get the stack 
+trace.
+> Run with --info or 
+--debug option to get more 
+log output.
+> Run with --scan to 
+generate a Build Scan 
+(powered by Develocity).
+> Get more help at 
+https://help.gradle.org.
+
+BUILD FAILED in 41s
+Running Gradle task 'assembleRelease'...                           41,8s
+Gradle task assembleRelease 
+failed with exit code 1

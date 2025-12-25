@@ -6,7 +6,7 @@ class Gasolinera {
   final String direccion;
   final double lat;
   final double lng;
-  final String horario; 
+  final String horario;
 
   final double gasolina95;
   final double gasolina95E10;
@@ -18,6 +18,10 @@ class Gasolinera {
   final double bioetanol;
   final double esterMetilico;
   final double hidrogeno;
+
+  // Información de provincia
+  final String provincia;
+  final String idProvincia;
 
   Gasolinera({
     required this.id,
@@ -36,11 +40,15 @@ class Gasolinera {
     required this.bioetanol,
     required this.esterMetilico,
     required this.hidrogeno,
+    this.provincia = '',
+    this.idProvincia = '',
   });
 
   // 🔧 Conversión segura de precios con coma decimal
   static double _parsePrecio(String? precioStr) {
-    if (precioStr == null || precioStr.trim().isEmpty || precioStr.trim().toUpperCase() == 'N/A') return 0.0;
+    if (precioStr == null ||
+        precioStr.trim().isEmpty ||
+        precioStr.trim().toUpperCase() == 'N/A') return 0.0;
     return double.tryParse(precioStr.replaceAll(',', '.')) ?? 0.0;
   }
 
@@ -63,6 +71,8 @@ class Gasolinera {
       bioetanol: _parsePrecio(json['Precio Bioetanol'] as String?),
       esterMetilico: _parsePrecio(json['Precio Éster metílico'] as String?),
       hidrogeno: _parsePrecio(json['Precio Hidrogeno'] as String?),
+      provincia: json['Provincia'] ?? '',
+      idProvincia: json['IDProvincia'] ?? json['IDCCAA'] ?? '',
     );
   }
 
@@ -78,7 +88,8 @@ class Gasolinera {
   // 🕐 Verificar si está abierta ahora
   bool get estaAbiertaAhora {
     if (es24Horas) return true;
-    if (horario.isEmpty) return false; // Si no hay horario, asumimos cerrada o desconocida
+    if (horario.isEmpty)
+      return false; // Si no hay horario, asumimos cerrada o desconocida
 
     final now = DateTime.now();
     final currentDay = now.weekday; // 1=Lunes, 7=Domingo
@@ -87,31 +98,31 @@ class Gasolinera {
     try {
       // Formato típico API: "L-D: 07:00-22:00" o "L-V: 07:00-22:00; S: 08:00-15:00"
       final rangos = horario.split(';');
-      
+
       for (var rango in rangos) {
         rango = rango.trim();
         if (!rango.contains(':')) continue;
-        
+
         // Separar días de horas. Ej: "L-D" de "07:00-22:00"
         // Buscamos el primer ':' que separa los días de las horas
         int firstColon = rango.indexOf(':');
         String diasStr = rango.substring(0, firstColon).trim();
         String horasStr = rango.substring(firstColon + 1).trim();
-        
+
         // Verificar si hoy está dentro del rango de días
         if (_esDiaEnRango(currentDay, diasStr)) {
           // Parsear horas "07:00-22:00"
           final horas = horasStr.split('-');
           if (horas.length != 2) continue;
-          
+
           final apertura = _parseHora(horas[0].trim());
           final cierre = _parseHora(horas[1].trim());
-          
+
           if (apertura != null && cierre != null) {
             // Caso normal: apertura < cierre (ej: 07:00 - 22:00)
             if (apertura <= cierre) {
               if (currentTime >= apertura && currentTime <= cierre) return true;
-            } 
+            }
             // Caso nocturno cruzando medianoche: apertura > cierre (ej: 22:00 - 06:00)
             else {
               if (currentTime >= apertura || currentTime <= cierre) return true;
@@ -123,7 +134,7 @@ class Gasolinera {
       // Si falla el parseo, devolvemos false por seguridad
       return false;
     }
-    
+
     return false;
   }
 
@@ -142,13 +153,13 @@ class Gasolinera {
 
   static bool _esDiaEnRango(int dia, String rangoStr) {
     rangoStr = rangoStr.toUpperCase().trim();
-    
+
     final Map<String, int> diasMap = {
-      'L': 1, 'M': 2, 'X': 3, 'J': 4, 'V': 5, 'S': 6, 'D': 7, 
+      'L': 1, 'M': 2, 'X': 3, 'J': 4, 'V': 5, 'S': 6, 'D': 7,
       'MI': 3, 'JU': 4, 'VI': 5, 'SA': 6, 'DO': 7 // Variantes posibles
     };
-    
-    if (rangoStr == 'L-D') return true; 
+
+    if (rangoStr == 'L-D') return true;
 
     // Rango tipo "L-V"
     if (rangoStr.contains('-')) {
@@ -157,11 +168,11 @@ class Gasolinera {
         // Limpiar strings para obtener solo las letras clave
         String inicioStr = partes[0].trim();
         String finStr = partes[1].trim();
-        
+
         // Manejo básico de abreviaturas
-        int? inicio = diasMap[inicioStr] ?? diasMap[inicioStr.substring(0,1)];
-        int? fin = diasMap[finStr] ?? diasMap[finStr.substring(0,1)];
-        
+        int? inicio = diasMap[inicioStr] ?? diasMap[inicioStr.substring(0, 1)];
+        int? fin = diasMap[finStr] ?? diasMap[finStr.substring(0, 1)];
+
         if (inicio != null && fin != null) {
           if (inicio <= fin) {
             return dia >= inicio && dia <= fin;
@@ -171,19 +182,20 @@ class Gasolinera {
         }
       }
     }
-    
+
     // Días sueltos separados por comas (S,D)
     if (rangoStr.contains(',')) {
-        final diasSueltos = rangoStr.split(',');
-        for (var d in diasSueltos) {
-             int? dNum = diasMap[d.trim()] ?? diasMap[d.trim().substring(0,1)];
-             if (dNum == dia) return true;
-        }
-        return false;
+      final diasSueltos = rangoStr.split(',');
+      for (var d in diasSueltos) {
+        int? dNum = diasMap[d.trim()] ?? diasMap[d.trim().substring(0, 1)];
+        if (dNum == dia) return true;
+      }
+      return false;
     }
 
     // Día único
-    int? diaUnico = diasMap[rangoStr] ?? (rangoStr.isNotEmpty ? diasMap[rangoStr.substring(0,1)] : null);
+    int? diaUnico = diasMap[rangoStr] ??
+        (rangoStr.isNotEmpty ? diasMap[rangoStr.substring(0, 1)] : null);
     return dia == diaUnico;
   }
 }
