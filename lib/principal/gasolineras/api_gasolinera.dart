@@ -3,31 +3,41 @@ import 'package:my_gasolinera/services/api_config.dart';
 import 'dart:convert';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
-/// Obtiene todas las gasolineras de España
+/// Obtiene gasolineras desde el backend optimizado (muestra de ~1000)
 Future<List<Gasolinera>> fetchGasolineras() async {
-  const url =
-      'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/';
-  final uri = Uri.parse(url);
-
   try {
-    final response = await http.get(uri);
+    final baseUrl = ApiConfig.baseUrl;
+    final uri = Uri.parse('$baseUrl/api/gasolineras');
+
+    print('🌐 API Backend: Solicitando gasolineras generales...');
+
+    final response = await http.get(uri).timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final bodyUtf8 = utf8.decode(response.bodyBytes);
-      final data = json.decode(bodyUtf8);
+      final jsonResponse = json.decode(bodyUtf8);
 
-      final List<dynamic> listaEESS = data['ListaEESSPrecio'] ?? [];
+      if (jsonResponse['success'] == true) {
+        final List<dynamic> listaGasolineras =
+            jsonResponse['gasolineras'] ?? [];
 
-      return listaEESS
-          .map((jsonItem) => Gasolinera.fromJson(jsonItem))
-          .where((g) => g.lat != 0.0 && g.lng != 0.0)
-          .toList();
+        print(
+            '✅ API Backend: Recibidas ${listaGasolineras.length} gasolineras');
+
+        return listaGasolineras
+            .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+            .where((g) => g.lat != 0.0 && g.lng != 0.0)
+            .toList();
+      } else {
+        print('❌ API Backend Error: ${jsonResponse['message']}');
+        return [];
+      }
     } else {
-      print('Error al cargar datos: ${response.statusCode}');
+      print('❌ API Backend Error HTTP: ${response.statusCode}');
       return [];
     }
   } catch (e) {
-    print('Error de red o decodificación: $e');
+    print('❌ API Backend Excepción: $e');
     return [];
   }
 }

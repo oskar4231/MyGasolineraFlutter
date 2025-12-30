@@ -7,7 +7,7 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
+import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
@@ -296,7 +296,17 @@ class _MapWidgetState extends State<MapWidget> {
             'Mapa: Cargadas ${listaGasolineras.length} gasolineras desde cache');
       } catch (e) {
         print('Mapa: Error al cargar desde cache, usando API: $e');
-        listaGasolineras = await fetchGasolineras();
+        // Usar API con filtro de provincia en lugar de todas las gasolineras
+        if (_currentProvinciaId != null) {
+          listaGasolineras =
+              await api.fetchGasolinerasByProvincia(_currentProvinciaId!);
+        } else {
+          // Si no tenemos provincia, intentar detectarla
+          final provinciaInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+          listaGasolineras =
+              await api.fetchGasolinerasByProvincia(provinciaInfo.id);
+        }
       } finally {
         if (mounted) {
           setState(() {

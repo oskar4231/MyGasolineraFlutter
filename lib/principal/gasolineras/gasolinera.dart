@@ -44,35 +44,71 @@ class Gasolinera {
     this.idProvincia = '',
   });
 
-  // 🔧 Conversión segura de precios con coma decimal
-  static double _parsePrecio(String? precioStr) {
-    if (precioStr == null ||
-        precioStr.trim().isEmpty ||
-        precioStr.trim().toUpperCase() == 'N/A') return 0.0;
-    return double.tryParse(precioStr.replaceAll(',', '.')) ?? 0.0;
+  // 🔧 Conversión segura de precios (acepta String o num)
+  static double _parsePrecio(dynamic value) {
+    if (value == null) return 0.0;
+
+    if (value is num) {
+      return value.toDouble();
+    }
+
+    if (value is String) {
+      if (value.trim().isEmpty || value.trim().toUpperCase() == 'N/A')
+        return 0.0;
+      // Reemplazar coma por punto si es necesario
+      return double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
+    }
+
+    return 0.0;
   }
 
-  // 🏭 Constructor desde JSON oficial del Ministerio
+  // 🏭 Constructor desde JSON oficial del Ministerio O desde nuestro backend
   factory Gasolinera.fromJson(Map<String, dynamic> json) {
+    // Detectar si el JSON tiene lat/lng directos (backend) o Latitud/Longitud (API Gobierno)
+    // El backend envía 'lat' (num) y 'lng' (num).
+    // La API Gobierno envía 'Latitud' (String) y 'Longitud (WGS84)' (String).
+
+    double lat;
+    double lng;
+
+    if (json.containsKey('lat') && json['lat'] is num) {
+      lat = (json['lat'] as num).toDouble();
+    } else {
+      lat = _parsePrecio(json['Latitud']);
+    }
+
+    if (json.containsKey('lng') && json['lng'] is num) {
+      lng = (json['lng'] as num).toDouble();
+    } else {
+      lng = _parsePrecio(json['Longitud (WGS84)']);
+    }
+
     return Gasolinera(
-      id: json['IDEESS'].toString(),
-      rotulo: json['Rótulo'] ?? 'Sin Rótulo',
-      direccion: '${json['Dirección'] ?? ''}, ${json['Municipio'] ?? ''}',
-      horario: json['Horario'] ?? '',
-      lat: _parsePrecio(json['Latitud'] as String?),
-      lng: _parsePrecio(json['Longitud (WGS84)'] as String?),
-      gasolina95: _parsePrecio(json['Precio Gasolina 95 E5'] as String?),
-      gasolina95E10: _parsePrecio(json['Precio Gasolina 95 E10'] as String?),
-      gasolina98: _parsePrecio(json['Precio Gasolina 98 E5'] as String?),
-      gasoleoA: _parsePrecio(json['Precio Gasoleo A'] as String?),
-      gasoleoPremium: _parsePrecio(json['Precio Gasoleo Premium'] as String?),
-      glp: _parsePrecio(json['Precio Gases licuados del petróleo'] as String?),
-      biodiesel: _parsePrecio(json['Precio Biodiesel'] as String?),
-      bioetanol: _parsePrecio(json['Precio Bioetanol'] as String?),
-      esterMetilico: _parsePrecio(json['Precio Éster metílico'] as String?),
-      hidrogeno: _parsePrecio(json['Precio Hidrogeno'] as String?),
-      provincia: json['Provincia'] ?? '',
-      idProvincia: json['IDProvincia'] ?? json['IDCCAA'] ?? '',
+      id: (json['IDEESS'] ?? json['id'] ?? '').toString(),
+      rotulo: json['Rótulo'] ?? json['rotulo'] ?? 'Sin Rótulo',
+      direccion: (json['Dirección'] ?? json['direccion'] ?? '') +
+          // Si viene del gobierno, añadir municipio. Si viene del backend, la dirección ya suele estar completa o el municipio viene aparte
+          (json.containsKey('Municipio') &&
+                  (json['Dirección'] != null || json['direccion'] != null)
+              ? ', ${json['Municipio']}'
+              : ''),
+      horario: json['Horario'] ?? json['horario'] ?? '',
+      lat: lat,
+      lng: lng,
+      // Usar _parsePrecio para todos, maneja String y num automáticamente
+      gasolina95: _parsePrecio(json['Precio Gasolina 95 E5']),
+      gasolina95E10: _parsePrecio(json['Precio Gasolina 95 E10']),
+      gasolina98: _parsePrecio(json['Precio Gasolina 98 E5']),
+      gasoleoA: _parsePrecio(json['Precio Gasoleo A']),
+      gasoleoPremium: _parsePrecio(json['Precio Gasoleo Premium']),
+      glp: _parsePrecio(json['Precio Gases licuados del petróleo']),
+      biodiesel: _parsePrecio(json['Precio Biodiesel']),
+      bioetanol: _parsePrecio(json['Precio Bioetanol']),
+      esterMetilico: _parsePrecio(json['Precio Éster metílico']),
+      hidrogeno: _parsePrecio(json['Precio Hidrogeno']),
+      provincia: json['Provincia'] ?? json['provincia'] ?? '',
+      idProvincia:
+          json['IDProvincia'] ?? json['idProvincia'] ?? json['IDCCAA'] ?? '',
     );
   }
 
