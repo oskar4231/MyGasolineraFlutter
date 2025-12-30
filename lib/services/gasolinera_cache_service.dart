@@ -1,4 +1,4 @@
-import 'package:my_gasolinera/bbdd_intermedia/ParaApk/baseDatosApk.dart';
+import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
 import 'package:my_gasolinera/services/provincia_service.dart';

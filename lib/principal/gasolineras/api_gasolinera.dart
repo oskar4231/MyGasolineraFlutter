@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:my_gasolinera/services/api_config.dart';
 import 'dart:convert';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 
@@ -33,19 +34,52 @@ Future<List<Gasolinera>> fetchGasolineras() async {
 
 /// Obtiene gasolineras filtradas por provincia
 /// El ID de provincia es un código de 2 dígitos (ej: '28' para Madrid)
+/// Obtiene gasolineras filtradas por provincia usando nuestro Backend Optimizado
+/// El ID de provincia es un código de 2 dígitos (ej: '28' para Madrid)
 Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
-  // La API del gobierno no tiene endpoint por provincia, así que cargamos todas
-  // y filtramos localmente. En el futuro se podría usar una API propia en el backend.
-  final allGasolineras = await fetchGasolineras();
+  try {
+    // 1. Obtener URL base del backend desde ConfigService
+    final baseUrl = ApiConfig.baseUrl; // E.g., http://localhost:3000
 
-  // Filtrar por provincia
-  return allGasolineras.where((g) {
-    // Intentar matchear por idProvincia o por nombre de provincia
-    return g.idProvincia == provinciaId ||
-        g.provincia
-            .toLowerCase()
-            .contains(_getProvinciaNombre(provinciaId).toLowerCase());
-  }).toList();
+    // 2. Construir URI para el nuevo endpoint
+    // Endpoint: /api/gasolineras?id_provincia=28
+    final uri = Uri.parse('$baseUrl/api/gasolineras')
+        .replace(queryParameters: {'id_provincia': provinciaId});
+
+    print(
+        '🌐 API Backend: Solicitando gasolineras para provincia $provinciaId...');
+
+    // 3. Realizar petición con timeout corto (el backend debería ser rápido)
+    final response = await http.get(uri).timeout(const Duration(seconds: 10));
+
+    if (response.statusCode == 200) {
+      final bodyUtf8 = utf8.decode(response.bodyBytes);
+      final jsonResponse = json.decode(bodyUtf8);
+
+      if (jsonResponse['success'] == true) {
+        final List<dynamic> listaGasolineras =
+            jsonResponse['gasolineras'] ?? [];
+
+        print(
+            '✅ API Backend: Recibidas ${listaGasolineras.length} gasolineras');
+
+        return listaGasolineras
+            .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+            .where((g) => g.lat != 0.0 && g.lng != 0.0)
+            .toList();
+      } else {
+        print('❌ API Backend Error lógico: ${jsonResponse['message']}');
+        return [];
+      }
+    } else {
+      print('❌ API Backend Error HTTP: ${response.statusCode}');
+      return [];
+    }
+  } catch (e) {
+    print('❌ API Backend Excepción: $e');
+    // Fallback silencioso: devolver lista vacía para que la UI use caché si tiene
+    return [];
+  }
 }
 
 /// Mapeo de códigos de provincia a nombres (simplificado)

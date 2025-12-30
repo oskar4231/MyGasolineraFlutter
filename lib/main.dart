@@ -4,9 +4,7 @@ import 'package:my_gasolinera/services/config_service.dart';
 import 'package:my_gasolinera/services/background_refresh_service.dart';
 import 'package:my_gasolinera/importante/switchWebApk.dart';
 
-// Importación condicional según plataforma
-import 'package:my_gasolinera/bbdd_intermedia/ParaApk/baseDatosApk.dart'
-    if (dart.library.html) 'package:my_gasolinera/bbdd_intermedia/ParaWeb/baseDatosWeb.dart';
+import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 
 // Instancias globales
 late AppDatabase database;
