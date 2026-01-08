@@ -6,6 +6,8 @@ class Gasolinera {
   final String direccion;
   final double lat;
   final double lng;
+  final String municipio;
+  final String provincia;
   final String horario; 
 
   final double gasolina95;
@@ -25,6 +27,8 @@ class Gasolinera {
     required this.direccion,
     required this.lat,
     required this.lng,
+    required this.municipio,
+    required this.provincia,
     required this.horario,
     required this.gasolina95,
     required this.gasolina95E10,
@@ -53,6 +57,8 @@ class Gasolinera {
       horario: json['Horario'] ?? '',
       lat: _parsePrecio(json['Latitud'] as String?),
       lng: _parsePrecio(json['Longitud (WGS84)'] as String?),
+      municipio: json['municipio'] ?? '',
+      provincia: json['provincia'] ?? '',
       gasolina95: _parsePrecio(json['Precio Gasolina 95 E5'] as String?),
       gasolina95E10: _parsePrecio(json['Precio Gasolina 95 E10'] as String?),
       gasolina98: _parsePrecio(json['Precio Gasolina 98 E5'] as String?),
