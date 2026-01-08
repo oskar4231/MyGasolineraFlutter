@@ -96,9 +96,7 @@ class _CrearScreenState extends State<CrearScreen> {
               backgroundColor: Colors.green,
             ),
           );
-=======
           
->>>>>>> origin/main
           // Navegar automáticamente a login después de 2 segundos
           Future.delayed(const Duration(seconds: 2), () {
             Navigator.pushReplacement(

@@ -11,8 +11,6 @@ class EstadisticasAvanzadasService {
       'Authorization': 'Bearer ${token ?? ''}',
     };
   }
-=======
->>>>>>> origin/main
   /// Obtener consumo real (L/100km)
   static Future<Map<String, dynamic>> obtenerConsumoReal() async {
     try {
