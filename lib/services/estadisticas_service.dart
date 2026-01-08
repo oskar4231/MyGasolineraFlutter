@@ -1,18 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'auth_service.dart';
-<<<<<<< HEAD
 import 'package:my_gasolinera/services/api_config.dart';
 
 /// Servicio para obtener estadísticas de gastos de combustible
 class EstadisticasService {
-=======
-
-/// Servicio para obtener estadísticas de gastos de combustible
-class EstadisticasService {
-  static const String baseUrl = 'http://localhost:3000';
-
->>>>>>> origin/main
   /// Headers comunes con autenticación
   static Map<String, String> _getHeaders() {
     final token = AuthService.getToken();
@@ -28,11 +20,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerGastoTotal() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/total'),
-=======
-        Uri.parse('$baseUrl/estadisticas/total'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -51,11 +39,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerGastoMesActual() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/mes-actual'),
-=======
-        Uri.parse('$baseUrl/estadisticas/mes-actual'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -74,11 +58,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerPromedioMensual() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/promedio-mensual'),
-=======
-        Uri.parse('$baseUrl/estadisticas/promedio-mensual'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -97,11 +77,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerGastoAnual() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/anual'),
-=======
-        Uri.parse('$baseUrl/estadisticas/anual'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -120,11 +96,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerComparacionMensual() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/mes-comparacion'),
-=======
-        Uri.parse('$baseUrl/estadisticas/mes-comparacion'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -143,11 +115,7 @@ class EstadisticasService {
   static Future<List<Map<String, dynamic>>> obtenerGastosPorMes() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/por-mes'),
-=======
-        Uri.parse('$baseUrl/estadisticas/por-mes'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -167,11 +135,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerPromedioFactura() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/promedio-factura'),
-=======
-        Uri.parse('$baseUrl/estadisticas/promedio-factura'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -190,11 +154,7 @@ class EstadisticasService {
   static Future<Map<String, dynamic>> obtenerProyeccionFinMes() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.estadisticasUrl}/proyeccion-fin-mes'),
-=======
-        Uri.parse('$baseUrl/estadisticas/proyeccion-fin-mes'),
->>>>>>> origin/main
         headers: _getHeaders(),
       );
 
@@ -212,11 +172,7 @@ class EstadisticasService {
   // ==================== MÉTODO COMPLETO (RECOMENDADO) ====================
 
   /// 🎯 Obtener todas las estadísticas en una sola llamada
-<<<<<<< HEAD
   ///
-=======
-  /// 
->>>>>>> origin/main
   /// Retorna un objeto con todas las estadísticas necesarias:
   /// - resumen: Gasto total, promedio por factura, etc.
   /// - mesActual: Gasto del mes en curso
@@ -227,7 +183,6 @@ class EstadisticasService {
     try {
       // Hacer todas las llamadas en paralelo para mejor rendimiento
       final results = await Future.wait([
-<<<<<<< HEAD
         obtenerGastoTotal(), // 0
         obtenerGastoMesActual(), // 1
         obtenerPromedioMensual(), // 2
@@ -236,16 +191,6 @@ class EstadisticasService {
         obtenerGastosPorMes(), // 5
         obtenerPromedioFactura(), // 6
         obtenerProyeccionFinMes(), // 7
-=======
-        obtenerGastoTotal(),           // 0
-        obtenerGastoMesActual(),       // 1
-        obtenerPromedioMensual(),      // 2
-        obtenerGastoAnual(),           // 3
-        obtenerComparacionMensual(),   // 4
-        obtenerGastosPorMes(),         // 5
-        obtenerPromedioFactura(),      // 6
-        obtenerProyeccionFinMes(),     // 7
->>>>>>> origin/main
       ]);
 
       // Cast explícito para evitar errores de tipado
@@ -294,8 +239,4 @@ class EstadisticasService {
       rethrow;
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/main

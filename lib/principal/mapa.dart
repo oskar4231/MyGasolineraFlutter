@@ -1,25 +1,5 @@
-<<<<<<< HEAD
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
-=======
->>>>>>> origin/main
-import 'package:flutter/material.dart';
-import 'dart:async';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_gasolinera/ajustes/ajustes.dart';
-<<<<<<< HEAD
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
-import 'package:my_gasolinera/main.dart' as app;
-import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
-import 'package:my_gasolinera/services/provincia_service.dart';
-=======
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
->>>>>>> origin/main
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -29,7 +9,6 @@ class MapaTiempoReal extends StatefulWidget {
 }
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
-<<<<<<< HEAD
   double _radiusKm = 25.0;
   Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
 
@@ -48,36 +27,15 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
     }
   }
 
-=======
->>>>>>> origin/main
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi Ubicación en Tiempo Real'),
-        backgroundColor: Colors.blue,
-      ),
-<<<<<<< HEAD
-      body: MapWidget(
-        key: _mapKey,
-        radiusKm: _radiusKm,
-      ),
-=======
-      body: const MapWidget(),
->>>>>>> origin/main
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
-<<<<<<< HEAD
           ).then((_) {
             // Recargar preferencias al volver de ajustes
             _cargarPreferencias();
           });
-=======
-          );
->>>>>>> origin/main
         },
         backgroundColor: Colors.blue,
         child: Image.asset(
@@ -101,23 +59,7 @@ class MapWidget extends StatefulWidget {
   final double? precioDesde;
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
-<<<<<<< HEAD
   final double radiusKm; // Nuevo parámetro
-=======
->>>>>>> origin/main
-
-  const MapWidget({
-    super.key,
-    this.externalGasolineras,
-    this.onLocationUpdate,
-    this.combustibleSeleccionado,
-    this.precioDesde,
-    this.precioHasta,
-    this.tipoAperturaSeleccionado,
-<<<<<<< HEAD
-    this.radiusKm = 25.0, // Valor por defecto
-=======
->>>>>>> origin/main
   });
 
   @override
@@ -137,7 +79,6 @@ class _MapWidgetState extends State<MapWidget> {
   List<String> _favoritosIds = [];
   bool _isBottomSheetOpen = false;
 
-<<<<<<< HEAD
   // Cache service y provincia
   late GasolinerasCacheService _cacheService;
   String? _currentProvinciaId;
@@ -145,101 +86,16 @@ class _MapWidgetState extends State<MapWidget> {
 
   // Para carga progresiva
   bool _isLoadingProgressively = false;
-=======
-  static const int LIMIT_RESULTS = 50;
->>>>>>> origin/main
 
   @override
   void initState() {
     super.initState();
-<<<<<<< HEAD
     _cacheService = GasolinerasCacheService(app.database);
-=======
->>>>>>> origin/main
-    _loadGasStationIcon();
-    _iniciarSeguimiento();
-    _cargarFavoritos();
-  }
-
-  @override
-  void didUpdateWidget(MapWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Si cambiaron los filtros o la lista externa, recargar gasolineras
-    if (oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
-        oldWidget.precioDesde != widget.precioDesde ||
-        oldWidget.precioHasta != widget.precioHasta ||
-        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-<<<<<<< HEAD
-        oldWidget.externalGasolineras != widget.externalGasolineras ||
-        oldWidget.radiusKm != widget.radiusKm) {
-      print(
-          '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
-
-=======
-        oldWidget.externalGasolineras != widget.externalGasolineras) {
->>>>>>> origin/main
       if (_ubicacionActual != null) {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
           _ubicacionActual!.longitude,
-<<<<<<< HEAD
           isInitialLoad: false,
-=======
->>>>>>> origin/main
-        );
-      }
-    }
-  }
-
-  Future<void> _cargarFavoritos() async {
-    final prefs = await SharedPreferences.getInstance();
-    final ids = prefs.getStringList('favoritas_ids') ?? [];
-    if (mounted) {
-      setState(() {
-        _favoritosIds = ids;
-      });
-    }
-  }
-
-<<<<<<< HEAD
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-  }
-
-  Future<void> _loadGasStationIcon() async {
-    try {
-      final Uint8List iconBytes = await getBytesFromAsset(
-        'lib/assets/location_9351238.png',
-        100,
-      );
-      final Uint8List favIconBytes = await getBytesFromAsset(
-        'lib/assets/localizacion_favs.png',
-        100,
-      );
-
-      final BitmapDescriptor icon = BitmapDescriptor.fromBytes(iconBytes);
-      final BitmapDescriptor favIcon = BitmapDescriptor.fromBytes(favIconBytes);
-
-=======
-  Future<void> _loadGasStationIcon() async {
-    try {
-      final BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
-        'lib/assets/location_9351238.png',
-      );
-      final BitmapDescriptor favIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
-        'lib/assets/localizacion_favs.png',
-      );
-
->>>>>>> origin/main
       if (mounted) {
         setState(() {
           _gasStationIcon = icon;
@@ -248,88 +104,13 @@ class _MapWidgetState extends State<MapWidget> {
       }
     } catch (e) {
       // Manejo de errores
-<<<<<<< HEAD
       print('Error cargando iconos: $e');
-=======
->>>>>>> origin/main
-    }
-  }
-
-  double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
-    switch (tipoCombustible) {
-      case 'Gasolina 95':
-        return g.gasolina95;
-      case 'Gasolina 98':
-        return g.gasolina98;
-      case 'Diesel':
-        return g.gasoleoA;
-      case 'Diesel Premium':
-        return g.gasoleoPremium;
-      case 'Gas':
-        return g.glp;
-      default:
-        return 0.0;
-    }
-  }
-
-  List<Gasolinera> _aplicarFiltros(List<Gasolinera> gasolineras) {
-    List<Gasolinera> resultado = gasolineras;
-
-    // 1. Filtro de combustible y precio
-    if (widget.combustibleSeleccionado != null) {
-      resultado = resultado.where((g) {
-        double precio = _obtenerPrecioCombustible(
-          g,
-          widget.combustibleSeleccionado!,
-        );
-
-        if (precio == 0.0) return false;
-
-        if (widget.precioDesde != null && precio < widget.precioDesde!) {
-          return false;
-        }
-        if (widget.precioHasta != null && precio > widget.precioHasta!) {
-          return false;
-        }
-
-        return true;
-      }).toList();
-    }
-
-    // 2. Filtro de Apertura (Horario)
-    if (widget.tipoAperturaSeleccionado != null) {
-      resultado = resultado.where((g) {
-        switch (widget.tipoAperturaSeleccionado) {
-          case '24 Horas':
-            return g.es24Horas;
-          case 'Gasolineras atendidas por personal':
-            return !g.es24Horas;
-          case 'Gasolineras abiertas ahora':
-            return g.estaAbiertaAhora;
-          case 'Todas':
-            return true;
-          default:
-            return true;
-        }
-      }).toList();
-    }
-
-    return resultado;
-  }
-
-<<<<<<< HEAD
-  Future<void> _cargarGasolineras(double lat, double lng,
-      {bool isInitialLoad = false}) async {
-=======
-  Future<void> _cargarGasolineras(double lat, double lng) async {
->>>>>>> origin/main
     List<Gasolinera> listaGasolineras;
 
     if (widget.externalGasolineras != null &&
         widget.externalGasolineras!.isNotEmpty) {
       listaGasolineras = widget.externalGasolineras!;
     } else {
-<<<<<<< HEAD
       // Usar cache service con detección de provincia
       setState(() {
         _isLoadingFromCache = true;
@@ -375,14 +156,10 @@ class _MapWidgetState extends State<MapWidget> {
           });
         }
       }
-=======
-      listaGasolineras = await fetchGasolineras();
->>>>>>> origin/main
     }
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
 
-<<<<<<< HEAD
     print(
         '📍 Filtrando ${listaGasolineras.length} gasolineras por radio de ${widget.radiusKm} km');
 
@@ -397,18 +174,10 @@ class _MapWidgetState extends State<MapWidget> {
     }).toList();
 
     // Ordenar por distancia
-=======
-    final gasolinerasCercanas = listaGasolineras.map((g) {
-      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
-      return {'gasolinera': g, 'distance': distance};
-    }).toList();
-
->>>>>>> origin/main
     gasolinerasCercanas.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-<<<<<<< HEAD
     final gasolinerasEnRadio =
         gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
 
@@ -451,12 +220,6 @@ class _MapWidgetState extends State<MapWidget> {
     }
 
     final topGasolineras = gasolinerasEnRadio;
-=======
-    final topGasolineras = gasolinerasCercanas
-        .take(LIMIT_RESULTS)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
->>>>>>> origin/main
 
     final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
@@ -525,7 +288,6 @@ class _MapWidgetState extends State<MapWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-<<<<<<< HEAD
                   Expanded(
                     child: Text(
                       gasolinera.rotulo,
@@ -533,13 +295,6 @@ class _MapWidgetState extends State<MapWidget> {
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
-=======
-                  Text(
-                    gasolinera.rotulo,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
->>>>>>> origin/main
                     ),
                   ),
                   IconButton(
@@ -619,14 +374,8 @@ class _MapWidgetState extends State<MapWidget> {
                     style: const TextStyle(fontSize: 16),
                   ),
                   style: ElevatedButton.styleFrom(
-<<<<<<< HEAD
                     backgroundColor:
                         esFavorita ? Colors.red : const Color(0xFFFF9350),
-=======
-                    backgroundColor: esFavorita
-                        ? Colors.red
-                        : const Color(0xFFFF9350),
->>>>>>> origin/main
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -724,12 +473,8 @@ class _MapWidgetState extends State<MapWidget> {
             ),
           );
         });
-<<<<<<< HEAD
         _cargarGasolineras(posicion.latitude, posicion.longitude,
             isInitialLoad: true);
-=======
-        _cargarGasolineras(posicion.latitude, posicion.longitude);
->>>>>>> origin/main
 
         if (widget.onLocationUpdate != null) {
           widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
@@ -739,7 +484,6 @@ class _MapWidgetState extends State<MapWidget> {
       // ignore
     }
 
-<<<<<<< HEAD
     _positionStreamSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.best,
@@ -768,37 +512,6 @@ class _MapWidgetState extends State<MapWidget> {
         });
       }
     });
-=======
-    _positionStreamSub =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.best,
-            distanceFilter: 5,
-          ),
-        ).listen((Position pos) {
-          if (!mounted) return;
-          setState(() {
-            _ubicacionActual = pos;
-            _markers.clear();
-            _markers.add(
-              Marker(
-                markerId: const MarkerId('yo'),
-                position: LatLng(pos.latitude, pos.longitude),
-                icon: BitmapDescriptor.defaultMarker,
-              ),
-            );
-          });
-
-          if (widget.onLocationUpdate != null) {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(const Duration(seconds: 2), () {
-              if (mounted) {
-                widget.onLocationUpdate!(pos.latitude, pos.longitude);
-              }
-            });
-          }
-        });
->>>>>>> origin/main
   }
 
   @override
@@ -834,7 +547,6 @@ class _MapWidgetState extends State<MapWidget> {
               () async {
                 if (mapController != null && mounted) {
                   try {
-<<<<<<< HEAD
                     final visibleRegion =
                         await mapController!.getVisibleRegion();
                     final centerLat = (visibleRegion.northeast.latitude +
@@ -845,19 +557,6 @@ class _MapWidgetState extends State<MapWidget> {
                         2;
                     await _cargarGasolineras(centerLat, centerLng,
                         isInitialLoad: false);
-=======
-                    final visibleRegion = await mapController!
-                        .getVisibleRegion();
-                    final centerLat =
-                        (visibleRegion.northeast.latitude +
-                            visibleRegion.southwest.latitude) /
-                        2;
-                    final centerLng =
-                        (visibleRegion.northeast.longitude +
-                            visibleRegion.southwest.longitude) /
-                        2;
-                    await _cargarGasolineras(centerLat, centerLng);
->>>>>>> origin/main
                   } catch (e) {}
                 }
               },

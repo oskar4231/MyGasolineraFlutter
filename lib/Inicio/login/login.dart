@@ -5,54 +5,7 @@ import 'package:my_gasolinera/Inicio/inicio.dart'; // Añade esta importación
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
-<<<<<<< HEAD
 import 'package:my_gasolinera/services/api_config.dart';
-=======
->>>>>>> origin/main
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _rememberMe = false;
-  bool _isLoading = false;
-  bool _obscurePassword = true;
-
-  // Focus nodes para manejar el foco entre campos
-  final _emailFocus = FocusNode();
-  final _passwordFocus = FocusNode();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
-    super.dispose();
-  }
-
-  Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      try {
-        // Use http://10.0.2.2:3000/login for Android Emulator
-<<<<<<< HEAD
-        // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/login for iOS Simulator or Web
-        final url = Uri.parse(ApiConfig.loginUrl);
-=======
-        // Use http://localhost:3000/login for iOS Simulator or Web
-        final url = Uri.parse('http://localhost:3000/login');
->>>>>>> origin/main
 
         print('Intentando login en: $url');
         print('Email: ${_emailController.text.trim()}');

@@ -3,17 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
-<<<<<<< HEAD
 import 'package:my_gasolinera/services/api_config.dart';
 
 class PerfilService {
-=======
-
-class PerfilService {
-  // Cambia esta URL a la dirección de tu backend
-  static const String baseUrl = 'http://localhost:3000/api/perfil';
-
->>>>>>> origin/main
   /// Sube una foto de perfil al servidor
   ///
   /// [imageFile] - El archivo de imagen seleccionado (XFile para soporte web)
@@ -31,11 +23,7 @@ class PerfilService {
       // Crear la petición multipart
       var request = http.MultipartRequest(
         'POST',
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.perfilUrl}/upload-photo'),
-=======
-        Uri.parse('$baseUrl/upload-photo'),
->>>>>>> origin/main
       );
 
       // Agregar el token en los headers
@@ -71,11 +59,7 @@ class PerfilService {
 
       // Enviar la petición
       print('📤 Subiendo foto de perfil...');
-<<<<<<< HEAD
       print('🔗 URL: ${ApiConfig.perfilUrl}/upload-photo');
-=======
-      print('🔗 URL: $baseUrl/upload-photo');
->>>>>>> origin/main
       print('🔑 Token presente: ${token.isNotEmpty}');
 
       var response = await request.send();
@@ -121,11 +105,7 @@ class PerfilService {
       }
 
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.perfilUrl}/profile'),
-=======
-        Uri.parse('$baseUrl/profile'),
->>>>>>> origin/main
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -155,12 +135,6 @@ class PerfilService {
   /// [photoPath] - La ruta relativa de la foto (ej: "uploads/profile-photos/foto.jpg")
   /// Retorna la URL completa para cargar la imagen
   String obtenerUrlCompletaFoto(String photoPath) {
-<<<<<<< HEAD
     return '${ApiConfig.baseUrl}/$photoPath';
-=======
-    // Remover "api/perfil" del baseUrl y agregar la ruta de la foto
-    final baseUrlSinApi = baseUrl.replaceAll('/api/perfil', '');
-    return '$baseUrlSinApi/$photoPath';
->>>>>>> origin/main
   }
 }

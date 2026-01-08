@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/inicio.dart';
-<<<<<<< HEAD
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:my_gasolinera/services/background_refresh_service.dart';
 import 'package:my_gasolinera/importante/switchWebApk.dart';
@@ -51,10 +50,6 @@ Future<void> main() async {
   // Configurar listener para comandos de consola del navegador
   setupBrowserConsoleListeners();
 
-=======
-
-void main() {
->>>>>>> origin/main
   runApp(const MyApp());
 }
 
@@ -64,10 +59,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-<<<<<<< HEAD
       scaffoldMessengerKey: rootScaffoldMessengerKey,
-=======
->>>>>>> origin/main
       debugShowCheckedModeBanner: false,
       title: 'MyGasolinera',
       theme: ThemeData(

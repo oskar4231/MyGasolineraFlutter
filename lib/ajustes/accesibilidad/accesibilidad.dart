@@ -250,7 +250,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           });
 
                           // Guardar en el backend
-<<<<<<< HEAD
                           final exito =
                               await _accesibilidadService.guardarConfiguracion(
                             tamanoFuente: _tamanoFuente,
@@ -258,15 +257,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                             modoOscuro: _modoOscuro,
                             idioma: _idiomaSeleccionado,
                           );
-=======
-                          final exito = await _accesibilidadService
-                              .guardarConfiguracion(
-                                tamanoFuente: _tamanoFuente,
-                                altoContraste: _altoContraste,
-                                modoOscuro: _modoOscuro,
-                                idioma: _idiomaSeleccionado,
-                              );
->>>>>>> origin/main
 
                           setState(() {
                             _cargando = false;
@@ -557,33 +547,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-<<<<<<< HEAD
                   fontSize: 18,
-=======
->>>>>>> origin/main
-                ),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 400,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: idiomasConVariantes.keys.length,
-              itemBuilder: (context, index) {
-                final idioma = idiomasConVariantes.keys.elementAt(index);
-                final esSeleccionado = _idiomaSeleccionado.startsWith(idioma);
-                return Card(
-                  elevation: esSeleccionado ? 4 : 1,
-<<<<<<< HEAD
-                  color:
-                      esSeleccionado ? const Color(0xFFFF9350) : Colors.white,
-=======
-                  color: esSeleccionado
-                      ? const Color(0xFFFF9350)
-                      : Colors.white,
->>>>>>> origin/main
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
@@ -657,34 +621,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-<<<<<<< HEAD
                     fontSize: 18,
-=======
->>>>>>> origin/main
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: variantes.length > 5 ? 400 : null,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: variantes.length,
-              itemBuilder: (context, index) {
-                final variante = variantes[index];
-                final esSeleccionado = _idiomaSeleccionado == variante;
-                return Card(
-                  elevation: esSeleccionado ? 4 : 1,
-<<<<<<< HEAD
-                  color:
-                      esSeleccionado ? const Color(0xFFFF9350) : Colors.white,
-=======
-                  color: esSeleccionado
-                      ? const Color(0xFFFF9350)
-                      : Colors.white,
->>>>>>> origin/main
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
@@ -742,10 +679,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-<<<<<<< HEAD
                     fontSize: 18,
-=======
->>>>>>> origin/main
                   ),
                 ),
               ),

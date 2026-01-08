@@ -3,29 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
-<<<<<<< HEAD
 import 'package:my_gasolinera/services/api_config.dart';
-=======
->>>>>>> origin/main
-
-void main() {
-  runApp(const Crear());
-}
-
-class Crear extends StatelessWidget {
-  const Crear({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Crear Cuenta MyGasolinera',
-<<<<<<< HEAD
-      theme: ThemeData(primarySwatch: Colors.orange),
-=======
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
->>>>>>> origin/main
       home: const CrearScreen(),
       debugShowCheckedModeBanner: false,
     );
@@ -99,15 +77,8 @@ class _CrearScreenState extends State<CrearScreen> {
 
       try {
         final response = await http.post(
-<<<<<<< HEAD
           Uri.parse(ApiConfig.registerUrl),
           headers: {'Content-Type': 'application/json'},
-=======
-          Uri.parse('http://localhost:3000/register'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
->>>>>>> origin/main
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,
@@ -125,8 +96,6 @@ class _CrearScreenState extends State<CrearScreen> {
               backgroundColor: Colors.green,
             ),
           );
-<<<<<<< HEAD
-
 =======
           
 >>>>>>> origin/main
@@ -134,24 +103,12 @@ class _CrearScreenState extends State<CrearScreen> {
           Future.delayed(const Duration(seconds: 2), () {
             Navigator.pushReplacement(
               context,
-<<<<<<< HEAD
               MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           });
 
           // Limpiar formulario
           _formKey.currentState!.reset();
-=======
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
-            );
-          });
-          
-          // Limpiar formulario
-          _formKey.currentState!.reset();
-          
->>>>>>> origin/main
         } else {
           // Error del servidor
           ScaffoldMessenger.of(context).showSnackBar(
@@ -252,13 +209,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('nombre'),
                       decoration: InputDecoration(
                         hintText: 'Nombre completo',
-<<<<<<< HEAD
                         hintStyle: const TextStyle(color: Color(0xFF492714)),
-=======
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
->>>>>>> origin/main
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -287,13 +238,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
                         hintText: 'E-mail',
-<<<<<<< HEAD
                         hintStyle: const TextStyle(color: Color(0xFF492714)),
-=======
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
->>>>>>> origin/main
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -317,11 +262,6 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 15),
-<<<<<<< HEAD
-
-=======
-                    
->>>>>>> origin/main
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
@@ -332,13 +272,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
-<<<<<<< HEAD
                         hintStyle: const TextStyle(color: Color(0xFF492714)),
-=======
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
->>>>>>> origin/main
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -382,32 +316,17 @@ class _CrearScreenState extends State<CrearScreen> {
                       backgroundColor: const Color(0xFFFFE8DA),
                     ),
                     const SizedBox(height: 15),
-<<<<<<< HEAD
-
-=======
-                    
->>>>>>> origin/main
                     // Campo de confirmar contraseña
                     TextFormField(
                       controller: _confirmPasswordController,
                       focusNode: _confirmPasswordFocus,
                       textInputAction: TextInputAction.done,
-<<<<<<< HEAD
                       onFieldSubmitted: (_) =>
                           _handleFieldSubmit('confirmPassword'),
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
                         hintText: 'Confirmar contraseña',
                         hintStyle: const TextStyle(color: Color(0xFF492714)),
-=======
-                      onFieldSubmitted: (_) => _handleFieldSubmit('confirmPassword'),
-                      obscureText: _obscureConfirmPassword,
-                      decoration: InputDecoration(
-                        hintText: 'Confirmar contraseña',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
->>>>>>> origin/main
                         filled: true,
                         fillColor: const Color(0xFFFFD4B8),
                         border: OutlineInputBorder(
@@ -427,12 +346,8 @@ class _CrearScreenState extends State<CrearScreen> {
                           ),
                           onPressed: () {
                             setState(() {
-<<<<<<< HEAD
                               _obscureConfirmPassword =
                                   !_obscureConfirmPassword;
-=======
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
->>>>>>> origin/main
                             });
                           },
                         ),
@@ -448,16 +363,10 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 30),
-<<<<<<< HEAD
-
-=======
-                    
->>>>>>> origin/main
                     // Botón de crear
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-<<<<<<< HEAD
                         onPressed:
                             (_isLoading ||
                                 !_isPasswordValid() ||
@@ -465,9 +374,6 @@ class _CrearScreenState extends State<CrearScreen> {
                                 _nombreController.text.isEmpty)
                             ? null
                             : _registrarUsuario,
-=======
-                        onPressed: (_isLoading || !_isPasswordValid() || _emailController.text.isEmpty || _nombreController.text.isEmpty) ? null : _registrarUsuario,
->>>>>>> origin/main
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF9955),
                           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -482,13 +388,9 @@ class _CrearScreenState extends State<CrearScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-<<<<<<< HEAD
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     Color(0xFF492714),
                                   ),
-=======
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF492714)),
->>>>>>> origin/main
                                 ),
                               )
                             : const Text(
@@ -511,8 +413,4 @@ class _CrearScreenState extends State<CrearScreen> {
       ),
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/main

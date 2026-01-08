@@ -9,47 +9,13 @@ import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
-<<<<<<< HEAD
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-=======
->>>>>>> origin/main
-
-class AjustesScreen extends StatefulWidget {
-  const AjustesScreen({super.key});
-
-  @override
-  State<AjustesScreen> createState() => _AjustesScreenState();
-}
-
-class _AjustesScreenState extends State<AjustesScreen> {
-  Uint8List? _profileImageBytes;
-  String? _profileImageUrl;
-  String _nombreUsuario = "Usuario"; // Nombre que se mostrará
-
-  String get _emailUsuario {
-    return AuthService.getUserEmail() ?? 'usuario@gmail.com';
-  }
-
-  final _usuarioService = UsuarioService();
-  final _perfilService = PerfilService();
-  bool _eliminandoCuenta = false;
-  bool _subiendoFoto = false;
-
-<<<<<<< HEAD
-  // Variables para la sección de conexión y mapa
-  bool _actualizandoUrl = false;
-  DateTime? _lastUrlUpdate;
-  double _radiusKm = 25.0; // Valor por defecto
-
-=======
->>>>>>> origin/main
   @override
   void initState() {
     super.initState();
     _cargarFotoPerfil();
     _cargarNombreUsuario();
-<<<<<<< HEAD
     _cargarDatosConexion();
   }
 
@@ -72,48 +38,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     setState(() {
       _radiusKm = valor;
     });
-=======
->>>>>>> origin/main
-  }
-
-  // Cargar el nombre del usuario desde el backend
-  Future<void> _cargarNombreUsuario() async {
-    try {
-      final nombre = await _usuarioService.obtenerNombreUsuario();
-      if (mounted) {
-        setState(() {
-          _nombreUsuario = nombre;
-        });
-        print('✅ Nombre de usuario cargado: $nombre');
-      }
-    } catch (e) {
-      print('❌ Error cargando nombre de usuario: $e');
-      // Fallback al email si falla
-      if (mounted) {
-        final emailFallback =
-            AuthService.getUserEmail()?.split('@')[0] ?? 'Usuario';
-        setState(() {
-          _nombreUsuario = emailFallback;
-        });
-      }
-    }
-  }
-
-  // Cargar foto de perfil desde el servidor
-  Future<void> _cargarFotoPerfil() async {
-    try {
-      final fotoData = await _usuarioService.cargarImagenPerfil(_emailUsuario);
-
-      if (fotoData != null && mounted) {
-        if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-<<<<<<< HEAD
-          final base64String =
-              fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
-=======
-          final base64String = fotoData.contains(',')
-              ? fotoData.split(',')[1]
-              : fotoData;
->>>>>>> origin/main
           final bytes = base64Decode(base64String);
           setState(() {
             _profileImageBytes = bytes;
@@ -296,7 +220,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
       child: Column(
         children: [
           Expanded(
-<<<<<<< HEAD
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -310,17 +233,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     _buildSeccionOpciones(context),
                   ],
                 ),
-=======
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSeccionPerfil(),
-                  const SizedBox(height: 24),
-                  _buildSeccionOpciones(context),
-                ],
->>>>>>> origin/main
               ),
             ),
           ),
@@ -352,7 +264,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
-<<<<<<< HEAD
                             ? NetworkImage(_profileImageUrl!) as ImageProvider
                             : null,
                     child:
@@ -363,18 +274,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                 size: 40,
                               )
                             : null,
-=======
-                        ? NetworkImage(_profileImageUrl!) as ImageProvider
-                        : null,
-                    child:
-                        _profileImageBytes == null && _profileImageUrl == null
-                        ? const Icon(
-                            Icons.person,
-                            color: Colors.black,
-                            size: 40,
-                          )
-                        : null,
->>>>>>> origin/main
                   ),
                   // Loader mientras sube la foto
                   if (_subiendoFoto)
@@ -454,7 +353,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-<<<<<<< HEAD
   Widget _buildSeccionConexion(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -610,161 +508,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-=======
->>>>>>> origin/main
-  Widget _buildSeccionOpciones(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Opciones',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _OpcionItem(
-          icono: Icons.local_gas_station,
-          texto: 'Combustible',
-          onTap: () {},
-        ),
-        _OpcionItem(
-          icono: Icons.query_stats,
-          texto: 'Estadísticas',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const EstadisticasScreen(),
-              ),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.receipt,
-          texto: 'Gasto/Facturas',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FacturasScreen()),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.accessibility_new,
-          texto: 'Accesibilidad',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AccesibilidadScreen(),
-              ),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.delete_outline,
-          texto: 'Borrar Cuenta',
-          onTap: () => _mostrarDialogoBorrarCuenta(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBotonCerrarSesion(BuildContext context) {
-    return Center(
-      child: ElevatedButton.icon(
-        onPressed: () {
-          _mostrarDialogoCerrarSesion(context);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        ),
-        icon: const Icon(Icons.logout),
-        label: const Text('Cerrar sesión'),
-      ),
-    );
-  }
-
-  void _mostrarDialogoCerrarSesion(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Cerrar sesión'),
-          content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: const Text('Cerrar sesión'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _mostrarDialogoBorrarCuenta() {
-    showDialog(
-      context: context,
-      barrierDismissible: !_eliminandoCuenta,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text('Borrar Cuenta'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
-                    'Esta acción no se puede deshacer.',
-                    style: TextStyle(color: Colors.black87, fontSize: 16),
-                  ),
-                  if (_eliminandoCuenta) ...[
-                    const SizedBox(height: 16),
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 8),
-                    const Text('Eliminando cuenta...'),
-                  ],
-                ],
-              ),
-              actions: [
-                if (!_eliminandoCuenta)
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Cancelar',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                if (!_eliminandoCuenta)
-                  ElevatedButton(
-                    onPressed: () async {
-                      setDialogState(() => _eliminandoCuenta = true);
-                      try {
-<<<<<<< HEAD
-                        final email =
-                            await _usuarioService.obtenerEmailGuardado();
-=======
-                        final email = await _usuarioService
-                            .obtenerEmailGuardado();
->>>>>>> origin/main
 
                         print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
                         print('🔍 DEBUG - Longitud del email: ${email.length}');

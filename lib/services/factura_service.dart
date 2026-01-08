@@ -2,16 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'auth_service.dart';
-<<<<<<< HEAD
 import 'api_config.dart';
 
 class FacturaService {
-=======
-
-class FacturaService {
-  static const String baseUrl = 'http://localhost:3000';
-
->>>>>>> origin/main
   // Obtener todas las facturas del usuario
   static Future<List<Map<String, dynamic>>> obtenerFacturas() async {
     try {
@@ -21,11 +14,7 @@ class FacturaService {
       }
 
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse(ApiConfig.facturasUrl),
-=======
-        Uri.parse('$baseUrl/facturas'),
->>>>>>> origin/main
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -67,11 +56,7 @@ class FacturaService {
       // Crear una petición multipart para enviar la imagen
       final request = http.MultipartRequest(
         'POST',
-<<<<<<< HEAD
         Uri.parse(ApiConfig.facturasUrl),
-=======
-        Uri.parse('$baseUrl/facturas'),
->>>>>>> origin/main
       );
 
       // Agregar headers de autenticación
@@ -85,12 +70,8 @@ class FacturaService {
       request.fields['descripcion'] = descripcion ?? '';
       request.fields['litros_repostados'] = litrosRepostados?.toString() ?? '';
       request.fields['precio_por_litro'] = precioPorLitro?.toString() ?? '';
-<<<<<<< HEAD
       request.fields['kilometraje_actual'] =
           kilometrajeActual?.toString() ?? '';
-=======
-      request.fields['kilometraje_actual'] = kilometrajeActual?.toString() ?? '';
->>>>>>> origin/main
       request.fields['tipo_combustible'] = tipoCombustible ?? '';
       request.fields['id_coche'] = idCoche?.toString() ?? '';
 
@@ -157,11 +138,7 @@ class FacturaService {
       }
 
       final response = await http.delete(
-<<<<<<< HEAD
         Uri.parse('${ApiConfig.facturasUrl}/$idFactura'),
-=======
-        Uri.parse('$baseUrl/facturas/$idFactura'),
->>>>>>> origin/main
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
