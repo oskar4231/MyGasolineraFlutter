@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
-import 'package:my_gasolinera/services/api_config.dart';
 import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
+import 'package:intl/intl.dart';
 
 class FacturasScreen extends StatefulWidget {
   const FacturasScreen({super.key});
@@ -46,14 +46,27 @@ class _FacturasScreenState extends State<FacturasScreen> {
   String _formatFecha(String? fecha) {
     if (fecha == null || fecha.isEmpty) return '';
 
-    // Si viene en formato ISO (2025-12-10T23:00:00.000Z)
-    if (fecha.contains('T')) {
-      try {
-        DateTime dateTime = DateTime.parse(fecha);
-        return '${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
-      } catch (e) {
-        return fecha;
+    // Si viene en formato ISO (2025-12-10T23:00:00.000Z) o yyyy-MM-dd
+    try {
+      DateTime? dateTime;
+      if (fecha.contains('T')) {
+        dateTime = DateTime.parse(fecha);
+      } else if (fecha.contains('-')) {
+        final partes = fecha.split('-');
+        if (partes.length == 3) {
+          dateTime = DateTime(
+            int.parse(partes[0]),
+            int.parse(partes[1]),
+            int.parse(partes[2].split(' ')[0]), // Por si viene con hora
+          );
+        }
       }
+
+      if (dateTime != null) {
+        return DateFormat('dd/MM/yyyy').format(dateTime);
+      }
+    } catch (e) {
+      print('Error parsing date: $e');
     }
 
     return fecha;
@@ -73,7 +86,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
 
   String _buildImageUrl(String path) {
     final normalizedPath = path.replaceAll('\\', '/');
-    return '${ApiConfig.baseUrl}/$normalizedPath';
+    return '${FacturaService.baseUrl}/$normalizedPath';
   }
 
   void _navegarACrearFactura() async {
