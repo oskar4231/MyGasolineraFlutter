@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/services/factura_service.dart';
 import 'package:my_gasolinera/services/coche_service.dart';
-
+import 'package:intl/intl.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
   const CrearFacturaScreen({super.key});
@@ -26,7 +26,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   String? _tipoCombustibleSeleccionado;
   int? _cocheSeleccionado;
   List<Map<String, dynamic>> _coches = [];
-  
+
   final List<String> _tiposCombustible = [
     'Gasolina 95',
     'Gasolina 98',
@@ -62,15 +62,15 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
     } catch (e) {
       print('❌ Error cargando coches: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al cargar coches: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al cargar coches: $e')));
       }
     }
   }
 
   String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return DateFormat('dd/MM/yyyy').format(date);
   }
 
   String _formatTime(DateTime time) {
@@ -152,16 +152,28 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       });
 
       try {
+        // Convertir la fecha de dd/mm/yyyy a yyyy-mm-dd para el backend
+        final dateParts = _fechaController.text.split('/');
+        final formattedFecha =
+            '${dateParts[2]}-${dateParts[1]}-${dateParts[0]}';
+
         await FacturaService.crearFactura(
           titulo: _tituloController.text,
           coste: double.parse(_costoController.text),
-          fecha: _fechaController.text,
+          fecha: formattedFecha,
           hora: _horaController.text,
+
           descripcion: _descripcionController.text,
           imagenFile: _imagenFactura,
-          litrosRepostados: _litrosController.text.isNotEmpty ? double.parse(_litrosController.text) : null,
-          precioPorLitro: _precioLitroController.text.isNotEmpty ? double.parse(_precioLitroController.text) : null,
-          kilometrajeActual: _kilometrajeController.text.isNotEmpty ? int.parse(_kilometrajeController.text) : null,
+          litrosRepostados: _litrosController.text.isNotEmpty
+              ? double.parse(_litrosController.text)
+              : null,
+          precioPorLitro: _precioLitroController.text.isNotEmpty
+              ? double.parse(_precioLitroController.text)
+              : null,
+          kilometrajeActual: _kilometrajeController.text.isNotEmpty
+              ? int.parse(_kilometrajeController.text)
+              : null,
           tipoCombustible: _tipoCombustibleSeleccionado,
           idCoche: _cocheSeleccionado,
         );
@@ -401,7 +413,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     },
                     dropdownColor: const Color(0xFFFFCFB0),
                     borderRadius: BorderRadius.circular(10),
-                    icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF492714)),
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Color(0xFF492714),
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -476,44 +491,46 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
                   ConstrainedBox(
                     constraints: const BoxConstraints(
-                      minWidth: 300,  // Ancho mínimo
-                      maxWidth: 400,  // Ancho máximo
+                      minWidth: 300, // Ancho mínimo
+                      maxWidth: 400, // Ancho máximo
                     ),
-                  // Dropdown Tipo de Combustible 
-                  child:DropdownButtonFormField<String>(
-                    value: _tipoCombustibleSeleccionado,
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: 'Tipo de Combustible',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
-                      filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    items: _tiposCombustible.map((tipo) {
-                      return DropdownMenuItem<String>(
-                        value: tipo,
-                        child: Text(
-                          tipo,
-                          style: const TextStyle(color: Color(0xFF492714)),
-                          
+                    // Dropdown Tipo de Combustible
+                    child: DropdownButtonFormField<String>(
+                      value: _tipoCombustibleSeleccionado,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Tipo de Combustible',
+                        labelStyle: const TextStyle(color: Color(0xFF492714)),
+                        filled: true,
+                        fillColor: const Color(0xFFFFCFB0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() => _tipoCombustibleSeleccionado = value);
-                    },
-                    dropdownColor: const Color(0xFFFFCFB0),
-                    borderRadius: BorderRadius.circular(10),
-                    icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF492714)),
-                  ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      items: _tiposCombustible.map((tipo) {
+                        return DropdownMenuItem<String>(
+                          value: tipo,
+                          child: Text(
+                            tipo,
+                            style: const TextStyle(color: Color(0xFF492714)),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() => _tipoCombustibleSeleccionado = value);
+                      },
+                      dropdownColor: const Color(0xFFFFCFB0),
+                      borderRadius: BorderRadius.circular(10),
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Color(0xFF492714),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 16),
 
