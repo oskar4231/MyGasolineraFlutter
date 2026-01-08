@@ -57,7 +57,9 @@ class Gasolinera {
         int firstColon = rango.indexOf(':');
         String diasStr = rango.substring(0, firstColon).trim();
         String horasStr = rango.substring(firstColon + 1).trim();
+=======
         
+>>>>>>> origin/main
         // Verificar si hoy está dentro del rango de días
         if (_esDiaEnRango(currentDay, diasStr)) {
           // Parsear horas "07:00-22:00"
