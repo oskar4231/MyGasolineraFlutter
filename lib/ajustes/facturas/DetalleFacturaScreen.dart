@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
+import 'package:intl/intl.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;
@@ -9,14 +10,26 @@ class DetalleFacturaScreen extends StatelessWidget {
   String _formatFecha(String? fecha) {
     if (fecha == null || fecha.isEmpty) return '';
 
-    // Si viene en formato ISO (2025-12-10T23:00:00.000Z)
-    if (fecha.contains('T')) {
-      try {
-        DateTime dateTime = DateTime.parse(fecha);
-        return '${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
-      } catch (e) {
-        return fecha;
+    try {
+      DateTime? dateTime;
+      if (fecha.contains('T')) {
+        dateTime = DateTime.parse(fecha);
+      } else if (fecha.contains('-')) {
+        final partes = fecha.split('-');
+        if (partes.length == 3) {
+          dateTime = DateTime(
+            int.parse(partes[0]),
+            int.parse(partes[1]),
+            int.parse(partes[2].split(' ')[0]),
+          );
+        }
       }
+
+      if (dateTime != null) {
+        return DateFormat('dd/MM/yyyy').format(dateTime);
+      }
+    } catch (e) {
+      print('Error parsing date in detalle: $e');
     }
 
     return fecha;
