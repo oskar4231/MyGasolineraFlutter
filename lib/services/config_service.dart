@@ -7,9 +7,9 @@ import 'api_config.dart';
 /// Servicio responsable de configurar la URL del backend dinámicamente
 class ConfigService {
   /// URL RAW del Gist que contiene la configuración del backend.
-  /// Reemplazar con la URL real de tu Gist (botón "Raw" en GitHub).
+  /// Gist para CLASE (rama PiramaClase) - Configuración separada de casa
   static const String _gistUrl =
-      'https://gist.githubusercontent.com/Cristian-KN/d3c38c2cd0f3f5b6c3cc2cea828fc6c2/raw/backend-url.json'; // URL dinámica (latest)
+      'https://gist.githubusercontent.com/Cristian-KN/3cc6860eb58644c5dfe9195967d677c0/raw/backend-url.json'; // MyGasolineraClase
 
   static const String _prefsKeyBackendUrl = 'backend_url';
   static const String _prefsKeyLastFetch = 'last_url_fetch';
