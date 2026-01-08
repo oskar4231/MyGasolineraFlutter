@@ -1,5 +1,17 @@
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_gasolinera/ajustes/ajustes.dart';
+import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
+import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/main.dart' as app;
+import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/services/provincia_service.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -27,6 +39,17 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mi Ubicación en Tiempo Real'),
+        backgroundColor: Colors.blue,
+      ),
+      body: MapWidget(
+        key: _mapKey,
+        radiusKm: _radiusKm,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -60,6 +83,16 @@ class MapWidget extends StatefulWidget {
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
   final double radiusKm; // Nuevo parámetro
+
+  const MapWidget({
+    super.key,
+    this.externalGasolineras,
+    this.onLocationUpdate,
+    this.combustibleSeleccionado,
+    this.precioDesde,
+    this.precioHasta,
+    this.tipoAperturaSeleccionado,
+    this.radiusKm = 25.0, // Valor por defecto
   });
 
   @override
@@ -91,11 +124,69 @@ class _MapWidgetState extends State<MapWidget> {
   void initState() {
     super.initState();
     _cacheService = GasolinerasCacheService(app.database);
+    _loadGasStationIcon();
+    _iniciarSeguimiento();
+    _cargarFavoritos();
+  }
+
+  @override
+  void didUpdateWidget(MapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Si cambiaron los filtros o la lista externa, recargar gasolineras
+    if (oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
+        oldWidget.precioDesde != widget.precioDesde ||
+        oldWidget.precioHasta != widget.precioHasta ||
+        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
+        oldWidget.externalGasolineras != widget.externalGasolineras ||
+        oldWidget.radiusKm != widget.radiusKm) {
+      print(
+          '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
+
       if (_ubicacionActual != null) {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
           _ubicacionActual!.longitude,
           isInitialLoad: false,
+        );
+      }
+    }
+  }
+
+  Future<void> _cargarFavoritos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final ids = prefs.getStringList('favoritas_ids') ?? [];
+    if (mounted) {
+      setState(() {
+        _favoritosIds = ids;
+      });
+    }
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  Future<void> _loadGasStationIcon() async {
+    try {
+      final Uint8List iconBytes = await getBytesFromAsset(
+        'lib/assets/location_9351238.png',
+        100,
+      );
+      final Uint8List favIconBytes = await getBytesFromAsset(
+        'lib/assets/localizacion_favs.png',
+        100,
+      );
+
+      final BitmapDescriptor icon = BitmapDescriptor.fromBytes(iconBytes);
+      final BitmapDescriptor favIcon = BitmapDescriptor.fromBytes(favIconBytes);
+
       if (mounted) {
         setState(() {
           _gasStationIcon = icon;
@@ -105,6 +196,73 @@ class _MapWidgetState extends State<MapWidget> {
     } catch (e) {
       // Manejo de errores
       print('Error cargando iconos: $e');
+    }
+  }
+
+  double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
+    switch (tipoCombustible) {
+      case 'Gasolina 95':
+        return g.gasolina95;
+      case 'Gasolina 98':
+        return g.gasolina98;
+      case 'Diesel':
+        return g.gasoleoA;
+      case 'Diesel Premium':
+        return g.gasoleoPremium;
+      case 'Gas':
+        return g.glp;
+      default:
+        return 0.0;
+    }
+  }
+
+  List<Gasolinera> _aplicarFiltros(List<Gasolinera> gasolineras) {
+    List<Gasolinera> resultado = gasolineras;
+
+    // 1. Filtro de combustible y precio
+    if (widget.combustibleSeleccionado != null) {
+      resultado = resultado.where((g) {
+        double precio = _obtenerPrecioCombustible(
+          g,
+          widget.combustibleSeleccionado!,
+        );
+
+        if (precio == 0.0) return false;
+
+        if (widget.precioDesde != null && precio < widget.precioDesde!) {
+          return false;
+        }
+        if (widget.precioHasta != null && precio > widget.precioHasta!) {
+          return false;
+        }
+
+        return true;
+      }).toList();
+    }
+
+    // 2. Filtro de Apertura (Horario)
+    if (widget.tipoAperturaSeleccionado != null) {
+      resultado = resultado.where((g) {
+        switch (widget.tipoAperturaSeleccionado) {
+          case '24 Horas':
+            return g.es24Horas;
+          case 'Gasolineras atendidas por personal':
+            return !g.es24Horas;
+          case 'Gasolineras abiertas ahora':
+            return g.estaAbiertaAhora;
+          case 'Todas':
+            return true;
+          default:
+            return true;
+        }
+      }).toList();
+    }
+
+    return resultado;
+  }
+
+  Future<void> _cargarGasolineras(double lat, double lng,
+      {bool isInitialLoad = false}) async {
     List<Gasolinera> listaGasolineras;
 
     if (widget.externalGasolineras != null &&

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +87,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
 
   String _buildImageUrl(String path) {
     final normalizedPath = path.replaceAll('\\', '/');
-    return '${FacturaService.baseUrl}/$normalizedPath';
+    return '${ApiConfig.baseUrl}/$normalizedPath';
   }
 
   void _navegarACrearFactura() async {
@@ -177,119 +178,127 @@ class _FacturasScreenState extends State<FacturasScreen> {
               child: CircularProgressIndicator(color: Color(0xFFFF9350)),
             )
           : _errorMessage != null
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 80, color: Colors.red),
-                  const SizedBox(height: 20),
-                  Text(
-                    _errorMessage!,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF492714),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _cargarFacturas,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF9350),
-                    ),
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
-            )
-          : _facturas.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.receipt_long, size: 80, color: Color(0xFFFF9350)),
-                  SizedBox(height: 20),
-                  Text(
-                    'No hay facturas',
-                    style: TextStyle(fontSize: 18, color: Color(0xFF492714)),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Presiona el botón + para agregar una factura',
-                    style: TextStyle(color: Color(0xFF492714)),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _facturas.length,
-              itemBuilder: (context, index) {
-                final factura = _facturas[index];
-                return Card(
-                  color: const Color(0xFFFFCFB0),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF9955),
-                        borderRadius: BorderRadius.circular(10),
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline,
+                          size: 80, color: Colors.red),
+                      const SizedBox(height: 20),
+                      Text(
+                        _errorMessage!,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF492714),
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      child: factura['imagenPath'] != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                _buildImageUrl(factura['imagenPath']),
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(
-                                      Icons.receipt,
-                                      color: Color(0xFF492714),
-                                    ),
-                              ),
-                            )
-                          : const Icon(Icons.receipt, color: Color(0xFF492714)),
-                    ),
-                    title: Text(
-                      factura['titulo'] ?? 'Sin título',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF492714),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _cargarFacturas,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF9350),
+                        ),
+                        child: const Text('Reintentar'),
                       ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4),
-                        Text(
-                          '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF492714),
+                    ],
+                  ),
+                )
+              : _facturas.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.receipt_long,
+                              size: 80, color: Color(0xFFFF9350)),
+                          SizedBox(height: 20),
+                          Text(
+                            'No hay facturas',
+                            style: TextStyle(
+                                fontSize: 18, color: Color(0xFF492714)),
                           ),
-                        ),
-                        Text(
-                          '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
-                          style: const TextStyle(color: Color(0xFF492714)),
-                        ),
-                      ],
+                          SizedBox(height: 10),
+                          Text(
+                            'Presiona el botón + para agregar una factura',
+                            style: TextStyle(color: Color(0xFF492714)),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _facturas.length,
+                      itemBuilder: (context, index) {
+                        final factura = _facturas[index];
+                        return Card(
+                          color: const Color(0xFFFFCFB0),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF9955),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: factura['imagenPath'] != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        _buildImageUrl(factura['imagenPath']),
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Icon(
+                                          Icons.receipt,
+                                          color: Color(0xFF492714),
+                                        ),
+                                      ),
+                                    )
+                                  : const Icon(Icons.receipt,
+                                      color: Color(0xFF492714)),
+                            ),
+                            title: Text(
+                              factura['titulo'] ?? 'Sin título',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF492714),
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF492714),
+                                  ),
+                                ),
+                                Text(
+                                  '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
+                                  style:
+                                      const TextStyle(color: Color(0xFF492714)),
+                                ),
+                              ],
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete,
+                                  color: Color(0xFF492714)),
+                              onPressed: () =>
+                                  _eliminarFactura(factura['id_factura']),
+                            ),
+                            onTap: () => _verDetalleFactura(factura),
+                          ),
+                        );
+                      },
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Color(0xFF492714)),
-                      onPressed: () => _eliminarFactura(factura['id_factura']),
-                    ),
-                    onTap: () => _verDetalleFactura(factura),
-                  ),
-                );
-              },
-            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navegarACrearFactura,
         backgroundColor: const Color(0xFFFF9350),

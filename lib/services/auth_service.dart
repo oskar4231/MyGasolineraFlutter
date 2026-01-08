@@ -2,6 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_config.dart';
+
+// Servicio para gestionar el token de autenticación y recuperación de contraseña
+class AuthService {
+  static String? _token;
+  static String? _userEmail;
+
   // Guardar el token y email del usuario
   static Future<void> saveToken(String token, String email) async {
     _token = token;

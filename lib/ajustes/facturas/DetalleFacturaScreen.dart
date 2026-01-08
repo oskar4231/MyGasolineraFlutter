@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 import 'package:intl/intl.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
@@ -50,7 +51,7 @@ class DetalleFacturaScreen extends StatelessWidget {
   String _buildImageUrl(String path) {
     // Normalizar ruta (reemplazar backslashes con slashes para URL)
     final normalizedPath = path.replaceAll('\\', '/');
-    return '${FacturaService.baseUrl}/$normalizedPath';
+    return '${ApiConfig.baseUrl}/$normalizedPath';
   }
 
   @override
@@ -194,10 +195,10 @@ class DetalleFacturaScreen extends StatelessWidget {
                                       errorBuilder:
                                           (context, error, stackTrace) =>
                                               const Icon(
-                                                Icons.broken_image,
-                                                color: Colors.white,
-                                                size: 100,
-                                              ),
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                        size: 100,
+                                      ),
                                     ),
                                   ),
                                 ),

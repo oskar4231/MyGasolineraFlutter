@@ -4,11 +4,6 @@ import 'dart:convert';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
 import 'package:my_gasolinera/services/api_config.dart';
-      home: const CrearScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
 
 class CrearScreen extends StatefulWidget {
   const CrearScreen({super.key});
@@ -96,7 +91,7 @@ class _CrearScreenState extends State<CrearScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           // Navegar automáticamente a login después de 2 segundos
           Future.delayed(const Duration(seconds: 2), () {
             Navigator.pushReplacement(
@@ -365,8 +360,7 @@ class _CrearScreenState extends State<CrearScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed:
-                            (_isLoading ||
+                        onPressed: (_isLoading ||
                                 !_isPasswordValid() ||
                                 _emailController.text.isEmpty ||
                                 _nombreController.text.isEmpty)

@@ -23,6 +23,92 @@ class Gasolinera {
   final String provincia;
   final String idProvincia;
 
+  Gasolinera({
+    required this.id,
+    required this.rotulo,
+    required this.direccion,
+    required this.lat,
+    required this.lng,
+    required this.horario,
+    required this.gasolina95,
+    required this.gasolina95E10,
+    required this.gasolina98,
+    required this.gasoleoA,
+    required this.gasoleoPremium,
+    required this.glp,
+    required this.biodiesel,
+    required this.bioetanol,
+    required this.esterMetilico,
+    required this.hidrogeno,
+    this.provincia = '',
+    this.idProvincia = '',
+  });
+
+  // 🔧 Conversión segura de precios (acepta String o num)
+  static double _parsePrecio(dynamic value) {
+    if (value == null) return 0.0;
+
+    if (value is num) {
+      return value.toDouble();
+    }
+
+    if (value is String) {
+      if (value.trim().isEmpty || value.trim().toUpperCase() == 'N/A')
+        return 0.0;
+      // Reemplazar coma por punto si es necesario
+      return double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
+    }
+
+    return 0.0;
+  }
+
+  // 🏭 Constructor desde JSON oficial del Ministerio O desde nuestro backend
+  factory Gasolinera.fromJson(Map<String, dynamic> json) {
+    // Detectar si el JSON tiene lat/lng directos (backend) o Latitud/Longitud (API Gobierno)
+    // El backend envía 'lat' (num) y 'lng' (num).
+    // La API Gobierno envía 'Latitud' (String) y 'Longitud (WGS84)' (String).
+
+    double lat;
+    double lng;
+
+    if (json.containsKey('lat') && json['lat'] is num) {
+      lat = (json['lat'] as num).toDouble();
+    } else {
+      lat = _parsePrecio(json['Latitud']);
+    }
+
+    if (json.containsKey('lng') && json['lng'] is num) {
+      lng = (json['lng'] as num).toDouble();
+    } else {
+      lng = _parsePrecio(json['Longitud (WGS84)']);
+    }
+
+    return Gasolinera(
+      id: (json['IDEESS'] ?? json['id'] ?? '').toString(),
+      rotulo: json['Rótulo'] ?? json['rotulo'] ?? 'Sin Rótulo',
+      direccion: (json['Dirección'] ?? json['direccion'] ?? '') +
+          // Si viene del gobierno, añadir municipio. Si viene del backend, la dirección ya suele estar completa o el municipio viene aparte
+          (json.containsKey('Municipio') &&
+                  (json['Dirección'] != null || json['direccion'] != null)
+              ? ', ${json['Municipio']}'
+              : ''),
+      horario: json['Horario'] ?? json['horario'] ?? '',
+      lat: lat,
+      lng: lng,
+      // Usar _parsePrecio para todos, maneja String y num automáticamente
+      gasolina95: _parsePrecio(json['Precio Gasolina 95 E5']),
+      gasolina95E10: _parsePrecio(json['Precio Gasolina 95 E10']),
+      gasolina98: _parsePrecio(json['Precio Gasolina 98 E5']),
+      gasoleoA: _parsePrecio(json['Precio Gasoleo A']),
+      gasoleoPremium: _parsePrecio(json['Precio Gasoleo Premium']),
+      glp: _parsePrecio(json['Precio Gases licuados del petróleo']),
+      biodiesel: _parsePrecio(json['Precio Biodiesel']),
+      bioetanol: _parsePrecio(json['Precio Bioetanol']),
+      esterMetilico: _parsePrecio(json['Precio Éster metílico']),
+      hidrogeno: _parsePrecio(json['Precio Hidrogeno']),
+      provincia: json['Provincia'] ?? json['provincia'] ?? '',
+      idProvincia:
+          json['IDProvincia'] ?? json['idProvincia'] ?? json['IDCCAA'] ?? '',
     );
   }
 
@@ -48,6 +134,7 @@ class Gasolinera {
     try {
       // Formato típico API: "L-D: 07:00-22:00" o "L-V: 07:00-22:00; S: 08:00-15:00"
       final rangos = horario.split(';');
+
       for (var rango in rangos) {
         rango = rango.trim();
         if (!rango.contains(':')) continue;
@@ -57,9 +144,7 @@ class Gasolinera {
         int firstColon = rango.indexOf(':');
         String diasStr = rango.substring(0, firstColon).trim();
         String horasStr = rango.substring(firstColon + 1).trim();
-=======
-        
->>>>>>> origin/main
+
         // Verificar si hoy está dentro del rango de días
         if (_esDiaEnRango(currentDay, diasStr)) {
           // Parsear horas "07:00-22:00"
@@ -85,6 +170,7 @@ class Gasolinera {
       // Si falla el parseo, devolvemos false por seguridad
       return false;
     }
+
     return false;
   }
 
@@ -118,6 +204,7 @@ class Gasolinera {
         // Limpiar strings para obtener solo las letras clave
         String inicioStr = partes[0].trim();
         String finStr = partes[1].trim();
+
         // Manejo básico de abreviaturas
         int? inicio = diasMap[inicioStr] ?? diasMap[inicioStr.substring(0, 1)];
         int? fin = diasMap[finStr] ?? diasMap[finStr.substring(0, 1)];
@@ -131,6 +218,7 @@ class Gasolinera {
         }
       }
     }
+
     // Días sueltos separados por comas (S,D)
     if (rangoStr.contains(',')) {
       final diasSueltos = rangoStr.split(',');

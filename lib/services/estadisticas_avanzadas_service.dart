@@ -11,8 +11,7 @@ class EstadisticasAvanzadasService {
       'Authorization': 'Bearer ${token ?? ''}',
     };
   }
-=======
->>>>>>> origin/main
+
   /// Obtener consumo real (L/100km)
   static Future<Map<String, dynamic>> obtenerConsumoReal() async {
     try {
@@ -61,10 +60,21 @@ class EstadisticasAvanzadasService {
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
+
         // Si no hay costos_por_coche, devolver mapa vacío
         if (!data.containsKey('costos_por_coche')) {
           data['costos_por_coche'] = [];
         }
+
+        return data;
+      } else {
+        throw Exception('Error ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en obtenerCostoPorKm: $e');
+      rethrow;
+    }
+  }
 
   /// Obtener información de mantenimiento
   static Future<List<Map<String, dynamic>>> obtenerMantenimiento() async {

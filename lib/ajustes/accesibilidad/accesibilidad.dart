@@ -548,6 +548,23 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: idiomasConVariantes.keys.length,
+              itemBuilder: (context, index) {
+                final idioma = idiomasConVariantes.keys.elementAt(index);
+                final esSeleccionado = _idiomaSeleccionado.startsWith(idioma);
+                return Card(
+                  elevation: esSeleccionado ? 4 : 1,
+                  color:
+                      esSeleccionado ? const Color(0xFFFF9350) : Colors.white,
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
@@ -622,6 +639,24 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: variantes.length > 5 ? 400 : null,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: variantes.length,
+              itemBuilder: (context, index) {
+                final variante = variantes[index];
+                final esSeleccionado = _idiomaSeleccionado == variante;
+                return Card(
+                  elevation: esSeleccionado ? 4 : 1,
+                  color:
+                      esSeleccionado ? const Color(0xFFFF9350) : Colors.white,
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
