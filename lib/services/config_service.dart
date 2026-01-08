@@ -28,12 +28,12 @@ class ConfigService {
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // 1. Cargar desde caché primero (si existe)
-    final cachedUrl = prefs.getString(_prefsKeyBackendUrl);
-    if (cachedUrl != null && cachedUrl.isNotEmpty) {
-      print('ConfigService: Cargando URL desde caché: $cachedUrl');
-      ApiConfig.setBaseUrl(cachedUrl);
-    }
+    // 1. CACHÉ DESHABILITADO - Siempre obtener URL fresca del Gist
+    // final cachedUrl = prefs.getString(_prefsKeyBackendUrl);
+    // if (cachedUrl != null && cachedUrl.isNotEmpty) {
+    //   print('ConfigService: Cargando URL desde caché: $cachedUrl');
+    //   ApiConfig.setBaseUrl(cachedUrl);
+    // }
 
     // 2. Intentar actualizar desde el Gist con reintentos
     await _fetchWithRetry(prefs, maxRetries: 3);
@@ -106,10 +106,10 @@ class ConfigService {
         final oldUrl = prefs.getString(_prefsKeyBackendUrl);
         final urlChanged = oldUrl != null && oldUrl != newUrl;
 
-        // Guardar en caché
-        await prefs.setString(_prefsKeyBackendUrl, newUrl);
-        await prefs.setInt(
-            _prefsKeyLastFetch, DateTime.now().millisecondsSinceEpoch);
+        // CACHÉ DESHABILITADO - No guardar URL en caché
+        // await prefs.setString(_prefsKeyBackendUrl, newUrl);
+        // await prefs.setInt(
+        //     _prefsKeyLastFetch, DateTime.now().millisecondsSinceEpoch);
 
         // Actualizar configuración
         ApiConfig.setBaseUrl(newUrl);

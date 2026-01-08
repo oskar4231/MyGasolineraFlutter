@@ -3,7 +3,6 @@ import 'package:my_gasolinera/Inicio/inicio.dart';
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:my_gasolinera/services/background_refresh_service.dart';
 import 'package:my_gasolinera/importante/switchWebApk.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 
@@ -22,12 +21,6 @@ Future<void> main() async {
   print('═══════════════════════════════════════════════════════════');
   print('🔧 MODO PLATAFORMA: ${esAPK ? "📱 APK" : "🌐 WEB"}');
   print('═══════════════════════════════════════════════════════════');
-
-  // 🔥 TEMPORAL: Forzar limpieza de caché de URL para obtener versión fresca
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.remove('backend_url');
-  await prefs.remove('last_url_fetch');
-  print('🔥 Caché de URL limpiado - obteniendo URL fresca del Gist...');
 
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
