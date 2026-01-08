@@ -21,12 +21,6 @@ class EstadisticasAvanzadasService {
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
-
-        // Si no hay consejos del backend, generar consejos automáticos
-        if (!data.containsKey('consejos')) {
-          data['consejos'] = _generarConsejos(data);
-        }
-
         return data;
       } else {
         throw Exception('Error ${response.statusCode}');
@@ -37,37 +31,24 @@ class EstadisticasAvanzadasService {
     }
   }
 
-  /// Generar consejos automáticos basados en datos de consumo
-  static List<String> _generarConsejos(Map<String, dynamic> data) {
-    final consejos = <String>[];
-
-    // Analizar consumo promedio
-    final consumoPromedio =
-        double.tryParse(data['consumo_promedio']?.toString() ?? '0') ?? 0;
-
-    if (consumoPromedio > 8) {
-      consejos.add(
-        '⛽ Mantén una velocidad constante entre 80-100 km/h para mejorar la eficiencia.',
+  /// Obtener consejos personalizados desde el backend
+  static Future<List<String>> obtenerConsejos() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.estadisticasUrl}/consejos'),
+        headers: _getHeaders(),
       );
-    } else if (consumoPromedio > 6) {
-      consejos.add(
-        '⛽ Tu consumo es moderado. Evita aceleraciones bruscas para ahorrar combustible.',
-      );
-    } else {
-      consejos.add(
-        '⛽ ¡Excelente! Tu consumo es muy eficiente. Mantén estos hábitos.',
-      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> consejos = data['consejos'] ?? [];
+        return consejos.map((c) => c.toString()).toList();
+      } else {
+        throw Exception('Error ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en obtenerConsejos: $e');
+      return [];
     }
-
-    consejos.addAll([
-      '🔧 Verifica la presión de los neumáticos mensualmente (ideal: 2.2-2.4 bar).',
-      '🛢️ Realiza cambios de aceite según el intervalo recomendado de tu vehículo.',
-      '🚗 Reduce el peso innecesario: retira objetos del maletero que no uses.',
-      '🪟 Cierra las ventanillas a velocidades altas para reducir la resistencia aerodinámica.',
-      '⏸️ Planifica tus rutas para evitar atascos y conducción en horas pico.',
-    ]);
-
-    return consejos;
   }
 
   /// Obtener costo por kilómetro (por coche)

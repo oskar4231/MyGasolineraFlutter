@@ -9,6 +9,8 @@ import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
+import 'package:my_gasolinera/services/config_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -31,11 +33,38 @@ class _AjustesScreenState extends State<AjustesScreen> {
   bool _eliminandoCuenta = false;
   bool _subiendoFoto = false;
 
+  // Variables para la sección de conexión y mapa
+  bool _actualizandoUrl = false;
+  DateTime? _lastUrlUpdate;
+  double _radiusKm = 25.0; // Valor por defecto
+
   @override
   void initState() {
     super.initState();
     _cargarFotoPerfil();
     _cargarNombreUsuario();
+    _cargarDatosConexion();
+  }
+
+  Future<void> _cargarDatosConexion() async {
+    final lastTime = await ConfigService.getLastFetchTime();
+    final prefs = await SharedPreferences.getInstance();
+    final savedRadius = prefs.getDouble('radius_km') ?? 25.0;
+
+    if (mounted) {
+      setState(() {
+        _lastUrlUpdate = lastTime;
+        _radiusKm = savedRadius;
+      });
+    }
+  }
+
+  Future<void> _guardarRadio(double valor) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('radius_km', valor);
+    setState(() {
+      _radiusKm = valor;
+    });
   }
 
   // Cargar el nombre del usuario desde el backend
@@ -68,9 +97,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (fotoData != null && mounted) {
         if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-          final base64String = fotoData.contains(',')
-              ? fotoData.split(',')[1]
-              : fotoData;
+          final base64String =
+              fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
           final bytes = base64Decode(base64String);
           setState(() {
             _profileImageBytes = bytes;
@@ -253,15 +281,19 @@ class _AjustesScreenState extends State<AjustesScreen> {
       child: Column(
         children: [
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSeccionPerfil(),
-                  const SizedBox(height: 24),
-                  _buildSeccionOpciones(context),
-                ],
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSeccionPerfil(),
+                    const SizedBox(height: 24),
+                    _buildSeccionConexion(context),
+                    const SizedBox(height: 24),
+                    _buildSeccionOpciones(context),
+                  ],
+                ),
               ),
             ),
           ),
@@ -293,16 +325,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!) as ImageProvider
-                        : null,
+                            ? NetworkImage(_profileImageUrl!) as ImageProvider
+                            : null,
                     child:
                         _profileImageBytes == null && _profileImageUrl == null
-                        ? const Icon(
-                            Icons.person,
-                            color: Colors.black,
-                            size: 40,
-                          )
-                        : null,
+                            ? const Icon(
+                                Icons.person,
+                                color: Colors.black,
+                                size: 40,
+                              )
+                            : null,
                   ),
                   // Loader mientras sube la foto
                   if (_subiendoFoto)
@@ -379,6 +411,161 @@ class _AjustesScreenState extends State<AjustesScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSeccionConexion(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Conexión y Mapa',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Card(
+          elevation: 1,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // 1. Botón Actualizar Servidor
+                Row(
+                  children: [
+                    const Icon(Icons.sync, color: Colors.blue),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Servidor Backend',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            _lastUrlUpdate != null
+                                ? 'Act: ${_lastUrlUpdate!.hour.toString().padLeft(2, '0')}:${_lastUrlUpdate!.minute.toString().padLeft(2, '0')}'
+                                : 'Sin actualizar',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: _actualizandoUrl
+                          ? null
+                          : () async {
+                              setState(() => _actualizandoUrl = true);
+                              try {
+                                await ConfigService.forceRefresh();
+                                final lastTime =
+                                    await ConfigService.getLastFetchTime();
+                                if (mounted) {
+                                  setState(() {
+                                    _lastUrlUpdate = lastTime;
+                                    _actualizandoUrl = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('✅ URL actualizada'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  setState(() => _actualizandoUrl = false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('❌ Error: $e')),
+                                  );
+                                }
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[50],
+                        foregroundColor: Colors.blue,
+                        elevation: 0,
+                      ),
+                      child: _actualizandoUrl
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Actualizar'),
+                    ),
+                  ],
+                ),
+
+                const Divider(height: 24),
+
+                // 2. Slider Radio
+                Row(
+                  children: [
+                    const Icon(Icons.radar, color: Colors.orange),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Radio de búsqueda',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '${_radiusKm.toInt()} km',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Slider(
+                            value: _radiusKm,
+                            min: 5,
+                            max: 100,
+                            divisions: 19,
+                            activeColor: Colors.orange,
+                            label: '${_radiusKm.toInt()} km',
+                            onChanged: (value) {
+                              setState(() {
+                                _radiusKm = value;
+                              });
+                            },
+                            onChangeEnd: (value) {
+                              _guardarRadio(value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -528,8 +715,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     onPressed: () async {
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
-                        final email = await _usuarioService
-                            .obtenerEmailGuardado();
+                        final email =
+                            await _usuarioService.obtenerEmailGuardado();
 
                         print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
                         print('🔍 DEBUG - Longitud del email: ${email.length}');

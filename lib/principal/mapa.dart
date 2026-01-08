@@ -7,8 +7,11 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
+import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/main.dart' as app;
+import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/services/provincia_service.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -18,6 +21,24 @@ class MapaTiempoReal extends StatefulWidget {
 }
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
+  double _radiusKm = 25.0;
+  Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarPreferencias();
+  }
+
+  Future<void> _cargarPreferencias() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _radiusKm = prefs.getDouble('radius_km') ?? 25.0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +46,19 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
         title: const Text('Mi Ubicación en Tiempo Real'),
         backgroundColor: Colors.blue,
       ),
-      body: const MapWidget(),
+      body: MapWidget(
+        key: _mapKey,
+        radiusKm: _radiusKm,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
-          );
+          ).then((_) {
+            // Recargar preferencias al volver de ajustes
+            _cargarPreferencias();
+          });
         },
         backgroundColor: Colors.blue,
         child: Image.asset(
@@ -55,6 +82,7 @@ class MapWidget extends StatefulWidget {
   final double? precioDesde;
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
+  final double radiusKm; // Nuevo parámetro
 
   const MapWidget({
     super.key,
@@ -64,6 +92,7 @@ class MapWidget extends StatefulWidget {
     this.precioDesde,
     this.precioHasta,
     this.tipoAperturaSeleccionado,
+    this.radiusKm = 25.0, // Valor por defecto
   });
 
   @override
@@ -83,11 +112,18 @@ class _MapWidgetState extends State<MapWidget> {
   List<String> _favoritosIds = [];
   bool _isBottomSheetOpen = false;
 
-  static const int LIMIT_RESULTS = 50;
+  // Cache service y provincia
+  late GasolinerasCacheService _cacheService;
+  String? _currentProvinciaId;
+  bool _isLoadingFromCache = false;
+
+  // Para carga progresiva
+  bool _isLoadingProgressively = false;
 
   @override
   void initState() {
     super.initState();
+    _cacheService = GasolinerasCacheService(app.database);
     _loadGasStationIcon();
     _iniciarSeguimiento();
     _cargarFavoritos();
@@ -102,11 +138,16 @@ class _MapWidgetState extends State<MapWidget> {
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-        oldWidget.externalGasolineras != widget.externalGasolineras) {
+        oldWidget.externalGasolineras != widget.externalGasolineras ||
+        oldWidget.radiusKm != widget.radiusKm) {
+      print(
+          '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
+
       if (_ubicacionActual != null) {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
           _ubicacionActual!.longitude,
+          isInitialLoad: false,
         );
       }
     }
@@ -220,31 +261,123 @@ class _MapWidgetState extends State<MapWidget> {
     return resultado;
   }
 
-  Future<void> _cargarGasolineras(double lat, double lng) async {
+  Future<void> _cargarGasolineras(double lat, double lng,
+      {bool isInitialLoad = false}) async {
     List<Gasolinera> listaGasolineras;
 
     if (widget.externalGasolineras != null &&
         widget.externalGasolineras!.isNotEmpty) {
       listaGasolineras = widget.externalGasolineras!;
     } else {
-      listaGasolineras = await fetchGasolineras();
+      // Usar cache service con detección de provincia
+      setState(() {
+        _isLoadingFromCache = true;
+      });
+
+      try {
+        // Detectar provincia actual
+        final provinciaInfo =
+            await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+        _currentProvinciaId = provinciaInfo.id;
+
+        print(
+            'Mapa: Cargando gasolineras para provincia ${provinciaInfo.nombre}');
+
+        // Cargar gasolineras de la provincia actual y vecinas
+        final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
+        final provinciasToLoad = [provinciaInfo.id, ...vecinas.take(2)];
+
+        listaGasolineras = await _cacheService.getGasolinerasMultiProvincia(
+          provinciasToLoad,
+          forceRefresh: false,
+        );
+
+        print(
+            'Mapa: Cargadas ${listaGasolineras.length} gasolineras desde cache');
+      } catch (e) {
+        print('Mapa: Error al cargar desde cache, usando API: $e');
+        // Usar API con filtro de provincia en lugar de todas las gasolineras
+        if (_currentProvinciaId != null) {
+          listaGasolineras =
+              await api.fetchGasolinerasByProvincia(_currentProvinciaId!);
+        } else {
+          // Si no tenemos provincia, intentar detectarla
+          final provinciaInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+          listaGasolineras =
+              await api.fetchGasolinerasByProvincia(provinciaInfo.id);
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoadingFromCache = false;
+          });
+        }
+      }
     }
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
 
+    print(
+        '📍 Filtrando ${listaGasolineras.length} gasolineras por radio de ${widget.radiusKm} km');
+
+    // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
+    }).where((item) {
+      // Filtrar por radio (convertir metros a km)
+      final distanceKm = (item['distance'] as double) / 1000;
+      return distanceKm <= widget.radiusKm;
     }).toList();
 
+    // Ordenar por distancia
     gasolinerasCercanas.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final topGasolineras = gasolinerasCercanas
-        .take(LIMIT_RESULTS)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
+    final gasolinerasEnRadio =
+        gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
+
+    print(
+        'Mapa: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${widget.radiusKm}km');
+
+    // Carga progresiva: SOLO en carga inicial para dar feedback rápido
+    if (isInitialLoad &&
+        !_isLoadingProgressively &&
+        gasolinerasEnRadio.length > 10) {
+      setState(() {
+        _isLoadingProgressively = true;
+      });
+
+      // Mostrar primero las 10 más cercanas
+      final primeras10 = gasolinerasEnRadio.take(10).toList();
+      final newMarkers = primeras10.map((g) => _crearMarcador(g)).toSet();
+
+      if (mounted) {
+        setState(() {
+          _gasolinerasMarkers.clear();
+          _gasolinerasMarkers.addAll(newMarkers);
+        });
+      }
+
+      // Cargar el resto en segundo plano
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          final resto = gasolinerasEnRadio.skip(10).toList();
+          final restoMarkers = resto.map((g) => _crearMarcador(g)).toSet();
+
+          setState(() {
+            _gasolinerasMarkers.addAll(restoMarkers);
+            _isLoadingProgressively = false;
+          });
+        }
+      });
+
+      return;
+    }
+
+    final topGasolineras = gasolinerasEnRadio;
 
     final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
@@ -498,7 +631,8 @@ class _MapWidgetState extends State<MapWidget> {
             ),
           );
         });
-        _cargarGasolineras(posicion.latitude, posicion.longitude);
+        _cargarGasolineras(posicion.latitude, posicion.longitude,
+            isInitialLoad: true);
 
         if (widget.onLocationUpdate != null) {
           widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
@@ -579,7 +713,8 @@ class _MapWidgetState extends State<MapWidget> {
                     final centerLng = (visibleRegion.northeast.longitude +
                             visibleRegion.southwest.longitude) /
                         2;
-                    await _cargarGasolineras(centerLat, centerLng);
+                    await _cargarGasolineras(centerLat, centerLng,
+                        isInitialLoad: false);
                   } catch (e) {}
                 }
               },
