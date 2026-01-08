@@ -1,13 +1,24 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+<<<<<<< HEAD
 import 'api_config.dart';
+=======
+>>>>>>> origin/main
 
 // Servicio para gestionar el token de autenticación y recuperación de contraseña
 class AuthService {
   static String? _token;
   static String? _userEmail;
 
+<<<<<<< HEAD
+=======
+  // IMPORTANTE: Cambia esta URL por la IP de tu servidor backend
+  // Si usas emulador Android: 10.0.2.2
+  // Si usas dispositivo físico: 10.2.1.158 (Tu IP actual)
+  static const String baseUrl = 'http://localhost:3000';
+
+>>>>>>> origin/main
   // Guardar el token y email del usuario
   static Future<void> saveToken(String token, String email) async {
     _token = token;
@@ -49,7 +60,11 @@ class AuthService {
   static Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {
       final response = await http.post(
+<<<<<<< HEAD
         Uri.parse(ApiConfig.forgotPasswordUrl),
+=======
+        Uri.parse('$baseUrl/forgot-password'),
+>>>>>>> origin/main
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email}),
       );
@@ -67,7 +82,11 @@ class AuthService {
   static Future<Map<String, dynamic>> verifyToken(String token) async {
     try {
       final response = await http.post(
+<<<<<<< HEAD
         Uri.parse(ApiConfig.verifyTokenUrl),
+=======
+        Uri.parse('$baseUrl/verify-token'),
+>>>>>>> origin/main
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'token': token}),
       );
@@ -88,7 +107,11 @@ class AuthService {
   ) async {
     try {
       final response = await http.post(
+<<<<<<< HEAD
         Uri.parse(ApiConfig.resetPasswordUrl),
+=======
+        Uri.parse('$baseUrl/reset-password'),
+>>>>>>> origin/main
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'token': token, 'newPassword': newPassword}),
       );

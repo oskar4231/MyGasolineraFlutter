@@ -2,9 +2,17 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+<<<<<<< HEAD
 import 'api_config.dart';
 
 class UsuarioService {
+=======
+
+class UsuarioService {
+  static const String baseUrl =
+      'http://localhost:3000'; // Cambia por tu URL real
+
+>>>>>>> origin/main
   /// Obtiene el nombre del usuario desde el backend
   Future<String> obtenerNombreUsuario() async {
     try {
@@ -18,7 +26,11 @@ class UsuarioService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
+<<<<<<< HEAD
       final url = ApiConfig.getUrl('/usuarios/perfil/$email');
+=======
+      final url = '$baseUrl/usuarios/perfil/$email';
+>>>>>>> origin/main
       print('🔍 DEBUG - Obteniendo nombre de usuario desde: $url');
 
       final response = await http
@@ -104,7 +116,11 @@ class UsuarioService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
+<<<<<<< HEAD
       final url = ApiConfig.getUrl('/usuarios/$emailFormateado');
+=======
+      final url = '$baseUrl/usuarios/$emailFormateado';
+>>>>>>> origin/main
       print('🔍 DEBUG - URL construida: $url');
 
       final response = await http
@@ -188,7 +204,11 @@ class UsuarioService {
         throw Exception('No hay sesión activa');
       }
 
+<<<<<<< HEAD
       final url = ApiConfig.getUrl('/cargarImagen/$email');
+=======
+      final url = '$baseUrl/cargarImagen/$email';
+>>>>>>> origin/main
       print('🔍 DEBUG - Cargando imagen de perfil desde: $url');
 
       final response = await http
@@ -237,7 +257,11 @@ class UsuarioService {
           // Es una ruta de archivo, retornar la URL completa
           final imageUrl = fotoPerfil.toString().startsWith('http')
               ? fotoPerfil
+<<<<<<< HEAD
               : '${ApiConfig.baseUrl}/$fotoPerfil';
+=======
+              : '$baseUrl/$fotoPerfil';
+>>>>>>> origin/main
           print('🔍 DEBUG - URL de imagen: $imageUrl');
           return imageUrl;
         } else {

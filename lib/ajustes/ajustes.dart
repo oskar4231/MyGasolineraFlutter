@@ -9,8 +9,11 @@ import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
+<<<<<<< HEAD
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+=======
+>>>>>>> origin/main
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -33,16 +36,20 @@ class _AjustesScreenState extends State<AjustesScreen> {
   bool _eliminandoCuenta = false;
   bool _subiendoFoto = false;
 
+<<<<<<< HEAD
   // Variables para la sección de conexión y mapa
   bool _actualizandoUrl = false;
   DateTime? _lastUrlUpdate;
   double _radiusKm = 25.0; // Valor por defecto
 
+=======
+>>>>>>> origin/main
   @override
   void initState() {
     super.initState();
     _cargarFotoPerfil();
     _cargarNombreUsuario();
+<<<<<<< HEAD
     _cargarDatosConexion();
   }
 
@@ -65,6 +72,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
     setState(() {
       _radiusKm = valor;
     });
+=======
+>>>>>>> origin/main
   }
 
   // Cargar el nombre del usuario desde el backend
@@ -97,8 +106,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (fotoData != null && mounted) {
         if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
+<<<<<<< HEAD
           final base64String =
               fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
+=======
+          final base64String = fotoData.contains(',')
+              ? fotoData.split(',')[1]
+              : fotoData;
+>>>>>>> origin/main
           final bytes = base64Decode(base64String);
           setState(() {
             _profileImageBytes = bytes;
@@ -281,6 +296,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       child: Column(
         children: [
           Expanded(
+<<<<<<< HEAD
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -294,6 +310,17 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     _buildSeccionOpciones(context),
                   ],
                 ),
+=======
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSeccionPerfil(),
+                  const SizedBox(height: 24),
+                  _buildSeccionOpciones(context),
+                ],
+>>>>>>> origin/main
               ),
             ),
           ),
@@ -325,6 +352,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
+<<<<<<< HEAD
                             ? NetworkImage(_profileImageUrl!) as ImageProvider
                             : null,
                     child:
@@ -335,6 +363,18 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                 size: 40,
                               )
                             : null,
+=======
+                        ? NetworkImage(_profileImageUrl!) as ImageProvider
+                        : null,
+                    child:
+                        _profileImageBytes == null && _profileImageUrl == null
+                        ? const Icon(
+                            Icons.person,
+                            color: Colors.black,
+                            size: 40,
+                          )
+                        : null,
+>>>>>>> origin/main
                   ),
                   // Loader mientras sube la foto
                   if (_subiendoFoto)
@@ -414,6 +454,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildSeccionConexion(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -569,6 +610,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
+=======
+>>>>>>> origin/main
   Widget _buildSeccionOpciones(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -715,8 +758,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     onPressed: () async {
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
+<<<<<<< HEAD
                         final email =
                             await _usuarioService.obtenerEmailGuardado();
+=======
+                        final email = await _usuarioService
+                            .obtenerEmailGuardado();
+>>>>>>> origin/main
 
                         print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
                         print('🔍 DEBUG - Longitud del email: ${email.length}');
