@@ -70,23 +70,28 @@ class ProvinciaService {
     // Guardar en caché
     final prefs = await SharedPreferences.getInstance();
 
+    print('ProvinciaService: Detectando provincia para $lat, $lng');
+
     // Detección simplificada por rangos geográficos aproximados
     // Madrid (centro de España)
-    if (lat >= 40.0 && lat <= 41.0 && lng >= -4.0 && lng <= -3.0) {
+    if (lat >= 40.0 && lat <= 41.5 && lng >= -4.5 && lng <= -3.0) {
+      print('ProvinciaService: Detectado Madrid');
       final info = ProvinciaInfo('28', 'Madrid');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     // Barcelona
-    if (lat >= 41.0 && lat <= 42.0 && lng >= 1.5 && lng <= 3.0) {
+    if (lat >= 41.0 && lat <= 42.5 && lng >= 1.0 && lng <= 3.0) {
+      print('ProvinciaService: Detectado Barcelona');
       final info = ProvinciaInfo('08', 'Barcelona');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     // Valencia
-    if (lat >= 39.0 && lat <= 40.0 && lng >= -1.0 && lng <= 0.5) {
+    if (lat >= 38.5 && lat <= 40.0 && lng >= -1.5 && lng <= 0.5) {
+      print('ProvinciaService: Detectado Valencia');
       final info = ProvinciaInfo('46', 'Valencia');
       await _saveLastProvincia(prefs, info);
       return info;
