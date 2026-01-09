@@ -148,4 +148,10 @@ class ConfigService {
     }
     return null;
   }
+
+  /// Método llamado desde la consola del navegador para forzar refresh
+  static Future<void> triggerRefreshFromConsole() async {
+    print('ConfigService: 🔄 Refresh forzado desde consola externa');
+    await forceRefresh();
+  }
 }
