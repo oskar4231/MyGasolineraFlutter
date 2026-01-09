@@ -5,6 +5,24 @@ import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
 import 'package:my_gasolinera/services/api_config.dart';
 
+void main() {
+  runApp(const Crear());
+}
+
+class Crear extends StatelessWidget {
+  const Crear({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Crear Cuenta MyGasolinera',
+      theme: ThemeData(primarySwatch: Colors.orange),
+      home: const CrearScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
 class CrearScreen extends StatefulWidget {
   const CrearScreen({super.key});
 
@@ -255,6 +273,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 15),
+
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
@@ -309,6 +328,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       backgroundColor: const Color(0xFFFFE8DA),
                     ),
                     const SizedBox(height: 15),
+
                     // Campo de confirmar contraseña
                     TextFormField(
                       controller: _confirmPasswordController,
@@ -356,11 +376,13 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 30),
+
                     // Botón de crear
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: (_isLoading ||
+                        onPressed:
+                            (_isLoading ||
                                 !_isPasswordValid() ||
                                 _emailController.text.isEmpty ||
                                 _nombreController.text.isEmpty)

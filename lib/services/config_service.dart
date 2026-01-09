@@ -4,9 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_config.dart';
 
-// Import condicional para Web
-import 'package:flutter/foundation.dart' show kIsWeb;
-
 /// Servicio responsable de configurar la URL del backend dinámicamente
 class ConfigService {
   /// URL RAW del Gist que contiene la configuración del backend.
@@ -31,7 +28,7 @@ class ConfigService {
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // 1. Cargar URL desde caché para inicio rápido
+    // 1. Cargar desde caché primero (si existe)
     final cachedUrl = prefs.getString(_prefsKeyBackendUrl);
     if (cachedUrl != null && cachedUrl.isNotEmpty) {
       print('ConfigService: Cargando URL desde caché: $cachedUrl');
@@ -43,31 +40,6 @@ class ConfigService {
 
     // 3. Iniciar actualización periódica cada 15 segundos (Gist es rápido ~100-300ms)
     startPeriodicRefresh();
-
-    // 4. Exponer función para consola del navegador (solo Web)
-    _setupBrowserConsoleIntegration();
-  }
-
-  /// Configura la integración con la consola del navegador
-  /// Permite ejecutar refreshBackendUrl() desde la consola
-  static void _setupBrowserConsoleIntegration() {
-    if (!kIsWeb) {
-      print(
-          'ConfigService: Integración con navegador no disponible (plataforma no-web)');
-      return;
-    }
-
-    print('ConfigService: ✅ Integración con consola del navegador activada');
-    print(
-        'ConfigService: Usa refreshBackendUrl() en la consola para forzar actualización');
-    // La integración se hace desde JavaScript directamente
-  }
-
-  /// Método público para forzar refresh desde JavaScript
-  /// Este método será llamado desde el código JavaScript
-  static void triggerRefreshFromConsole() {
-    print('ConfigService: 🔄 Comando recibido desde consola del navegador');
-    forceRefresh();
   }
 
   /// Inicia actualización periódica de la URL del backend
@@ -134,7 +106,7 @@ class ConfigService {
         final oldUrl = prefs.getString(_prefsKeyBackendUrl);
         final urlChanged = oldUrl != null && oldUrl != newUrl;
 
-        // Guardar URL en caché para detectar cambios
+        // Guardar en caché
         await prefs.setString(_prefsKeyBackendUrl, newUrl);
         await prefs.setInt(
             _prefsKeyLastFetch, DateTime.now().millisecondsSinceEpoch);

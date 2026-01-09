@@ -18,10 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _isLoading = false;
   bool _rememberMe = false;
+  bool _isLoading = false;
+  bool _obscurePassword = true;
 
+  // Focus nodes para manejar el foco entre campos
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
 
@@ -41,6 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
+        // Use http://10.0.2.2:3000/login for Android Emulator
+        // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/login for iOS Simulator or Web
         final url = Uri.parse(ApiConfig.loginUrl);
 
         print('Intentando login en: $url');

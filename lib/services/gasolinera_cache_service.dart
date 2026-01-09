@@ -47,21 +47,9 @@ class GasolinerasCacheService {
           'GasolinerasCacheService: API sin datos, intentando cache antiguo...');
       return await _loadFromCache(provinciaId);
     } catch (e) {
-      print(
-          'GasolinerasCacheService: Error al acceder a cache ($e). Intentando API directo...');
-      // Si falla el cache (ej: sql.js error en web), intentamos API directamente
-      try {
-        final gasolineras = await api.fetchGasolinerasByProvincia(provinciaId);
-        // Intentamos guardar, pero si falla no importa (modo solo online)
-        try {
-          if (gasolineras.isNotEmpty)
-            await _saveToCache(provinciaId, gasolineras);
-        } catch (_) {}
-        return gasolineras;
-      } catch (apiError) {
-        print('GasolinerasCacheService: Error total (Cache + API): $apiError');
-        return [];
-      }
+      print('GasolinerasCacheService: Error al obtener gasolineras: $e');
+      // Fallback a cache en caso de error
+      return await _loadFromCache(provinciaId);
     }
   }
 

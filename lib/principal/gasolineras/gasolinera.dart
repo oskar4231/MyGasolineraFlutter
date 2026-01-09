@@ -68,10 +68,20 @@ class Gasolinera {
     // El backend envía 'lat' (num) y 'lng' (num).
     // La API Gobierno envía 'Latitud' (String) y 'Longitud (WGS84)' (String).
 
-    double lat =
-        _parsePrecio(json['lat'] ?? json['Latitud'] ?? json['latitud']);
-    double lng = _parsePrecio(
-        json['lng'] ?? json['Longitud (WGS84)'] ?? json['longitud']);
+    double lat;
+    double lng;
+
+    if (json.containsKey('lat') && json['lat'] is num) {
+      lat = (json['lat'] as num).toDouble();
+    } else {
+      lat = _parsePrecio(json['Latitud']);
+    }
+
+    if (json.containsKey('lng') && json['lng'] is num) {
+      lng = (json['lng'] as num).toDouble();
+    } else {
+      lng = _parsePrecio(json['Longitud (WGS84)']);
+    }
 
     return Gasolinera(
       id: (json['IDEESS'] ?? json['id'] ?? '').toString(),

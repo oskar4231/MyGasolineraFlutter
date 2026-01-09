@@ -5,7 +5,6 @@ import 'package:my_gasolinera/services/background_refresh_service.dart';
 import 'package:my_gasolinera/importante/switchWebApk.dart';
 
 import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
-import 'package:my_gasolinera/browser_console_helper.dart';
 
 // Instancias globales
 late AppDatabase database;
@@ -20,7 +19,6 @@ Future<void> main() async {
 
   // Mostrar modo de plataforma
   print('═══════════════════════════════════════════════════════════');
-
   print('🔧 MODO PLATAFORMA: ${esAPK ? "📱 APK" : "🌐 WEB"}');
   print('═══════════════════════════════════════════════════════════');
 
@@ -46,9 +44,6 @@ Future<void> main() async {
   // Inicializar servicio de actualización en segundo plano
   backgroundRefreshService = BackgroundRefreshService(database);
   backgroundRefreshService.start();
-
-  // Configurar listener para comandos de consola del navegador
-  setupBrowserConsoleListeners();
 
   runApp(const MyApp());
 }
