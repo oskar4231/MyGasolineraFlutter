@@ -89,6 +89,9 @@ class _CrearScreenState extends State<CrearScreen> {
       });
 
       try {
+        // Debug: mostrar la URL que se usará para registro (útil en redes restrictivas)
+        // ignore: avoid_print
+        print('API Register URL: ${ApiConfig.registerUrl}');
         final response = await http.post(
           Uri.parse(ApiConfig.registerUrl),
           headers: {'Content-Type': 'application/json'},

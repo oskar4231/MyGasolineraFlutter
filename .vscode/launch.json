@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "MyGasolineraFlutter (Web Port 8080)",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "--web-port",
+                "8080",
+                "--web-browser-flag",
+                "--disable-web-security"
+            ]
+        }
+    ]
+}

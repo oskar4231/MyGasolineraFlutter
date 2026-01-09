@@ -33,12 +33,32 @@ class ApiConfig {
   /// ```dart
   /// ApiConfig.getUrl('/usuarios') // 'https://tu-url.com/usuarios'
   /// ```
+  ///
+  /// Nota de desarrollo: para entornos con DNS/firewall restrictivo (p. ej. aulas),
+  /// puedes sobrescribir la URL base desde la query string del navegador:
+  /// `http://localhost:8080/?backend_override=http://localhost:3000`
+  /// Esto es sólo para desarrollo y no afecta producción si no se usa.
+  static String get _effectiveBaseUrl {
+    try {
+      final override = Uri.base.queryParameters['backend_override'];
+      if (override != null && override.isNotEmpty) {
+        final clean = override.endsWith('/') ? override.substring(0, override.length - 1) : override;
+        // ignore: avoid_print
+        print('API Config: usando backend_override desde la query: $clean');
+        return clean;
+      }
+    } catch (e) {
+      // Si algo falla, caeremos al valor por defecto
+    }
+    return baseUrl;
+  }
+
   static String getUrl(String endpoint) {
     // Asegurar que el endpoint comience con /
     if (!endpoint.startsWith('/')) {
       endpoint = '/$endpoint';
     }
-    return '$baseUrl$endpoint';
+    return '${_effectiveBaseUrl}$endpoint';
   }
 
   /// URL para el endpoint de login
