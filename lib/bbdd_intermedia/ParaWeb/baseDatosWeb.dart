@@ -16,7 +16,12 @@ class AppDatabase extends _$AppDatabase {
 
   /// Abre la conexión a IndexedDB para Web
   static QueryExecutor _openConnection() {
-    return WebDatabase('gasolinera_cache_db');
+    print('----------------------------------------------------------------');
+    print('🌐 FORZANDO INDEXED DB EN WEB (SIN SQL.JS)');
+    print('----------------------------------------------------------------');
+    // Forzar el uso de IndexedDB para evitar errores buscando sql.js/wasm
+    return WebDatabase.withStorage(
+        DriftWebStorage.indexedDb('gasolinera_cache_db'));
   }
 
   // ==================== GASOLINERAS ====================
@@ -122,5 +127,18 @@ class AppDatabase extends _$AppDatabase {
     await (delete(provinciaCacheTable)
           ..where((tbl) => tbl.lastUpdated.isSmallerThanValue(cutoffDate)))
         .go();
+  }
+
+  /// Borra TODO el caché de gasolineras (útil para forzar recarga completa)
+  Future<void> clearAllCache() async {
+    print('WEB: 🗑️ Borrando TODO el caché de gasolineras...');
+
+    // Eliminar todas las gasolineras
+    await delete(gasolinerasTable).go();
+
+    // Eliminar todos los registros de provincia cache
+    await delete(provinciaCacheTable).go();
+
+    print('✅ Caché completamente borrado');
   }
 }

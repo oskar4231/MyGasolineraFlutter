@@ -17,6 +17,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Abre la conexión a la base de datos SQLite nativa
   static QueryExecutor _openConnection() {
+    print('📱 INICIANDO BASE DE DATOS APK (NATIVA)');
     return driftDatabase(name: 'gasolinera_cache_db');
   }
 
@@ -123,5 +124,18 @@ class AppDatabase extends _$AppDatabase {
     await (delete(provinciaCacheTable)
           ..where((tbl) => tbl.lastUpdated.isSmallerThanValue(cutoffDate)))
         .go();
+  }
+
+  /// Borra TODO el caché de gasolineras (útil para forzar recarga completa)
+  Future<void> clearAllCache() async {
+    print('APK: 🗑️ Borrando TODO el caché de gasolineras...');
+
+    // Eliminar todas las gasolineras
+    await delete(gasolinerasTable).go();
+
+    // Eliminar todos los registros de provincia cache
+    await delete(provinciaCacheTable).go();
+
+    print('✅ Caché completamente borrado');
   }
 }
