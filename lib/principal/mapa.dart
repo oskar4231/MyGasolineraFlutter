@@ -177,7 +177,7 @@ class _MapWidgetState extends State<MapWidget> {
     try {
       final Uint8List iconBytes = await getBytesFromAsset(
         'lib/assets/location_9351238.png',
-        40,
+        100,
       );
       final Uint8List favIconBytes = await getBytesFromAsset(
         'lib/assets/localizacion_favs.png',
@@ -281,7 +281,7 @@ class _MapWidgetState extends State<MapWidget> {
         _currentProvinciaId = provinciaInfo.id;
 
         print(
-            'Mapa: Detectada provincia ${provinciaInfo.nombre} (ID: ${provinciaInfo.id}) en $lat, $lng');
+            'Mapa: Cargando gasolineras para provincia ${provinciaInfo.nombre}');
 
         // Cargar gasolineras de la provincia actual y vecinas
         final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
@@ -289,7 +289,7 @@ class _MapWidgetState extends State<MapWidget> {
 
         listaGasolineras = await _cacheService.getGasolinerasMultiProvincia(
           provinciasToLoad,
-          forceRefresh: false,
+          forceRefresh: false, // Usar caché para mejor rendimiento
         );
 
         print(
@@ -297,17 +297,27 @@ class _MapWidgetState extends State<MapWidget> {
       } catch (e) {
         print('Mapa: Error al cargar desde cache, usando API: $e');
         // Usar API con filtro de provincia en lugar de todas las gasolineras
+        print('Mapa: Error al cargar desde cache, usando API: $e');
+
+        // Intentar detectar provincia de nuevo para asegurar que tenemos la correcta para ESTA ubicación
+        try {
+          final detectedInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+          _currentProvinciaId = detectedInfo.id;
+          print(
+              'Mapa: (Fallback API) Provincia detectada: ${detectedInfo.nombre} ($_currentProvinciaId)');
+        } catch (e2) {
+          print('Mapa: Error al re-detectar provincia en catch: $e2');
+        }
+
         if (_currentProvinciaId != null) {
           listaGasolineras =
               await api.fetchGasolinerasByProvincia(_currentProvinciaId!);
-          print(
-              'Mapa: Cargadas ${listaGasolineras.length} gasolineras desde API para $_currentProvinciaId');
         } else {
-          // Si no tenemos provincia, intentar detectarla
-          final provinciaInfo =
-              await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
-          listaGasolineras =
-              await api.fetchGasolinerasByProvincia(provinciaInfo.id);
+          print(
+              'Mapa: No se pudo determinar provincia, cargando lista vacía o default');
+          // Opcional: cargar todas o Madrid por defecto si falla todo
+          listaGasolineras = [];
         }
       } finally {
         if (mounted) {
@@ -320,16 +330,18 @@ class _MapWidgetState extends State<MapWidget> {
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
 
-    print('DEBUG: User Location: $lat, $lng');
-    if (listaGasolineras.isNotEmpty) {
-      final first = listaGasolineras.first;
-      final dist = Geolocator.distanceBetween(lat, lng, first.lat, first.lng);
-      print(
-          'DEBUG: First Gas Station: ${first.rotulo} (lat: ${first.lat}, lng: ${first.lng}) is $dist meters away');
-    }
-
     print(
         '📍 Filtrando ${listaGasolineras.length} gasolineras por radio de ${widget.radiusKm} km');
+
+    if (listaGasolineras.isNotEmpty) {
+      print('🔍 DEBUG: Primeras 3 gasolineras recibidas (sin filtrar):');
+      for (var i = 0;
+          i < (listaGasolineras.length > 3 ? 3 : listaGasolineras.length);
+          i++) {
+        final g = listaGasolineras[i];
+        print('   - ${g.rotulo}: ${g.lat}, ${g.lng} (Prov: ${g.provincia})');
+      }
+    }
 
     // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
@@ -350,7 +362,7 @@ class _MapWidgetState extends State<MapWidget> {
         gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
 
     print(
-        'Mapa: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${widget.radiusKm}km desde el centro ($lat, $lng)');
+        'Mapa: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${widget.radiusKm}km');
 
     // Carga progresiva: SOLO en carga inicial para dar feedback rápido
     if (isInitialLoad &&
@@ -443,9 +455,6 @@ class _MapWidgetState extends State<MapWidget> {
 
     await showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Permite que el contenido defina su altura
-      barrierColor:
-          Colors.black54, // Oscurece el fondo para bloquear interacción visual
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -756,10 +765,13 @@ class _MapWidgetState extends State<MapWidget> {
 
     // ✅ CORRECCIÓN: Soluciona el error "Maps cannot be retrieved before calling buildView!" en Flutter Web
     // Posponemos el dispose para evitar el conflicto del ciclo de vida.
-    //     Future.delayed(Duration.zero, () {
-    //       mapController!.dispose();
-    //     });
-    //   }
+    // ✅ CORRECCIÓN: Soluciona el error "Maps cannot be retrieved before calling buildView!" en Flutter Web
+    // En web evita llamar a dispose manual del controller.
+    // if (mapController != null) {
+    //   Future.delayed(Duration.zero, () {
+    //     mapController!.dispose();
+    //   });
+    // }
 
     super.dispose();
   }
