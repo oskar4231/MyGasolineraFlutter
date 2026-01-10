@@ -6,7 +6,10 @@ ThemeData modoOscuro() {
     colorScheme: ColorScheme.fromSeed(
       seedColor: const Color(0xFFFF9350), // Mantenemos semilla pero en oscuro
       brightness: Brightness.dark,
-      surface: const Color(0xFF2C2C2C),
+      primary: const Color(0xFFFF9350),
+      onPrimary: Colors.black, // Texto negro sobre naranja
+      surface: const Color(0xFF1E1E1E), // Gris oscuro para superficies
+      onSurface: Colors.white, // Blanco para texto general
     ),
     scaffoldBackgroundColor: const Color(0xFF121212),
     appBarTheme: const AppBarTheme(

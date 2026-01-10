@@ -252,22 +252,23 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFFF9350),
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Ajustes',
           style: TextStyle(
             fontFamily: 'Roboto',
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: theme.colorScheme.onPrimary,
           ),
         ),
-        backgroundColor: const Color(0xFFFF9350),
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: theme.colorScheme.primary,
+        iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -276,8 +277,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   Widget _buildAjustesContent(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
-      color: const Color(0xFFFF9350),
+      color: theme.colorScheme.surface,
       child: Column(
         children: [
           Expanded(
@@ -307,9 +309,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   Widget _buildSeccionPerfil() {
+    final theme = Theme.of(context);
     return Card(
       elevation: 2,
-      color: const Color(0xFFFFE8DA),
+      color: theme.colorScheme.surfaceContainerHighest,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
@@ -329,9 +332,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                             : null,
                     child:
                         _profileImageBytes == null && _profileImageUrl == null
-                            ? const Icon(
+                            ? Icon(
                                 Icons.person,
-                                color: Colors.black,
+                                color: theme.colorScheme.onSurface,
                                 size: 40,
                               )
                             : null,
@@ -340,7 +343,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   if (_subiendoFoto)
                     Positioned.fill(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.black54,
                           shape: BoxShape.circle,
                         ),
@@ -365,14 +368,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.camera_alt,
                           size: 16,
-                          color: Colors.white,
+                          color: theme.colorScheme.onPrimary,
                         ),
                       ),
                     ),
@@ -388,9 +391,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
-                        color: Colors.black,
+                        color: theme.colorScheme.onSurface,
                         fontFamily: 'Roboto',
                       ),
                       children: [
@@ -415,15 +418,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   Widget _buildSeccionConexion(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Conexión y Mapa',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -438,7 +442,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 // 1. Botón Actualizar Servidor
                 Row(
                   children: [
-                    const Icon(Icons.sync, color: Colors.blue),
+                    Icon(Icons.sync, color: theme.colorScheme.primary),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -457,13 +461,15 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                 : 'Sin actualizar',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
                         ],
                       ),
                     ),
                     ElevatedButton(
+                      // ... (button logic unchanged)
                       onPressed: _actualizandoUrl
                           ? null
                           : () async {
@@ -494,15 +500,19 @@ class _AjustesScreenState extends State<AjustesScreen> {
                               }
                             },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[50],
-                        foregroundColor: Colors.blue,
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                        foregroundColor: theme.colorScheme.primary,
                         elevation: 0,
                       ),
                       child: _actualizandoUrl
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    theme.colorScheme.primary),
+                              ),
                             )
                           : const Text('Actualizar'),
                     ),
@@ -514,7 +524,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 // 2. Slider Radio
                 Row(
                   children: [
-                    const Icon(Icons.radar, color: Colors.orange),
+                    Icon(Icons.radar, color: theme.colorScheme.primary),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -532,10 +542,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                               ),
                               Text(
                                 '${_radiusKm.toInt()} km',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange,
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                             ],
@@ -545,7 +555,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                             min: 5,
                             max: 100,
                             divisions: 19,
-                            activeColor: Colors.orange,
+                            activeColor: theme.colorScheme.primary,
                             label: '${_radiusKm.toInt()} km',
                             onChanged: (value) {
                               setState(() {
@@ -570,15 +580,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   Widget _buildSeccionOpciones(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Opciones',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -631,14 +642,15 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   Widget _buildBotonCerrarSesion(BuildContext context) {
+    final theme = Theme.of(context);
     return Center(
       child: ElevatedButton.icon(
         onPressed: () {
           _mostrarDialogoCerrarSesion(context);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          backgroundColor: theme.colorScheme.onSurface,
+          foregroundColor: theme.colorScheme.surface,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),
@@ -677,6 +689,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
   }
 
   void _mostrarDialogoBorrarCuenta() {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       barrierDismissible: !_eliminandoCuenta,
@@ -688,10 +701,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
+                  Text(
                     '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
                     'Esta acción no se puede deshacer.',
-                    style: TextStyle(color: Colors.black87, fontSize: 16),
+                    style: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.87),
+                        fontSize: 16),
                   ),
                   if (_eliminandoCuenta) ...[
                     const SizedBox(height: 16),
@@ -705,9 +720,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 if (!_eliminandoCuenta)
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
+                    child: Text(
                       'Cancelar',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ),
                 if (!_eliminandoCuenta)
@@ -764,11 +779,11 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF9350),
+                      backgroundColor: theme.colorScheme.primary,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Eliminar',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: theme.colorScheme.onPrimary),
                     ),
                   ),
               ],
@@ -804,19 +819,22 @@ class __OpcionItemState extends State<_OpcionItem> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
         decoration: BoxDecoration(
-          color: _isHovered ? Colors.black12 : Colors.transparent,
+          color: _isHovered
+              ? theme.colorScheme.onSurface.withOpacity(0.12)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: ListTile(
-          leading: Icon(widget.icono, color: Colors.black),
+          leading: Icon(widget.icono, color: theme.colorScheme.onSurface),
           title: Text(
             widget.texto,
-            style: const TextStyle(color: Colors.black),
+            style: TextStyle(color: theme.colorScheme.onSurface),
           ),
           trailing: widget.tieneCheckbox
               ? Checkbox(

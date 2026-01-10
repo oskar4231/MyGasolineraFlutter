@@ -41,10 +41,17 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Ubicación en Tiempo Real'),
-        backgroundColor: Colors.blue,
+        title: Text(
+          'Mi Ubicación en Tiempo Real',
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
+          ),
+        ),
+        iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
+        backgroundColor: theme.colorScheme.primary,
       ),
       body: MapWidget(
         key: _mapKey,
@@ -60,12 +67,12 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
             _cargarPreferencias();
           });
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: theme.colorScheme.primary,
         child: Image.asset(
           'lib/assets/ajustes.png',
           width: 24,
           height: 24,
-          color: Colors.white,
+          color: theme.colorScheme.onPrimary,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -495,7 +502,12 @@ class _MapWidgetState extends State<MapWidget> {
 
               Text(
                 gasolinera.direccion,
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.6)),
               ),
 
               const SizedBox(height: 20),
@@ -516,7 +528,7 @@ class _MapWidgetState extends State<MapWidget> {
                       'Diesel',
                       gasolinera.gasoleoA,
                       Icons.directions_car,
-                      Colors.black,
+                      Theme.of(context).colorScheme.onSurface,
                     ),
                   if (gasolinera.gasolina98 > 0)
                     _buildPrecioItem(
@@ -554,9 +566,10 @@ class _MapWidgetState extends State<MapWidget> {
                     style: const TextStyle(fontSize: 16),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        esFavorita ? Colors.red : const Color(0xFFFF9350),
-                    foregroundColor: Colors.white,
+                    backgroundColor: esFavorita
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -610,15 +623,18 @@ class _MapWidgetState extends State<MapWidget> {
           const SizedBox(width: 8),
           Text(
             '$nombre: ',
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            style: TextStyle(
+                fontSize: 16,
+                color:
+                    Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
           ),
           const Spacer(),
           Text(
             '${precio.toStringAsFixed(3)}€',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
