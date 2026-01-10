@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/accesibilidad_service.dart';
+import 'package:my_gasolinera/Modos/Temas/theme_manager.dart';
 
 class AccesibilidadScreen extends StatefulWidget {
   const AccesibilidadScreen({super.key});
@@ -131,60 +132,78 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Alto contraste
+            // TEMA DEL PROYECTO
             Card(
               elevation: 2,
-              color: const Color(0xFFFFE8DA),
-              child: SwitchListTile(
-                secondary: const Icon(Icons.contrast, color: Colors.black),
-                title: const Text(
-                  'Alto Contraste',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+              color: Theme.of(context).cardTheme.color,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.palette,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Tema',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ListenableBuilder(
+                        listenable: ThemeManager(),
+                        builder: (context, _) {
+                          return DropdownButtonFormField<int>(
+                            value: ThemeManager().currentThemeId,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              filled: true,
+                              fillColor:
+                                  Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                            dropdownColor: Theme.of(context).cardColor,
+                            items: const [
+                              DropdownMenuItem(
+                                  value: 0,
+                                  child: Text('Predeterminado (Naranja)')),
+                              DropdownMenuItem(
+                                  value: 1, child: Text('Modo Oscuro')),
+                              DropdownMenuItem(
+                                  value: 2,
+                                  child: Text('Daltonismo: Protanopia')),
+                              DropdownMenuItem(
+                                  value: 3,
+                                  child: Text('Daltonismo: Deuteranopia')),
+                              DropdownMenuItem(
+                                  value: 4,
+                                  child: Text('Daltonismo: Tritanopia')),
+                              DropdownMenuItem(
+                                  value: 5,
+                                  child: Text('Daltonismo: Achromatopsia')),
+                            ],
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                ThemeManager().setObjectTheme(newValue);
+                              }
+                            },
+                          );
+                        }),
+                  ],
                 ),
-                subtitle: const Text(
-                  'Mejora la visibilidad de los elementos',
-                  style: TextStyle(color: Colors.black87, fontSize: 12),
-                ),
-                value: _altoContraste,
-                activeThumbColor: const Color(0xFFFF9350),
-                onChanged: (bool value) {
-                  setState(() {
-                    _altoContraste = value;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Modo Oscuro
-            Card(
-              elevation: 2,
-              color: const Color(0xFFFFE8DA),
-              child: SwitchListTile(
-                secondary: const Icon(Icons.dark_mode, color: Colors.black),
-                title: const Text(
-                  'Modo Oscuro',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                subtitle: const Text(
-                  'Reduce el brillo y mejora la visibilidad nocturna',
-                  style: TextStyle(color: Colors.black87, fontSize: 12),
-                ),
-                value: _modoOscuro,
-                activeThumbColor: const Color(0xFFFF9350),
-                onChanged: (bool value) {
-                  setState(() {
-                    _modoOscuro = value;
-                  });
-                },
               ),
             ),
             const SizedBox(height: 16),

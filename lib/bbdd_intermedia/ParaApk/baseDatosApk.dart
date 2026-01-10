@@ -3,12 +3,13 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaGasolineras.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaCacheProvincias.dart';
+import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaTheme.dart';
 
 part 'baseDatosApk.g.dart';
 
 /// Base de datos local para cache de gasolineras (VERSIÓN APK)
 /// Usa SQLite nativo con drift_flutter
-@DriftDatabase(tables: [GasolinerasTable, ProvinciaCacheTable])
+@DriftDatabase(tables: [GasolinerasTable, ProvinciaCacheTable, ThemeTable])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -137,5 +138,27 @@ class AppDatabase extends _$AppDatabase {
     await delete(provinciaCacheTable).go();
 
     print('✅ Caché completamente borrado');
+  }
+
+  // ==================== TEMA ====================
+
+  /// Obtiene el ID del tema guardado
+  Future<int> getThemeId() async {
+    final query = selectOnly(themeTable)..addColumns([themeTable.themeId]);
+    final result = await query.getSingleOrNull();
+    return result?.read(themeTable.themeId) ?? 0;
+  }
+
+  /// Guarda el ID del tema
+  Future<void> saveThemeId(int id) async {
+    // Borramos cualquier configuración anterior (solo queremos una fila)
+    await delete(themeTable).go();
+
+    // Insertamos la nueva
+    await into(themeTable).insert(
+      ThemeTableCompanion(
+        themeId: Value(id),
+      ),
+    );
   }
 }

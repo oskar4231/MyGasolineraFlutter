@@ -9,7 +9,7 @@ class ConfigService {
   /// URL RAW del Gist que contiene la configuración del backend.
   /// Gist para CLASE (rama PiramaClase) - Actualizado automáticamente por el backend
   static const String _gistUrl =
-      'https://gist.githubusercontent.com/Cristian-KN/1d794d2471497d5081551ae9d105665f/raw/backend-url.json'; // Gist auto-actualizado por backend
+      'https://gist.githubusercontent.com/Cristian-KN/1812d8a029a5a1b4d8b9610e6a94a509/raw/backend-url.json'; // Gist auto-actualizado por backend
 
   static const String _prefsKeyBackendUrl = 'backend_url';
   static const String _prefsKeyLastFetch = 'last_url_fetch';

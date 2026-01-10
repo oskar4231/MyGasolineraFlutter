@@ -3,6 +3,7 @@ import 'package:my_gasolinera/Inicio/inicio.dart';
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:my_gasolinera/services/background_refresh_service.dart';
 import 'package:my_gasolinera/importante/switchWebApk.dart';
+import 'package:my_gasolinera/Modos/Temas/theme_manager.dart';
 
 import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 
@@ -45,6 +46,9 @@ Future<void> main() async {
   backgroundRefreshService = BackgroundRefreshService(database);
   backgroundRefreshService.start();
 
+  // Cargar TEMA
+  await ThemeManager().loadInitialTheme();
+
   runApp(const MyApp());
 }
 
@@ -53,14 +57,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      scaffoldMessengerKey: rootScaffoldMessengerKey,
-      debugShowCheckedModeBanner: false,
-      title: 'MyGasolinera',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const Inicio(),
+    return ListenableBuilder(
+      listenable: ThemeManager(),
+      builder: (context, _) {
+        return MaterialApp(
+          scaffoldMessengerKey: rootScaffoldMessengerKey,
+          debugShowCheckedModeBanner: false,
+          title: 'MyGasolinera',
+          theme: ThemeManager().currentTheme,
+          home: const Inicio(),
+        );
+      },
     );
   }
 }
