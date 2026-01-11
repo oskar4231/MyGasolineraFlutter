@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/services/factura_service.dart';
 import 'package:my_gasolinera/services/coche_service.dart';
+import 'package:my_gasolinera/services/local_image_service.dart';
+import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:intl/intl.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
@@ -160,13 +162,14 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
         final formattedFecha =
             '${dateParts[2]}-${dateParts[1]}-${dateParts[0]}';
 
-        await FacturaService.crearFactura(
+        // 1. Crear factura en backend SIN imagen (para obtener ID)
+        final response = await FacturaService.crearFactura(
           titulo: _tituloController.text,
           coste: double.parse(_costoController.text),
           fecha: formattedFecha,
           hora: _horaController.text,
           descripcion: _descripcionController.text,
-          imagenFile: _imagenFactura,
+          imagenFile: null, // NO Enviamos imagen al backend
           litrosRepostados: _litrosController.text.isNotEmpty
               ? double.parse(_litrosController.text)
               : null,
@@ -180,9 +183,17 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
           idCoche: _cocheSeleccionado,
         );
 
+        // 2. Si hay imagen, guardar localmente en BBDD intermedia encriptada
+        if (_imagenFactura != null && response['id'] != null) {
+          print('💾 Guardando imagen localmente...');
+          await LocalImageService.saveImage(
+              _imagenFactura!, 'factura', response['id'].toString());
+        }
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Factura creada correctamente')),
+            const SnackBar(
+                content: Text('Factura creada y asegurada localmente')),
           );
           Navigator.pop(context, true);
         }
@@ -290,8 +301,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Por favor ingresa el coste total';
                       }
-                      if (double.tryParse(value) == null) {
-                        return 'Por favor ingresa un número válido';
+                      if (!RegExp(r'^\d+([.,]\d{1,3})?$').hasMatch(value)) {
+                        return 'Formato inválido (Ej: 10.50)';
                       }
                       return null;
                     },

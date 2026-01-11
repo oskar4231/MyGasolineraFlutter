@@ -11,6 +11,7 @@ import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_gasolinera/services/local_image_service.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -90,9 +91,23 @@ class _AjustesScreenState extends State<AjustesScreen> {
     }
   }
 
-  // Cargar foto de perfil desde el servidor
+  // Cargar foto de perfil (Local > Servidor)
   Future<void> _cargarFotoPerfil() async {
     try {
+      // 1. Intentar cargar desde local (intermedia/encriptada)
+      print('🔍 Intentando cargar foto de perfil localmente...');
+      final localBytes =
+          await LocalImageService.getImageBytes('perfil', _emailUsuario);
+
+      if (localBytes != null && mounted) {
+        setState(() {
+          _profileImageBytes = localBytes;
+        });
+        print('✅ Foto de perfil cargada desde almacenamiento local encriptado');
+        return;
+      }
+
+      // 2. Si no hay local, intentar desde servidor
       final fotoData = await _usuarioService.cargarImagenPerfil(_emailUsuario);
 
       if (fotoData != null && mounted) {
@@ -141,7 +156,11 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _subiendoFoto = true;
       });
 
-      final exito = await _perfilService.subirFotoPerfil(pickedFile);
+      // CAMBIO: Guardar localmente en lugar de subir
+      print('💾 Guardando foto de perfil en local (encriptada)...');
+      final path = await LocalImageService.saveImage(
+          pickedFile, 'perfil', _emailUsuario);
+      final exito = path != null;
 
       setState(() {
         _subiendoFoto = false;
@@ -150,7 +169,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       if (exito && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Foto de perfil actualizada'),
+            content: Text('✅ Foto de perfil guardada localmente (segura)'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -158,7 +177,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('❌ Error al subir la foto'),
+            content: Text('❌ Error al guardar la foto localmente'),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 2),
           ),
@@ -182,7 +201,11 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _subiendoFoto = true;
       });
 
-      final exito = await _perfilService.subirFotoPerfil(pickedFile);
+      // CAMBIO: Guardar localmente en lugar de subir
+      print('💾 Guardando foto de perfil en local (encriptada)...');
+      final path = await LocalImageService.saveImage(
+          pickedFile, 'perfil', _emailUsuario);
+      final exito = path != null;
 
       setState(() {
         _subiendoFoto = false;
@@ -191,7 +214,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       if (exito && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Foto de perfil actualizada'),
+            content: Text('✅ Foto de perfil guardada localmente (segura)'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -199,7 +222,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('❌ Error al subir la foto'),
+            content: Text('❌ Error al guardar la foto localmente'),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 2),
           ),

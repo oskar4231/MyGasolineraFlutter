@@ -2,18 +2,39 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaWeb/tablaGasolineras.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaWeb/tablaCacheProvincias.dart';
+import 'package:my_gasolinera/bbdd_intermedia/ParaWeb/tablaLocalImages.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaWeb/tablaTheme.dart';
 
 part 'baseDatosWeb.g.dart';
 
 /// Base de datos local para cache de gasolineras (VERSIÓN WEB)
 /// Usa IndexedDB a través de drift_flutter
-@DriftDatabase(tables: [GasolinerasTable, ProvinciaCacheTable, ThemeTable])
+@DriftDatabase(tables: [
+  GasolinerasTable,
+  ProvinciaCacheTable,
+  ThemeTable,
+  LocalImagesTable
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from < 3) {
+          await m.deleteTable(localImagesTable.actualTableName);
+          await m.createTable(localImagesTable);
+        }
+      },
+    );
+  }
 
   /// Abre la conexión para Web usando drift_flutter (que gestiona WASM/IndexedDB automáticamente)
   static QueryExecutor _openConnection() {
@@ -167,5 +188,18 @@ class AppDatabase extends _$AppDatabase {
         themeId: Value(id),
       ),
     );
+  }
+
+  // ==================== IMÁGENES LOCALES ====================
+
+  Future<int> insertLocalImage(LocalImagesTableCompanion image) {
+    return into(localImagesTable).insert(image);
+  }
+
+  Future<LocalImagesTableData?> getLocalImage(String type, String relatedId) {
+    return (select(localImagesTable)
+          ..where(
+              (t) => t.imageType.equals(type) & t.relatedId.equals(relatedId)))
+        .getSingleOrNull();
   }
 }
