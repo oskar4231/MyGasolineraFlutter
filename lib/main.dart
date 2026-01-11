@@ -26,17 +26,6 @@ Future<void> main() async {
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
 
-  // Configurar callback de cambio de URL
-  ConfigService.onUrlChanged = () {
-    rootScaffoldMessengerKey.currentState?.showSnackBar(
-      const SnackBar(
-        content: Text('🔄 Conexión actualizada automáticamente'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 4),
-      ),
-    );
-  };
-
   // Inicializar base de datos (APK o Web según configuración)
   database = AppDatabase();
   print(

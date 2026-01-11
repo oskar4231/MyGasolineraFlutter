@@ -6,15 +6,14 @@
 /// Ejemplos de URLs:
 /// - Desarrollo local: 'http://localhost:3000'
 /// - Android Emulator: 'http://10.0.2.2:3000'
-/// - Cloudflared: 'https://tu-url-cloudflared.trycloudflare.com'
+/// - Ngrok: 'https://rectricial-dewayne-collusive.ngrok-free.dev'
 /// - Producción: 'https://tu-dominio.com'
 class ApiConfig {
   /// URL base del backend
   ///
   /// Esta URL se actualiza dinámicamente al iniciar la app usando ConfigService
   /// No incluyas la barra final (/)
-  static String baseUrl =
-      'https://arizona-islamic-representatives-care.trycloudflare.com';
+  static String baseUrl = 'https://rectricial-dewayne-collusive.ngrok-free.dev';
 
   /// Actualiza la URL base dinámicamente
   static void setBaseUrl(String newUrl) {
