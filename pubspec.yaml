@@ -39,6 +39,15 @@ dev_dependencies:
   # Code generation para Drift
   build_runner: ^2.4.13
   drift_dev: ^2.20.3
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib/assets/logo.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "lib/assets/logo.png"
 
 flutter:
   uses-material-design: true
