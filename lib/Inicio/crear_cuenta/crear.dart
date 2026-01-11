@@ -91,7 +91,7 @@ class _CrearScreenState extends State<CrearScreen> {
       try {
         final response = await http.post(
           Uri.parse(ApiConfig.registerUrl),
-          headers: {'Content-Type': 'application/json'},
+          headers: ApiConfig.headers,
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,

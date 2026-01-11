@@ -72,4 +72,13 @@ class ApiConfig {
 
   /// URL para el endpoint de accesibilidad
   static String get accesibilidadUrl => getUrl('/accesibilidad');
+
+  /// Headers base para todas las peticiones
+  ///
+  /// Incluye el header para saltar el aviso de ngrok
+  static Map<String, String> get headers => {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      };
 }
