@@ -1,4 +1,6 @@
 /// Configuración centralizada de la URL del backend
+import 'package:my_gasolinera/importante/switchBackend.dart';
+
 ///
 /// Este archivo contiene la URL base del servidor backend.
 /// Cambia solo la URL aquí cuando uses cloudflared o cambies de servidor.
@@ -13,7 +15,14 @@ class ApiConfig {
   ///
   /// Esta URL se actualiza dinámicamente al iniciar la app usando ConfigService
   /// No incluyas la barra final (/)
-  static String baseUrl = 'https://rectricial-dewayne-collusive.ngrok-free.dev';
+  static const String _localUrl = 'http://localhost:3000';
+  static const String _ngrokUrl =
+      'https://rectricial-dewayne-collusive.ngrok-free.dev';
+
+  /// URL base del backend
+  ///
+  /// Esta URL se determina por el switch en lib/important/switchBackend.dart
+  static String baseUrl = switchBackend == 0 ? _localUrl : _ngrokUrl;
 
   /// Actualiza la URL base dinámicamente
   static void setBaseUrl(String newUrl) {

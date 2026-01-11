@@ -111,17 +111,18 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        color: const Color(0xFFFFE8DA),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.photo_library,
-                color: Color(0xFF492714),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
-              title: const Text(
+              title: Text(
                 'Galería',
-                style: TextStyle(color: Color(0xFF492714)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -129,10 +130,12 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: Color(0xFF492714)),
-              title: const Text(
+              leading: Icon(Icons.camera_alt,
+                  color: Theme.of(context).colorScheme.onSurface),
+              title: Text(
                 'Cámara',
-                style: TextStyle(color: Color(0xFF492714)),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -162,7 +165,6 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
           coste: double.parse(_costoController.text),
           fecha: formattedFecha,
           hora: _horaController.text,
-
           descripcion: _descripcionController.text,
           imagenFile: _imagenFactura,
           litrosRepostados: _litrosController.text.isNotEmpty
@@ -213,19 +215,20 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Nueva Factura',
           style: TextStyle(
-            color: Color(0xFF492714),
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -242,9 +245,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _tituloController,
                     decoration: InputDecoration(
                       labelText: 'Título',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -269,9 +273,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'Coste Total (€)',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -302,11 +307,11 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                           controller: _fechaController,
                           decoration: InputDecoration(
                             labelText: 'Fecha',
-                            labelStyle: const TextStyle(
-                              color: Color(0xFF492714),
+                            labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             filled: true,
-                            fillColor: const Color(0xFFFFCFB0),
+                            fillColor: Theme.of(context).cardColor,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
@@ -338,11 +343,11 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                           controller: _horaController,
                           decoration: InputDecoration(
                             labelText: 'Hora',
-                            labelStyle: const TextStyle(
-                              color: Color(0xFF492714),
+                            labelStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             filled: true,
-                            fillColor: const Color(0xFFFFCFB0),
+                            fillColor: Theme.of(context).cardColor,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide.none,
@@ -370,16 +375,18 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                   const SizedBox(height: 16),
 
                   // NUEVA SECCIÓN: Información del Repostaje
-                  const Text(
+                  Text(
                     'Información del Repostaje',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF492714),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Divider(color: Color(0xFF492714), thickness: 1),
+                  Divider(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      thickness: 1),
                   const SizedBox(height: 16),
 
                   // Dropdown Coche
@@ -387,9 +394,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     value: _cocheSeleccionado,
                     decoration: InputDecoration(
                       labelText: 'Coche',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -404,18 +412,19 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                         value: coche['id_coche'],
                         child: Text(
                           '${coche['marca']} ${coche['modelo']}',
-                          style: const TextStyle(color: Color(0xFF492714)),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface),
                         ),
                       );
                     }).toList(),
                     onChanged: (value) {
                       setState(() => _cocheSeleccionado = value);
                     },
-                    dropdownColor: const Color(0xFFFFCFB0),
+                    dropdownColor: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_drop_down,
-                      color: Color(0xFF492714),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -427,10 +436,15 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     decoration: InputDecoration(
                       labelText: 'Litros Repostados',
                       hintText: 'Ej: 45.5',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
-                      hintStyle: const TextStyle(color: Color(0x99492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
+                      hintStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6)),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -450,10 +464,15 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     decoration: InputDecoration(
                       labelText: 'Precio por Litro (€)',
                       hintText: 'Ej: 1.459',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
-                      hintStyle: const TextStyle(color: Color(0x99492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
+                      hintStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6)),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -473,10 +492,15 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     decoration: InputDecoration(
                       labelText: 'Kilometraje Actual',
                       hintText: 'Ej: 45230',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
-                      hintStyle: const TextStyle(color: Color(0x99492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
+                      hintStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6)),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -500,9 +524,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText: 'Tipo de Combustible',
-                        labelStyle: const TextStyle(color: Color(0xFF492714)),
+                        labelStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface),
                         filled: true,
-                        fillColor: const Color(0xFFFFCFB0),
+                        fillColor: Theme.of(context).cardColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -517,34 +542,37 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                           value: tipo,
                           child: Text(
                             tipo,
-                            style: const TextStyle(color: Color(0xFF492714)),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface),
                           ),
                         );
                       }).toList(),
                       onChanged: (value) {
                         setState(() => _tipoCombustibleSeleccionado = value);
                       },
-                      dropdownColor: const Color(0xFFFFCFB0),
+                      dropdownColor: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(10),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_drop_down,
-                        color: Color(0xFF492714),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
 
                   // NUEVA SECCIÓN: Imagen de Factura
-                  const Text(
+                  Text(
                     'Imagen de Factura',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF492714),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Divider(color: Color(0xFF492714), thickness: 1),
+                  Divider(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      thickness: 1),
                   const SizedBox(height: 16),
 
                   // Botón para agregar imagen
@@ -552,7 +580,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     width: double.infinity,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFCFB0),
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: _imagenFactura == null
@@ -560,17 +588,19 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                             onPressed: _mostrarOpcionesImagen,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.add_photo_alternate,
                                   size: 40,
-                                  color: Color(0xFF492714),
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Text(
                                   'Agregar Imagen de Factura',
                                   style: TextStyle(
-                                    color: Color(0xFF492714),
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -633,9 +663,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     maxLines: 4,
                     decoration: InputDecoration(
                       labelText: 'Descripción (Opcional)',
-                      labelStyle: const TextStyle(color: Color(0xFF492714)),
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
-                      fillColor: const Color(0xFFFFCFB0),
+                      fillColor: Theme.of(context).cardColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -654,23 +685,26 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _guardarFactura,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF9350),
-                        foregroundColor: const Color(0xFF492714),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         elevation: 4,
-                        shadowColor: const Color(0xFF492714).withOpacity(0.3),
+                        shadowColor: Theme.of(context)
+                            .shadowColor
+                            .withValues(alpha: 0.3),
                       ),
                       child: _isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 24,
                               width: 24,
                               child: CircularProgressIndicator(
                                 strokeWidth: 3,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF492714),
+                                  Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                             )

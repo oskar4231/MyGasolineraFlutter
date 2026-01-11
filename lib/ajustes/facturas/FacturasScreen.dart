@@ -151,31 +151,31 @@ class _FacturasScreenState extends State<FacturasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Mis Facturas',
-          style: TextStyle(
-            color: Color(0xFF492714),
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF492714)),
+            icon: Icon(Icons.refresh,
+                color: Theme.of(context).appBarTheme.iconTheme?.color),
             onPressed: _cargarFacturas,
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+          ? Center(
+              child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor),
             )
           : _errorMessage != null
               ? Center(
@@ -187,9 +187,9 @@ class _FacturasScreenState extends State<FacturasScreen> {
                       const SizedBox(height: 20),
                       Text(
                         _errorMessage!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
-                          color: Color(0xFF492714),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -197,9 +197,13 @@ class _FacturasScreenState extends State<FacturasScreen> {
                       ElevatedButton(
                         onPressed: _cargarFacturas,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF9350),
+                          backgroundColor: Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Reintentar'),
+                        child: Text(
+                          'Reintentar',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary),
+                        ),
                       ),
                     ],
                   ),
@@ -208,19 +212,24 @@ class _FacturasScreenState extends State<FacturasScreen> {
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(Icons.receipt_long,
-                              size: 80, color: Color(0xFFFF9350)),
-                          SizedBox(height: 20),
+                              size: 80, color: Theme.of(context).primaryColor),
+                          const SizedBox(height: 20),
                           Text(
                             'No hay facturas',
                             style: TextStyle(
-                                fontSize: 18, color: Color(0xFF492714)),
+                                fontSize: 18,
+                                color: Theme.of(context).colorScheme.onSurface),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             'Presiona el botón + para agregar una factura',
-                            style: TextStyle(color: Color(0xFF492714)),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.7)),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -232,7 +241,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
                       itemBuilder: (context, index) {
                         final factura = _facturas[index];
                         return Card(
-                          color: const Color(0xFFFFCFB0),
+                          color: Theme.of(context).cardColor,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -243,7 +252,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFF9955),
+                                color: Theme.of(context).primaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: factura['imagenPath'] != null
@@ -254,20 +263,24 @@ class _FacturasScreenState extends State<FacturasScreen> {
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (context, error, stackTrace) =>
-                                                const Icon(
+                                                Icon(
                                           Icons.receipt,
-                                          color: Color(0xFF492714),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
                                         ),
                                       ),
                                     )
-                                  : const Icon(Icons.receipt,
-                                      color: Color(0xFF492714)),
+                                  : Icon(Icons.receipt,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
                             ),
                             title: Text(
                               factura['titulo'] ?? 'Sin título',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF492714),
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             subtitle: Column(
@@ -276,21 +289,25 @@ class _FacturasScreenState extends State<FacturasScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF492714),
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 Text(
                                   '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
-                                  style:
-                                      const TextStyle(color: Color(0xFF492714)),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withOpacity(0.7)),
                                 ),
                               ],
                             ),
                             trailing: IconButton(
-                              icon: const Icon(Icons.delete,
-                                  color: Color(0xFF492714)),
+                              icon: Icon(Icons.delete,
+                                  color: Theme.of(context).colorScheme.error),
                               onPressed: () =>
                                   _eliminarFactura(factura['id_factura']),
                             ),
@@ -301,8 +318,8 @@ class _FacturasScreenState extends State<FacturasScreen> {
                     ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navegarACrearFactura,
-        backgroundColor: const Color(0xFFFF9350),
-        foregroundColor: const Color(0xFF492714),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         child: const Icon(Icons.add),
       ),
     );

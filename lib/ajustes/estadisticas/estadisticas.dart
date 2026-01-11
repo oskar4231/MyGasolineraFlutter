@@ -29,26 +29,27 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE2CE),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Tema
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Estadísticas',
-          style: TextStyle(
-            color: Color(0xFF492714),
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
-        backgroundColor: const Color(0xFFFF9350),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFF492714),
-          labelColor: const Color(0xFF492714),
-          unselectedLabelColor: const Color(0xFF492714).withOpacity(0.6),
+          indicatorColor: Theme.of(context)
+              .colorScheme
+              .onPrimary, // Indicador visible sobre primario
+          labelColor: Theme.of(context).colorScheme.onPrimary,
+          unselectedLabelColor:
+              Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
           tabs: const [
             Tab(text: 'Gastos', icon: Icon(Icons.euro)),
             Tab(text: 'Consumo', icon: Icon(Icons.local_gas_station)),

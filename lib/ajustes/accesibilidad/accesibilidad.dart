@@ -54,21 +54,17 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFF9350),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Accesibilidad',
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
-        backgroundColor: const Color(0xFFFF9350),
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -77,12 +73,12 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Configuración de Accesibilidad',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),
@@ -90,22 +86,23 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             // Tamaño de fuente
             Card(
               elevation: 2,
-              color: const Color(0xFFFFE8DA),
+              color: Theme.of(context).cardColor,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: const [
-                        Icon(Icons.text_fields, color: Colors.black),
-                        SizedBox(width: 8),
+                      children: [
+                        Icon(Icons.text_fields,
+                            color: Theme.of(context).colorScheme.onSurface),
+                        const SizedBox(width: 8),
                         Text(
                           'Tamaño de Fuente',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -144,18 +141,14 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     Row(
                       children: [
                         Icon(Icons.palette,
-                            color:
-                                Theme.of(context).textTheme.bodyLarge?.color ??
-                                    Colors.black),
+                            color: Theme.of(context).colorScheme.onSurface),
                         const SizedBox(width: 8),
                         Text(
                           'Tema',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).textTheme.bodyLarge?.color ??
-                                    Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -211,7 +204,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             // Idioma - con popup scrollable
             Card(
               elevation: 2,
-              color: const Color(0xFFFFE8DA),
+              color: Theme.of(context).cardColor,
               child: InkWell(
                 onTap: () => _mostrarPopupIdioma(),
                 borderRadius: BorderRadius.circular(12),
@@ -219,34 +212,42 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                      const Icon(Icons.language, color: Colors.black, size: 28),
+                      Icon(Icons.language,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          size: 28),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Idioma',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               _idiomaSeleccionado,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.black87,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.8),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_ios,
-                        color: Colors.black54,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
                         size: 16,
                       ),
                     ],
@@ -312,8 +313,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         }
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 12,
@@ -344,6 +345,13 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
   Widget _buildOpcionTamano(String tamano) {
     final isSelected = _tamanoFuente == tamano;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    final selectedColor =
+        isDarkMode ? Colors.grey[700]! : Theme.of(context).primaryColor;
+    final selectedTextColor =
+        isDarkMode ? Colors.white : Theme.of(context).colorScheme.onPrimary;
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -353,17 +361,19 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFF9350) : Colors.white,
+          color: isSelected ? selectedColor : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFF9350) : Colors.black26,
+            color: isSelected ? selectedColor : Theme.of(context).dividerColor,
             width: 2,
           ),
         ),
         child: Text(
           tamano,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
+            color: isSelected
+                ? selectedTextColor
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 14,
           ),
@@ -375,15 +385,22 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
   Widget _buildOpcionPersonalizada() {
     final isSelected = _tamanoFuente == 'Personalizada';
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    final selectedColor =
+        isDarkMode ? Colors.grey[700]! : Theme.of(context).primaryColor;
+    final selectedTextColor =
+        isDarkMode ? Colors.white : Theme.of(context).colorScheme.onPrimary;
+
     return GestureDetector(
       onTap: () => _mostrarSliderTamanoFuente(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFF9350) : Colors.white,
+          color: isSelected ? selectedColor : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFFFF9350) : Colors.black26,
+            color: isSelected ? selectedColor : Theme.of(context).dividerColor,
             width: 2,
           ),
         ),
@@ -392,14 +409,18 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           children: [
             Icon(
               Icons.tune,
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected
+                  ? selectedTextColor
+                  : Theme.of(context).colorScheme.onSurface,
               size: 20,
             ),
             const SizedBox(width: 8),
             Text(
               'Personalizado',
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
+                color: isSelected
+                    ? selectedTextColor
+                    : Theme.of(context).colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 14,
               ),
@@ -408,7 +429,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
               const SizedBox(width: 8),
               Text(
                 '(${_tamanoFuentePersonalizado.round()}px)',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(color: selectedTextColor, fontSize: 12),
               ),
             ],
           ],
@@ -427,15 +448,16 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: const Color(0xFFFFE8DA),
+              backgroundColor: Theme.of(context).dialogBackgroundColor,
               title: Row(
-                children: const [
-                  Icon(Icons.format_size, color: Colors.black),
-                  SizedBox(width: 8),
+                children: [
+                  Icon(Icons.format_size,
+                      color: Theme.of(context).colorScheme.onSurface),
+                  const SizedBox(width: 8),
                   Text(
                     'Tamaño Personalizado',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -448,16 +470,16 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black12),
+                      border: Border.all(color: Theme.of(context).dividerColor),
                     ),
                     child: Center(
                       child: Text(
                         'Este es un ejemplo',
                         style: TextStyle(
                           fontSize: tempTamano,
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -467,10 +489,13 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   // Slider
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.text_fields,
                         size: 16,
-                        color: Colors.black54,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
                       ),
                       Expanded(
                         child: Slider(
@@ -478,8 +503,11 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           min: 10.0,
                           max: 32.0,
                           divisions: 22,
-                          activeColor: const Color(0xFFFF9350),
-                          inactiveColor: Colors.black12,
+                          activeColor: Theme.of(context).primaryColor,
+                          inactiveColor: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.1),
                           label: tempTamano.round().toString(),
                           onChanged: (double value) {
                             setDialogState(() {
@@ -488,25 +516,31 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           },
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.text_fields,
                         size: 24,
-                        color: Colors.black54,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
                       ),
                     ],
                   ),
                   Text(
                     'Tamaño: ${tempTamano.round()}px',
-                    style: const TextStyle(color: Colors.black87, fontSize: 14),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 14),
                   ),
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
+                  child: Text(
                     'Cancelar',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ),
                 ElevatedButton(
@@ -526,11 +560,12 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF9350),
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  child: const Text(
+                  child: Text(
                     'Aplicar',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ],
@@ -556,15 +591,16 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFE8DA),
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
           title: Row(
-            children: const [
-              Icon(Icons.language, color: Colors.black),
-              SizedBox(width: 8),
+            children: [
+              Icon(Icons.language,
+                  color: Theme.of(context).colorScheme.onSurface),
+              const SizedBox(width: 8),
               Text(
                 'Seleccionar Idioma',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -580,10 +616,21 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
               itemBuilder: (context, index) {
                 final idioma = idiomasConVariantes.keys.elementAt(index);
                 final esSeleccionado = _idiomaSeleccionado.startsWith(idioma);
+                final isDarkMode =
+                    Theme.of(context).brightness == Brightness.dark;
+
+                final selectedColor = isDarkMode
+                    ? Colors.grey[700]!
+                    : Theme.of(context).primaryColor;
+                final selectedTextColor = isDarkMode
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onPrimary;
+
                 return Card(
                   elevation: esSeleccionado ? 4 : 1,
-                  color:
-                      esSeleccionado ? const Color(0xFFFF9350) : Colors.white,
+                  color: esSeleccionado
+                      ? selectedColor
+                      : Theme.of(context).cardColor,
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
@@ -592,7 +639,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     title: Text(
                       idioma,
                       style: TextStyle(
-                        color: esSeleccionado ? Colors.white : Colors.black,
+                        color: esSeleccionado
+                            ? selectedTextColor
+                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: esSeleccionado
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -600,7 +649,12 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     ),
                     trailing: Icon(
                       Icons.arrow_forward_ios,
-                      color: esSeleccionado ? Colors.white : Colors.black54,
+                      color: esSeleccionado
+                          ? selectedTextColor
+                          : Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.5),
                       size: 16,
                     ),
                     onTap: () {
@@ -623,9 +677,10 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
+              child: Text(
                 'Cancelar',
-                style: TextStyle(color: Colors.black),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ],
@@ -672,10 +727,17 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
               itemBuilder: (context, index) {
                 final variante = variantes[index];
                 final esSeleccionado = _idiomaSeleccionado == variante;
+                final isDarkMode =
+                    Theme.of(context).brightness == Brightness.dark;
+
+                final selectedColor =
+                    isDarkMode ? Colors.grey[700]! : const Color(0xFFFF9350);
+                final selectedTextColor =
+                    isDarkMode ? Colors.white : Colors.black;
+
                 return Card(
                   elevation: esSeleccionado ? 4 : 1,
-                  color:
-                      esSeleccionado ? const Color(0xFFFF9350) : Colors.white,
+                  color: esSeleccionado ? selectedColor : Colors.white,
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
@@ -684,14 +746,15 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     title: Text(
                       variante,
                       style: TextStyle(
-                        color: esSeleccionado ? Colors.white : Colors.black,
+                        color:
+                            esSeleccionado ? selectedTextColor : Colors.black,
                         fontWeight: esSeleccionado
                             ? FontWeight.bold
                             : FontWeight.normal,
                       ),
                     ),
                     trailing: esSeleccionado
-                        ? const Icon(Icons.check_circle, color: Colors.white)
+                        ? Icon(Icons.check_circle, color: selectedTextColor)
                         : null,
                     onTap: () {
                       Navigator.of(context).pop();
@@ -722,16 +785,17 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFE8DA),
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
           title: Row(
-            children: const [
-              Icon(Icons.warning_amber_rounded, color: Colors.black),
-              SizedBox(width: 8),
+            children: [
+              Icon(Icons.warning_amber_rounded,
+                  color: Theme.of(context).colorScheme.onSurface),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Confirmar cambio',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -741,12 +805,16 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           ),
           content: Text(
             '¿Seguro que quieres cambiar el idioma a $nuevoIdioma?',
-            style: const TextStyle(color: Colors.black87, fontSize: 16),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                fontSize: 16),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('No', style: TextStyle(color: Colors.black)),
+              child: Text('No',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -758,14 +826,16 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   SnackBar(
                     content: Text('Idioma cambiado a: $nuevoIdioma'),
                     duration: const Duration(seconds: 2),
-                    backgroundColor: const Color(0xFFFF9350),
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF9350),
+                backgroundColor: Theme.of(context).primaryColor,
               ),
-              child: const Text('Sí', style: TextStyle(color: Colors.white)),
+              child: Text('Sí',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
             ),
           ],
         );

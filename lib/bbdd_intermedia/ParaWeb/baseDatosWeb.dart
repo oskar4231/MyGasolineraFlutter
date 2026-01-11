@@ -20,7 +20,13 @@ class AppDatabase extends _$AppDatabase {
     print('----------------------------------------------------------------');
     print('🌐 INICIANDO BASE DE DATOS WEB (DRIFT_FLUTTER)');
     print('----------------------------------------------------------------');
-    return driftDatabase(name: 'gasolinera_cache_db');
+    return driftDatabase(
+      name: 'gasolinera_cache_db',
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
+    );
   }
 
   // ==================== GASOLINERAS ====================
