@@ -288,6 +288,9 @@ class _MapWidgetState extends State<MapWidget> {
         _currentProvinciaId = provinciaInfo.id;
 
         print(
+            '🔎 DEBUG Mapa: Provincia detectada para ($lat, $lng): ${provinciaInfo.nombre} (ID: ${_currentProvinciaId})');
+
+        print(
             'Mapa: Cargando gasolineras para provincia ${provinciaInfo.nombre}');
 
         // Cargar gasolineras de la provincia actual y vecinas
@@ -350,13 +353,22 @@ class _MapWidgetState extends State<MapWidget> {
       }
     }
 
+    print('📍 Calculando distancias desde origen: $lat, $lng');
+
     // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
     }).where((item) {
+      final distance = item['distance'] as double;
+      // DEBUG: Imprimir distancia de los primeros 3 elementos antes de filtrar
+      if (listaGasolineras.indexOf(item['gasolinera'] as Gasolinera) < 3) {
+        print(
+            '   -> Distancia a ${(item['gasolinera'] as Gasolinera).rotulo}: ${distance.toStringAsFixed(2)} metros (${(distance / 1000).toStringAsFixed(2)} km)');
+      }
+
       // Filtrar por radio (convertir metros a km)
-      final distanceKm = (item['distance'] as double) / 1000;
+      final distanceKm = distance / 1000;
       return distanceKm <= widget.radiusKm;
     }).toList();
 
@@ -375,9 +387,11 @@ class _MapWidgetState extends State<MapWidget> {
     if (isInitialLoad &&
         !_isLoadingProgressively &&
         gasolinerasEnRadio.length > 10) {
-      setState(() {
-        _isLoadingProgressively = true;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoadingProgressively = true;
+        });
+      }
 
       // Mostrar primero las 10 más cercanas
       final primeras10 = gasolinerasEnRadio.take(10).toList();

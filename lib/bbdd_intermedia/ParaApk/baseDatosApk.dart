@@ -3,18 +3,46 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaGasolineras.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaCacheProvincias.dart';
+import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaLocalImages.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaTheme.dart';
 
 part 'baseDatosApk.g.dart';
 
 /// Base de datos local para cache de gasolineras (VERSIÓN APK)
 /// Usa SQLite nativo con drift_flutter
-@DriftDatabase(tables: [GasolinerasTable, ProvinciaCacheTable, ThemeTable])
+@DriftDatabase(tables: [
+  GasolinerasTable,
+  ProvinciaCacheTable,
+  ThemeTable,
+  LocalImagesTable
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3; // Incremented for new table schema (BLOB)
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from < 2) {
+          // Schema v1 -> v2 (Initial creation of tables including LocalImagesTable)
+          // But since v2 was flawed, we just treat everything < 3 as needing update
+        }
+
+        if (from < 3) {
+          // Re-create the LocalImagesTable to handle the new BLOB column
+          // We drop it if it exists (from v2) and recreate it
+          await m.deleteTable(localImagesTable.actualTableName);
+          await m.createTable(localImagesTable);
+        }
+      },
+    );
+  }
 
   /// Abre la conexión a la base de datos SQLite nativa
   static QueryExecutor _openConnection() {
@@ -160,5 +188,18 @@ class AppDatabase extends _$AppDatabase {
         themeId: Value(id),
       ),
     );
+  }
+
+  // ==================== IMÁGENES LOCALES ====================
+
+  Future<int> insertLocalImage(LocalImagesTableCompanion image) {
+    return into(localImagesTable).insert(image);
+  }
+
+  Future<LocalImagesTableData?> getLocalImage(String type, String relatedId) {
+    return (select(localImagesTable)
+          ..where(
+              (t) => t.imageType.equals(type) & t.relatedId.equals(relatedId)))
+        .getSingleOrNull();
   }
 }

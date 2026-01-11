@@ -1351,6 +1351,346 @@ class ThemeTableCompanion extends UpdateCompanion<ThemeTableData> {
   }
 }
 
+class $LocalImagesTableTable extends LocalImagesTable
+    with TableInfo<$LocalImagesTableTable, LocalImagesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalImagesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _imageTypeMeta =
+      const VerificationMeta('imageType');
+  @override
+  late final GeneratedColumn<String> imageType = GeneratedColumn<String>(
+      'image_type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _relatedIdMeta =
+      const VerificationMeta('relatedId');
+  @override
+  late final GeneratedColumn<String> relatedId = GeneratedColumn<String>(
+      'related_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _localPathMeta =
+      const VerificationMeta('localPath');
+  @override
+  late final GeneratedColumn<String> localPath = GeneratedColumn<String>(
+      'local_path', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _contentMeta =
+      const VerificationMeta('content');
+  @override
+  late final GeneratedColumn<Uint8List> content = GeneratedColumn<Uint8List>(
+      'content', aliasedName, false,
+      type: DriftSqlType.blob, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, imageType, relatedId, localPath, content, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_images_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<LocalImagesTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('image_type')) {
+      context.handle(_imageTypeMeta,
+          imageType.isAcceptableOrUnknown(data['image_type']!, _imageTypeMeta));
+    } else if (isInserting) {
+      context.missing(_imageTypeMeta);
+    }
+    if (data.containsKey('related_id')) {
+      context.handle(_relatedIdMeta,
+          relatedId.isAcceptableOrUnknown(data['related_id']!, _relatedIdMeta));
+    }
+    if (data.containsKey('local_path')) {
+      context.handle(_localPathMeta,
+          localPath.isAcceptableOrUnknown(data['local_path']!, _localPathMeta));
+    }
+    if (data.containsKey('content')) {
+      context.handle(_contentMeta,
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalImagesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalImagesTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      imageType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_type'])!,
+      relatedId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}related_id']),
+      localPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}local_path']),
+      content: attachedDatabase.typeMapping
+          .read(DriftSqlType.blob, data['${effectivePrefix}content'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $LocalImagesTableTable createAlias(String alias) {
+    return $LocalImagesTableTable(attachedDatabase, alias);
+  }
+}
+
+class LocalImagesTableData extends DataClass
+    implements Insertable<LocalImagesTableData> {
+  final int id;
+  final String imageType;
+  final String? relatedId;
+  final String? localPath;
+  final Uint8List content;
+  final DateTime createdAt;
+  const LocalImagesTableData(
+      {required this.id,
+      required this.imageType,
+      this.relatedId,
+      this.localPath,
+      required this.content,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['image_type'] = Variable<String>(imageType);
+    if (!nullToAbsent || relatedId != null) {
+      map['related_id'] = Variable<String>(relatedId);
+    }
+    if (!nullToAbsent || localPath != null) {
+      map['local_path'] = Variable<String>(localPath);
+    }
+    map['content'] = Variable<Uint8List>(content);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  LocalImagesTableCompanion toCompanion(bool nullToAbsent) {
+    return LocalImagesTableCompanion(
+      id: Value(id),
+      imageType: Value(imageType),
+      relatedId: relatedId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(relatedId),
+      localPath: localPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localPath),
+      content: Value(content),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory LocalImagesTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalImagesTableData(
+      id: serializer.fromJson<int>(json['id']),
+      imageType: serializer.fromJson<String>(json['imageType']),
+      relatedId: serializer.fromJson<String?>(json['relatedId']),
+      localPath: serializer.fromJson<String?>(json['localPath']),
+      content: serializer.fromJson<Uint8List>(json['content']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'imageType': serializer.toJson<String>(imageType),
+      'relatedId': serializer.toJson<String?>(relatedId),
+      'localPath': serializer.toJson<String?>(localPath),
+      'content': serializer.toJson<Uint8List>(content),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  LocalImagesTableData copyWith(
+          {int? id,
+          String? imageType,
+          Value<String?> relatedId = const Value.absent(),
+          Value<String?> localPath = const Value.absent(),
+          Uint8List? content,
+          DateTime? createdAt}) =>
+      LocalImagesTableData(
+        id: id ?? this.id,
+        imageType: imageType ?? this.imageType,
+        relatedId: relatedId.present ? relatedId.value : this.relatedId,
+        localPath: localPath.present ? localPath.value : this.localPath,
+        content: content ?? this.content,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  LocalImagesTableData copyWithCompanion(LocalImagesTableCompanion data) {
+    return LocalImagesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      imageType: data.imageType.present ? data.imageType.value : this.imageType,
+      relatedId: data.relatedId.present ? data.relatedId.value : this.relatedId,
+      localPath: data.localPath.present ? data.localPath.value : this.localPath,
+      content: data.content.present ? data.content.value : this.content,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalImagesTableData(')
+          ..write('id: $id, ')
+          ..write('imageType: $imageType, ')
+          ..write('relatedId: $relatedId, ')
+          ..write('localPath: $localPath, ')
+          ..write('content: $content, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, imageType, relatedId, localPath,
+      $driftBlobEquality.hash(content), createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalImagesTableData &&
+          other.id == this.id &&
+          other.imageType == this.imageType &&
+          other.relatedId == this.relatedId &&
+          other.localPath == this.localPath &&
+          $driftBlobEquality.equals(other.content, this.content) &&
+          other.createdAt == this.createdAt);
+}
+
+class LocalImagesTableCompanion extends UpdateCompanion<LocalImagesTableData> {
+  final Value<int> id;
+  final Value<String> imageType;
+  final Value<String?> relatedId;
+  final Value<String?> localPath;
+  final Value<Uint8List> content;
+  final Value<DateTime> createdAt;
+  const LocalImagesTableCompanion({
+    this.id = const Value.absent(),
+    this.imageType = const Value.absent(),
+    this.relatedId = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.content = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  LocalImagesTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String imageType,
+    this.relatedId = const Value.absent(),
+    this.localPath = const Value.absent(),
+    required Uint8List content,
+    this.createdAt = const Value.absent(),
+  })  : imageType = Value(imageType),
+        content = Value(content);
+  static Insertable<LocalImagesTableData> custom({
+    Expression<int>? id,
+    Expression<String>? imageType,
+    Expression<String>? relatedId,
+    Expression<String>? localPath,
+    Expression<Uint8List>? content,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (imageType != null) 'image_type': imageType,
+      if (relatedId != null) 'related_id': relatedId,
+      if (localPath != null) 'local_path': localPath,
+      if (content != null) 'content': content,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  LocalImagesTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? imageType,
+      Value<String?>? relatedId,
+      Value<String?>? localPath,
+      Value<Uint8List>? content,
+      Value<DateTime>? createdAt}) {
+    return LocalImagesTableCompanion(
+      id: id ?? this.id,
+      imageType: imageType ?? this.imageType,
+      relatedId: relatedId ?? this.relatedId,
+      localPath: localPath ?? this.localPath,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (imageType.present) {
+      map['image_type'] = Variable<String>(imageType.value);
+    }
+    if (relatedId.present) {
+      map['related_id'] = Variable<String>(relatedId.value);
+    }
+    if (localPath.present) {
+      map['local_path'] = Variable<String>(localPath.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<Uint8List>(content.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalImagesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('imageType: $imageType, ')
+          ..write('relatedId: $relatedId, ')
+          ..write('localPath: $localPath, ')
+          ..write('content: $content, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1359,12 +1699,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProvinciaCacheTableTable provinciaCacheTable =
       $ProvinciaCacheTableTable(this);
   late final $ThemeTableTable themeTable = $ThemeTableTable(this);
+  late final $LocalImagesTableTable localImagesTable =
+      $LocalImagesTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [gasolinerasTable, provinciaCacheTable, themeTable];
+      [gasolinerasTable, provinciaCacheTable, themeTable, localImagesTable];
 }
 
 typedef $$GasolinerasTableTableCreateCompanionBuilder
@@ -2042,6 +2384,191 @@ typedef $$ThemeTableTableProcessedTableManager = ProcessedTableManager<
     ),
     ThemeTableData,
     PrefetchHooks Function()>;
+typedef $$LocalImagesTableTableCreateCompanionBuilder
+    = LocalImagesTableCompanion Function({
+  Value<int> id,
+  required String imageType,
+  Value<String?> relatedId,
+  Value<String?> localPath,
+  required Uint8List content,
+  Value<DateTime> createdAt,
+});
+typedef $$LocalImagesTableTableUpdateCompanionBuilder
+    = LocalImagesTableCompanion Function({
+  Value<int> id,
+  Value<String> imageType,
+  Value<String?> relatedId,
+  Value<String?> localPath,
+  Value<Uint8List> content,
+  Value<DateTime> createdAt,
+});
+
+class $$LocalImagesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $LocalImagesTableTable> {
+  $$LocalImagesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get imageType => $composableBuilder(
+      column: $table.imageType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get relatedId => $composableBuilder(
+      column: $table.relatedId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get localPath => $composableBuilder(
+      column: $table.localPath, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<Uint8List> get content => $composableBuilder(
+      column: $table.content, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$LocalImagesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocalImagesTableTable> {
+  $$LocalImagesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get imageType => $composableBuilder(
+      column: $table.imageType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get relatedId => $composableBuilder(
+      column: $table.relatedId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get localPath => $composableBuilder(
+      column: $table.localPath, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<Uint8List> get content => $composableBuilder(
+      column: $table.content, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$LocalImagesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocalImagesTableTable> {
+  $$LocalImagesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get imageType =>
+      $composableBuilder(column: $table.imageType, builder: (column) => column);
+
+  GeneratedColumn<String> get relatedId =>
+      $composableBuilder(column: $table.relatedId, builder: (column) => column);
+
+  GeneratedColumn<String> get localPath =>
+      $composableBuilder(column: $table.localPath, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$LocalImagesTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $LocalImagesTableTable,
+    LocalImagesTableData,
+    $$LocalImagesTableTableFilterComposer,
+    $$LocalImagesTableTableOrderingComposer,
+    $$LocalImagesTableTableAnnotationComposer,
+    $$LocalImagesTableTableCreateCompanionBuilder,
+    $$LocalImagesTableTableUpdateCompanionBuilder,
+    (
+      LocalImagesTableData,
+      BaseReferences<_$AppDatabase, $LocalImagesTableTable,
+          LocalImagesTableData>
+    ),
+    LocalImagesTableData,
+    PrefetchHooks Function()> {
+  $$LocalImagesTableTableTableManager(
+      _$AppDatabase db, $LocalImagesTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalImagesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocalImagesTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocalImagesTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> imageType = const Value.absent(),
+            Value<String?> relatedId = const Value.absent(),
+            Value<String?> localPath = const Value.absent(),
+            Value<Uint8List> content = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              LocalImagesTableCompanion(
+            id: id,
+            imageType: imageType,
+            relatedId: relatedId,
+            localPath: localPath,
+            content: content,
+            createdAt: createdAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String imageType,
+            Value<String?> relatedId = const Value.absent(),
+            Value<String?> localPath = const Value.absent(),
+            required Uint8List content,
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              LocalImagesTableCompanion.insert(
+            id: id,
+            imageType: imageType,
+            relatedId: relatedId,
+            localPath: localPath,
+            content: content,
+            createdAt: createdAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$LocalImagesTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $LocalImagesTableTable,
+    LocalImagesTableData,
+    $$LocalImagesTableTableFilterComposer,
+    $$LocalImagesTableTableOrderingComposer,
+    $$LocalImagesTableTableAnnotationComposer,
+    $$LocalImagesTableTableCreateCompanionBuilder,
+    $$LocalImagesTableTableUpdateCompanionBuilder,
+    (
+      LocalImagesTableData,
+      BaseReferences<_$AppDatabase, $LocalImagesTableTable,
+          LocalImagesTableData>
+    ),
+    LocalImagesTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2052,4 +2579,6 @@ class $AppDatabaseManager {
       $$ProvinciaCacheTableTableTableManager(_db, _db.provinciaCacheTable);
   $$ThemeTableTableTableManager get themeTable =>
       $$ThemeTableTableTableManager(_db, _db.themeTable);
+  $$LocalImagesTableTableTableManager get localImagesTable =>
+      $$LocalImagesTableTableTableManager(_db, _db.localImagesTable);
 }

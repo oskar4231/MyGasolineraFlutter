@@ -75,7 +75,9 @@ class _CrearScreenState extends State<CrearScreen> {
     final password = _passwordController.text;
     final hasMinLength = password.length >= 8;
     final hasNumber = password.contains(RegExp(r'[0-9]'));
-    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
+    // Updated regex to include a broader range of special characters including dot and tilde
+    final hasSpecialChar =
+        password.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-.,ñÑ]'));
     final hasUppercase = password.contains(RegExp(r'[A-Z]'));
 
     return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;
@@ -281,8 +283,13 @@ class _CrearScreenState extends State<CrearScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa tu email';
                         }
-                        if (!value.contains('@')) {
-                          return 'Ingresa un email válido';
+                        if (value.contains('@')) {
+                          final emailRegex = RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          );
+                          if (!emailRegex.hasMatch(value)) {
+                            return 'Ingresa un email válido';
+                          }
                         }
                         return null;
                       },

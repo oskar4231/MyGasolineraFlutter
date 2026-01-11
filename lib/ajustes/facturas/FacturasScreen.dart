@@ -3,6 +3,7 @@ import 'package:my_gasolinera/services/factura_service.dart';
 import 'package:my_gasolinera/services/api_config.dart';
 import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
+import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart';
 import 'package:intl/intl.dart';
 
 class FacturasScreen extends StatefulWidget {
@@ -83,11 +84,6 @@ class _FacturasScreenState extends State<FacturasScreen> {
     }
 
     return hora;
-  }
-
-  String _buildImageUrl(String path) {
-    final normalizedPath = path.replaceAll('\\', '/');
-    return '${ApiConfig.baseUrl}/$normalizedPath';
   }
 
   void _navegarACrearFactura() async {
@@ -255,26 +251,20 @@ class _FacturasScreenState extends State<FacturasScreen> {
                                 color: Theme.of(context).primaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: factura['imagenPath'] != null
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.network(
-                                        _buildImageUrl(factura['imagenPath']),
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                Icon(
-                                          Icons.receipt,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                        ),
-                                      ),
-                                    )
-                                  : Icon(Icons.receipt,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: FacturaImageWidget(
+                                  facturaId:
+                                      factura['id_factura'] ?? factura['id'],
+                                  serverPath: factura['imagenPath'],
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context) => Icon(
+                                    Icons.receipt,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
                             ),
                             title: Text(
                               factura['titulo'] ?? 'Sin título',

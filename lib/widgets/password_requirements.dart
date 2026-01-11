@@ -21,7 +21,8 @@ class PasswordRequirements extends StatelessWidget {
   // Validaciones
   bool get hasMinLength => password.length >= 8;
   bool get hasNumber => password.contains(RegExp(r'[0-9]'));
-  bool get hasSpecialChar => password.contains(RegExp(r'[#$?¿]'));
+  bool get hasSpecialChar =>
+      password.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-.,ñÑ]'));
   bool get hasUppercase => password.contains(RegExp(r'[A-Z]'));
 
   // Validación de todos los requisitos
@@ -67,7 +68,7 @@ class PasswordRequirements extends StatelessWidget {
                     _buildRequirementItem('Al menos un número (0-9)', hasNumber,
                         effectivePrimaryColor),
                     _buildRequirementItem(
-                        'Al menos un carácter especial (#, \$, ?, ¿)',
+                        'Al menos un carácter especial (., #, ñ, ...)',
                         hasSpecialChar,
                         effectivePrimaryColor),
                     _buildRequirementItem('Al menos una mayúscula (A-Z)',
