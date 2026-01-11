@@ -21,7 +21,7 @@ class CocheService {
       final response = await http.get(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );
@@ -72,7 +72,7 @@ class CocheService {
       final response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
@@ -123,7 +123,7 @@ class CocheService {
       final response = await http.delete(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );

@@ -8,7 +8,7 @@ class Inicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFE8DA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -38,7 +38,7 @@ class Inicio extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF492714),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ],
@@ -60,13 +60,17 @@ class Inicio extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF9350),
-                        foregroundColor: Color(0xFF492714),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 30),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                           side: BorderSide(
-                            color: Color(0xFF492714),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimary
+                                .withOpacity(0.5),
                             width: 2.0,
                           ),
                         ),
@@ -94,13 +98,18 @@ class Inicio extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFCFB0),
-                        foregroundColor: Color(0xFF492714),
+                        // Usamos un tono más claro/oscuro del primario con opacidad para simular el color secundario
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.3),
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onSurface,
                         padding: const EdgeInsets.symmetric(vertical: 30),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                           side: BorderSide(
-                            color: Color(0xFFFF9350),
+                            color: Theme.of(context).colorScheme.primary,
                             width: 2.0,
                           ),
                         ),

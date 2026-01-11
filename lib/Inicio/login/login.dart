@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         final response = await http.post(
           url,
-          headers: {'Content-Type': 'application/json'},
+          headers: ApiConfig.headers,
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,
@@ -137,13 +137,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Volver'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             // MODIFICACIÓN AQUÍ: Navegar a Inicio en lugar de pop
             Navigator.pushReplacement(
@@ -168,12 +169,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     Container(
                       margin: const EdgeInsets.only(bottom: 30.0),
-                      child: const Text(
+                      child: Text(
                         'MyGasolinera',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -196,9 +197,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
                         hintText: 'Email o Usuario',
-                        hintStyle: const TextStyle(color: Color(0xFF492714)),
+                        hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
                         filled: true,
-                        fillColor: const Color(0xFFFFD4B8),
+                        fillColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -234,9 +242,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
-                        hintStyle: const TextStyle(color: Color(0xFF492714)),
+                        hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
                         filled: true,
-                        fillColor: const Color(0xFFFFD4B8),
+                        fillColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -250,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Color(0xFF492714),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           onPressed: () {
                             setState(() {
@@ -278,12 +293,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               _rememberMe = value ?? false;
                             });
                           },
-                          activeColor: const Color(0xFFFF9350),
-                          checkColor: const Color(0xFF492714),
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          checkColor: Theme.of(context).colorScheme.onPrimary,
                         ),
-                        const Text(
+                        Text(
                           'Recuérdame',
-                          style: TextStyle(color: Color(0xFF492714)),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface),
                         ),
                       ],
                     ),
@@ -295,7 +311,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _login,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF9955),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -303,22 +320,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           elevation: 0,
                         ),
                         child: _isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xFF492714),
+                                    Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 ),
                               )
-                            : const Text(
+                            : Text(
                                 'Iniciar sesión',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF492714),
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                       ),
@@ -334,10 +352,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         '¿Has olvidado la contraseña?',
                         style: TextStyle(
-                          color: Color(0xFF492714),
+                          color: Theme.of(context).colorScheme.primary,
                           decoration: TextDecoration.underline,
                         ),
                       ),

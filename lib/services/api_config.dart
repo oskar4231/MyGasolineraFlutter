@@ -1,4 +1,6 @@
 /// Configuración centralizada de la URL del backend
+import 'package:my_gasolinera/importante/switchBackend.dart';
+
 ///
 /// Este archivo contiene la URL base del servidor backend.
 /// Cambia solo la URL aquí cuando uses cloudflared o cambies de servidor.
@@ -6,15 +8,21 @@
 /// Ejemplos de URLs:
 /// - Desarrollo local: 'http://localhost:3000'
 /// - Android Emulator: 'http://10.0.2.2:3000'
-/// - Cloudflared: 'https://tu-url-cloudflared.trycloudflare.com'
+/// - Ngrok: 'https://rectricial-dewayne-collusive.ngrok-free.dev'
 /// - Producción: 'https://tu-dominio.com'
 class ApiConfig {
   /// URL base del backend
   ///
   /// Esta URL se actualiza dinámicamente al iniciar la app usando ConfigService
   /// No incluyas la barra final (/)
-  static String baseUrl =
-      'https://arizona-islamic-representatives-care.trycloudflare.com';
+  static const String _localUrl = 'http://localhost:3000';
+  static const String _ngrokUrl =
+      'https://rectricial-dewayne-collusive.ngrok-free.dev';
+
+  /// URL base del backend
+  ///
+  /// Esta URL se determina por el switch en lib/important/switchBackend.dart
+  static String baseUrl = switchBackend == 0 ? _localUrl : _ngrokUrl;
 
   /// Actualiza la URL base dinámicamente
   static void setBaseUrl(String newUrl) {
@@ -73,4 +81,13 @@ class ApiConfig {
 
   /// URL para el endpoint de accesibilidad
   static String get accesibilidadUrl => getUrl('/accesibilidad');
+
+  /// Headers base para todas las peticiones
+  ///
+  /// Incluye el header para saltar el aviso de ngrok
+  static Map<String, String> get headers => {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      };
 }

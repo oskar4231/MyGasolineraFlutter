@@ -37,12 +37,14 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _recargar,
-      color: const Color(0xFFFF9350),
+      color: Theme.of(context).primaryColor,
       child: FutureBuilder<List<Map<String, dynamic>>>(
         future: _mantenimientoData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFFFF9350)));
+            return Center(
+                child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor));
           }
 
           if (snapshot.hasError) {
@@ -77,7 +79,8 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
           const SizedBox(height: 20),
           Text(
             'Error: $error',
-            style: const TextStyle(fontSize: 16, color: Color(0xFF492714)),
+            style: TextStyle(
+                fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -100,9 +103,10 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
         children: [
           const Icon(Icons.build, size: 80, color: Colors.grey),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'No hay datos de mantenimiento',
-            style: TextStyle(fontSize: 16, color: Color(0xFF492714)),
+            style: TextStyle(
+                fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: 10),
           const Text(
@@ -132,12 +136,20 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
     final kmDesdeCambio = coche['km_desde_ultimo_cambio'] as int;
     final kmActual = coche['kilometraje_actual'] as int?;
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final primaryIconColor =
+        isDarkMode ? Colors.orangeAccent : Theme.of(context).primaryColor;
+    final errorIconColor =
+        isDarkMode ? Colors.redAccent : Theme.of(context).colorScheme.error;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      color: necesitaCambio ? Colors.red[50] : Colors.white,
+      color: necesitaCambio
+          ? Theme.of(context).colorScheme.errorContainer
+          : Theme.of(context).cardColor,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -148,14 +160,14 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: necesitaCambio 
-                        ? Color(0xFF492714).withOpacity(0.2)
-                        : Color(0xFFFF9350).withOpacity(0.2),
+                    color: necesitaCambio
+                        ? errorIconColor.withOpacity(0.2)
+                        : primaryIconColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.car_repair,
-                    color: necesitaCambio ? Color(0xFF492714) : Color(0xFFFF9350),
+                    color: necesitaCambio ? errorIconColor : primaryIconColor,
                     size: 32,
                   ),
                 ),
@@ -166,10 +178,10 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                     children: [
                       Text(
                         '$marca $modelo',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       if (kmActual != null)
@@ -195,7 +207,9 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: necesitaCambio ? Color(0xFF492714) : Color(0xFFFF9350),
+                color: necesitaCambio
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).primaryColor,
               ),
             ),
             const SizedBox(height: 8),
@@ -230,7 +244,9 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: necesitaCambio ? Color(0xFF492714) : Color(0xFFFF9350),
+                        color: necesitaCambio
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).primaryColor,
                       ),
                     ),
                   ],
@@ -256,7 +272,9 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: necesitaCambio ? Color(0xFF492714) : Color(0xFFFF9350),
+                        color: necesitaCambio
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).primaryColor,
                       ),
                     ),
                   ],

@@ -7,7 +7,7 @@ class EstadisticasAvanzadasService {
   static Map<String, String> _getHeaders() {
     final token = AuthService.getToken();
     return {
-      'Content-Type': 'application/json',
+      ...ApiConfig.headers,
       'Authorization': 'Bearer ${token ?? ''}',
     };
   }

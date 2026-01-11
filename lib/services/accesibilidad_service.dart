@@ -44,7 +44,7 @@ class AccesibilidadService {
           .post(
             Uri.parse(url),
             headers: {
-              'Content-Type': 'application/json',
+              ...ApiConfig.headers,
               if (token.isNotEmpty) 'Authorization': 'Bearer $token',
             },
             body: jsonEncode(body),
@@ -102,7 +102,7 @@ class AccesibilidadService {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
         },
       ).timeout(

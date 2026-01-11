@@ -27,6 +27,7 @@ class PerfilService {
       );
 
       // Agregar el token en los headers
+      request.headers.addAll(ApiConfig.headers);
       request.headers['Authorization'] = 'Bearer $token';
 
       // Leer los bytes del archivo (compatible con Web y Nativo)
@@ -107,8 +108,8 @@ class PerfilService {
       final response = await http.get(
         Uri.parse('${ApiConfig.perfilUrl}/profile'),
         headers: {
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
         },
       );
 

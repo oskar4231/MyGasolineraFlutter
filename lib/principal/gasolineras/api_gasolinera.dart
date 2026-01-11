@@ -11,7 +11,9 @@ Future<List<Gasolinera>> fetchGasolineras() async {
 
     print('🌐 API Backend: Solicitando gasolineras generales...');
 
-    final response = await http.get(uri).timeout(const Duration(seconds: 10));
+    final response = await http
+        .get(uri, headers: ApiConfig.headers)
+        .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final bodyUtf8 = utf8.decode(response.bodyBytes);
@@ -60,7 +62,9 @@ Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
         '🌐 API Backend: Solicitando gasolineras para provincia $provinciaId...');
 
     // 3. Realizar petición con timeout corto (el backend debería ser rápido)
-    final response = await http.get(uri).timeout(const Duration(seconds: 10));
+    final response = await http
+        .get(uri, headers: ApiConfig.headers)
+        .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final bodyUtf8 = utf8.decode(response.bodyBytes);

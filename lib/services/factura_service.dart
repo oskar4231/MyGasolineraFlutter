@@ -16,7 +16,7 @@ class FacturaService {
       final response = await http.get(
         Uri.parse(ApiConfig.facturasUrl),
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );
@@ -60,6 +60,7 @@ class FacturaService {
       );
 
       // Agregar headers de autenticación
+      request.headers.addAll(ApiConfig.headers);
       request.headers['Authorization'] = 'Bearer $token';
 
       // Agregar campos del formulario
@@ -140,7 +141,7 @@ class FacturaService {
       final response = await http.delete(
         Uri.parse('${ApiConfig.facturasUrl}/$idFactura'),
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );
