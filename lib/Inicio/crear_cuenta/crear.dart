@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
+import 'package:my_gasolinera/services/api_config.dart';
 
 void main() {
   runApp(const Crear());
@@ -15,9 +16,7 @@ class Crear extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Crear Cuenta MyGasolinera',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
+      theme: ThemeData(primarySwatch: Colors.orange),
       home: const CrearScreen(),
       debugShowCheckedModeBanner: false,
     );
@@ -76,7 +75,9 @@ class _CrearScreenState extends State<CrearScreen> {
     final password = _passwordController.text;
     final hasMinLength = password.length >= 8;
     final hasNumber = password.contains(RegExp(r'[0-9]'));
-    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
+    // Updated regex to include a broader range of special characters including dot and tilde
+    final hasSpecialChar =
+        password.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-.,ñÑ]'));
     final hasUppercase = password.contains(RegExp(r'[A-Z]'));
 
     return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;
@@ -91,10 +92,8 @@ class _CrearScreenState extends State<CrearScreen> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:3000/register'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          Uri.parse(ApiConfig.registerUrl),
+          headers: ApiConfig.headers,
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,
@@ -112,20 +111,17 @@ class _CrearScreenState extends State<CrearScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           // Navegar automáticamente a login después de 2 segundos
           Future.delayed(const Duration(seconds: 2), () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           });
-          
+
           // Limpiar formulario
           _formKey.currentState!.reset();
-          
         } else {
           // Error del servidor
           ScaffoldMessenger.of(context).showSnackBar(
@@ -173,13 +169,14 @@ class _CrearScreenState extends State<CrearScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Volver'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF492714)),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -198,12 +195,12 @@ class _CrearScreenState extends State<CrearScreen> {
 
                     Container(
                       margin: const EdgeInsets.only(bottom: 30.0),
-                      child: const Text(
+                      child: Text(
                         'MyGasolinera',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -226,11 +223,16 @@ class _CrearScreenState extends State<CrearScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('nombre'),
                       decoration: InputDecoration(
                         hintText: 'Nombre completo',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
                         filled: true,
-                        fillColor: const Color(0xFFFFD4B8),
+                        fillColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -257,11 +259,16 @@ class _CrearScreenState extends State<CrearScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
                         hintText: 'E-mail',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
                         filled: true,
-                        fillColor: const Color(0xFFFFD4B8),
+                        fillColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -276,14 +283,19 @@ class _CrearScreenState extends State<CrearScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa tu email';
                         }
-                        if (!value.contains('@')) {
-                          return 'Ingresa un email válido';
+                        if (value.contains('@')) {
+                          final emailRegex = RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          );
+                          if (!emailRegex.hasMatch(value)) {
+                            return 'Ingresa un email válido';
+                          }
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 15),
-                    
+
                     // Campo de contraseña
                     TextFormField(
                       controller: _passwordController,
@@ -294,11 +306,16 @@ class _CrearScreenState extends State<CrearScreen> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Contraseña',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
                         filled: true,
-                        fillColor: const Color(0xFFFFD4B8),
+                        fillColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -312,7 +329,10 @@ class _CrearScreenState extends State<CrearScreen> {
                             _obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Color(0xFF492714),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7),
                           ),
                           onPressed: () {
                             setState(() {
@@ -334,27 +354,32 @@ class _CrearScreenState extends State<CrearScreen> {
                     PasswordRequirements(
                       password: _passwordController.text,
                       isVisible: _showPasswordRequirements,
-                      primaryColor: const Color(0xFF492714),
+                      // Eliminados los colores hardcodeados para que use el tema
                       successColor: Colors.green,
                       errorColor: Colors.red,
-                      backgroundColor: const Color(0xFFFFE8DA),
                     ),
                     const SizedBox(height: 15),
-                    
+
                     // Campo de confirmar contraseña
                     TextFormField(
                       controller: _confirmPasswordController,
                       focusNode: _confirmPasswordFocus,
                       textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _handleFieldSubmit('confirmPassword'),
+                      onFieldSubmitted: (_) =>
+                          _handleFieldSubmit('confirmPassword'),
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
                         hintText: 'Confirmar contraseña',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF492714),
-                        ),
+                        hintStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6)),
                         filled: true,
-                        fillColor: const Color(0xFFFFD4B8),
+                        fillColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -368,11 +393,15 @@ class _CrearScreenState extends State<CrearScreen> {
                             _obscureConfirmPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Color(0xFF492714),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7),
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
                             });
                           },
                         ),
@@ -388,14 +417,20 @@ class _CrearScreenState extends State<CrearScreen> {
                       },
                     ),
                     const SizedBox(height: 30),
-                    
+
                     // Botón de crear
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: (_isLoading || !_isPasswordValid() || _emailController.text.isEmpty || _nombreController.text.isEmpty) ? null : _registrarUsuario,
+                        onPressed: (_isLoading ||
+                                !_isPasswordValid() ||
+                                _emailController.text.isEmpty ||
+                                _nombreController.text.isEmpty)
+                            ? null
+                            : _registrarUsuario,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF9955),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -403,20 +438,23 @@ class _CrearScreenState extends State<CrearScreen> {
                           elevation: 0,
                         ),
                         child: _isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF492714)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context).colorScheme.onPrimary,
+                                  ),
                                 ),
                               )
-                            : const Text(
+                            : Text(
                                 'Crear Cuenta',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF492714),
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                       ),

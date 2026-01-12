@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:tools="http://schemas.android.com/tools" package="com.tudominio.mygasolinera">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:tools="http://schemas.android.com/tools">
 <!-- Permisos necesarios -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -30,9 +29,9 @@
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 					 
     <application
-        android:label="my_gasolinera"
+        android:label="My Gasolinera"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="false"
         android:usesCleartextTraffic="true"
@@ -108,3 +107,4 @@
         </intent>
     </queries>
 </manifest>
+

@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'auth_service.dart';
+import 'api_config.dart';
 
 class FacturaService {
-  static const String baseUrl = 'http://localhost:3000';
-
   // Obtener todas las facturas del usuario
   static Future<List<Map<String, dynamic>>> obtenerFacturas() async {
     try {
@@ -15,9 +14,9 @@ class FacturaService {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/facturas'),
+        Uri.parse(ApiConfig.facturasUrl),
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );
@@ -57,10 +56,11 @@ class FacturaService {
       // Crear una petición multipart para enviar la imagen
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/facturas'),
+        Uri.parse(ApiConfig.facturasUrl),
       );
 
       // Agregar headers de autenticación
+      request.headers.addAll(ApiConfig.headers);
       request.headers['Authorization'] = 'Bearer $token';
 
       // Agregar campos del formulario
@@ -71,7 +71,8 @@ class FacturaService {
       request.fields['descripcion'] = descripcion ?? '';
       request.fields['litros_repostados'] = litrosRepostados?.toString() ?? '';
       request.fields['precio_por_litro'] = precioPorLitro?.toString() ?? '';
-      request.fields['kilometraje_actual'] = kilometrajeActual?.toString() ?? '';
+      request.fields['kilometraje_actual'] =
+          kilometrajeActual?.toString() ?? '';
       request.fields['tipo_combustible'] = tipoCombustible ?? '';
       request.fields['id_coche'] = idCoche?.toString() ?? '';
 
@@ -138,9 +139,9 @@ class FacturaService {
       }
 
       final response = await http.delete(
-        Uri.parse('$baseUrl/facturas/$idFactura'),
+        Uri.parse('${ApiConfig.facturasUrl}/$idFactura'),
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );

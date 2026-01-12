@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PasswordRequirements extends StatelessWidget {
   final String password;
   final bool isVisible;
-  final Color primaryColor;
+  final Color? primaryColor;
   final Color successColor;
   final Color errorColor;
   final Color? backgroundColor;
@@ -12,7 +12,7 @@ class PasswordRequirements extends StatelessWidget {
     super.key,
     required this.password,
     required this.isVisible,
-    this.primaryColor = const Color(0xFF492714),
+    this.primaryColor,
     this.successColor = Colors.green,
     this.errorColor = Colors.red,
     this.backgroundColor,
@@ -22,7 +22,7 @@ class PasswordRequirements extends StatelessWidget {
   bool get hasMinLength => password.length >= 8;
   bool get hasNumber => password.contains(RegExp(r'[0-9]'));
   bool get hasSpecialChar =>
-      password.contains(RegExp(r'[#$?¿]'));
+      password.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-.,ñÑ]'));
   bool get hasUppercase => password.contains(RegExp(r'[A-Z]'));
 
   // Validación de todos los requisitos
@@ -31,6 +31,11 @@ class PasswordRequirements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectivePrimaryColor =
+        primaryColor ?? Theme.of(context).colorScheme.onSurface;
+    final effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.surface;
+
     return AnimatedSize(
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
@@ -42,7 +47,7 @@ class PasswordRequirements extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 16),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: backgroundColor ?? const Color(0xFFFFE8DA),
+                  color: effectiveBackgroundColor,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey[300]!),
                 ),
@@ -54,15 +59,20 @@ class PasswordRequirements extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: primaryColor,
+                        color: effectivePrimaryColor,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildRequirementItem('Al menos 8 caracteres', hasMinLength),
-                    _buildRequirementItem('Al menos un número (0-9)', hasNumber),
-                    _buildRequirementItem('Al menos un carácter especial (#, \$, ?, ¿)',
-                        hasSpecialChar),
-                    _buildRequirementItem('Al menos una mayúscula (A-Z)', hasUppercase),
+                    _buildRequirementItem('Al menos 8 caracteres', hasMinLength,
+                        effectivePrimaryColor),
+                    _buildRequirementItem('Al menos un número (0-9)', hasNumber,
+                        effectivePrimaryColor),
+                    _buildRequirementItem(
+                        'Al menos un carácter especial (., #, ñ, ...)',
+                        hasSpecialChar,
+                        effectivePrimaryColor),
+                    _buildRequirementItem('Al menos una mayúscula (A-Z)',
+                        hasUppercase, effectivePrimaryColor),
                   ],
                 ),
               )
@@ -71,7 +81,8 @@ class PasswordRequirements extends StatelessWidget {
     );
   }
 
-  Widget _buildRequirementItem(String text, bool isMet) {
+  Widget _buildRequirementItem(
+      String text, bool isMet, Color effectivePrimaryColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -93,7 +104,7 @@ class PasswordRequirements extends StatelessWidget {
               child: Icon(
                 isMet ? Icons.check : Icons.close,
                 size: 12,
-                color: primaryColor,
+                color: effectivePrimaryColor,
               ),
             ),
           ),
@@ -103,7 +114,7 @@ class PasswordRequirements extends StatelessWidget {
               text,
               style: TextStyle(
                 fontSize: 13,
-                color: primaryColor,
+                color: effectivePrimaryColor,
                 fontWeight: FontWeight.w500,
               ),
             ),

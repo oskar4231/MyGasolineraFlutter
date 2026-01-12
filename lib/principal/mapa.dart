@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -5,8 +7,11 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
+import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/main.dart' as app;
+import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/services/provincia_service.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -16,27 +21,58 @@ class MapaTiempoReal extends StatefulWidget {
 }
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
+  double _radiusKm = 25.0;
+  Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarPreferencias();
+  }
+
+  Future<void> _cargarPreferencias() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _radiusKm = prefs.getDouble('radius_km') ?? 25.0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Ubicación en Tiempo Real'),
-        backgroundColor: Colors.blue,
+        title: Text(
+          'Mi Ubicación en Tiempo Real',
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
+          ),
+        ),
+        iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
+        backgroundColor: theme.colorScheme.primary,
       ),
-      body: const MapWidget(),
+      body: MapWidget(
+        key: _mapKey,
+        radiusKm: _radiusKm,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
-          );
+          ).then((_) {
+            // Recargar preferencias al volver de ajustes
+            _cargarPreferencias();
+          });
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: theme.colorScheme.primary,
         child: Image.asset(
           'lib/assets/ajustes.png',
           width: 24,
           height: 24,
-          color: Colors.white,
+          color: theme.colorScheme.onPrimary,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -53,6 +89,7 @@ class MapWidget extends StatefulWidget {
   final double? precioDesde;
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
+  final double radiusKm; // Nuevo parámetro
 
   const MapWidget({
     super.key,
@@ -62,6 +99,7 @@ class MapWidget extends StatefulWidget {
     this.precioDesde,
     this.precioHasta,
     this.tipoAperturaSeleccionado,
+    this.radiusKm = 25.0, // Valor por defecto
   });
 
   @override
@@ -81,11 +119,18 @@ class _MapWidgetState extends State<MapWidget> {
   List<String> _favoritosIds = [];
   bool _isBottomSheetOpen = false;
 
-  static const int LIMIT_RESULTS = 50;
+  // Cache service y provincia
+  late GasolinerasCacheService _cacheService;
+  String? _currentProvinciaId;
+  bool _isLoadingFromCache = false;
+
+  // Para carga progresiva
+  bool _isLoadingProgressively = false;
 
   @override
   void initState() {
     super.initState();
+    _cacheService = GasolinerasCacheService(app.database);
     _loadGasStationIcon();
     _iniciarSeguimiento();
     _cargarFavoritos();
@@ -100,11 +145,16 @@ class _MapWidgetState extends State<MapWidget> {
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-        oldWidget.externalGasolineras != widget.externalGasolineras) {
+        oldWidget.externalGasolineras != widget.externalGasolineras ||
+        oldWidget.radiusKm != widget.radiusKm) {
+      print(
+          '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
+
       if (_ubicacionActual != null) {
         _cargarGasolineras(
           _ubicacionActual!.latitude,
           _ubicacionActual!.longitude,
+          isInitialLoad: false,
         );
       }
     }
@@ -120,16 +170,29 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
   Future<void> _loadGasStationIcon() async {
     try {
-      final BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
+      final Uint8List iconBytes = await getBytesFromAsset(
         'lib/assets/location_9351238.png',
+        100,
       );
-      final BitmapDescriptor favIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)),
+      final Uint8List favIconBytes = await getBytesFromAsset(
         'lib/assets/localizacion_favs.png',
+        100,
       );
+
+      final BitmapDescriptor icon = BitmapDescriptor.fromBytes(iconBytes);
+      final BitmapDescriptor favIcon = BitmapDescriptor.fromBytes(favIconBytes);
 
       if (mounted) {
         setState(() {
@@ -139,6 +202,7 @@ class _MapWidgetState extends State<MapWidget> {
       }
     } catch (e) {
       // Manejo de errores
+      print('Error cargando iconos: $e');
     }
   }
 
@@ -204,31 +268,159 @@ class _MapWidgetState extends State<MapWidget> {
     return resultado;
   }
 
-  Future<void> _cargarGasolineras(double lat, double lng) async {
+  Future<void> _cargarGasolineras(double lat, double lng,
+      {bool isInitialLoad = false}) async {
     List<Gasolinera> listaGasolineras;
 
     if (widget.externalGasolineras != null &&
         widget.externalGasolineras!.isNotEmpty) {
       listaGasolineras = widget.externalGasolineras!;
     } else {
-      listaGasolineras = await fetchGasolineras();
+      // Usar cache service con detección de provincia
+      setState(() {
+        _isLoadingFromCache = true;
+      });
+
+      try {
+        // Detectar provincia actual
+        final provinciaInfo =
+            await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+        _currentProvinciaId = provinciaInfo.id;
+
+        print(
+            '🔎 DEBUG Mapa: Provincia detectada para ($lat, $lng): ${provinciaInfo.nombre} (ID: ${_currentProvinciaId})');
+
+        print(
+            'Mapa: Cargando gasolineras para provincia ${provinciaInfo.nombre}');
+
+        // Cargar gasolineras de la provincia actual y vecinas
+        final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
+        final provinciasToLoad = [provinciaInfo.id, ...vecinas.take(2)];
+
+        listaGasolineras = await _cacheService.getGasolinerasMultiProvincia(
+          provinciasToLoad,
+          forceRefresh: false, // Usar caché para mejor rendimiento
+        );
+
+        print(
+            'Mapa: Cargadas ${listaGasolineras.length} gasolineras desde cache');
+      } catch (e) {
+        print('Mapa: Error al cargar desde cache, usando API: $e');
+        // Usar API con filtro de provincia en lugar de todas las gasolineras
+        print('Mapa: Error al cargar desde cache, usando API: $e');
+
+        // Intentar detectar provincia de nuevo para asegurar que tenemos la correcta para ESTA ubicación
+        try {
+          final detectedInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
+          _currentProvinciaId = detectedInfo.id;
+          print(
+              'Mapa: (Fallback API) Provincia detectada: ${detectedInfo.nombre} ($_currentProvinciaId)');
+        } catch (e2) {
+          print('Mapa: Error al re-detectar provincia en catch: $e2');
+        }
+
+        if (_currentProvinciaId != null) {
+          listaGasolineras =
+              await api.fetchGasolinerasByProvincia(_currentProvinciaId!);
+        } else {
+          print(
+              'Mapa: No se pudo determinar provincia, cargando lista vacía o default');
+          // Opcional: cargar todas o Madrid por defecto si falla todo
+          listaGasolineras = [];
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoadingFromCache = false;
+          });
+        }
+      }
     }
 
     listaGasolineras = _aplicarFiltros(listaGasolineras);
 
+    print(
+        '📍 Filtrando ${listaGasolineras.length} gasolineras por radio de ${widget.radiusKm} km');
+
+    if (listaGasolineras.isNotEmpty) {
+      print('🔍 DEBUG: Primeras 3 gasolineras recibidas (sin filtrar):');
+      for (var i = 0;
+          i < (listaGasolineras.length > 3 ? 3 : listaGasolineras.length);
+          i++) {
+        final g = listaGasolineras[i];
+        print('   - ${g.rotulo}: ${g.lat}, ${g.lng} (Prov: ${g.provincia})');
+      }
+    }
+
+    print('📍 Calculando distancias desde origen: $lat, $lng');
+
+    // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
+    }).where((item) {
+      final distance = item['distance'] as double;
+      // DEBUG: Imprimir distancia de los primeros 3 elementos antes de filtrar
+      if (listaGasolineras.indexOf(item['gasolinera'] as Gasolinera) < 3) {
+        print(
+            '   -> Distancia a ${(item['gasolinera'] as Gasolinera).rotulo}: ${distance.toStringAsFixed(2)} metros (${(distance / 1000).toStringAsFixed(2)} km)');
+      }
+
+      // Filtrar por radio (convertir metros a km)
+      final distanceKm = distance / 1000;
+      return distanceKm <= widget.radiusKm;
     }).toList();
 
+    // Ordenar por distancia
     gasolinerasCercanas.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final topGasolineras = gasolinerasCercanas
-        .take(LIMIT_RESULTS)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
+    final gasolinerasEnRadio =
+        gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
+
+    print(
+        'Mapa: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${widget.radiusKm}km');
+
+    // Carga progresiva: SOLO en carga inicial para dar feedback rápido
+    if (isInitialLoad &&
+        !_isLoadingProgressively &&
+        gasolinerasEnRadio.length > 10) {
+      if (mounted) {
+        setState(() {
+          _isLoadingProgressively = true;
+        });
+      }
+
+      // Mostrar primero las 10 más cercanas
+      final primeras10 = gasolinerasEnRadio.take(10).toList();
+      final newMarkers = primeras10.map((g) => _crearMarcador(g)).toSet();
+
+      if (mounted) {
+        setState(() {
+          _gasolinerasMarkers.clear();
+          _gasolinerasMarkers.addAll(newMarkers);
+        });
+      }
+
+      // Cargar el resto en segundo plano
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          final resto = gasolinerasEnRadio.skip(10).toList();
+          final restoMarkers = resto.map((g) => _crearMarcador(g)).toSet();
+
+          setState(() {
+            _gasolinerasMarkers.addAll(restoMarkers);
+            _isLoadingProgressively = false;
+          });
+        }
+      });
+
+      return;
+    }
+
+    final topGasolineras = gasolinerasEnRadio;
 
     final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
@@ -297,11 +489,13 @@ class _MapWidgetState extends State<MapWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    gasolinera.rotulo,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      gasolinera.rotulo,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -322,7 +516,12 @@ class _MapWidgetState extends State<MapWidget> {
 
               Text(
                 gasolinera.direccion,
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.6)),
               ),
 
               const SizedBox(height: 20),
@@ -343,7 +542,7 @@ class _MapWidgetState extends State<MapWidget> {
                       'Diesel',
                       gasolinera.gasoleoA,
                       Icons.directions_car,
-                      Colors.black,
+                      Theme.of(context).colorScheme.onSurface,
                     ),
                   if (gasolinera.gasolina98 > 0)
                     _buildPrecioItem(
@@ -382,9 +581,9 @@ class _MapWidgetState extends State<MapWidget> {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: esFavorita
-                        ? Colors.red
-                        : const Color(0xFFFF9350),
-                    foregroundColor: Colors.white,
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -438,15 +637,18 @@ class _MapWidgetState extends State<MapWidget> {
           const SizedBox(width: 8),
           Text(
             '$nombre: ',
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            style: TextStyle(
+                fontSize: 16,
+                color:
+                    Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
           ),
           const Spacer(),
           Text(
             '${precio.toStringAsFixed(3)}€',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -481,7 +683,8 @@ class _MapWidgetState extends State<MapWidget> {
             ),
           );
         });
-        _cargarGasolineras(posicion.latitude, posicion.longitude);
+        _cargarGasolineras(posicion.latitude, posicion.longitude,
+            isInitialLoad: true);
 
         if (widget.onLocationUpdate != null) {
           widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
@@ -491,35 +694,34 @@ class _MapWidgetState extends State<MapWidget> {
       // ignore
     }
 
-    _positionStreamSub =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.best,
-            distanceFilter: 5,
+    _positionStreamSub = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: 5,
+      ),
+    ).listen((Position pos) {
+      if (!mounted) return;
+      setState(() {
+        _ubicacionActual = pos;
+        _markers.clear();
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('yo'),
+            position: LatLng(pos.latitude, pos.longitude),
+            icon: BitmapDescriptor.defaultMarker,
           ),
-        ).listen((Position pos) {
-          if (!mounted) return;
-          setState(() {
-            _ubicacionActual = pos;
-            _markers.clear();
-            _markers.add(
-              Marker(
-                markerId: const MarkerId('yo'),
-                position: LatLng(pos.latitude, pos.longitude),
-                icon: BitmapDescriptor.defaultMarker,
-              ),
-            );
-          });
+        );
+      });
 
-          if (widget.onLocationUpdate != null) {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(const Duration(seconds: 2), () {
-              if (mounted) {
-                widget.onLocationUpdate!(pos.latitude, pos.longitude);
-              }
-            });
+      if (widget.onLocationUpdate != null) {
+        _debounceTimer?.cancel();
+        _debounceTimer = Timer(const Duration(seconds: 2), () {
+          if (mounted) {
+            widget.onLocationUpdate!(pos.latitude, pos.longitude);
           }
         });
+      }
+    });
   }
 
   @override
@@ -555,17 +757,16 @@ class _MapWidgetState extends State<MapWidget> {
               () async {
                 if (mapController != null && mounted) {
                   try {
-                    final visibleRegion = await mapController!
-                        .getVisibleRegion();
-                    final centerLat =
-                        (visibleRegion.northeast.latitude +
+                    final visibleRegion =
+                        await mapController!.getVisibleRegion();
+                    final centerLat = (visibleRegion.northeast.latitude +
                             visibleRegion.southwest.latitude) /
                         2;
-                    final centerLng =
-                        (visibleRegion.northeast.longitude +
+                    final centerLng = (visibleRegion.northeast.longitude +
                             visibleRegion.southwest.longitude) /
                         2;
-                    await _cargarGasolineras(centerLat, centerLng);
+                    await _cargarGasolineras(centerLat, centerLng,
+                        isInitialLoad: false);
                   } catch (e) {}
                 }
               },
@@ -594,11 +795,13 @@ class _MapWidgetState extends State<MapWidget> {
 
     // ✅ CORRECCIÓN: Soluciona el error "Maps cannot be retrieved before calling buildView!" en Flutter Web
     // Posponemos el dispose para evitar el conflicto del ciclo de vida.
-    if (mapController != null) {
-      Future.delayed(Duration.zero, () {
-        mapController!.dispose();
-      });
-    }
+    // ✅ CORRECCIÓN: Soluciona el error "Maps cannot be retrieved before calling buildView!" en Flutter Web
+    // En web evita llamar a dispose manual del controller.
+    // if (mapController != null) {
+    //   Future.delayed(Duration.zero, () {
+    //     mapController!.dispose();
+    //   });
+    // }
 
     super.dispose();
   }

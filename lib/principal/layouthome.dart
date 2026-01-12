@@ -557,42 +557,47 @@ class _LayouthomeState extends State<Layouthome> {
   @override
   Widget build(BuildContext context) {
     final scaffoldKey = GlobalKey<ScaffoldState>();
+    final theme = Theme.of(context);
 
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFFFE2CE),
+      backgroundColor: theme.colorScheme.surface,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const SizedBox(
+            SizedBox(
               height: 60,
               child: DrawerHeader(
-                decoration: BoxDecoration(color: Color(0xFFFF9350)),
+                decoration: BoxDecoration(color: theme.colorScheme.primary),
                 margin: EdgeInsets.zero,
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Text(
                   'Filtros',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 20, color: theme.colorScheme.onPrimary),
                 ),
               ),
             ),
             ListTile(
-              title: const Text('Precio'),
+              title: Text('Precio',
+                  style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Navigator.of(context).pop();
                 _mostrarFiltroPrecio();
               },
             ),
             ListTile(
-              title: const Text('Combustible'),
+              title: Text('Combustible',
+                  style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Navigator.of(context).pop();
                 _mostrarFiltroCombustible();
               },
             ),
             ListTile(
-              title: const Text('Apertura'),
+              title: Text('Apertura',
+                  style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Navigator.of(context).pop();
                 _mostrarFiltroApertura();
@@ -608,7 +613,7 @@ class _LayouthomeState extends State<Layouthome> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF9350),
+                color: theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -617,15 +622,19 @@ class _LayouthomeState extends State<Layouthome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "MyGasolinera",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF9350),
+                      color: theme.colorScheme.primary,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20),
@@ -643,9 +652,10 @@ class _LayouthomeState extends State<Layouthome> {
                               });
                             },
                             borderRadius: BorderRadius.circular(8),
-                            selectedColor: Colors.black,
-                            color: Colors.white,
-                            fillColor: Colors.white70,
+                            selectedColor: theme.colorScheme.onPrimary,
+                            color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                            fillColor:
+                                theme.colorScheme.onPrimary.withOpacity(0.2),
                             constraints: const BoxConstraints(
                               minHeight: 32,
                               minWidth: 85,
@@ -683,7 +693,8 @@ class _LayouthomeState extends State<Layouthome> {
                     children: [
                       // Botón de Favoritos (Estrella)
                       IconButton(
-                        icon: const Icon(Icons.stars, size: 40),
+                        icon: Icon(Icons.stars,
+                            size: 40, color: theme.colorScheme.onPrimary),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -696,13 +707,15 @@ class _LayouthomeState extends State<Layouthome> {
 
                       // Botón de filtro de precio (flecha arriba)
                       IconButton(
-                        icon: const Icon(Icons.arrow_upward, size: 40),
+                        icon: Icon(Icons.arrow_upward,
+                            size: 40, color: theme.colorScheme.onPrimary),
                         onPressed: _mostrarFiltroPrecio,
                       ),
 
                       // Botón para abrir el drawer de filtros (+)
                       IconButton(
-                        icon: const Icon(Icons.add, size: 40),
+                        icon: Icon(Icons.add,
+                            size: 40, color: theme.colorScheme.onPrimary),
                         onPressed: () {
                           scaffoldKey.currentState?.openDrawer();
                         },
@@ -721,7 +734,7 @@ class _LayouthomeState extends State<Layouthome> {
                   horizontal: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
@@ -744,7 +757,7 @@ class _LayouthomeState extends State<Layouthome> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF9350),
+                color: theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -763,7 +776,8 @@ class _LayouthomeState extends State<Layouthome> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.directions_car, size: 40),
+                    icon: Icon(Icons.directions_car,
+                        size: 40, color: theme.colorScheme.onPrimary),
                   ),
 
                   // Botón de Ubicación (Pin)
@@ -772,7 +786,8 @@ class _LayouthomeState extends State<Layouthome> {
                       // Acción para centrar en ubicación actual
                       // Podrías añadir funcionalidad aquí si lo necesitas
                     },
-                    icon: const Icon(Icons.pin_drop, size: 40),
+                    icon: Icon(Icons.pin_drop,
+                        size: 40, color: theme.colorScheme.onPrimary),
                   ),
 
                   // Botón de Ajustes
@@ -785,7 +800,8 @@ class _LayouthomeState extends State<Layouthome> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.settings, size: 40),
+                    icon: Icon(Icons.settings,
+                        size: 40, color: theme.colorScheme.onPrimary),
                   ),
                 ],
               ),

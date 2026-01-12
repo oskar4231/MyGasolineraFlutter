@@ -44,38 +44,42 @@ class _ConsumoTabState extends State<ConsumoTab> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _recargar,
-      color: const Color(0xFFFF9350),
+      color: Theme.of(context).primaryColor,
       child: FutureBuilder<Map<String, dynamic>>(
         future: _costoKmData,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting || _isLoading) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFFFF9350)));
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              _isLoading) {
+            return Center(
+                child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor));
           }
-          
+
           if (snapshot.hasError) {
             return _buildError(snapshot.error.toString());
           }
 
-          final data = snapshot.data ?? {'costos_por_coche': [], 'total_coches': 0};
+          final data =
+              snapshot.data ?? {'costos_por_coche': [], 'total_coches': 0};
           final costosPorCoche = data['costos_por_coche'] as List<dynamic>;
           final totalCoches = data['total_coches'] as int;
-          
+
           if (totalCoches == 0) {
             return _buildEmptyState();
           }
-          
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Título principal
-                const Text(
+                Text(
                   'Costo por Kilómetro',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -83,7 +87,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   'Análisis detallado por vehículo',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Color(0xFF492714).withOpacity(0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -92,10 +99,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF9350).withOpacity(0.1),
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFFF9350).withOpacity(0.3),
+                      color: Theme.of(context).primaryColor.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -111,10 +118,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           const SizedBox(height: 4),
                           Text(
                             '$totalCoches',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF492714),
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ],
@@ -128,10 +135,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           const SizedBox(height: 4),
                           Text(
                             '${_calcularTotalFacturas(costosPorCoche)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF492714),
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ],
@@ -142,27 +149,27 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 const SizedBox(height: 24),
 
                 // Lista de coches
-                const Text(
+                Text(
                   'Análisis por Vehículo',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 ...costosPorCoche.map((cocheData) {
                   final coche = cocheData as Map<String, dynamic>;
                   return _buildCocheCard(coche);
                 }).toList(),
-                
+
                 // Información adicional
                 const SizedBox(height: 24),
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -172,7 +179,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                       ),
                     ],
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
@@ -184,7 +191,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF492714),
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ],
@@ -212,27 +219,37 @@ class _ConsumoTabState extends State<ConsumoTab> {
   }
 
   Widget _buildCocheCard(Map<String, dynamic> coche) {
-    final costoProm = double.tryParse(coche['costo_promedio_por_km']?.toString() ?? '0') ?? 0;
-    final costoMin = double.tryParse(coche['costo_minimo_por_km']?.toString() ?? '0') ?? 0;
-    final costoMax = double.tryParse(coche['costo_maximo_por_km']?.toString() ?? '0') ?? 0;
+    final costoProm =
+        double.tryParse(coche['costo_promedio_por_km']?.toString() ?? '0') ?? 0;
+    final costoMin =
+        double.tryParse(coche['costo_minimo_por_km']?.toString() ?? '0') ?? 0;
+    final costoMax =
+        double.tryParse(coche['costo_maximo_por_km']?.toString() ?? '0') ?? 0;
     final kmTotales = int.tryParse(coche['km_totales']?.toString() ?? '0') ?? 0;
-    final gastoTotal = double.tryParse(coche['gasto_total']?.toString() ?? '0') ?? 0;
-    final numFacturas = int.tryParse(coche['num_facturas']?.toString() ?? '0') ?? 0;
-    final numFacturasValidas = int.tryParse(coche['num_facturas_validas']?.toString() ?? '0') ?? 0;
-    
+    final gastoTotal =
+        double.tryParse(coche['gasto_total']?.toString() ?? '0') ?? 0;
+    final numFacturas =
+        int.tryParse(coche['num_facturas']?.toString() ?? '0') ?? 0;
+    final numFacturasValidas =
+        int.tryParse(coche['num_facturas_validas']?.toString() ?? '0') ?? 0;
+
     // Determinar color basado en el costo (más barato = mejor)
     Color getCostoColor(double costo) {
-      if (costo < 0.08) return Color(0xFFFF9350);
+      if (costo < 0.08) return Theme.of(context).primaryColor;
       if (costo < 0.12) return Colors.orange;
-      return Colors.red;
+      return Theme.of(context).colorScheme.error;
     }
-    
+
     final costoColor = getCostoColor(costoProm);
-    
+
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final primaryIconColor =
+        isDarkMode ? Colors.orangeAccent : Theme.of(context).primaryColor;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -253,12 +270,12 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF9350).withOpacity(0.2),
+                    color: primaryIconColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.directions_car,
-                    color: Color(0xFFFF9350),
+                    color: primaryIconColor,
                     size: 32,
                   ),
                 ),
@@ -269,10 +286,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     children: [
                       Text(
                         '${coche['marca']} ${coche['modelo']}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -299,7 +316,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
               ],
             ),
           ),
-          
+
           // Costo promedio (destacado)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -315,16 +332,17 @@ class _ConsumoTabState extends State<ConsumoTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Costo promedio por km:',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF492714),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: costoColor,
                     borderRadius: BorderRadius.circular(20),
@@ -341,7 +359,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
               ],
             ),
           ),
-          
+
           // Estadísticas detalladas
           Padding(
             padding: const EdgeInsets.all(16),
@@ -357,7 +375,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Rango de costos
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -444,7 +462,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Totales
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -469,7 +487,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     ),
                   ],
                 ),
-                
+
                 // Eficiencia relativa
                 if (costoProm > 0) ...[
                   const SizedBox(height: 16),
@@ -556,16 +574,19 @@ class _ConsumoTabState extends State<ConsumoTab> {
           const SizedBox(height: 20),
           Text(
             'Error al cargar datos: $error',
-            style: const TextStyle(fontSize: 16, color: Color(0xFF492714)),
+            style: TextStyle(
+                fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _recargar,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: const Text('Reintentar'),
+            child: Text('Reintentar',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
         ],
       ),
@@ -577,11 +598,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.directions_car_outlined, size: 80, color: Colors.grey),
+          const Icon(Icons.directions_car_outlined,
+              size: 80, color: Colors.grey),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'No hay datos de consumo disponibles',
-            style: TextStyle(fontSize: 16, color: Color(0xFF492714)),
+            style: TextStyle(
+                fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: 10),
           const Text(
@@ -593,9 +616,11 @@ class _ConsumoTabState extends State<ConsumoTab> {
           ElevatedButton(
             onPressed: _recargar,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: const Text('Reintentar'),
+            child: Text('Reintentar',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
         ],
       ),

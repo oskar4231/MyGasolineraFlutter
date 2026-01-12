@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'api_config.dart';
 
 class CocheService {
-  static const String baseUrl = 'http://localhost:3000';
-
   // Obtener todos los coches del usuario - devuelve List<dynamic> en lugar de List<Coche>
   static Future<List<dynamic>> obtenerCoches() async {
     try {
@@ -15,14 +14,14 @@ class CocheService {
         return [];
       }
 
-      final url = Uri.parse('$baseUrl/coches');
+      final url = Uri.parse(ApiConfig.cochesUrl);
 
       print('Cargando coches desde: $url');
 
       final response = await http.get(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );
@@ -31,7 +30,7 @@ class CocheService {
 
       if (response.statusCode == 200) {
         final List<dynamic> cochesJson = json.decode(response.body);
-        return cochesJson;  // Devuelve List<dynamic> directamente
+        return cochesJson; // Devuelve List<dynamic> directamente
       } else {
         print('Error al cargar coches: ${response.statusCode}');
         throw Exception('Error al cargar coches: ${response.statusCode}');
@@ -62,7 +61,7 @@ class CocheService {
         throw Exception('Debes iniciar sesión primero para añadir coches');
       }
 
-      final url = Uri.parse('$baseUrl/insertCar');
+      final url = Uri.parse(ApiConfig.getUrl('/insertCar'));
       final combustibleString = tiposCombustible.join(', ');
 
       print('Intentando crear coche en: $url');
@@ -73,7 +72,7 @@ class CocheService {
       final response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
@@ -95,7 +94,7 @@ class CocheService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = json.decode(response.body);
-        return responseData;  // Devuelve Map<String, dynamic> directamente
+        return responseData; // Devuelve Map<String, dynamic> directamente
       } else {
         final responseData = json.decode(response.body);
         String errorMessage =
@@ -117,14 +116,14 @@ class CocheService {
         throw Exception('Debes iniciar sesión para eliminar coches');
       }
 
-      final url = Uri.parse('$baseUrl/coches/$idCoche');
+      final url = Uri.parse('${ApiConfig.cochesUrl}/$idCoche');
 
       print('Eliminando coche: $idCoche');
 
       final response = await http.delete(
         url,
         headers: {
-          'Content-Type': 'application/json',
+          ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },
       );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/services/factura_service.dart';
+
+import 'package:my_gasolinera/services/api_config.dart';
 import 'package:intl/intl.dart';
+import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;
@@ -45,12 +47,6 @@ class DetalleFacturaScreen extends StatelessWidget {
     }
 
     return hora;
-  }
-
-  String _buildImageUrl(String path) {
-    // Normalizar ruta (reemplazar backslashes con slashes para URL)
-    final normalizedPath = path.replaceAll('\\', '/');
-    return '${FacturaService.baseUrl}/$normalizedPath';
   }
 
   @override
@@ -140,7 +136,9 @@ class DetalleFacturaScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Imagen de la factura
-            if (factura['imagenPath'] != null)
+            if (factura['imagenPath'] != null ||
+                factura['id_factura'] != null ||
+                factura['id'] != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -188,16 +186,16 @@ class DetalleFacturaScreen extends StatelessWidget {
                                   child: InteractiveViewer(
                                     minScale: 0.5,
                                     maxScale: 4.0,
-                                    child: Image.network(
-                                      _buildImageUrl(factura['imagenPath']),
+                                    child: FacturaImageWidget(
+                                      facturaId: factura['id_factura'] ??
+                                          factura['id'],
+                                      serverPath: factura['imagenPath'],
                                       fit: BoxFit.contain,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const Icon(
-                                                Icons.broken_image,
-                                                color: Colors.white,
-                                                size: 100,
-                                              ),
+                                      errorBuilder: (context) => const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                        size: 100,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -205,10 +203,11 @@ class DetalleFacturaScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Image.network(
-                          _buildImageUrl(factura['imagenPath']),
+                        child: FacturaImageWidget(
+                          facturaId: factura['id_factura'] ?? factura['id'],
+                          serverPath: factura['imagenPath'],
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
+                          errorBuilder: (context) {
                             return Container(
                               color: Colors.grey[300],
                               child: const Icon(Icons.broken_image, size: 50),
