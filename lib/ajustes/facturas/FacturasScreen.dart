@@ -253,15 +253,26 @@ class _FacturasScreenState extends State<FacturasScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: FacturaImageWidget(
-                                  facturaId:
-                                      factura['id_factura'] ?? factura['id'],
-                                  serverPath: factura['imagenPath'],
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context) => Icon(
-                                    Icons.receipt,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    FacturaImageWidget.showFullScreen(
+                                      context,
+                                      facturaId: factura['id_factura'] ??
+                                          factura['id'],
+                                      serverPath: factura['imagenPath'],
+                                    );
+                                  },
+                                  child: FacturaImageWidget(
+                                    facturaId:
+                                        factura['id_factura'] ?? factura['id'],
+                                    serverPath: factura['imagenPath'],
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context) => Icon(
+                                      Icons.receipt,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                    ),
                                   ),
                                 ),
                               ),
