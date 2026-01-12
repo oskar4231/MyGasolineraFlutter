@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:my_gasolinera/Inicio/inicio.dart'; // Añade esta importación
+import 'package:my_gasolinera/Inicio/inicio.dart';
 import 'package:my_gasolinera/Inicio/login/recuperar.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/api_config.dart';
+import 'package:my_gasolinera/services/http_helper.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -51,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         final response = await http.post(
           url,
-          headers: ApiConfig.headers,
+          headers: HttpHelper.mergeHeaders(ApiConfig.headers),
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,
@@ -139,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Volver'),
+        title: Text(AppLocalizations.of(context)!.volver),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -196,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
-                        hintText: 'Email o Usuario',
+                        hintText: AppLocalizations.of(context)!.email,
                         hintStyle: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
@@ -218,14 +220,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu email o usuario';
+                          return AppLocalizations.of(context)!.ingresaEmail;
                         }
                         if (value.contains('@')) {
                           final emailRegex = RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           );
                           if (!emailRegex.hasMatch(value)) {
-                            return 'Ingresa un email válido';
+                            return AppLocalizations.of(context)!.emailValido;
                           }
                         }
                         return null;
@@ -241,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onFieldSubmitted: (_) => _handleFieldSubmit('password'),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'Contraseña',
+                        hintText: AppLocalizations.of(context)!.password,
                         hintStyle: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
@@ -276,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu contraseña';
+                          return AppLocalizations.of(context)!.ingresaPassword;
                         }
                         return null;
                       },
@@ -297,7 +299,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           checkColor: Theme.of(context).colorScheme.onPrimary,
                         ),
                         Text(
-                          'Recuérdame',
+                          AppLocalizations.of(context)!.recordarme,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface),
                         ),
@@ -331,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )
                             : Text(
-                                'Iniciar sesión',
+                                AppLocalizations.of(context)!.iniciarSesion,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -353,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: Text(
-                        '¿Has olvidado la contraseña?',
+                        AppLocalizations.of(context)!.olvidoPassword,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           decoration: TextDecoration.underline,

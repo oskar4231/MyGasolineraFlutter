@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/gastos_tab.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/consumo_tab.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/mantenimiento_tab.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class EstadisticasScreen extends StatefulWidget {
   const EstadisticasScreen({super.key});
@@ -32,7 +33,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
       backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Tema
       appBar: AppBar(
         title: Text(
-          'Estadísticas',
+          AppLocalizations.of(context)!.estadisticas,
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -50,10 +51,16 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
           labelColor: Theme.of(context).colorScheme.onPrimary,
           unselectedLabelColor:
               Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
-          tabs: const [
-            Tab(text: 'Gastos', icon: Icon(Icons.euro)),
-            Tab(text: 'Consumo', icon: Icon(Icons.local_gas_station)),
-            Tab(text: 'Mantenimiento', icon: Icon(Icons.build)),
+          tabs: [
+            Tab(
+                text: AppLocalizations.of(context)!.gastos,
+                icon: const Icon(Icons.euro)),
+            Tab(
+                text: AppLocalizations.of(context)!.consumo,
+                icon: const Icon(Icons.local_gas_station)),
+            Tab(
+                text: AppLocalizations.of(context)!.mantenimiento,
+                icon: const Icon(Icons.build)),
           ],
         ),
       ),

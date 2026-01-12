@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   
   # Dependencias Actualizadas a las versiones más recientes (Diciembre 2024)
   image_picker: ^1.2.1
@@ -51,6 +53,7 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
     - assets/images/

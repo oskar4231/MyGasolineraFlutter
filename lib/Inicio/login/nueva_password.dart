@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class NuevaPasswordScreen extends StatefulWidget {
   final String email;
@@ -68,7 +69,8 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              verifyResponse['message'] ?? 'Token inválido o expirado',
+              verifyResponse['message'] ??
+                  AppLocalizations.of(context)!.codigoInvalido,
             ),
             backgroundColor: Colors.red,
           ),
@@ -87,8 +89,8 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
 
       if (resetResponse['status'] == 'success') {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Contraseña actualizada correctamente'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.passwordActualizada),
             backgroundColor: Colors.green,
           ),
         );
@@ -129,8 +131,8 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFE8DA),
       appBar: AppBar(
-        title: const Text(
-          'Nueva contraseña',
+        title: Text(
+          AppLocalizations.of(context)!.nuevaPassword,
           style: TextStyle(
             color: Color(0xFF492714),
             fontWeight: FontWeight.bold,
@@ -204,7 +206,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     decoration: InputDecoration(
                       hintText: '000000',
                       hintStyle: const TextStyle(letterSpacing: 8),
-                      labelText: 'Código de recuperación',
+                      labelText: AppLocalizations.of(context)!.ingresarCodigo,
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -218,7 +220,8 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     ),
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Ingresa el código';
+                      if (v == null || v.isEmpty)
+                        return AppLocalizations.of(context)!.ingresaTuCodigo;
                       if (v.length != 6) {
                         return 'El código debe tener 6 dígitos';
                       }
@@ -236,7 +239,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     enabled: !_isLoading,
                     onChanged: (_) => setState(() {}),
                     decoration: InputDecoration(
-                      hintText: 'Nueva contraseña',
+                      hintText: AppLocalizations.of(context)!.nuevaPassword,
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -250,10 +253,10 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (v) {
                       if (v == null || v.isEmpty) {
-                        return 'Ingresa la nueva contraseña';
+                        return AppLocalizations.of(context)!.ingresaPassword;
                       }
                       if (!_isPasswordValid()) {
-                        return 'La contraseña no cumple todos los requisitos';
+                        return AppLocalizations.of(context)!.passwordRequisitos;
                       }
                       return null;
                     },
@@ -272,7 +275,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     style: const TextStyle(fontSize: 16),
                     enabled: !_isLoading,
                     decoration: InputDecoration(
-                      hintText: 'Confirmar contraseña',
+                      hintText: AppLocalizations.of(context)!.confirmPassword,
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -286,10 +289,11 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     onFieldSubmitted: (_) => _handleChangePassword(),
                     validator: (v) {
                       if (v == null || v.isEmpty) {
-                        return 'Confirma la contraseña';
+                        return AppLocalizations.of(context)!.confirmaPassword;
                       }
                       if (v != _passwordController.text) {
-                        return 'Las contraseñas no coinciden';
+                        return AppLocalizations.of(context)!
+                            .passwordsNoCoinciden;
                       }
                       return null;
                     },
@@ -299,8 +303,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed:
-                          (_isLoading ||
+                      onPressed: (_isLoading ||
                               !_isPasswordValid() ||
                               _tokenController.text.isEmpty)
                           ? null
@@ -329,7 +332,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                 ),
                               ),
                             )
-                          : const Text('Cambiar contraseña'),
+                          : Text(AppLocalizations.of(context)!.guardar),
                     ),
                   ),
                 ],

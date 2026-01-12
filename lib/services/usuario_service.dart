@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'api_config.dart';
+import 'http_helper.dart';
 
 class UsuarioService {
   /// Obtiene el nombre del usuario desde el backend
@@ -21,19 +22,17 @@ class UsuarioService {
       final url = ApiConfig.getUrl('/usuarios/perfil/$email');
       print('🔍 DEBUG - Obteniendo nombre de usuario desde: $url');
 
-      final response = await http
-          .get(
-            Uri.parse(url),
-            headers: {
-              'Content-Type': 'application/json',
-              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () =>
-                throw Exception('Timeout al conectar con el servidor'),
-          );
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          ...HttpHelper.getLanguageHeaders(),
+          'Content-Type': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
+      );
 
       print('🔍 DEBUG - Status code: ${response.statusCode}');
       print('🔍 DEBUG - Response body: ${response.body}');
@@ -46,8 +45,7 @@ class UsuarioService {
 
         if (data is Map) {
           // Intentar obtener el nombre de diferentes campos posibles
-          nombre =
-              data['nombre'] ??
+          nombre = data['nombre'] ??
               data['name'] ??
               data['usuario']?['nombre'] ??
               data['usuario']?['name'] ??
@@ -111,6 +109,7 @@ class UsuarioService {
           .delete(
             Uri.parse(url),
             headers: {
+              ...HttpHelper.getLanguageHeaders(),
               'Content-Type': 'application/json',
               if (token.isNotEmpty) 'Authorization': 'Bearer $token',
             },
@@ -191,19 +190,17 @@ class UsuarioService {
       final url = ApiConfig.getUrl('/cargarImagen/$email');
       print('🔍 DEBUG - Cargando imagen de perfil desde: $url');
 
-      final response = await http
-          .get(
-            Uri.parse(url),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () =>
-                throw Exception('Timeout al conectar con el servidor'),
-          );
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          ...HttpHelper.getLanguageHeaders(),
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
+      );
 
       print('🔍 DEBUG - Status code: ${response.statusCode}');
       print('🔍 DEBUG - Response body: ${response.body}');

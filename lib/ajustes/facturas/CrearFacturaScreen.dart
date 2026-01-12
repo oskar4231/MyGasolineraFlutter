@@ -6,6 +6,7 @@ import 'package:my_gasolinera/services/coche_service.dart';
 import 'package:my_gasolinera/services/local_image_service.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:intl/intl.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
   const CrearFacturaScreen({super.key});
@@ -89,7 +90,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al seleccionar imagen: $e')),
+        SnackBar(
+            content: Text(
+                '${AppLocalizations.of(context)!.errorSeleccionarImagen}: $e')),
       );
     }
   }
@@ -105,7 +108,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error al tomar foto: $e')));
+      ).showSnackBar(SnackBar(
+          content: Text(
+              '${AppLocalizations.of(context)!.errorSeleccionarImagen}: $e')));
     }
   }
 
@@ -122,7 +127,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
               title: Text(
-                'Galería',
+                AppLocalizations.of(context)!.galeria,
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
@@ -135,7 +140,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
               leading: Icon(Icons.camera_alt,
                   color: Theme.of(context).colorScheme.onSurface),
               title: Text(
-                'Cámara',
+                AppLocalizations.of(context)!.camara,
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onSurface),
               ),
@@ -192,8 +197,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Factura creada y asegurada localmente')),
+            SnackBar(
+                content:
+                    Text(AppLocalizations.of(context)!.facturaCreadaExito)),
           );
           Navigator.pop(context, true);
         }
@@ -201,7 +207,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Error al crear factura: $e')));
+          ).showSnackBar(SnackBar(
+              content: Text(
+                  '${AppLocalizations.of(context)!.errorCrearFactura}: $e')));
         }
       } finally {
         if (mounted) {
@@ -229,7 +237,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Nueva Factura',
+          AppLocalizations.of(context)!.nuevaFactura,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
@@ -255,7 +263,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                   TextFormField(
                     controller: _tituloController,
                     decoration: InputDecoration(
-                      labelText: 'Título',
+                      labelText: AppLocalizations.of(context)!.titulo,
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
@@ -271,7 +279,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa un título';
+                        return AppLocalizations.of(context)!.ingreseTitulo;
                       }
                       return null;
                     },
@@ -283,7 +291,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _costoController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Coste Total (€)',
+                      labelText:
+                          '${AppLocalizations.of(context)!.costeTotal} (€)',
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
@@ -299,10 +308,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa el coste total';
+                        return AppLocalizations.of(context)!.ingreseCoste;
                       }
                       if (!RegExp(r'^\d+([.,]\d{1,3})?$').hasMatch(value)) {
-                        return 'Formato inválido (Ej: 10.50)';
+                        return AppLocalizations.of(context)!.formatoInvalido;
                       }
                       return null;
                     },
@@ -317,7 +326,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                         child: TextFormField(
                           controller: _fechaController,
                           decoration: InputDecoration(
-                            labelText: 'Fecha',
+                            labelText: AppLocalizations.of(context)!.fecha,
                             labelStyle: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
@@ -353,7 +362,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                         child: TextFormField(
                           controller: _horaController,
                           decoration: InputDecoration(
-                            labelText: 'Hora',
+                            labelText: AppLocalizations.of(context)!.hora,
                             labelStyle: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
@@ -387,7 +396,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
                   // NUEVA SECCIÓN: Información del Repostaje
                   Text(
-                    'Información del Repostaje',
+                    AppLocalizations.of(context)!.infoRepostaje,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -404,7 +413,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                   DropdownButtonFormField<int>(
                     value: _cocheSeleccionado,
                     decoration: InputDecoration(
-                      labelText: 'Coche',
+                      labelText: AppLocalizations.of(context)!.coche,
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
@@ -445,7 +454,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _litrosController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Litros Repostados',
+                      labelText: AppLocalizations.of(context)!.litros,
                       hintText: 'Ej: 45.5',
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
@@ -473,7 +482,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _precioLitroController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Precio por Litro (€)',
+                      labelText:
+                          '${AppLocalizations.of(context)!.precioLitro} (€)',
                       hintText: 'Ej: 1.459',
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
@@ -501,7 +511,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _kilometrajeController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Kilometraje Actual',
+                      labelText: AppLocalizations.of(context)!.kilometraje,
                       hintText: 'Ej: 45230',
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
@@ -534,7 +544,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                       value: _tipoCombustibleSeleccionado,
                       isExpanded: true,
                       decoration: InputDecoration(
-                        labelText: 'Tipo de Combustible',
+                        labelText:
+                            AppLocalizations.of(context)!.tipoCombustible,
                         labelStyle: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface),
                         filled: true,
@@ -573,7 +584,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
                   // NUEVA SECCIÓN: Imagen de Factura
                   Text(
-                    'Imagen de Factura',
+                    AppLocalizations.of(context)!.imagenFactura,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -608,7 +619,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Agregar Imagen de Factura',
+                                  AppLocalizations.of(context)!.agregarImagen,
                                   style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
@@ -673,7 +684,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     controller: _descripcionController,
                     maxLines: 4,
                     decoration: InputDecoration(
-                      labelText: 'Descripción (Opcional)',
+                      labelText:
+                          AppLocalizations.of(context)!.descripcionOpcional,
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface),
                       filled: true,
@@ -719,9 +731,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                 ),
                               ),
                             )
-                          : const Text(
-                              'Guardar Factura',
-                              style: TextStyle(
+                          : Text(
+                              AppLocalizations.of(context)!.guardarFactura,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),

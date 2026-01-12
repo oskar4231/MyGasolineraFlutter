@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
 import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
+import 'package:my_gasolinera/ajustes/idiomas/idiomas_screen.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
@@ -280,7 +282,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          'Ajustes',
+          AppLocalizations.of(context)!.ajustesTitulo,
           style: TextStyle(
             fontFamily: 'Roboto',
             fontSize: 20,
@@ -420,9 +422,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         fontFamily: 'Roboto',
                       ),
                       children: [
-                        const TextSpan(
-                          text: 'Hola, ',
-                          style: TextStyle(fontWeight: FontWeight.normal),
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.holaUsuario,
+                          style: const TextStyle(fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
                           text: _nombreUsuario,
@@ -446,7 +448,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Conexión y Mapa',
+          AppLocalizations.of(context)!.conexionMapa,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -471,8 +473,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Servidor Backend',
+                          Text(
+                            AppLocalizations.of(context)!.servidorBackend,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -537,7 +539,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                     theme.colorScheme.primary),
                               ),
                             )
-                          : const Text('Actualizar'),
+                          : Text(AppLocalizations.of(context)!.actualizar),
                     ),
                   ],
                 ),
@@ -556,8 +558,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                'Radio de búsqueda',
+                              Text(
+                                AppLocalizations.of(context)!.radioBusqueda,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -604,11 +606,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   Widget _buildSeccionOpciones(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Opciones',
+          l10n.opciones,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -617,13 +621,20 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         const SizedBox(height: 16),
         _OpcionItem(
-          icono: Icons.local_gas_station,
-          texto: 'Combustible',
-          onTap: () {},
+          icono: Icons.language,
+          texto: l10n.idiomas,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const IdiomasScreen(),
+              ),
+            );
+          },
         ),
         _OpcionItem(
           icono: Icons.query_stats,
-          texto: 'Estadísticas',
+          texto: l10n.estadisticas,
           onTap: () {
             Navigator.push(
               context,
@@ -635,7 +646,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         _OpcionItem(
           icono: Icons.receipt,
-          texto: 'Gasto/Facturas',
+          texto: l10n.gastosFacturas,
           onTap: () {
             Navigator.push(
               context,
@@ -645,7 +656,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         _OpcionItem(
           icono: Icons.accessibility_new,
-          texto: 'Accesibilidad',
+          texto: l10n.accesibilidad,
           onTap: () {
             Navigator.push(
               context,
@@ -657,7 +668,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         _OpcionItem(
           icono: Icons.delete_outline,
-          texto: 'Borrar Cuenta',
+          texto: l10n.borrarCuenta,
           onTap: () => _mostrarDialogoBorrarCuenta(),
         ),
       ],
@@ -677,7 +688,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),
-        label: const Text('Cerrar sesión'),
+        label: Text(AppLocalizations.of(context)!.cerrarSesion),
       ),
     );
   }
@@ -687,12 +698,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Cerrar sesión'),
-          content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+          title: Text(AppLocalizations.of(context)!.cerrarSesion),
+          content: Text(AppLocalizations.of(context)!.confirmarCerrarSesion),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancelar),
             ),
             TextButton(
               onPressed: () {
@@ -703,7 +714,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   (Route<dynamic> route) => false,
                 );
               },
-              child: const Text('Cerrar sesión'),
+              child: Text(AppLocalizations.of(context)!.cerrarSesion),
             ),
           ],
         );
@@ -720,13 +731,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Borrar Cuenta'),
+              title: Text(AppLocalizations.of(context)!.borrarCuenta),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
-                    'Esta acción no se puede deshacer.',
+                    AppLocalizations.of(context)!.confirmarBorrarCuenta,
                     style: TextStyle(
                         color: theme.colorScheme.onSurface.withOpacity(0.87),
                         fontSize: 16),
@@ -735,7 +745,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     const SizedBox(height: 16),
                     const CircularProgressIndicator(),
                     const SizedBox(height: 8),
-                    const Text('Eliminando cuenta...'),
+                    Text(AppLocalizations.of(context)!.eliminandoCuenta),
                   ],
                 ],
               ),
@@ -744,7 +754,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancelar',
+                      AppLocalizations.of(context)!.cancelar,
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ),
@@ -792,7 +802,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Error al eliminar cuenta: ${e.toString()}',
+                                '${AppLocalizations.of(context)!.errorEliminarCuenta}: ${e.toString()}',
                               ),
                               duration: const Duration(seconds: 4),
                               backgroundColor: Colors.red,
@@ -805,7 +815,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       backgroundColor: theme.colorScheme.primary,
                     ),
                     child: Text(
-                      'Eliminar',
+                      AppLocalizations.of(context)!.eliminar,
                       style: TextStyle(color: theme.colorScheme.onPrimary),
                     ),
                   ),

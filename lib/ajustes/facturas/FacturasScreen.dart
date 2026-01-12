@@ -5,6 +5,7 @@ import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
 import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class FacturasScreen extends StatefulWidget {
   const FacturasScreen({super.key});
@@ -112,18 +113,19 @@ class _FacturasScreenState extends State<FacturasScreen> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
-        content: const Text(
-          '¿Estás seguro de que quieres eliminar esta factura?',
+        title: Text(AppLocalizations.of(context)!.confirmarEliminar),
+        content: Text(
+          AppLocalizations.of(context)!.confirmarEliminar,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancelar),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.eliminar,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -133,7 +135,9 @@ class _FacturasScreenState extends State<FacturasScreen> {
       try {
         await FacturaService.eliminarFactura(idFactura);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Factura eliminada correctamente')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.facturaEliminadaExito)),
         );
         _cargarFacturas(); // Recargar la lista
       } catch (e) {
@@ -150,7 +154,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Mis Facturas',
+          AppLocalizations.of(context)!.facturas,
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -196,7 +200,7 @@ class _FacturasScreenState extends State<FacturasScreen> {
                           backgroundColor: Theme.of(context).primaryColor,
                         ),
                         child: Text(
-                          'Reintentar',
+                          AppLocalizations.of(context)!.intenteNuevamente,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary),
                         ),
@@ -213,14 +217,14 @@ class _FacturasScreenState extends State<FacturasScreen> {
                               size: 80, color: Theme.of(context).primaryColor),
                           const SizedBox(height: 20),
                           Text(
-                            'No hay facturas',
+                            AppLocalizations.of(context)!.noFacturas,
                             style: TextStyle(
                                 fontSize: 18,
                                 color: Theme.of(context).colorScheme.onSurface),
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            'Presiona el botón + para agregar una factura',
+                            AppLocalizations.of(context)!.presionaBotonFactura,
                             style: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
