@@ -150,10 +150,16 @@ class _FacturasScreenState extends State<FacturasScreen>
 
       final facturasImportadas = await ExportService.importarExcel();
 
+      debugPrint(
+          '📥 Resultado de importación: ${facturasImportadas?.length ?? 'null'} facturas');
+
       if (facturasImportadas != null && facturasImportadas.isNotEmpty) {
+        debugPrint(
+            '📥 Procesando ${facturasImportadas.length} facturas importadas...');
         int count = 0;
         for (var factura in facturasImportadas) {
           try {
+            debugPrint('📥 Procesando factura: ${factura['titulo']}');
             String fecha = factura['fecha'] ??
                 DateFormat('yyyy-MM-dd').format(DateTime.now());
             if (fecha.contains('/')) {
@@ -163,6 +169,8 @@ class _FacturasScreenState extends State<FacturasScreen>
               }
             }
 
+            debugPrint(
+                '📥 Creando factura con fecha: $fecha, coste: ${factura['coste']}');
             await FacturaService.crearFactura(
               titulo: factura['titulo'],
               coste: double.tryParse(factura['coste'].toString()) ?? 0.0,
@@ -179,8 +187,10 @@ class _FacturasScreenState extends State<FacturasScreen>
               imagenFile: null,
             );
             count++;
+            debugPrint('✅ Factura creada exitosamente ($count)');
           } catch (e) {
-            debugPrint('Error importando factura individual: $e');
+            debugPrint('❌ Error importando factura individual: $e');
+            debugPrint('❌ Datos de la factura: $factura');
           }
         }
 
@@ -191,6 +201,14 @@ class _FacturasScreenState extends State<FacturasScreen>
           );
         }
         _cargarFacturas();
+      } else {
+        debugPrint('⚠️ No se importaron facturas (lista vacía o null)');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('No se encontraron facturas en el archivo')),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {

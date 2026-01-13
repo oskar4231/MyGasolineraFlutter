@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,11 +18,15 @@ class ExportService {
       debugPrint('📊 Iniciando exportación de Excel...');
       debugPrint('📊 Número de facturas a exportar: ${facturas.length}');
       var excel = Excel.createExcel();
-      // Remove default sheet if exists
+
+      // Crear la hoja "Facturas" primero
+      Sheet sheetObject = excel['Facturas'];
+
+      // Eliminar la hoja por defecto "Sheet1" si existe
       if (excel.sheets.containsKey('Sheet1')) {
         excel.delete('Sheet1');
+        debugPrint('📊 Hoja "Sheet1" eliminada');
       }
-      Sheet sheetObject = excel['Facturas'];
 
       // Headers
       List<String> headers = [
@@ -71,20 +76,21 @@ class ExportService {
       }
       debugPrint('📊 ${facturas.length} filas de datos agregadas');
 
-      // Guardar archivo
-      var fileBytes = excel.save();
-      if (fileBytes == null) {
-        debugPrint('❌ Error: excel.save() retornó null');
-        return;
+      // Guardar archivo - usar encode() en lugar de save()
+      var fileBytes = excel.encode();
+      if (fileBytes == null || fileBytes.isEmpty) {
+        debugPrint('❌ Error: excel.encode() retornó null o vacío');
+        throw Exception('No se pudieron generar los bytes del archivo Excel');
       }
       debugPrint('📊 Bytes generados: ${fileBytes.length} bytes');
 
       if (kIsWeb) {
         debugPrint('🌐 Modo Web detectado, iniciando descarga...');
         // Lógica específica para Web
-        final blob = html.Blob([
-          fileBytes
-        ], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        final blob = html.Blob(
+          [Uint8List.fromList(fileBytes)],
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        );
         final url = html.Url.createObjectUrlFromBlob(blob);
         final anchor = html.AnchorElement(href: url)
           ..setAttribute('download', 'facturas_exported.xlsx')
@@ -151,8 +157,11 @@ class ExportService {
         List<Map<String, dynamic>> facturasImportadas = [];
 
         for (var table in excel.tables.keys) {
+          debugPrint('📂 Procesando tabla: $table');
           var sheet = excel.tables[table];
           if (sheet == null) continue;
+
+          debugPrint('📂 Filas en la tabla: ${sheet.rows.length}');
 
           // Asumimos que la primera fila son headers
           bool isHeader = true;
@@ -160,27 +169,40 @@ class ExportService {
           for (var row in sheet.rows) {
             if (isHeader) {
               isHeader = false;
+              debugPrint(
+                  '📂 Headers: ${row.map((cell) => cell?.value).toList()}');
               continue;
             }
 
             // ID [0], Titulo [1], Fecha [2], Hora [3], Coste [4] ...
-            if (row.length < 5) continue; // Mínimo datos requeridos
+            if (row.length < 5) {
+              debugPrint(
+                  '⚠️ Fila omitida (menos de 5 columnas): ${row.length}');
+              continue;
+            }
+
+            // Helper function to safely get cell value
+            String? getCellValue(int index) {
+              if (index >= row.length) return null;
+              final cell = row[index];
+              if (cell == null || cell.value == null) return null;
+              return cell.value.toString();
+            }
 
             Map<String, dynamic> factura = {
-              'titulo': row[1]?.value.toString() ?? 'Importada',
-              'fecha': row[2]?.value.toString(),
-              'hora': row[3]?.value.toString(),
-              'coste': double.tryParse(row[4]?.value.toString() ?? '0') ?? 0,
-              'litros_repostados':
-                  double.tryParse(row[5]?.value.toString() ?? '0'),
-              'precio_por_litro':
-                  double.tryParse(row[6]?.value.toString() ?? '0'),
-              'tipo_combustible': row[7]?.value.toString(),
-              'kilometraje_actual':
-                  int.tryParse(row[8]?.value.toString() ?? '0'),
-              'descripcion': row[9]?.value.toString(),
+              'titulo': getCellValue(1) ?? 'Importada',
+              'fecha': getCellValue(2),
+              'hora': getCellValue(3),
+              'coste': double.tryParse(getCellValue(4) ?? '0') ?? 0,
+              'litros_repostados': double.tryParse(getCellValue(5) ?? '0'),
+              'precio_por_litro': double.tryParse(getCellValue(6) ?? '0'),
+              'tipo_combustible': getCellValue(7),
+              'kilometraje_actual': int.tryParse(getCellValue(8) ?? '0'),
+              'descripcion': getCellValue(9),
             };
 
+            debugPrint(
+                '📂 Factura importada: ${factura['titulo']} - ${factura['coste']}€');
             facturasImportadas.add(factura);
           }
         }
