@@ -274,7 +274,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
         // 2. Si hay imagen, guardar localmente en BBDD intermedia encriptada
         // Verificar ambos posibles keys para el ID
-        final idFactura = response['id'] ?? response['id_factura'];
+        final idFactura =
+            response['id'] ?? response['id_factura'] ?? response['facturaId'];
 
         print('📝 Respuesta crear factura: $response');
         print('🆔 ID Factura obtenido para imagen: $idFactura');
@@ -356,9 +357,9 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                       icon: const Icon(Icons.document_scanner),
                       label: const Text('Escanear Factura (Autocompletar)'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.tertiary,
+                        backgroundColor: Theme.of(context).primaryColor,
                         foregroundColor:
-                            Theme.of(context).colorScheme.onTertiary,
+                            Theme.of(context).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
