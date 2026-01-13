@@ -184,10 +184,18 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
         );
 
         // 2. Si hay imagen, guardar localmente en BBDD intermedia encriptada
-        if (_imagenFactura != null && response['id'] != null) {
+        // Verificar ambos posibles keys para el ID
+        final idFactura = response['id'] ?? response['id_factura'];
+
+        print('📝 Respuesta crear factura: $response');
+        print('🆔 ID Factura obtenido para imagen: $idFactura');
+
+        if (_imagenFactura != null && idFactura != null) {
           print('💾 Guardando imagen localmente...');
           await LocalImageService.saveImage(
-              _imagenFactura!, 'factura', response['id'].toString());
+              _imagenFactura!, 'factura', idFactura.toString());
+        } else if (_imagenFactura != null) {
+          print('❌ No se pudo guardar imagen: ID nulo');
         }
 
         if (mounted) {
