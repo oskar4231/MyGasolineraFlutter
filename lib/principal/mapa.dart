@@ -336,7 +336,7 @@ class _MapWidgetState extends State<MapWidget> {
 
         // Cargar gasolineras de la provincia actual y vecinas
         final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
-        final provinciasToLoad = [provinciaInfo.id, ...vecinas.take(2)];
+        final provinciasToLoad = [provinciaInfo.id, ...vecinas.take(5)];
 
         listaGasolineras = await _cacheService.getGasolinerasMultiProvincia(
           provinciasToLoad,
