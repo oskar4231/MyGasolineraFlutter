@@ -11,7 +11,6 @@
   "opciones": "Opciones",
   "idiomaActual": "Idioma Actual",
   "configuracionIdioma": "Configuración de Idioma",
-  
   "email": "Email o Usuario",
   "password": "Contraseña",
   "confirmPassword": "Confirmar contraseña",
@@ -21,7 +20,6 @@
   "olvidoPassword": "¿Has olvidado la contraseña?",
   "recordarme": "Recuérdame",
   "volver": "Volver",
-  
   "ingresaEmail": "Por favor ingresa tu email o usuario",
   "emailValido": "Ingresa un email válido",
   "ingresaPassword": "Por favor ingresa tu contraseña",
@@ -30,18 +28,15 @@
   "confirmaPassword": "Por favor confirma tu contraseña",
   "passwordsNoCoinciden": "Las contraseñas no coinciden",
   "passwordRequisitos": "La contraseña no cumple todos los requisitos",
-  
   "loginExitoso": "Login exitoso",
   "errorConexion": "Error de conexión. Asegúrate de que el servidor esté corriendo.",
   "errorLogin": "Error al iniciar sesión",
   "registroExitoso": "Cuenta creada exitosamente",
-  
   "requisitosPassword": "Requisitos de contraseña:",
   "minimo8Caracteres": "Mínimo 8 caracteres",
   "unNumero": "Al menos un número",
   "caracterEspecial": "Al menos un carácter especial",
   "mayuscula": "Al menos una letra mayúscula",
-  
   "recuperarPassword": "Recuperar Contraseña",
   "enviarCodigo": "Enviar Código",
   "ingresarCodigo": "Ingresar Código",
@@ -50,7 +45,6 @@
   "passwordActualizada": "Contraseña actualizada exitosamente",
   "codigoInvalido": "Código inválido o expirado",
   "ingresaTuCodigo": "Ingresa el código de 6 dígitos",
-  
   "facturas": "Facturas",
   "crearFactura": "Crear Factura",
   "detalleFactura": "Detalle de Factura",
@@ -78,7 +72,6 @@
   "seleccionarImagen": "Seleccionar Imagen",
   "tomarFoto": "Tomar Foto",
   "galeria": "Galería",
-  
   "consumo": "Consumo",
   "gastos": "Gastos",
   "mantenimiento": "Mantenimiento",
@@ -95,7 +88,6 @@
   "promedio": "Promedio",
   "maximo": "Máximo",
   "minimo": "Mínimo",
-  
   "combustibleConfig": "Configuración de Combustible",
   "tipoCombustible": "Tipo de Combustible",
   "gasolina": "Gasolina",
@@ -107,7 +99,6 @@
   "galones": "Galones",
   "kilometros": "Kilómetros",
   "millas": "Millas",
-  
   "accesibilidadConfig": "Configuración de Accesibilidad",
   "tamanoFuente": "Tamaño de Fuente",
   "pequeno": "Pequeño",
@@ -118,7 +109,6 @@
   "modoOscuro": "Modo Oscuro",
   "activado": "Activado",
   "desactivado": "Desactivado",
-  
   "cargando": "Cargando...",
   "sinDatos": "Sin datos disponibles",
   "error": "Error",
@@ -129,7 +119,6 @@
   "ayuda": "Ayuda",
   "acercaDe": "Acerca de",
   "version": "Versión",
-  
   "si": "Sí",
   "no": "No",
   "continuar": "Continuar",
@@ -141,7 +130,6 @@
   "restaurar": "Restaurar",
   "predeterminado": "Predeterminado",
   "nuevaFactura": "Nueva Factura",
-  
   "titulo": "Título",
   "costeTotal": "Coste Total",
   "fecha": "Fecha",
@@ -162,7 +150,6 @@
   "errorSeleccionarImagen": "Error al seleccionar imagen",
   "errorCrearFactura": "Error al crear factura",
   "guardarFactura": "Guardar Factura",
-  
   "errorCargarEstadisticas": "Error al cargar estadísticas",
   "reintentar": "Reintentar",
   "resumenGeneral": "Resumen General",
@@ -170,7 +157,6 @@
   "repostajes": "repostajes",
   "mesActual": "Mes Actual",
   "promedioRepostaje": "Promedio por Repostaje",
-  
   "costoKilometro": "Costo por Kilómetro",
   "analisisVehiculoSubtitle": "Análisis detallado por vehículo",
   "totalCoches": "Total Coches",
@@ -190,7 +176,6 @@
   "eficienciaBaja": "Eficiencia baja - Considera optimizar",
   "noDatosConsumo": "No hay datos de consumo disponibles",
   "agregaFacturasConsumo": "Agrega facturas con kilometraje para calcular costos",
-  
   "errorCargarMantenimiento": "Error cargando mantenimiento",
   "noDatosMantenimiento": "No hay datos de mantenimiento",
   "anadeCochesMantenimiento": "Añade coches con información de kilometraje",
@@ -202,14 +187,12 @@
   "necesitaCambio": "¡Necesita cambio!",
   "buenEstado": "En buen estado",
   "programaCambioAceite": "Programa el cambio de aceite próximamente",
-  
   "comparativaMensual": "Comparativa Mensual",
   "mesAnterior": "Mes Anterior",
   "proyeccionFinMes": "Proyección Fin de Mes",
   "proyeccion": "Proyección",
   "gastoActual": "Gasto Actual",
   "diaXdeY": "Día {dia} de {total}",
-  
   "tema": "Tema",
   "modoOscuro": "Modo Oscuro",
   "predeterminadoNaranja": "Predeterminado (Naranja)",
@@ -222,23 +205,50 @@
   "tamanoLabel": "Tamaño",
   "ejemploTexto": "Este es un ejemplo",
   "aplicar": "Aplicar",
-  
   "borrarCuenta": "Borrar Cuenta",
   "confirmarBorrarCuenta": "¿Estás seguro de que quieres eliminar tu cuenta?\n\nEsta acción no se puede deshacer.",
   "eliminandoCuenta": "Eliminando cuenta...",
   "errorEliminarCuenta": "Error al eliminar cuenta",
-  
   "ajustesTitulo": "Ajustes",
   "holaUsuario": "Hola, ",
   "conexionMapa": "Conexión y Mapa",
   "servidorBackend": "Servidor Backend",
   "actualizar": "Actualizar",
   "radioBusqueda": "Radio de búsqueda",
-  
   "cerrarSesion": "Cerrar sesión",
   "confirmarCerrarSesion": "¿Estás seguro de que quieres cerrar sesión?",
-  
   "confirmarCambio": "Confirmar cambio",
   "seguroCambiarIdioma": "¿Seguro que quieres cambiar el idioma a {idioma}?",
-  "idiomaCambiado": "Idioma cambiado a: {idioma}"
+  "idiomaCambiado": "Idioma cambiado a: {idioma}",
+  "filtros": "Filtros",
+  "precio": "Precio",
+  "apertura": "Apertura",
+  "veinticuatroHoras": "24 Horas",
+  "atendidasPersonal": "Gasolineras atendidas por personal",
+  "abiertasAhora": "Gasolineras abiertas ahora",
+  "todas": "Todas",
+  "tiposCombustible": "Tipos de Combustible",
+  "filtrarPrecio": "Filtrar por Precio",
+  "desde": "Desde (€)",
+  "hasta": "Hasta (€)",
+  "ejemploPrecio": "Ej: 1,50",
+  "seleccioneCombustibleAlert": "Por favor, antes de filtrar por precio seleccione un tipo de combustible",
+  "mapa": "Mapa",
+  "lista": "Lista",
+  "noGasolinerasCercanas": "No hay gasolineras cercanas con estos filtros",
+  "reintentar": "Reintentar",
+  "gasolinerasFavoritas": "Gasolineras favoritas",
+  "todos": "Todos",
+  "tipoCombustible": "Tipo de Combustible",
+  "filtrarPor": "Filtrar Por",
+  "nombre": "Nombre",
+  "precioAscendente": "Precio Ascendente",
+  "precioDescendente": "Precio Descendente",
+  "noHayFavoritos": "No hay gasolineras favoritas en tu lista",
+  "seleccionaGasolinerasEnMapa": "Selecciona gasolineras en el mapa para añadirlas aquí",
+  "verMapa": "Ver mapa",
+  "eliminadoDeFavoritos": "eliminado de favoritos",
+  "ordenNombre": "Orden: Nombre",
+  "ordenPrecioAsc": "Orden: Precio ↑",
+  "ordenPrecioDesc": "Orden: Precio ↓"
 }

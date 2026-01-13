@@ -308,7 +308,7 @@ class _CochesScreenState extends State<CochesScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           dense: true,
                         );
-                      }).toList(),
+                      }),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _kilometrajeInicialController,

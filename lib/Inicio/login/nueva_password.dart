@@ -220,8 +220,9 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                     ),
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (v) {
-                      if (v == null || v.isEmpty)
+                      if (v == null || v.isEmpty) {
                         return AppLocalizations.of(context)!.ingresaTuCodigo;
+                      }
                       if (v.length != 6) {
                         return 'El código debe tener 6 dígitos';
                       }

@@ -673,4 +673,94 @@ class AppLocalizationsEs extends AppLocalizations {
   String idiomaCambiado(Object idioma) {
     return 'Idioma cambiado a: $idioma';
   }
+
+  @override
+  String get filtros => 'Filtros';
+
+  @override
+  String get precio => 'Precio';
+
+  @override
+  String get apertura => 'Apertura';
+
+  @override
+  String get veinticuatroHoras => '24 Horas';
+
+  @override
+  String get atendidasPersonal => 'Gasolineras atendidas por personal';
+
+  @override
+  String get abiertasAhora => 'Gasolineras abiertas ahora';
+
+  @override
+  String get todas => 'Todas';
+
+  @override
+  String get tiposCombustible => 'Tipos de Combustible';
+
+  @override
+  String get filtrarPrecio => 'Filtrar por Precio';
+
+  @override
+  String get desde => 'Desde (€)';
+
+  @override
+  String get hasta => 'Hasta (€)';
+
+  @override
+  String get ejemploPrecio => 'Ej: 1,50';
+
+  @override
+  String get seleccioneCombustibleAlert =>
+      'Por favor, antes de filtrar por precio seleccione un tipo de combustible';
+
+  @override
+  String get mapa => 'Mapa';
+
+  @override
+  String get lista => 'Lista';
+
+  @override
+  String get noGasolinerasCercanas =>
+      'No hay gasolineras cercanas con estos filtros';
+
+  @override
+  String get gasolinerasFavoritas => 'Gasolineras favoritas';
+
+  @override
+  String get todos => 'Todos';
+
+  @override
+  String get filtrarPor => 'Filtrar Por';
+
+  @override
+  String get nombre => 'Nombre';
+
+  @override
+  String get precioAscendente => 'Precio Ascendente';
+
+  @override
+  String get precioDescendente => 'Precio Descendente';
+
+  @override
+  String get noHayFavoritos => 'No hay gasolineras favoritas en tu lista';
+
+  @override
+  String get seleccionaGasolinerasEnMapa =>
+      'Selecciona gasolineras en el mapa para añadirlas aquí';
+
+  @override
+  String get verMapa => 'Ver mapa';
+
+  @override
+  String get eliminadoDeFavoritos => 'eliminado de favoritos';
+
+  @override
+  String get ordenNombre => 'Orden: Nombre';
+
+  @override
+  String get ordenPrecioAsc => 'Orden: Precio ↑';
+
+  @override
+  String get ordenPrecioDesc => 'Orden: Precio ↓';
 }

@@ -1399,6 +1399,180 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Idioma cambiado a: {idioma}'**
   String idiomaCambiado(Object idioma);
+
+  /// No description provided for @filtros.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros'**
+  String get filtros;
+
+  /// No description provided for @precio.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio'**
+  String get precio;
+
+  /// No description provided for @apertura.
+  ///
+  /// In es, this message translates to:
+  /// **'Apertura'**
+  String get apertura;
+
+  /// No description provided for @veinticuatroHoras.
+  ///
+  /// In es, this message translates to:
+  /// **'24 Horas'**
+  String get veinticuatroHoras;
+
+  /// No description provided for @atendidasPersonal.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasolineras atendidas por personal'**
+  String get atendidasPersonal;
+
+  /// No description provided for @abiertasAhora.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasolineras abiertas ahora'**
+  String get abiertasAhora;
+
+  /// No description provided for @todas.
+  ///
+  /// In es, this message translates to:
+  /// **'Todas'**
+  String get todas;
+
+  /// No description provided for @tiposCombustible.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipos de Combustible'**
+  String get tiposCombustible;
+
+  /// No description provided for @filtrarPrecio.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtrar por Precio'**
+  String get filtrarPrecio;
+
+  /// No description provided for @desde.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde (€)'**
+  String get desde;
+
+  /// No description provided for @hasta.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta (€)'**
+  String get hasta;
+
+  /// No description provided for @ejemploPrecio.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: 1,50'**
+  String get ejemploPrecio;
+
+  /// No description provided for @seleccioneCombustibleAlert.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor, antes de filtrar por precio seleccione un tipo de combustible'**
+  String get seleccioneCombustibleAlert;
+
+  /// No description provided for @mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'Mapa'**
+  String get mapa;
+
+  /// No description provided for @lista.
+  ///
+  /// In es, this message translates to:
+  /// **'Lista'**
+  String get lista;
+
+  /// No description provided for @noGasolinerasCercanas.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay gasolineras cercanas con estos filtros'**
+  String get noGasolinerasCercanas;
+
+  /// No description provided for @gasolinerasFavoritas.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasolineras favoritas'**
+  String get gasolinerasFavoritas;
+
+  /// No description provided for @todos.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get todos;
+
+  /// No description provided for @filtrarPor.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtrar Por'**
+  String get filtrarPor;
+
+  /// No description provided for @nombre.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get nombre;
+
+  /// No description provided for @precioAscendente.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio Ascendente'**
+  String get precioAscendente;
+
+  /// No description provided for @precioDescendente.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio Descendente'**
+  String get precioDescendente;
+
+  /// No description provided for @noHayFavoritos.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay gasolineras favoritas en tu lista'**
+  String get noHayFavoritos;
+
+  /// No description provided for @seleccionaGasolinerasEnMapa.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona gasolineras en el mapa para añadirlas aquí'**
+  String get seleccionaGasolinerasEnMapa;
+
+  /// No description provided for @verMapa.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver mapa'**
+  String get verMapa;
+
+  /// No description provided for @eliminadoDeFavoritos.
+  ///
+  /// In es, this message translates to:
+  /// **'eliminado de favoritos'**
+  String get eliminadoDeFavoritos;
+
+  /// No description provided for @ordenNombre.
+  ///
+  /// In es, this message translates to:
+  /// **'Orden: Nombre'**
+  String get ordenNombre;
+
+  /// No description provided for @ordenPrecioAsc.
+  ///
+  /// In es, this message translates to:
+  /// **'Orden: Precio ↑'**
+  String get ordenPrecioAsc;
+
+  /// No description provided for @ordenPrecioDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Orden: Precio ↓'**
+  String get ordenPrecioDesc;
 }
 
 class _AppLocalizationsDelegate

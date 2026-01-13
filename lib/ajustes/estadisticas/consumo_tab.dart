@@ -163,7 +163,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 ...costosPorCoche.map((cocheData) {
                   final coche = cocheData as Map<String, dynamic>;
                   return _buildCocheCard(coche);
-                }).toList(),
+                }),
 
                 // Información adicional
                 const SizedBox(height: 24),
@@ -301,7 +301,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '$numFacturasValidas/${numFacturas} ${AppLocalizations.of(context)!.recargasValidas}',
+                            '$numFacturasValidas/$numFacturas ${AppLocalizations.of(context)!.recargasValidas}',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
@@ -648,10 +648,12 @@ class _ConsumoTabState extends State<ConsumoTab> {
   }
 
   String _getEficienciaMensaje(double costoPorKm) {
-    if (costoPorKm < 0.08)
+    if (costoPorKm < 0.08) {
       return AppLocalizations.of(context)!.excelenteEficiencia;
-    if (costoPorKm < 0.12)
+    }
+    if (costoPorKm < 0.12) {
       return AppLocalizations.of(context)!.eficienciaNormal;
+    }
     return AppLocalizations.of(context)!.eficienciaBaja;
   }
 

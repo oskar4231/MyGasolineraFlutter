@@ -668,4 +668,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String idiomaCambiado(Object idioma) {
     return 'Language changed to: $idioma';
   }
+
+  @override
+  String get filtros => 'Filters';
+
+  @override
+  String get precio => 'Price';
+
+  @override
+  String get apertura => 'Opening';
+
+  @override
+  String get veinticuatroHoras => '24 Hours';
+
+  @override
+  String get atendidasPersonal => 'Staffed Stations';
+
+  @override
+  String get abiertasAhora => 'Open Now';
+
+  @override
+  String get todas => 'All';
+
+  @override
+  String get tiposCombustible => 'Fuel Types';
+
+  @override
+  String get filtrarPrecio => 'Filter by Price';
+
+  @override
+  String get desde => 'From (€)';
+
+  @override
+  String get hasta => 'To (€)';
+
+  @override
+  String get ejemploPrecio => 'Ex: 1.50';
+
+  @override
+  String get seleccioneCombustibleAlert =>
+      'Please select a fuel type before filtering by price';
+
+  @override
+  String get mapa => 'Map';
+
+  @override
+  String get lista => 'List';
+
+  @override
+  String get noGasolinerasCercanas =>
+      'No nearby gas stations with these filters';
+
+  @override
+  String get gasolinerasFavoritas => 'Favorite Gas Stations';
+
+  @override
+  String get todos => 'All';
+
+  @override
+  String get filtrarPor => 'Filter By';
+
+  @override
+  String get nombre => 'Name';
+
+  @override
+  String get precioAscendente => 'Price Ascending';
+
+  @override
+  String get precioDescendente => 'Price Descending';
+
+  @override
+  String get noHayFavoritos => 'No favorite gas stations in your list';
+
+  @override
+  String get seleccionaGasolinerasEnMapa =>
+      'Select gas stations on the map to add them here';
+
+  @override
+  String get verMapa => 'View Map';
+
+  @override
+  String get eliminadoDeFavoritos => 'removed from favorites';
+
+  @override
+  String get ordenNombre => 'Order: Name';
+
+  @override
+  String get ordenPrecioAsc => 'Order: Price ↑';
+
+  @override
+  String get ordenPrecioDesc => 'Order: Price ↓';
 }

@@ -1,4 +1,5 @@
 /// Configuración centralizada de la URL del backend
+library;
 import 'package:my_gasolinera/importante/switchBackend.dart';
 
 ///

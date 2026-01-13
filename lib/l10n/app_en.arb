@@ -11,7 +11,6 @@
   "opciones": "Options",
   "idiomaActual": "Current Language",
   "configuracionIdioma": "Language Settings",
-  
   "email": "Email or Username",
   "password": "Password",
   "confirmPassword": "Confirm password",
@@ -21,7 +20,6 @@
   "olvidoPassword": "Forgot your password?",
   "recordarme": "Remember me",
   "volver": "Back",
-  
   "ingresaEmail": "Please enter your email or username",
   "emailValido": "Enter a valid email",
   "ingresaPassword": "Please enter your password",
@@ -30,18 +28,15 @@
   "confirmaPassword": "Please confirm your password",
   "passwordsNoCoinciden": "Passwords do not match",
   "passwordRequisitos": "Password does not meet all requirements",
-  
   "loginExitoso": "Login successful",
   "errorConexion": "Connection error. Make sure the server is running.",
   "errorLogin": "Login error",
   "registroExitoso": "Account created successfully",
-  
   "requisitosPassword": "Password requirements:",
   "minimo8Caracteres": "Minimum 8 characters",
   "unNumero": "At least one number",
   "caracterEspecial": "At least one special character",
   "mayuscula": "At least one uppercase letter",
-  
   "recuperarPassword": "Recover Password",
   "enviarCodigo": "Send Code",
   "ingresarCodigo": "Enter Code",
@@ -50,7 +45,6 @@
   "passwordActualizada": "Password updated successfully",
   "codigoInvalido": "Invalid or expired code",
   "ingresaTuCodigo": "Enter the 6-digit code",
-  
   "facturas": "Invoices",
   "crearFactura": "Create Invoice",
   "detalleFactura": "Invoice Details",
@@ -78,7 +72,6 @@
   "seleccionarImagen": "Select Image",
   "tomarFoto": "Take Photo",
   "galeria": "Gallery",
-  
   "consumo": "Consumption",
   "gastos": "Expenses",
   "mantenimiento": "Maintenance",
@@ -95,7 +88,6 @@
   "promedio": "Average",
   "maximo": "Maximum",
   "minimo": "Minimum",
-  
   "combustibleConfig": "Fuel Settings",
   "tipoCombustible": "Fuel Type",
   "gasolina": "Gasoline",
@@ -107,7 +99,6 @@
   "galones": "Gallons",
   "kilometros": "Kilometers",
   "millas": "Miles",
-  
   "accesibilidadConfig": "Accessibility Settings",
   "tamanoFuente": "Font Size",
   "pequeno": "Small",
@@ -118,7 +109,6 @@
   "modoOscuro": "Dark Mode",
   "activado": "Enabled",
   "desactivado": "Disabled",
-  
   "cargando": "Loading...",
   "sinDatos": "No data available",
   "error": "Error",
@@ -129,7 +119,6 @@
   "ayuda": "Help",
   "acercaDe": "About",
   "version": "Version",
-  
   "si": "Yes",
   "no": "No",
   "continuar": "Continue",
@@ -141,7 +130,6 @@
   "restaurar": "Restore",
   "predeterminado": "Default",
   "nuevaFactura": "New Invoice",
-  
   "titulo": "Title",
   "costeTotal": "Total Cost",
   "fecha": "Date",
@@ -162,7 +150,6 @@
   "errorSeleccionarImagen": "Error selecting image",
   "errorCrearFactura": "Error creating invoice",
   "guardarFactura": "Save Invoice",
-  
   "errorCargarEstadisticas": "Error loading statistics",
   "reintentar": "Retry",
   "resumenGeneral": "General Summary",
@@ -170,7 +157,6 @@
   "repostajes": "refuelings",
   "mesActual": "Current Month",
   "promedioRepostaje": "Average per Refueling",
-  
   "costoKilometro": "Cost per Kilometer",
   "analisisVehiculoSubtitle": "Detailed analysis by vehicle",
   "totalCoches": "Total Cars",
@@ -190,7 +176,6 @@
   "eficienciaBaja": "Low efficiency - Consider optimizing",
   "noDatosConsumo": "No consumption data available",
   "agregaFacturasConsumo": "Add invoices with mileage to calculate costs",
-  
   "errorCargarMantenimiento": "Error loading maintenance",
   "noDatosMantenimiento": "No maintenance data available",
   "anadeCochesMantenimiento": "Add cars with mileage information",
@@ -202,14 +187,12 @@
   "necesitaCambio": "Needs change!",
   "buenEstado": "In good condition",
   "programaCambioAceite": "Schedule oil change soon",
-  
   "comparativaMensual": "Monthly Comparison",
   "mesAnterior": "Previous Month",
   "proyeccionFinMes": "End of Month Projection",
   "proyeccion": "Projection",
   "gastoActual": "Current Spending",
   "diaXdeY": "Day {dia} of {total}",
-  
   "tema": "Theme",
   "modoOscuro": "Dark Mode",
   "predeterminadoNaranja": "Default (Orange)",
@@ -222,23 +205,50 @@
   "tamanoLabel": "Size",
   "ejemploTexto": "This is an example",
   "aplicar": "Apply",
-  
   "borrarCuenta": "Delete Account",
   "confirmarBorrarCuenta": "Are you sure you want to delete your account?\n\nThis action cannot be undone.",
   "eliminandoCuenta": "Deleting account...",
   "errorEliminarCuenta": "Error deleting account",
-  
   "ajustesTitulo": "Settings",
   "holaUsuario": "Hello, ",
   "conexionMapa": "Connection and Map",
   "servidorBackend": "Backend Server",
   "actualizar": "Refresh",
   "radioBusqueda": "Search Radius",
-  
   "cerrarSesion": "Log Out",
   "confirmarCerrarSesion": "Are you sure you want to log out?",
-  
   "confirmarCambio": "Confirm Change",
   "seguroCambiarIdioma": "Are you sure you want to change the language to {idioma}?",
-  "idiomaCambiado": "Language changed to: {idioma}"
+  "idiomaCambiado": "Language changed to: {idioma}",
+  "filtros": "Filters",
+  "precio": "Price",
+  "apertura": "Opening",
+  "veinticuatroHoras": "24 Hours",
+  "atendidasPersonal": "Staffed Stations",
+  "abiertasAhora": "Open Now",
+  "todas": "All",
+  "tiposCombustible": "Fuel Types",
+  "filtrarPrecio": "Filter by Price",
+  "desde": "From (€)",
+  "hasta": "To (€)",
+  "ejemploPrecio": "Ex: 1.50",
+  "seleccioneCombustibleAlert": "Please select a fuel type before filtering by price",
+  "mapa": "Map",
+  "lista": "List",
+  "noGasolinerasCercanas": "No nearby gas stations with these filters",
+  "reintentar": "Retry",
+  "gasolinerasFavoritas": "Favorite Gas Stations",
+  "todos": "All",
+  "tipoCombustible": "Fuel Type",
+  "filtrarPor": "Filter By",
+  "nombre": "Name",
+  "precioAscendente": "Price Ascending",
+  "precioDescendente": "Price Descending",
+  "noHayFavoritos": "No favorite gas stations in your list",
+  "seleccionaGasolinerasEnMapa": "Select gas stations on the map to add them here",
+  "verMapa": "View Map",
+  "eliminadoDeFavoritos": "removed from favorites",
+  "ordenNombre": "Order: Name",
+  "ordenPrecioAsc": "Order: Price ↑",
+  "ordenPrecioDesc": "Order: Price ↓"
 }

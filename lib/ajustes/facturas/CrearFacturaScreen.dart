@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:my_gasolinera/services/factura_service.dart';
 import 'package:my_gasolinera/services/coche_service.dart';
 import 'package:my_gasolinera/services/local_image_service.dart';
-import 'package:my_gasolinera/principal/layouthome.dart';
 import 'package:intl/intl.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 
@@ -411,7 +410,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
                   // Dropdown Coche
                   DropdownButtonFormField<int>(
-                    value: _cocheSeleccionado,
+                    initialValue: _cocheSeleccionado,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.coche,
                       labelStyle: TextStyle(
@@ -541,7 +540,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                     ),
                     // Dropdown Tipo de Combustible
                     child: DropdownButtonFormField<String>(
-                      value: _tipoCombustibleSeleccionado,
+                      initialValue: _tipoCombustibleSeleccionado,
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText:

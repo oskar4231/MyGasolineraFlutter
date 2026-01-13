@@ -163,7 +163,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         listenable: ThemeManager(),
                         builder: (context, _) {
                           return DropdownButtonFormField<int>(
-                            value: ThemeManager().currentThemeId,
+                            initialValue: ThemeManager().currentThemeId,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8)),

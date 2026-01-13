@@ -7,6 +7,7 @@ import 'package:my_gasolinera/principal/lista.dart';
 import 'mapa.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/coches/coches.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'favoritos.dart'; // Importar la nueva pantalla de favoritos
 
 class Layouthome extends StatefulWidget {
@@ -83,7 +84,9 @@ class _LayouthomeState extends State<Layouthome> {
       if (permission == LocationPermission.deniedForever) return;
 
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.best,
+        ),
       );
 
       if (mounted) {
@@ -239,7 +242,7 @@ class _LayouthomeState extends State<Layouthome> {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: CheckboxListTile(
@@ -255,7 +258,7 @@ class _LayouthomeState extends State<Layouthome> {
 
   void _mostrarDialogoFiltro({
     required String titulo,
-    required List<String> opciones,
+    required Map<String, String> opciones, // Key -> Label
     required String? valorActual,
     required Function(String?) onAplicar,
   }) {
@@ -284,10 +287,10 @@ class _LayouthomeState extends State<Layouthome> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ...opciones.map(
-                  (opcion) => _buildCheckboxOption(
-                    opcion,
-                    opcion,
+                ...opciones.entries.map(
+                  (entry) => _buildCheckboxOption(
+                    entry.value, // Label
+                    entry.key, // Value (Internal)
                     valorTemporal,
                     (valor) => setStateDialog(() => valorTemporal = valor),
                   ),
@@ -298,9 +301,9 @@ class _LayouthomeState extends State<Layouthome> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Cancelar',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancelar,
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -316,9 +319,9 @@ class _LayouthomeState extends State<Layouthome> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'Aplicar',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: Text(
+                        AppLocalizations.of(context)!.aplicar,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -332,14 +335,15 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroApertura() {
+    final l10n = AppLocalizations.of(context)!;
     _mostrarDialogoFiltro(
-      titulo: 'Apertura',
-      opciones: [
-        '24 Horas',
-        'Gasolineras atendidas por personal',
-        'Gasolineras abiertas ahora',
-        'Todas',
-      ],
+      titulo: l10n.apertura,
+      opciones: {
+        '24 Horas': l10n.veinticuatroHoras,
+        'Gasolineras atendidas por personal': l10n.atendidasPersonal,
+        'Gasolineras abiertas ahora': l10n.abiertasAhora,
+        'Todas': l10n.todas,
+      },
       valorActual: _tipoAperturaSeleccionado,
       onAplicar: (valor) {
         setState(() => _tipoAperturaSeleccionado = valor);
@@ -349,15 +353,16 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroCombustible() {
+    final l10n = AppLocalizations.of(context)!;
     _mostrarDialogoFiltro(
-      titulo: 'Tipos de Combustible',
-      opciones: [
-        'Gasolina 95',
-        'Gasolina 98',
-        'Diesel',
-        'Diesel Premium',
-        'Gas',
-      ],
+      titulo: l10n.tiposCombustible,
+      opciones: {
+        'Gasolina 95': '${l10n.gasolina} 95',
+        'Gasolina 98': '${l10n.gasolina} 98',
+        'Diesel': l10n.diesel,
+        'Diesel Premium': '${l10n.diesel} Premium',
+        'Gas': 'Gas (GLP)', // Or localized 'Gas' if available
+      },
       valorActual: _tipoCombustibleSeleccionado,
       onAplicar: (valor) {
         setState(() {
@@ -373,13 +378,14 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroPrecio() {
+    final l10n = AppLocalizations.of(context)!;
     if (_tipoCombustibleSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Por favor, antes de filtrar por precio seleccione un tipo de combustible',
+          content: Text(
+            l10n.seleccioneCombustibleAlert,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFFFF9350),
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -421,18 +427,18 @@ class _LayouthomeState extends State<Layouthome> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Filtrar por Precio',
-                  style: TextStyle(
+                Text(
+                  l10n.filtrarPrecio,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Desde (€)',
-                  style: TextStyle(
+                Text(
+                  l10n.desde,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -450,7 +456,7 @@ class _LayouthomeState extends State<Layouthome> {
                     ),
                   ],
                   decoration: InputDecoration(
-                    hintText: 'Ej: 1,50',
+                    hintText: l10n.ejemploPrecio,
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     filled: true,
                     fillColor: Colors.white,
@@ -465,9 +471,9 @@ class _LayouthomeState extends State<Layouthome> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Hasta (€)',
-                  style: TextStyle(
+                Text(
+                  l10n.hasta,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -485,7 +491,7 @@ class _LayouthomeState extends State<Layouthome> {
                     ),
                   ],
                   decoration: InputDecoration(
-                    hintText: 'Ej: 2,00',
+                    hintText: l10n.ejemploPrecio,
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     filled: true,
                     fillColor: Colors.white,
@@ -505,9 +511,9 @@ class _LayouthomeState extends State<Layouthome> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text(
-                        'Cancelar',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        l10n.cancelar,
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -539,9 +545,9 @@ class _LayouthomeState extends State<Layouthome> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'Aplicar',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      child: Text(
+                        l10n.aplicar,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -559,6 +565,8 @@ class _LayouthomeState extends State<Layouthome> {
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final theme = Theme.of(context);
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: theme.colorScheme.surface,
@@ -573,14 +581,14 @@ class _LayouthomeState extends State<Layouthome> {
                 margin: EdgeInsets.zero,
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Filtros',
+                  l10n.filtros,
                   style: TextStyle(
                       fontSize: 20, color: theme.colorScheme.onPrimary),
                 ),
               ),
             ),
             ListTile(
-              title: Text('Precio',
+              title: Text(l10n.precio,
                   style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Navigator.of(context).pop();
@@ -588,7 +596,7 @@ class _LayouthomeState extends State<Layouthome> {
               },
             ),
             ListTile(
-              title: Text('Combustible',
+              title: Text(l10n.combustible,
                   style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Navigator.of(context).pop();
@@ -596,7 +604,7 @@ class _LayouthomeState extends State<Layouthome> {
               },
             ),
             ListTile(
-              title: Text('Apertura',
+              title: Text(l10n.apertura,
                   style: TextStyle(color: theme.colorScheme.onSurface)),
               onTap: () {
                 Navigator.of(context).pop();
@@ -653,29 +661,32 @@ class _LayouthomeState extends State<Layouthome> {
                             },
                             borderRadius: BorderRadius.circular(8),
                             selectedColor: theme.colorScheme.onPrimary,
-                            color: theme.colorScheme.onPrimary.withOpacity(0.7),
-                            fillColor:
-                                theme.colorScheme.onPrimary.withOpacity(0.2),
+                            color: theme.colorScheme.onPrimary
+                                .withValues(alpha: 0.7),
+                            fillColor: theme.colorScheme.onPrimary
+                                .withValues(alpha: 0.2),
                             constraints: const BoxConstraints(
                               minHeight: 32,
                               minWidth: 85,
                             ),
-                            children: const [
+                            children: [
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
                                 child: Text(
-                                  'Mapa',
-                                  style: TextStyle(
+                                  l10n.mapa,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 13,
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
                                 child: Text(
-                                  'Lista',
-                                  style: TextStyle(
+                                  l10n.lista,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 13,
                                   ),
@@ -748,7 +759,7 @@ class _LayouthomeState extends State<Layouthome> {
                           precioHasta: _precioHasta,
                           tipoAperturaSeleccionado: _tipoAperturaSeleccionado,
                         )
-                      : _buildListContent(),
+                      : _buildListContent(context),
                 ),
               ),
             ),
@@ -812,7 +823,9 @@ class _LayouthomeState extends State<Layouthome> {
     );
   }
 
-  Widget _buildListContent() {
+  Widget _buildListContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -823,15 +836,15 @@ class _LayouthomeState extends State<Layouthome> {
         children: [
           const Icon(Icons.location_off, size: 50, color: Colors.grey),
           const SizedBox(height: 10),
-          const Text(
-            'No hay gasolineras cercanas con estos filtros',
+          Text(
+            l10n.noGasolinerasCercanas,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: _recargarDatos,
-            child: const Text('Reintentar'),
+            child: Text(l10n.reintentar),
           ),
         ],
       );

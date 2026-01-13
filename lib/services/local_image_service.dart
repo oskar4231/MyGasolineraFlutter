@@ -54,11 +54,9 @@ class LocalImageService {
       }
 
       // Si tenemos contenido en blob (nueva versión)
-      if (record.content != null) {
-        // Drift devuelve Uint8List para BlobColumn
-        return _encryptBytes(record.content); // XOR es simétrico
-      }
-
+      // Drift devuelve Uint8List para BlobColumn
+      return _encryptBytes(record.content); // XOR es simétrico
+    
       // Fallback para versión antigua (si existiera lógica de archivo, pero la hemos eliminado para compatibilidad Web)
       // Si la columna content está vacía, no podemos recuperar la imagen en Web si dependía de FileSystem.
       return null;

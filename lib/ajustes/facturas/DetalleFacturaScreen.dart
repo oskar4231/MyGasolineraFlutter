@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:my_gasolinera/services/api_config.dart';
 import 'package:intl/intl.dart';
 import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
