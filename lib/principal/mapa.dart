@@ -12,6 +12,7 @@ import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/services/provincia_service.dart';
+import 'package:my_gasolinera/services/geocoding_service.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -23,6 +24,7 @@ class MapaTiempoReal extends StatefulWidget {
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
   double _radiusKm = 25.0;
   Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
+  String _provinciaActual = 'Detectando...'; // 🆕 Provincia actual del usuario
 
   @override
   void initState() {
@@ -39,13 +41,24 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
     }
   }
 
+  /// 🆕 Actualiza la provincia actual en el AppBar
+  /// Llamado por MapWidget cuando detecta un cambio de provincia
+  void _actualizarProvincia(String nombreProvincia) {
+    if (mounted) {
+      setState(() {
+        _provinciaActual = nombreProvincia;
+      });
+      print('✅ AppBar: Provincia actualizada: $_provinciaActual');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Mi Ubicación en Tiempo Real',
+          '📍 $_provinciaActual', // 🆕 Muestra provincia en tiempo real
           style: TextStyle(
             color: theme.colorScheme.onPrimary,
           ),
@@ -56,6 +69,10 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
       body: MapWidget(
         key: _mapKey,
         radiusKm: _radiusKm,
+        onProvinciaUpdate: (String provincia) {
+          // 🆕 Callback para actualizar provincia en el AppBar
+          _actualizarProvincia(provincia);
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -83,6 +100,8 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
 class MapWidget extends StatefulWidget {
   final List<Gasolinera>? externalGasolineras;
   final Function(double lat, double lng)? onLocationUpdate;
+  final Function(String provincia)?
+      onProvinciaUpdate; // 🆕 Callback para actualizar provincia
 
   // Parámetros para filtros
   final String? combustibleSeleccionado;
@@ -95,6 +114,7 @@ class MapWidget extends StatefulWidget {
     super.key,
     this.externalGasolineras,
     this.onLocationUpdate,
+    this.onProvinciaUpdate, // 🆕 Callback para provincia
     this.combustibleSeleccionado,
     this.precioDesde,
     this.precioHasta,
@@ -167,6 +187,27 @@ class _MapWidgetState extends State<MapWidget> {
       setState(() {
         _favoritosIds = ids;
       });
+    }
+  }
+
+  /// 🆕 Actualiza la provincia actual usando geocodificación inversa
+  /// Notifica al widget padre mediante el callback onProvinciaUpdate
+  Future<void> _actualizarProvincia(double lat, double lng) async {
+    try {
+      print('🔄 MapWidget: Actualizando provincia para ($lat, $lng)...');
+
+      // Llamar al servicio de geocodificación
+      final nombreProvincia =
+          await GeocodingService.obtenerProvinciaDesdeCoords(lat, lng);
+
+      print('✅ MapWidget: Provincia detectada: $nombreProvincia');
+
+      // 🆕 Notificar al widget padre para actualizar el AppBar
+      if (widget.onProvinciaUpdate != null) {
+        widget.onProvinciaUpdate!(nombreProvincia);
+      }
+    } catch (e) {
+      print('❌ MapWidget: Error actualizando provincia: $e');
     }
   }
 
@@ -686,6 +727,9 @@ class _MapWidgetState extends State<MapWidget> {
         _cargarGasolineras(posicion.latitude, posicion.longitude,
             isInitialLoad: true);
 
+        // 🆕 Actualizar provincia inicial
+        _actualizarProvincia(posicion.latitude, posicion.longitude);
+
         if (widget.onLocationUpdate != null) {
           widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
         }
@@ -712,6 +756,9 @@ class _MapWidgetState extends State<MapWidget> {
           ),
         );
       });
+
+      // 🆕 Actualizar provincia cada vez que el usuario se mueve >5 metros
+      _actualizarProvincia(pos.latitude, pos.longitude);
 
       if (widget.onLocationUpdate != null) {
         _debounceTimer?.cancel();

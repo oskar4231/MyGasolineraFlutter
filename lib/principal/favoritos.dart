@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart'; // 🆕 Para obtener ubicación
+import 'package:my_gasolinera/services/provincia_service.dart'; // 🆕 Para detectar provincia
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -32,19 +34,57 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     });
 
     try {
-      // 1. Cargar todas las gasolineras
-      _todasLasGasolineras = await fetchGasolineras();
+      // 1. Obtener ubicación actual
+      Position? position;
+      try {
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (serviceEnabled) {
+          LocationPermission permission = await Geolocator.checkPermission();
+          if (permission == LocationPermission.denied) {
+            permission = await Geolocator.requestPermission();
+          }
+          if (permission != LocationPermission.denied &&
+              permission != LocationPermission.deniedForever) {
+            position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.best,
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint('Error obteniendo ubicación: $e');
+      }
 
-      // 2. Cargar IDs de favoritos desde SharedPreferences
+      // 2. Detectar provincia (o usar Madrid por defecto)
+      String provinciaId = '28'; // Madrid por defecto
+      if (position != null) {
+        try {
+          final provinciaInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          provinciaId = provinciaInfo.id;
+          debugPrint(
+              'Provincia detectada: ${provinciaInfo.nombre} ($provinciaId)');
+        } catch (e) {
+          debugPrint(
+              'Error detectando provincia: $e, usando Madrid por defecto');
+        }
+      }
+
+      // 3. Cargar gasolineras de la provincia detectada
+      _todasLasGasolineras = await fetchGasolinerasByProvincia(provinciaId);
+
+      // 4. Cargar IDs de favoritos desde SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
 
-      // 3. Filtrar gasolineras favoritas
+      // 5. Filtrar gasolineras favoritas
       _gasolinerasFavoritas = _todasLasGasolineras
           .where((g) => idsFavoritos.contains(g.id))
           .toList();
 
-      // 4. Aplicar orden inicial
+      // 6. Aplicar orden inicial
       _aplicarOrden();
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');
@@ -110,10 +150,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     String ordenTemp = _ordenSeleccionado == 'nombre'
         ? 'Nombre'
         : _ordenSeleccionado == 'precio_asc'
-        ? 'Precio Ascendente'
-        : _ordenSeleccionado == 'precio_desc'
-        ? 'Precio Descendente'
-        : 'Nombre';
+            ? 'Precio Ascendente'
+            : _ordenSeleccionado == 'precio_desc'
+                ? 'Precio Descendente'
+                : 'Nombre';
 
     showDialog(
       context: context,
@@ -202,27 +242,26 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 combustibleTemp = nuevoValor!;
                               });
                             },
-                            items:
-                                [
-                                  'Todos',
-                                  'Gasolina 95',
-                                  'Gasolina 98',
-                                  'Diesel',
-                                  'Diesel Premium',
-                                  'Gas',
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
+                            items: [
+                              'Todos',
+                              'Gasolina 95',
+                              'Gasolina 98',
+                              'Diesel',
+                              'Diesel Premium',
+                              'Gas',
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ),
@@ -356,8 +395,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               setState(() {
                                 _tipoCombustibleSeleccionado =
                                     (combustibleTemp == 'Todos')
-                                    ? null
-                                    : combustibleTemp;
+                                        ? null
+                                        : combustibleTemp;
 
                                 if (ordenTemp == 'Nombre') {
                                   _ordenSeleccionado = 'nombre';
@@ -512,7 +551,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               ],
             ),
           ),
-
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
@@ -613,115 +651,117 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               child: CircularProgressIndicator(color: Color(0xFFFF9350)),
             )
           : _gasolinerasFavoritas.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.star_border,
+                            size: 80, color: Colors.grey[400]),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'No hay gasolineras favoritas en tu lista',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Selecciona gasolineras en el mapa para añadirlas aquí',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 30),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.map),
+                          label: const Text('Ver mapa'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF9350),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Column(
                   children: [
-                    Icon(Icons.star_border, size: 80, color: Colors.grey[400]),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'No hay gasolineras favoritas en tu lista',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Selecciona gasolineras en el mapa para añadirlas aquí',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 30),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.map),
-                      label: const Text('Ver mapa'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF9350),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    // FILA DE FILTROS ACTIVOS
+                    if (_tipoCombustibleSeleccionado != null ||
+                        _ordenSeleccionado != null)
+                      Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                          horizontal: 16,
+                          vertical: 8,
                         ),
+                        color: Colors.white,
+                        child: Row(
+                          children: [
+                            if (_tipoCombustibleSeleccionado != null)
+                              Chip(
+                                label: Text(_tipoCombustibleSeleccionado!),
+                                backgroundColor: const Color(
+                                  0xFFFF9350,
+                                ).withOpacity(0.2),
+                                onDeleted: () {
+                                  setState(() {
+                                    _tipoCombustibleSeleccionado = null;
+                                    _aplicarOrden();
+                                  });
+                                },
+                              ),
+                            if (_ordenSeleccionado != null)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Chip(
+                                  label: Text(
+                                    _ordenSeleccionado == 'nombre'
+                                        ? 'Orden: Nombre'
+                                        : _ordenSeleccionado == 'precio_asc'
+                                            ? 'Orden: Precio ↑'
+                                            : 'Orden: Precio ↓',
+                                  ),
+                                  backgroundColor: const Color(
+                                    0xFFFF9350,
+                                  ).withOpacity(0.2),
+                                  onDeleted: () {
+                                    setState(() {
+                                      _ordenSeleccionado = null;
+                                      _aplicarOrden();
+                                    });
+                                  },
+                                ),
+                              ),
+                            const Spacer(),
+                          ],
+                        ),
+                      ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        itemCount: _gasolinerasFavoritas.length,
+                        itemBuilder: (context, index) {
+                          return _buildGasolineraItem(
+                              _gasolinerasFavoritas[index]);
+                        },
                       ),
                     ),
                   ],
                 ),
-              ),
-            )
-          : Column(
-              children: [
-                // FILA DE FILTROS ACTIVOS
-                if (_tipoCombustibleSeleccionado != null ||
-                    _ordenSeleccionado != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        if (_tipoCombustibleSeleccionado != null)
-                          Chip(
-                            label: Text(_tipoCombustibleSeleccionado!),
-                            backgroundColor: const Color(
-                              0xFFFF9350,
-                            ).withOpacity(0.2),
-                            onDeleted: () {
-                              setState(() {
-                                _tipoCombustibleSeleccionado = null;
-                                _aplicarOrden();
-                              });
-                            },
-                          ),
-                        if (_ordenSeleccionado != null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Chip(
-                              label: Text(
-                                _ordenSeleccionado == 'nombre'
-                                    ? 'Orden: Nombre'
-                                    : _ordenSeleccionado == 'precio_asc'
-                                    ? 'Orden: Precio ↑'
-                                    : 'Orden: Precio ↓',
-                              ),
-                              backgroundColor: const Color(
-                                0xFFFF9350,
-                              ).withOpacity(0.2),
-                              onDeleted: () {
-                                setState(() {
-                                  _ordenSeleccionado = null;
-                                  _aplicarOrden();
-                                });
-                              },
-                            ),
-                          ),
-                        const Spacer(),
-                      ],
-                    ),
-                  ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: _gasolinerasFavoritas.length,
-                    itemBuilder: (context, index) {
-                      return _buildGasolineraItem(_gasolinerasFavoritas[index]);
-                    },
-                  ),
-                ),
-              ],
-            ),
     );
   }
 }
