@@ -170,37 +170,10 @@ class DetalleFacturaScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          FacturaImageWidget.showFullScreen(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => Scaffold(
-                                backgroundColor: Colors.black,
-                                appBar: AppBar(
-                                  backgroundColor: Colors.transparent,
-                                  elevation: 0,
-                                  iconTheme: const IconThemeData(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                body: Center(
-                                  child: InteractiveViewer(
-                                    minScale: 0.5,
-                                    maxScale: 4.0,
-                                    child: FacturaImageWidget(
-                                      facturaId: factura['id_factura'] ??
-                                          factura['id'],
-                                      serverPath: factura['imagenPath'],
-                                      fit: BoxFit.contain,
-                                      errorBuilder: (context) => const Icon(
-                                        Icons.broken_image,
-                                        color: Colors.white,
-                                        size: 100,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            facturaId: factura['id_factura'] ?? factura['id'],
+                            serverPath: factura['imagenPath'],
                           );
                         },
                         child: FacturaImageWidget(
