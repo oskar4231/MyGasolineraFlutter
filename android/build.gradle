@@ -1,2 +1,18 @@
-// Este archivo debe estar vacío o solo contener configuración a nivel de proyecto
-// La configuración de plugins está en android/app/build.gradle
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
