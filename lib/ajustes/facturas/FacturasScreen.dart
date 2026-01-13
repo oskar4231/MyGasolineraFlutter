@@ -254,8 +254,9 @@ class _FacturasScreenState extends State<FacturasScreen> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: FacturaImageWidget(
-                                  facturaId:
-                                      factura['id_factura'] ?? factura['id'],
+                                  facturaId: factura['id_factura'] ??
+                                      factura['id'] ??
+                                      factura['facturaId'],
                                   serverPath: factura['imagenPath'],
                                   fit: BoxFit.cover,
                                   errorBuilder: (context) => Icon(
@@ -298,8 +299,10 @@ class _FacturasScreenState extends State<FacturasScreen> {
                             trailing: IconButton(
                               icon: Icon(Icons.delete,
                                   color: Theme.of(context).colorScheme.error),
-                              onPressed: () =>
-                                  _eliminarFactura(factura['id_factura']),
+                              onPressed: () => _eliminarFactura(
+                                  factura['id_factura'] ??
+                                      factura['id'] ??
+                                      factura['facturaId']),
                             ),
                             onTap: () => _verDetalleFactura(factura),
                           ),
