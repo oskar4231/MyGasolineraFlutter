@@ -162,7 +162,18 @@ class _FacturasScreenState extends State<FacturasScreen>
             debugPrint('📥 Procesando factura: ${factura['titulo']}');
             String fecha = factura['fecha'] ??
                 DateFormat('yyyy-MM-dd').format(DateTime.now());
-            if (fecha.contains('/')) {
+
+            // Convert date to MySQL-compatible format (YYYY-MM-DD)
+            if (fecha.contains('T')) {
+              // ISO 8601 format (e.g., 2026-01-12T23:00:00.000Z)
+              try {
+                DateTime parsedDate = DateTime.parse(fecha);
+                fecha = DateFormat('yyyy-MM-dd').format(parsedDate);
+              } catch (e) {
+                debugPrint('⚠️ Error parsing ISO date: $e');
+              }
+            } else if (fecha.contains('/')) {
+              // DD/MM/YYYY format
               var parts = fecha.split('/');
               if (parts.length == 3) {
                 fecha = '${parts[2]}-${parts[1]}-${parts[0]}';
