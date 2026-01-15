@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:intl/intl.dart';
+import 'package:my_gasolinera/services/navigation_service.dart';
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -111,7 +112,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     // Colores dinámicos para el diálogo
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = Theme.of(context).primaryColor;
-    final textColor = Colors.white;
+    const textColor = Colors.white;
 
     showDialog(
       context: context,
@@ -134,7 +135,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Filtros',
                         style: TextStyle(
                           fontSize: 24,
@@ -143,7 +144,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Text(
+                      const Text(
                         'TIPO DE COMBUSTIBLE',
                         style: TextStyle(
                           fontSize: 12,
@@ -172,7 +173,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               size: 28,
                             ),
                             style: const TextStyle(
-                              color: Colors.black, // Texto dentro del dropdown siempre negro
+                              color: Colors
+                                  .black, // Texto dentro del dropdown siempre negro
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
@@ -200,7 +202,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
+                      const Text(
                         'FILTRAR POR',
                         style: TextStyle(
                           fontSize: 12,
@@ -271,7 +273,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 vertical: 12,
                               ),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Cancelar',
                               style: TextStyle(
                                 color: textColor,
@@ -343,7 +345,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
     // --- Colores Dinámicos para la Tarjeta ---
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Fondo de la tarjeta: Blanco degradado en claro, Gris oscuro en dark
     final cardDecoration = isDark
         ? BoxDecoration(
@@ -376,10 +378,14 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final textColor = isDark ? Colors.white : const Color(0xFF492714);
     final subtitleColor = isDark ? Colors.white70 : Colors.grey[600];
     final iconBgColor = isDark ? Colors.white10 : const Color(0xFFFF9350);
-    final iconColor = isDark ? Colors.white : Colors.white; // Icono siempre blanco si el fondo es naranja, pero en dark el fondo es transparente
+    final iconColor = isDark
+        ? Colors.white
+        : Colors
+            .white; // Icono siempre blanco si el fondo es naranja, pero en dark el fondo es transparente
 
     // Contenedor de precios (parte inferior)
-    final pricesContainerColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFF0E6);
+    final pricesContainerColor =
+        isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFF0E6);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -393,7 +399,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFFFF9350) : const Color(0xFFFF9350), // Mantenemos el acento naranja
+                    color: isDark
+                        ? const Color(0xFFFF9350)
+                        : const Color(
+                            0xFFFF9350), // Mantenemos el acento naranja
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Icon(
@@ -457,13 +466,38 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                   },
                   icon: Icon(
                     Icons.star_rounded,
-                    color: isDark ? Colors.amber : const Color(0xFFFF9350), // Ámbar destaca mejor en dark
+                    color: isDark
+                        ? Colors.amber
+                        : const Color(
+                            0xFFFF9350), // Ámbar destaca mejor en dark
                     size: 32,
                   ),
                 ),
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  NavigationService.launchMaps(gasolinera.lat, gasolinera.lng);
+                },
+                icon: const Icon(Icons.navigation, size: 18),
+                label: const Text('Cómo ir'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -483,7 +517,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     );
   }
 
-  List<Widget> _buildPreciosPremium(Gasolinera g, NumberFormat formatter, bool isDark) {
+  List<Widget> _buildPreciosPremium(
+      Gasolinera g, NumberFormat formatter, bool isDark) {
     final preciosWidgets = <Widget>[];
     // Texto de las etiquetas (G95, Diesel...)
     final labelColor = isDark ? Colors.white70 : Colors.grey[700];
@@ -491,9 +526,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     Widget buildPrice(String label, double price, Color color) {
       // Ajustamos el color del precio en modo oscuro para que sea legible
       // Si el color original es negro (diesel), lo pasamos a blanco
-      final displayColor = (isDark && color == const Color(0xFF000000)) 
-          ? Colors.white 
-          : color;
+      final displayColor =
+          (isDark && color == const Color(0xFF000000)) ? Colors.white : color;
 
       return Column(
         children: [
@@ -549,7 +583,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final primaryColor = Theme.of(context).primaryColor;
     final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Iconos de la AppBar (Blanco en dark, Negro en light)
     final appBarIconColor = isDark ? Colors.white : Colors.black;
     final appBarTextColor = isDark ? Colors.white : Colors.black;
@@ -567,7 +601,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         ),
         backgroundColor: primaryColor, // Dinámico
         centerTitle: true,
-        iconTheme: IconThemeData(color: appBarIconColor), // Para la flecha de volver
+        iconTheme:
+            IconThemeData(color: appBarIconColor), // Para la flecha de volver
         actions: [
           IconButton(
             onPressed: _mostrarFiltros,
@@ -586,7 +621,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.star_border, size: 80, color: Colors.grey[400]),
+                        Icon(Icons.star_border,
+                            size: 80, color: Colors.grey[400]),
                         const SizedBox(height: 20),
                         const Text(
                           'No hay gasolineras favoritas en tu lista',
@@ -629,25 +665,31 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               : Column(
                   children: [
                     // FILA DE FILTROS ACTIVOS
-                    if (_tipoCombustibleSeleccionado != null || _ordenSeleccionado != null)
+                    if (_tipoCombustibleSeleccionado != null ||
+                        _ordenSeleccionado != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
                         ),
-                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white, // Fondo de la barra de filtros
+                        color: isDark
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.white, // Fondo de la barra de filtros
                         child: Row(
                           children: [
                             if (_tipoCombustibleSeleccionado != null)
                               Chip(
                                 label: Text(
                                   _tipoCombustibleSeleccionado!,
-                                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                                  style: TextStyle(
+                                      color:
+                                          isDark ? Colors.white : Colors.black),
                                 ),
-                                backgroundColor: isDark 
-                                    ? Colors.white24 
+                                backgroundColor: isDark
+                                    ? Colors.white24
                                     : const Color(0xFFFF9350).withOpacity(0.2),
-                                deleteIconColor: isDark ? Colors.white70 : Colors.black54,
+                                deleteIconColor:
+                                    isDark ? Colors.white70 : Colors.black54,
                                 onDeleted: () {
                                   setState(() {
                                     _tipoCombustibleSeleccionado = null;
@@ -665,12 +707,17 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                         : _ordenSeleccionado == 'precio_asc'
                                             ? 'Orden: Precio ↑'
                                             : 'Orden: Precio ↓',
-                                    style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                                    style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black),
                                   ),
-                                  backgroundColor: isDark 
-                                      ? Colors.white24 
-                                      : const Color(0xFFFF9350).withOpacity(0.2),
-                                  deleteIconColor: isDark ? Colors.white70 : Colors.black54,
+                                  backgroundColor: isDark
+                                      ? Colors.white24
+                                      : const Color(0xFFFF9350)
+                                          .withOpacity(0.2),
+                                  deleteIconColor:
+                                      isDark ? Colors.white70 : Colors.black54,
                                   onDeleted: () {
                                     setState(() {
                                       _ordenSeleccionado = null;
@@ -688,7 +735,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         itemCount: _gasolinerasFavoritas.length,
                         itemBuilder: (context, index) {
-                          return _buildGasolineraItem(_gasolinerasFavoritas[index]);
+                          return _buildGasolineraItem(
+                              _gasolinerasFavoritas[index]);
                         },
                       ),
                     ),

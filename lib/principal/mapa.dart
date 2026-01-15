@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/services/navigation_service.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
@@ -17,17 +18,9 @@ class MapaTiempoReal extends StatefulWidget {
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Mapa de Gasolineras',
-          style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        ),
-        backgroundColor: primaryColor,
-        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+        title: const Text('Mapa de Gasolineras'),
       ),
       body: const MapWidget(),
       floatingActionButton: FloatingActionButton(
@@ -37,7 +30,6 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
           );
         },
-        backgroundColor: primaryColor,
         child: Image.asset(
           'lib/assets/ajustes.png',
           width: 24,
@@ -72,15 +64,16 @@ class MapWidget extends StatefulWidget {
   _MapWidgetState createState() => _MapWidgetState();
 }
 
-class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin {
+class _MapWidgetState extends State<MapWidget>
+    with AutomaticKeepAliveClientMixin {
   GoogleMapController? mapController;
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
-  
+
   // --- MEMORIA PERSISTENTE ---
   // Esta variable estática sobrevive al cambio de tema (reconstrucción del widget)
-  // Así evitamos que el mapa vuelva a Madrid al cambiar a modo oscuro
-  static Position? _memoriaUbicacion; 
+  static Position? _memoriaUbicacion;
+  static CameraPosition? _memoriaCamara; // Nueva memoria para la cámara
 
   final Set<Marker> _markers = {};
   final Set<Marker> _gasolinerasMarkers = {};
@@ -88,11 +81,11 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
   BitmapDescriptor? _favoriteGasStationIcon;
   List<String> _favoritosIds = [];
   bool _isBottomSheetOpen = false;
-  
+
   Timer? _debounceTimer;
 
   // Ubicación por defecto (Madrid) - Solo se usa si no hay NADA en memoria
-  final LatLng _defaultPos = const LatLng(40.416775, -3.703790); 
+  final LatLng _defaultPos = const LatLng(40.416775, -3.703790);
   bool _isLocating = true;
 
   static const int LIMIT_RESULTS = 50;
@@ -195,13 +188,14 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
   @override
   void initState() {
     super.initState();
-    
+
     // 1. CARGA INMEDIATA DE MEMORIA (Para evitar el salto a Madrid)
     if (_memoriaUbicacion != null) {
       _ubicacionActual = _memoriaUbicacion;
       _isLocating = false;
       // Actualizamos marcadores inmediatamente con la memoria
-      _actualizarMarcadorUsuario(_ubicacionActual!.latitude, _ubicacionActual!.longitude);
+      _actualizarMarcadorUsuario(
+          _ubicacionActual!.latitude, _ubicacionActual!.longitude);
     }
 
     _loadGasStationIcon();
@@ -218,7 +212,8 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
         oldWidget.externalGasolineras != widget.externalGasolineras) {
       if (_ubicacionActual != null) {
-        _cargarGasolineras(_ubicacionActual!.latitude, _ubicacionActual!.longitude);
+        _cargarGasolineras(
+            _ubicacionActual!.latitude, _ubicacionActual!.longitude);
       } else {
         _cargarGasolineras(_defaultPos.latitude, _defaultPos.longitude);
       }
@@ -234,10 +229,17 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
   Future<void> _loadGasStationIcon() async {
     try {
       final icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)), 'lib/assets/location_9351238.png');
+          const ImageConfiguration(size: Size(48, 48)),
+          'lib/assets/location_9351238.png');
       final favIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(48, 48)), 'lib/assets/localizacion_favs.png');
-      if (mounted) setState(() { _gasStationIcon = icon; _favoriteGasStationIcon = favIcon; });
+          const ImageConfiguration(size: Size(48, 48)),
+          'lib/assets/localizacion_favs.png');
+      if (mounted) {
+        setState(() {
+          _gasStationIcon = icon;
+          _favoriteGasStationIcon = favIcon;
+        });
+      }
     } catch (e) {}
   }
 
@@ -276,7 +278,7 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
     // Buscamos ubicación precisa
     try {
       Position posicion = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high, 
+        desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
       );
       if (mounted) {
@@ -295,8 +297,8 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
     // Stream para cambios
     _positionStreamSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high, 
-        distanceFilter: 20, 
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 20,
       ),
     ).listen((Position pos) {
       if (mounted) {
@@ -314,32 +316,40 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
       _isLocating = false;
       _actualizarMarcadorUsuario(pos.latitude, pos.longitude);
     });
-    
+
     if (animar) {
-      mapController?.animateCamera(CameraUpdate.newLatLng(
-        LatLng(pos.latitude, pos.longitude)
-      ));
+      // SOLO animamos si la memoria de cámara está vacía (primera vez)
+      // O si queremos forzar el seguimiento (opcional, aquí priorizamos no molestar al usuario)
+      if (_memoriaCamara == null) {
+        mapController?.animateCamera(
+            CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
+      }
     }
     _cargarGasolineras(pos.latitude, pos.longitude);
-    
+
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
     _debounceTimer = Timer(const Duration(seconds: 1), () {
-        widget.onLocationUpdate?.call(pos.latitude, pos.longitude);
+      widget.onLocationUpdate?.call(pos.latitude, pos.longitude);
     });
   }
 
   void _usarUbicacionPorDefecto() {
     if (!mounted) return;
-    
+
     // Si ya tenemos una ubicación válida en memoria, NO usamos Madrid
     if (_memoriaUbicacion != null) return;
 
     final defaultPosition = Position(
-      latitude: _defaultPos.latitude,
-      longitude: _defaultPos.longitude,
-      timestamp: DateTime.now(),
-      accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0
-    );
+        latitude: _defaultPos.latitude,
+        longitude: _defaultPos.longitude,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0);
 
     setState(() {
       _ubicacionActual = defaultPosition;
@@ -365,7 +375,8 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
   }
 
   Future<void> _cargarGasolineras(double lat, double lng) async {
-    List<Gasolinera> listaGasolineras = (widget.externalGasolineras != null && widget.externalGasolineras!.isNotEmpty)
+    List<Gasolinera> listaGasolineras = (widget.externalGasolineras != null &&
+            widget.externalGasolineras!.isNotEmpty)
         ? widget.externalGasolineras!
         : await fetchGasolineras();
 
@@ -376,9 +387,13 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
       return {'gasolinera': g, 'distance': distance};
     }).toList();
 
-    gasolinerasCercanas.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
+    gasolinerasCercanas.sort(
+        (a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
 
-    final topGasolineras = gasolinerasCercanas.take(LIMIT_RESULTS).map((e) => e['gasolinera'] as Gasolinera).toList();
+    final topGasolineras = gasolinerasCercanas
+        .take(LIMIT_RESULTS)
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
     final newMarkers = topGasolineras.map((g) => _crearMarcador(g)).toSet();
 
     if (mounted) {
@@ -391,12 +406,18 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
 
   double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
     switch (tipoCombustible) {
-      case 'Gasolina 95': return g.gasolina95;
-      case 'Gasolina 98': return g.gasolina98;
-      case 'Diesel': return g.gasoleoA;
-      case 'Diesel Premium': return g.gasoleoPremium;
-      case 'Gas': return g.glp;
-      default: return 0.0;
+      case 'Gasolina 95':
+        return g.gasolina95;
+      case 'Gasolina 98':
+        return g.gasolina98;
+      case 'Diesel':
+        return g.gasoleoA;
+      case 'Diesel Premium':
+        return g.gasoleoPremium;
+      case 'Gas':
+        return g.glp;
+      default:
+        return 0.0;
     }
   }
 
@@ -404,7 +425,8 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
     List<Gasolinera> res = lista;
     if (widget.combustibleSeleccionado != null) {
       res = res.where((g) {
-        double p = _obtenerPrecioCombustible(g, widget.combustibleSeleccionado!);
+        double p =
+            _obtenerPrecioCombustible(g, widget.combustibleSeleccionado!);
         if (p == 0.0) return false;
         if (widget.precioDesde != null && p < widget.precioDesde!) return false;
         if (widget.precioHasta != null && p > widget.precioHasta!) return false;
@@ -414,11 +436,16 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
     if (widget.tipoAperturaSeleccionado != null) {
       res = res.where((g) {
         switch (widget.tipoAperturaSeleccionado) {
-          case '24 Horas': return g.es24Horas;
-          case 'Gasolineras atendidas por personal': return !g.es24Horas;
-          case 'Gasolineras abiertas ahora': return g.estaAbiertaAhora;
-          case 'Todas': return true;
-          default: return true;
+          case '24 Horas':
+            return g.es24Horas;
+          case 'Gasolineras atendidas por personal':
+            return !g.es24Horas;
+          case 'Gasolineras abiertas ahora':
+            return g.estaAbiertaAhora;
+          case 'Todas':
+            return true;
+          default:
+            return true;
         }
       }).toList();
     }
@@ -428,9 +455,12 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
   Marker _crearMarcador(Gasolinera g) {
     bool fav = _favoritosIds.contains(g.id);
     BitmapDescriptor icon;
-    if (fav && _favoriteGasStationIcon != null) icon = _favoriteGasStationIcon!;
-    else if (_gasStationIcon != null) icon = _gasStationIcon!;
-    else icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+    if (fav && _favoriteGasStationIcon != null) {
+      icon = _favoriteGasStationIcon!;
+    } else if (_gasStationIcon != null)
+      icon = _gasStationIcon!;
+    else
+      icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
 
     return Marker(
       markerId: MarkerId('eess_${g.id}'),
@@ -441,19 +471,21 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
     );
   }
 
-  Future<void> _mostrarInfoGasolinera(Gasolinera gasolinera, bool esFavorita) async {
+  Future<void> _mostrarInfoGasolinera(
+      Gasolinera gasolinera, bool esFavorita) async {
     if (_isBottomSheetOpen) return;
     setState(() => _isBottomSheetOpen = true);
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF2C2C2C) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subtitleColor = isDark ? Colors.white70 : Colors.grey[600];
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+    final subtitleColor =
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7);
 
     await showModalBottomSheet(
       context: context,
-      backgroundColor: bgColor,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(20),
@@ -461,28 +493,78 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(gasolinera.rotulo, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
+              Text(gasolinera.rotulo,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: textColor)),
               const SizedBox(height: 10),
-              Text(gasolinera.direccion, style: TextStyle(color: subtitleColor)),
+              Text(gasolinera.direccion,
+                  style: TextStyle(color: subtitleColor)),
               const SizedBox(height: 20),
-              if (gasolinera.gasolina95 > 0) _buildPrecioItem("Gasolina 95", gasolinera.gasolina95, Icons.local_gas_station, Colors.green, textColor, subtitleColor!),
-              if (gasolinera.gasoleoA > 0) _buildPrecioItem("Diesel", gasolinera.gasoleoA, Icons.directions_car, Colors.black, textColor, subtitleColor!),
+              if (gasolinera.gasolina95 > 0)
+                _buildPrecioItem(
+                    "Gasolina 95",
+                    gasolinera.gasolina95,
+                    Icons.local_gas_station,
+                    Colors.green,
+                    textColor,
+                    subtitleColor!),
+              if (gasolinera.gasoleoA > 0)
+                _buildPrecioItem(
+                    "Diesel",
+                    gasolinera.gasoleoA,
+                    Icons.directions_car,
+                    Colors.black,
+                    textColor,
+                    subtitleColor!),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    await _toggleFavorito(gasolinera.id);
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(esFavorita ? Icons.star : Icons.star_border, color: Colors.white),
-                  label: Text(esFavorita ? 'Eliminar de favoritos' : 'Añadir a favoritos', style: const TextStyle(fontSize: 16)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: esFavorita ? Colors.red : (isDark ? Colors.grey[800] : const Color(0xFFFF9350)),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          NavigationService.launchMaps(
+                              gasolinera.lat, gasolinera.lng);
+                        },
+                        icon: const Icon(Icons.directions_car,
+                            color: Colors.white),
+                        label: const Text('Cómo ir',
+                            style: TextStyle(fontSize: 16)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          await _toggleFavorito(gasolinera.id);
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(esFavorita ? Icons.star : Icons.star_border,
+                            color: Colors.white),
+                        label: Text(esFavorita ? 'Borrar' : 'Guardar',
+                            style: const TextStyle(fontSize: 16)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: esFavorita
+                              ? Colors.red
+                              : Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -496,12 +578,17 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
   Future<void> _toggleFavorito(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final ids = prefs.getStringList('favoritas_ids') ?? [];
-    if (ids.contains(id)) ids.remove(id); else ids.add(id);
+    if (ids.contains(id)) {
+      ids.remove(id);
+    } else {
+      ids.add(id);
+    }
     await prefs.setStringList('favoritas_ids', ids);
     if (mounted) setState(() => _favoritosIds = ids);
   }
 
-  Widget _buildPrecioItem(String n, double p, IconData i, Color ic, Color tc, Color sc) {
+  Widget _buildPrecioItem(
+      String n, double p, IconData i, Color ic, Color tc, Color sc) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(children: [
@@ -509,7 +596,9 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
         const SizedBox(width: 8),
         Text('$n: ', style: TextStyle(fontSize: 16, color: sc)),
         const Spacer(),
-        Text('${p.toStringAsFixed(3)}€', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: tc)),
+        Text('${p.toStringAsFixed(3)}€',
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: tc)),
       ]),
     );
   }
@@ -519,7 +608,7 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
     super.build(context);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     if (mapController != null) {
       mapController!.setMapStyle(isDark ? _darkMapStyle : "[]");
     }
@@ -531,49 +620,55 @@ class _MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixi
 
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        height: 300,
-        child: Stack(
-          children: [
-            GoogleMap(
-              onMapCreated: (c) {
-                mapController = c;
-                c.setMapStyle(isDark ? _darkMapStyle : "[]");
-                
-                // Si tenemos ubicación (de memoria o GPS), vamos a ella directo
-                if (_ubicacionActual != null) {
-                  c.moveCamera(CameraUpdate.newLatLng(targetPosition));
-                }
-              },
-              initialCameraPosition: CameraPosition(
+    return Stack(
+      children: [
+        GoogleMap(
+          onMapCreated: (c) {
+            mapController = c;
+            c.setMapStyle(isDark ? _darkMapStyle : "[]");
+
+            // PRIORIDAD: Si hay memoria de cámara, la usamos
+            if (_memoriaCamara != null) {
+              c.moveCamera(CameraUpdate.newCameraPosition(_memoriaCamara!));
+            }
+            // Si no, si tenemos ubicación, vamos a ella
+            else if (_ubicacionActual != null) {
+              c.moveCamera(CameraUpdate.newLatLng(targetPosition));
+            }
+          },
+          initialCameraPosition: _memoriaCamara ??
+              CameraPosition(
                 target: targetPosition,
                 zoom: 15,
               ),
-              markers: allMarkers,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-            ),
-            
-            // Solo mostramos loader si NO tenemos ubicación NI en memoria
-            if (_isLocating && _ubicacionActual == null)
-              Positioned(
-                bottom: 20, left: 20,
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
-                  child: Row(children: const [
-                    CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                    SizedBox(width: 10),
-                    Text("Buscando GPS...", style: TextStyle(color: Colors.white))
-                  ]),
-                ),
-              )
-          ],
+          markers: allMarkers,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          // GUARDAR POSICIÓN AL MOVER
+          onCameraMove: (CameraPosition position) {
+            _memoriaCamara = position;
+          },
         ),
-      ),
+
+        // Solo mostramos loader si NO tenemos ubicación NI en memoria
+        if (_isLocating && _ubicacionActual == null)
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(20)),
+              child: const Row(children: [
+                CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                SizedBox(width: 10),
+                Text("Buscando GPS...", style: TextStyle(color: Colors.white))
+              ]),
+            ),
+          )
+      ],
     );
   }
 

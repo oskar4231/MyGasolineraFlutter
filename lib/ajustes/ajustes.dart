@@ -64,9 +64,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (fotoData != null && mounted) {
         if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-          final base64String = fotoData.contains(',')
-              ? fotoData.split(',')[1]
-              : fotoData;
+          final base64String =
+              fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
           final bytes = base64Decode(base64String);
           setState(() {
             _profileImageBytes = bytes;
@@ -180,44 +179,22 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // --- LÓGICA DE COLORES EXACTA ---
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Si es oscuro: Negro Suave (0xFF121212). 
-    // Si es claro: TU NARANJA ORIGINAL (0xFFFF9350).
-    final backgroundColor = isDark ? const Color(0xFF121212) : const Color(0xFFFF9350);
-    
-    // Texto blanco en oscuro, negro en claro
-    final textColor = isDark ? Colors.white : Colors.black; 
-
     return Scaffold(
-      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(
-          'Ajustes',
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
-        ),
-        backgroundColor: backgroundColor, // Se mantiene el color de fondo
-        iconTheme: IconThemeData(color: textColor),
+        title: const Text('Ajustes'),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: textColor),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      // Pasamos las variables de color a los widgets hijos
-      body: _buildAjustesContent(context, backgroundColor, textColor, isDark),
+      body: _buildAjustesContent(context),
     );
   }
 
-  Widget _buildAjustesContent(BuildContext context, Color bgColor, Color textColor, bool isDark) {
+  Widget _buildAjustesContent(BuildContext context) {
     return Container(
-      color: bgColor, 
+      // color: Theme.of(context).scaffoldBackgroundColor, // Ya lo hace el Scaffold por defecto
       child: Column(
         children: [
           Expanded(
@@ -226,29 +203,26 @@ class _AjustesScreenState extends State<AjustesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSeccionPerfil(context, isDark, textColor),
+                  _buildSeccionPerfil(context),
                   const SizedBox(height: 24),
-                  _buildSeccionOpciones(context, textColor, isDark),
+                  _buildSeccionOpciones(context),
                 ],
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildBotonCerrarSesion(context, isDark),
+            child: _buildBotonCerrarSesion(context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSeccionPerfil(BuildContext context, bool isDark, Color textColor) {
-    // Tarjeta: Si es oscuro (Gris), Si es claro (TU COLOR CREMA ORIGINAL: 0xFFFFE8DA)
-    final cardColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFFFE8DA);
-
+  Widget _buildSeccionPerfil(BuildContext context) {
     return Card(
       elevation: 2,
-      color: cardColor, 
+      // color uses Theme.cardColor by default
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
@@ -264,15 +238,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!) as ImageProvider
-                        : null,
-                    child: _profileImageBytes == null && _profileImageUrl == null
-                        ? Icon(
-                            Icons.person,
-                            color: isDark ? Colors.white : Colors.black,
-                            size: 40,
-                          )
-                        : null,
+                            ? NetworkImage(_profileImageUrl!) as ImageProvider
+                            : null,
+                    child:
+                        _profileImageBytes == null && _profileImageUrl == null
+                            ? Icon(
+                                Icons.person,
+                                color: Theme.of(context).iconTheme.color,
+                                size: 40,
+                              )
+                            : null,
                   ),
                   if (_subiendoFoto)
                     Positioned.fill(
@@ -287,7 +262,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                             height: 30,
                             child: CircularProgressIndicator(
                               strokeWidth: 3,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ),
                         ),
@@ -301,7 +277,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           // Icono cámara: Negro en claro, Naranja en oscuro para resaltar
-                          color: isDark ? const Color(0xFFFF9350) : Colors.black, 
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFFFF9350)
+                              : Colors.black,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -325,7 +303,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     text: TextSpan(
                       style: TextStyle(
                         fontSize: 24,
-                        color: textColor, // Dinámico
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.color, // Dinámico
                         fontFamily: 'Roboto',
                       ),
                       children: [
@@ -349,7 +330,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  Widget _buildSeccionOpciones(BuildContext context, Color textColor, bool isDark) {
+  Widget _buildSeccionOpciones(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -358,20 +339,18 @@ class _AjustesScreenState extends State<AjustesScreen> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
         const SizedBox(height: 16),
         _OpcionItem(
           icono: Icons.local_gas_station,
           texto: 'Combustible',
-          textColor: textColor,
           onTap: () {},
         ),
         _OpcionItem(
           icono: Icons.query_stats,
           texto: 'Estadísticas',
-          textColor: textColor,
           onTap: () {
             Navigator.push(
               context,
@@ -384,7 +363,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.receipt,
           texto: 'Gasto/Facturas',
-          textColor: textColor,
           onTap: () {
             Navigator.push(
               context,
@@ -395,7 +373,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _OpcionItem(
           icono: Icons.accessibility_new,
           texto: 'Accesibilidad',
-          textColor: textColor,
           onTap: () {
             Navigator.push(
               context,
@@ -415,16 +392,20 @@ class _AjustesScreenState extends State<AjustesScreen> {
     );
   }
 
-  Widget _buildBotonCerrarSesion(BuildContext context, bool isDark) {
+  Widget _buildBotonCerrarSesion(BuildContext context) {
     return Center(
       child: ElevatedButton.icon(
         onPressed: () {
           _mostrarDialogoCerrarSesion(context);
         },
         style: ElevatedButton.styleFrom(
-          // Botón Cerrar Sesión: Blanco en oscuro, Negro en claro
-          backgroundColor: isDark ? Colors.white : Colors.black, 
-          foregroundColor: isDark ? Colors.black : Colors.white,
+          // Botón Cerrar Sesión:
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black,
+          foregroundColor: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),
@@ -478,10 +459,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
                     'Esta acción no se puede deshacer.',
                     style: TextStyle(
-                      // Color de texto del diálogo
-                      color: Theme.of(context).textTheme.bodyMedium?.color, 
-                      fontSize: 16
-                    ),
+                        // Color de texto del diálogo
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                        fontSize: 16),
                   ),
                   if (_eliminandoCuenta) ...[
                     const SizedBox(height: 16),
@@ -502,11 +482,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     onPressed: () async {
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
-                        final email = await _usuarioService.obtenerEmailGuardado();
+                        final email =
+                            await _usuarioService.obtenerEmailGuardado();
                         if (email.isEmpty) {
                           throw Exception('No se encontró email del usuario');
                         }
-                        final exito = await _usuarioService.eliminarCuenta(email);
+                        final exito =
+                            await _usuarioService.eliminarCuenta(email);
 
                         if (exito) {
                           await _usuarioService.limpiarDatosUsuario();
@@ -553,13 +535,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
 class _OpcionItem extends StatefulWidget {
   final IconData icono;
   final String texto;
-  final Color textColor;
+  final Color? textColor;
   final VoidCallback onTap;
 
   const _OpcionItem({
     required this.icono,
     required this.texto,
-    required this.textColor,
+    this.textColor,
     required this.onTap,
   });
 
@@ -585,10 +567,13 @@ class __OpcionItemState extends State<_OpcionItem> {
           borderRadius: BorderRadius.circular(8),
         ),
         child: ListTile(
-          leading: Icon(widget.icono, color: widget.textColor),
+          leading: Icon(widget.icono,
+              color: widget.textColor ?? Theme.of(context).iconTheme.color),
           title: Text(
             widget.texto,
-            style: TextStyle(color: widget.textColor),
+            style: TextStyle(
+                color: widget.textColor ??
+                    Theme.of(context).textTheme.bodyLarge?.color),
           ),
           onTap: widget.onTap,
           contentPadding: const EdgeInsets.symmetric(

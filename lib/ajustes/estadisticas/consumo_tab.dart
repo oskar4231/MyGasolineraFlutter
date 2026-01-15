@@ -158,7 +158,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 ...costosPorCoche.map((cocheData) {
                   final coche = cocheData as Map<String, dynamic>;
                   return _buildCocheCard(coche, isDark);
-                }).toList(),
+                }),
               ],
             ),
           );
@@ -210,7 +210,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Coste/KM', style: TextStyle(fontSize: 12, color: subTextColor)),
-                  Text('€${_formatNumber(costoProm)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: const Color(0xFFFF9350))),
+                  Text('€${_formatNumber(costoProm)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFFFF9350))),
                 ],
               ),
               Column(

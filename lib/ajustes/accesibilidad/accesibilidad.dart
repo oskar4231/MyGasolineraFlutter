@@ -72,7 +72,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
     final Color textColor = isDark ? Colors.white : Colors.black;
     final Color iconColor = isDark ? Colors.white : Colors.black;
     final Color subtitleColor = isDark ? Colors.grey[400]! : Colors.black87;
-    final Color activeColor = const Color(0xFFFF9350); // El naranja se mantiene como acento
+    const Color activeColor = Color(0xFFFF9350); // El naranja se mantiene como acento
 
     return Scaffold(
       backgroundColor: backgroundColor,

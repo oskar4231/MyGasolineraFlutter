@@ -312,7 +312,7 @@ class _CrearScreenState extends State<CrearScreen> {
                             _obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Color(0xFF492714),
+                            color: const Color(0xFF492714),
                           ),
                           onPressed: () {
                             setState(() {
@@ -368,7 +368,7 @@ class _CrearScreenState extends State<CrearScreen> {
                             _obscureConfirmPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Color(0xFF492714),
+                            color: const Color(0xFF492714),
                           ),
                           onPressed: () {
                             setState(() {

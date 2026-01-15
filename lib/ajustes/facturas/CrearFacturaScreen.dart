@@ -342,7 +342,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
                   // Dropdown Coche
                   DropdownButtonFormField<int>(
-                    value: _cocheSeleccionado,
+                    initialValue: _cocheSeleccionado,
                     decoration: InputDecoration(
                       labelText: 'Coche',
                       labelStyle: TextStyle(color: isDark ? Colors.white70 : const Color(0xFF492714)),
@@ -398,7 +398,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                   ConstrainedBox(
                     constraints: const BoxConstraints(minWidth: 300, maxWidth: 400),
                     child: DropdownButtonFormField<String>(
-                      value: _tipoCombustibleSeleccionado,
+                      initialValue: _tipoCombustibleSeleccionado,
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText: 'Tipo de Combustible',

@@ -74,7 +74,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
       body: TabBarView(
         controller: _tabController,
         // CORRECCIÓN AQUÍ: Quitamos 'const' porque los widgets son dinámicos
-        children: [
+        children: const [
           GastosTab(),
           ConsumoTab(),
           MantenimientoTab(),

@@ -306,7 +306,7 @@ class _CochesScreenState extends State<CochesScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           dense: true,
                         );
-                      }).toList(),
+                      }),
 
                       const SizedBox(height: 16),
                       TextFormField(
@@ -553,9 +553,9 @@ class _CochesScreenState extends State<CochesScreen> {
                         ),
                         elevation: 4,
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(Icons.add, size: 28),
                           SizedBox(width: 8),
                           Text(
@@ -576,7 +576,7 @@ class _CochesScreenState extends State<CochesScreen> {
             // LISTA DE COCHES
             Expanded(
               child: _coches.isEmpty
-                  ? Center(
+                  ? const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -585,8 +585,8 @@ class _CochesScreenState extends State<CochesScreen> {
                             size: 80,
                             color: Colors.grey,
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
+                          SizedBox(height: 16),
+                          Text(
                             'No hay coches añadidos',
                             style: TextStyle(
                               fontSize: 18,
@@ -594,8 +594,8 @@ class _CochesScreenState extends State<CochesScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
+                          SizedBox(height: 8),
+                          Text(
                             'Pulsa el botón "Añadir Coche" para empezar',
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),

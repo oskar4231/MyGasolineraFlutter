@@ -147,8 +147,8 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
         
     final textColor = isDark ? Colors.white : const Color(0xFF492714);
     final subtextColor = isDark ? Colors.grey[400] : Colors.grey;
-    final warningColor = Colors.red;
-    final goodColor = const Color(0xFFFF9350);
+    const warningColor = Colors.red;
+    const goodColor = Color(0xFFFF9350);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),

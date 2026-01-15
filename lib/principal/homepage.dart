@@ -8,6 +8,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Devolver directamente el widget del mapa para que se muestre al navegar aquí.
-    return MapaTiempoReal();
+    return const MapaTiempoReal();
   }
 }

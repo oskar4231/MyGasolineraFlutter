@@ -28,7 +28,7 @@ class Inicio extends StatelessWidget {
     // Light: Tu Melocotón original, Texto Marrón
     final btn2Bg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFCFB0);
     final btn2Fg = isDark ? Colors.white : const Color(0xFF492714);
-    final btn2Border = const Color(0xFFFF9350); // Mantenemos borde naranja en ambos para identidad
+    const btn2Border = Color(0xFFFF9350); // Mantenemos borde naranja en ambos para identidad
 
     return Scaffold(
       backgroundColor: scaffoldBg, // Dinámico
@@ -125,7 +125,7 @@ class Inicio extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 30),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: btn2Border, // Siempre Naranja
                             width: 2.0,
                           ),

@@ -79,9 +79,9 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
   // Colores usados en los campos
   @override
   Widget build(BuildContext context) {
-    final bgColor = const Color(0xFFFFE8DA);
-    final cardColor = const Color(0xFFFFCFB0);
-    final accent = const Color(0xFFFF9350);
+    const bgColor = Color(0xFFFFE8DA);
+    const cardColor = Color(0xFFFFCFB0);
+    const accent = Color(0xFFFF9350);
 
     final maxWidth =
         MediaQuery.of(context).size.width * 0.95; // Aumentado de 0.85 a 0.95
@@ -112,7 +112,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
             decoration: BoxDecoration(
               color: cardColor,
               borderRadius: BorderRadius.circular(16), // Aumentado de 12 a 16
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Color.fromRGBO(
                     0,
@@ -121,7 +121,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                     0.15,
                   ), // Aumentado de 0.12 a 0.15
                   blurRadius: 16, // Aumentado de 12 a 16
-                  offset: const Offset(0, 8), // Aumentado de 6 a 8
+                  offset: Offset(0, 8), // Aumentado de 6 a 8
                 ),
               ],
             ),

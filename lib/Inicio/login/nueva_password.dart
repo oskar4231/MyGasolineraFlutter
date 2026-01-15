@@ -152,11 +152,11 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
             decoration: BoxDecoration(
               color: const Color(0xFFFFCFB0),
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                  color: const Color.fromRGBO(0, 0, 0, 0.15),
+                  color: Color.fromRGBO(0, 0, 0, 0.15),
                   blurRadius: 16,
-                  offset: const Offset(0, 8),
+                  offset: Offset(0, 8),
                 ),
               ],
             ),

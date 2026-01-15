@@ -26,7 +26,7 @@ class AccesibilidadService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken') ?? '';
 
-      final url = '$baseUrl/accesibilidad';
+      const url = '$baseUrl/accesibilidad';
       print('🔍 DEBUG - Guardando configuración de accesibilidad');
       print('🔍 DEBUG - URL: $url');
 
