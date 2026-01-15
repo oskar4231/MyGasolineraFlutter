@@ -250,5 +250,98 @@
   "eliminadoDeFavoritos": "eliminado de favoritos",
   "ordenNombre": "Orden: Nombre",
   "ordenPrecioAsc": "Orden: Precio ↑",
-  "ordenPrecioDesc": "Orden: Precio ↓"
+  "ordenPrecioDesc": "Orden: Precio ↓",
+  "cochesTitulo": "Coches",
+  "anadirCoche": "Añadir Coche",
+  "noHayCoches": "No hay coches añadidos",
+  "pulsaAnadirCoche": "Pulsa el botón \"Añadir Coche\" para empezar",
+  "marca": "Marca",
+  "ejemploMarca": "Ej: Toyota, BMW, Seat...",
+  "ingresaMarca": "Por favor ingresa la marca",
+  "modelo": "Modelo",
+  "ejemploModelo": "Ej: Corolla, Serie 3, León...",
+  "ingresaModelo": "Por favor ingresa el modelo",
+  "kilometrajeInicial": "Kilometraje Inicial",
+  "ejemploKilometraje": "Ej: 50000",
+  "capacidadTanque": "Capacidad del Tanque (L)",
+  "ejemploTanque": "Ej: 50",
+  "consumoTeorico": "Consumo Teórico (L/100km)",
+  "ejemploConsumo": "Ej: 5.5",
+  "seleccionaCombustibleError": "Selecciona al menos un tipo de combustible",
+  "cocheCreadoExito": "Coche creado exitosamente: {marca} {modelo}",
+  "@cocheCreadoExito": {
+    "placeholders": {
+      "marca": {
+        "type": "String"
+      },
+      "modelo": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCrearCoche": "Error al crear coche: {error}",
+  "@errorCrearCoche": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmarEliminacion": "Confirmar eliminación",
+  "confirmarEliminarCoche": "¿Estás seguro de que quieres eliminar {marca} {modelo}?",
+  "@confirmarEliminarCoche": {
+    "placeholders": {
+      "marca": {
+        "type": "String"
+      },
+      "modelo": {
+        "type": "String"
+      }
+    }
+  },
+  "cocheEliminado": "Coche eliminado: {marca} {modelo}",
+  "@cocheEliminado": {
+    "placeholders": {
+      "marca": {
+        "type": "String"
+      },
+      "modelo": {
+        "type": "String"
+      }
+    }
+  },
+  "errorEliminarCoche": "Error al eliminar coche: {error}",
+  "@errorEliminarCoche": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCocheSinId": "Error: El coche no tiene ID",
+  "kilometrajeItem": "Kilometraje: {km} km",
+  "@kilometrajeItem": {
+    "placeholders": {
+      "km": {
+        "type": "int"
+      }
+    }
+  },
+  "tanqueItem": "Tanque: {capacidad}L",
+  "@tanqueItem": {
+    "placeholders": {
+      "capacidad": {
+        "type": "double"
+      }
+    }
+  },
+  "tiposCombustibleLabel": "Tipos de combustible:",
+  "errorCargarCochesDetalle": "Error al cargar los coches: {error}",
+  "@errorCargarCochesDetalle": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -758,4 +758,104 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ordenPrecioDesc => 'Order: Price ↓';
+
+  @override
+  String get cochesTitulo => 'Cars';
+
+  @override
+  String get anadirCoche => 'Add Car';
+
+  @override
+  String get noHayCoches => 'No cars added';
+
+  @override
+  String get pulsaAnadirCoche => 'Press the \"Add Car\" button to get started';
+
+  @override
+  String get marca => 'Make';
+
+  @override
+  String get ejemploMarca => 'Ex: Toyota, BMW, Ford...';
+
+  @override
+  String get ingresaMarca => 'Please enter the make';
+
+  @override
+  String get modelo => 'Model';
+
+  @override
+  String get ejemploModelo => 'Ex: Corolla, 3 Series, Focus...';
+
+  @override
+  String get ingresaModelo => 'Please enter the model';
+
+  @override
+  String get kilometrajeInicial => 'Initial Mileage';
+
+  @override
+  String get ejemploKilometraje => 'Ex: 50000';
+
+  @override
+  String get capacidadTanque => 'Tank Capacity (L)';
+
+  @override
+  String get ejemploTanque => 'Ex: 50';
+
+  @override
+  String get consumoTeorico => 'Theoretical Consumption (L/100km)';
+
+  @override
+  String get ejemploConsumo => 'Ex: 5.5';
+
+  @override
+  String get seleccionaCombustibleError => 'Select at least one fuel type';
+
+  @override
+  String cocheCreadoExito(String marca, String modelo) {
+    return 'Car created successfully: $marca $modelo';
+  }
+
+  @override
+  String errorCrearCoche(String error) {
+    return 'Error creating car: $error';
+  }
+
+  @override
+  String get confirmarEliminacion => 'Confirm Deletion';
+
+  @override
+  String confirmarEliminarCoche(String marca, String modelo) {
+    return 'Are you sure you want to delete $marca $modelo?';
+  }
+
+  @override
+  String cocheEliminado(String marca, String modelo) {
+    return 'Car deleted: $marca $modelo';
+  }
+
+  @override
+  String errorEliminarCoche(String error) {
+    return 'Error deleting car: $error';
+  }
+
+  @override
+  String get errorCocheSinId => 'Error: Car has no ID';
+
+  @override
+  String kilometrajeItem(int km) {
+    return 'Mileage: $km km';
+  }
+
+  @override
+  String tanqueItem(double capacidad) {
+    return 'Tank: ${capacidad}L';
+  }
+
+  @override
+  String get tiposCombustibleLabel => 'Fuel types:';
+
+  @override
+  String errorCargarCochesDetalle(String error) {
+    return 'Error loading cars: $error';
+  }
 }

@@ -1573,6 +1573,174 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Orden: Precio ↓'**
   String get ordenPrecioDesc;
+
+  /// No description provided for @cochesTitulo.
+  ///
+  /// In es, this message translates to:
+  /// **'Coches'**
+  String get cochesTitulo;
+
+  /// No description provided for @anadirCoche.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir Coche'**
+  String get anadirCoche;
+
+  /// No description provided for @noHayCoches.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay coches añadidos'**
+  String get noHayCoches;
+
+  /// No description provided for @pulsaAnadirCoche.
+  ///
+  /// In es, this message translates to:
+  /// **'Pulsa el botón \"Añadir Coche\" para empezar'**
+  String get pulsaAnadirCoche;
+
+  /// No description provided for @marca.
+  ///
+  /// In es, this message translates to:
+  /// **'Marca'**
+  String get marca;
+
+  /// No description provided for @ejemploMarca.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: Toyota, BMW, Seat...'**
+  String get ejemploMarca;
+
+  /// No description provided for @ingresaMarca.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor ingresa la marca'**
+  String get ingresaMarca;
+
+  /// No description provided for @modelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Modelo'**
+  String get modelo;
+
+  /// No description provided for @ejemploModelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: Corolla, Serie 3, León...'**
+  String get ejemploModelo;
+
+  /// No description provided for @ingresaModelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor ingresa el modelo'**
+  String get ingresaModelo;
+
+  /// No description provided for @kilometrajeInicial.
+  ///
+  /// In es, this message translates to:
+  /// **'Kilometraje Inicial'**
+  String get kilometrajeInicial;
+
+  /// No description provided for @ejemploKilometraje.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: 50000'**
+  String get ejemploKilometraje;
+
+  /// No description provided for @capacidadTanque.
+  ///
+  /// In es, this message translates to:
+  /// **'Capacidad del Tanque (L)'**
+  String get capacidadTanque;
+
+  /// No description provided for @ejemploTanque.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: 50'**
+  String get ejemploTanque;
+
+  /// No description provided for @consumoTeorico.
+  ///
+  /// In es, this message translates to:
+  /// **'Consumo Teórico (L/100km)'**
+  String get consumoTeorico;
+
+  /// No description provided for @ejemploConsumo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: 5.5'**
+  String get ejemploConsumo;
+
+  /// No description provided for @seleccionaCombustibleError.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona al menos un tipo de combustible'**
+  String get seleccionaCombustibleError;
+
+  /// No description provided for @cocheCreadoExito.
+  ///
+  /// In es, this message translates to:
+  /// **'Coche creado exitosamente: {marca} {modelo}'**
+  String cocheCreadoExito(String marca, String modelo);
+
+  /// No description provided for @errorCrearCoche.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al crear coche: {error}'**
+  String errorCrearCoche(String error);
+
+  /// No description provided for @confirmarEliminacion.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar eliminación'**
+  String get confirmarEliminacion;
+
+  /// No description provided for @confirmarEliminarCoche.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que quieres eliminar {marca} {modelo}?'**
+  String confirmarEliminarCoche(String marca, String modelo);
+
+  /// No description provided for @cocheEliminado.
+  ///
+  /// In es, this message translates to:
+  /// **'Coche eliminado: {marca} {modelo}'**
+  String cocheEliminado(String marca, String modelo);
+
+  /// No description provided for @errorEliminarCoche.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al eliminar coche: {error}'**
+  String errorEliminarCoche(String error);
+
+  /// No description provided for @errorCocheSinId.
+  ///
+  /// In es, this message translates to:
+  /// **'Error: El coche no tiene ID'**
+  String get errorCocheSinId;
+
+  /// No description provided for @kilometrajeItem.
+  ///
+  /// In es, this message translates to:
+  /// **'Kilometraje: {km} km'**
+  String kilometrajeItem(int km);
+
+  /// No description provided for @tanqueItem.
+  ///
+  /// In es, this message translates to:
+  /// **'Tanque: {capacidad}L'**
+  String tanqueItem(double capacidad);
+
+  /// No description provided for @tiposCombustibleLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipos de combustible:'**
+  String get tiposCombustibleLabel;
+
+  /// No description provided for @errorCargarCochesDetalle.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al cargar los coches: {error}'**
+  String errorCargarCochesDetalle(String error);
 }
 
 class _AppLocalizationsDelegate
