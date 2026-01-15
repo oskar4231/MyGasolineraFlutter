@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaGasolineras.dart';

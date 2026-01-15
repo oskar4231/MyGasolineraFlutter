@@ -7,9 +7,14 @@ import 'package:my_gasolinera/Modos/Temas/theme_manager.dart';
 
 import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/providers/language_provider.dart';
+
 // Instancias globales
 late AppDatabase database;
 late BackgroundRefreshService backgroundRefreshService;
+final LanguageProvider languageProvider = LanguageProvider();
 
 // Global key para mostrar SnackBars desde cualquier lugar
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -38,6 +43,9 @@ Future<void> main() async {
   // Cargar TEMA
   await ThemeManager().loadInitialTheme();
 
+  // Cargar IDIOMA
+  await languageProvider.loadInitialLanguage();
+
   runApp(const MyApp());
 }
 
@@ -49,12 +57,28 @@ class MyApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: ThemeManager(),
       builder: (context, _) {
-        return MaterialApp(
-          scaffoldMessengerKey: rootScaffoldMessengerKey,
-          debugShowCheckedModeBanner: false,
-          title: 'MyGasolinera',
-          theme: ThemeManager().currentTheme,
-          home: const Inicio(),
+        return ListenableBuilder(
+          listenable: languageProvider,
+          builder: (context, _) {
+            return MaterialApp(
+              scaffoldMessengerKey: rootScaffoldMessengerKey,
+              debugShowCheckedModeBanner: false,
+              title: 'MyGasolinera',
+              theme: ThemeManager().currentTheme,
+              locale: languageProvider.currentLocale,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('es'), // Español
+                Locale('en'), // Inglés
+              ],
+              home: const Inicio(),
+            );
+          },
         );
       },
     );

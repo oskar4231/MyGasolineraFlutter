@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
@@ -329,7 +330,7 @@ class _MapWidgetState extends State<MapWidget> {
         _currentProvinciaId = provinciaInfo.id;
 
         print(
-            '🔎 DEBUG Mapa: Provincia detectada para ($lat, $lng): ${provinciaInfo.nombre} (ID: ${_currentProvinciaId})');
+            '🔎 DEBUG Mapa: Provincia detectada para ($lat, $lng): ${provinciaInfo.nombre} (ID: $_currentProvinciaId)');
 
         print(
             'Mapa: Cargando gasolineras para provincia ${provinciaInfo.nombre}');

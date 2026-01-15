@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/accesibilidad_service.dart';
 import 'package:my_gasolinera/Modos/Temas/theme_manager.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class AccesibilidadScreen extends StatefulWidget {
   const AccesibilidadScreen({super.key});
@@ -13,7 +14,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   String _tamanoFuente = 'Mediano';
   bool _altoContraste = false;
   bool _modoOscuro = false;
-  String _idiomaSeleccionado = 'Español';
   final _accesibilidadService = AccesibilidadService();
   bool _cargando = true;
   double _tamanoFuentePersonalizado = 16.0; // Tamaño personalizado
@@ -33,7 +33,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           _tamanoFuente = config['tamanoFuente'] ?? 'Mediano';
           _altoContraste = config['altoContraste'] ?? false;
           _modoOscuro = config['modoOscuro'] ?? false;
-          _idiomaSeleccionado = config['idioma'] ?? 'Español';
           _cargando = false;
         });
       } else {
@@ -57,7 +56,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Accesibilidad',
+          AppLocalizations.of(context)!.accesibilidad,
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -74,7 +73,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Configuración de Accesibilidad',
+              AppLocalizations.of(context)!.accesibilidadConfig,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -98,7 +97,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                             color: Theme.of(context).colorScheme.onSurface),
                         const SizedBox(width: 8),
                         Text(
-                          'Tamaño de Fuente',
+                          AppLocalizations.of(context)!.tamanoFuente,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -112,11 +111,17 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       children: [
                         Row(
                           children: [
-                            Expanded(child: _buildOpcionTamano('Pequeño')),
+                            Expanded(
+                                child: _buildOpcionTamano(
+                                    AppLocalizations.of(context)!.pequeno)),
                             const SizedBox(width: 8),
-                            Expanded(child: _buildOpcionTamano('Mediano')),
+                            Expanded(
+                                child: _buildOpcionTamano(
+                                    AppLocalizations.of(context)!.mediano)),
                             const SizedBox(width: 8),
-                            Expanded(child: _buildOpcionTamano('Grande')),
+                            Expanded(
+                                child: _buildOpcionTamano(
+                                    AppLocalizations.of(context)!.grande)),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -144,7 +149,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                             color: Theme.of(context).colorScheme.onSurface),
                         const SizedBox(width: 8),
                         Text(
-                          'Tema',
+                          AppLocalizations.of(context)!.tema,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -158,7 +163,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         listenable: ThemeManager(),
                         builder: (context, _) {
                           return DropdownButtonFormField<int>(
-                            value: ThemeManager().currentThemeId,
+                            initialValue: ThemeManager().currentThemeId,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8)),
@@ -169,24 +174,31 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                   Theme.of(context).scaffoldBackgroundColor,
                             ),
                             dropdownColor: Theme.of(context).cardColor,
-                            items: const [
+                            items: [
                               DropdownMenuItem(
                                   value: 0,
-                                  child: Text('Predeterminado (Naranja)')),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .predeterminadoNaranja)),
                               DropdownMenuItem(
-                                  value: 1, child: Text('Modo Oscuro')),
+                                  value: 1,
+                                  child: Text(AppLocalizations.of(context)!
+                                      .modoOscuro)),
                               DropdownMenuItem(
                                   value: 2,
-                                  child: Text('Daltonismo: Protanopia')),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .protanopia)),
                               DropdownMenuItem(
                                   value: 3,
-                                  child: Text('Daltonismo: Deuteranopia')),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .deuteranopia)),
                               DropdownMenuItem(
                                   value: 4,
-                                  child: Text('Daltonismo: Tritanopia')),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .tritanopia)),
                               DropdownMenuItem(
                                   value: 5,
-                                  child: Text('Daltonismo: Achromatopsia')),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .achromatopsia)),
                             ],
                             onChanged: (int? newValue) {
                               if (newValue != null) {
@@ -196,62 +208,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           );
                         }),
                   ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Idioma - con popup scrollable
-            Card(
-              elevation: 2,
-              color: Theme.of(context).cardColor,
-              child: InkWell(
-                onTap: () => _mostrarPopupIdioma(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.language,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          size: 28),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Idioma',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _idiomaSeleccionado,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.5),
-                        size: 16,
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),
@@ -275,7 +231,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                             tamanoFuente: _tamanoFuente,
                             altoContraste: _altoContraste,
                             modoOscuro: _modoOscuro,
-                            idioma: _idiomaSeleccionado,
+                            idioma:
+                                'Español', // Valor por defecto ya que idioma está en otro lado
                           );
 
                           setState(() {
@@ -331,9 +288,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           ),
                         ),
                       )
-                    : const Text(
-                        'Guardar Cambios',
-                        style: TextStyle(fontSize: 16),
+                    : Text(
+                        AppLocalizations.of(context)!.guardarCambios,
+                        style: const TextStyle(fontSize: 16),
                       ),
               ),
             ),
@@ -416,7 +373,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              'Personalizado',
+              AppLocalizations.of(context)!.personalizado,
               style: TextStyle(
                 color: isSelected
                     ? selectedTextColor
@@ -455,7 +412,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       color: Theme.of(context).colorScheme.onSurface),
                   const SizedBox(width: 8),
                   Text(
-                    'Tamaño Personalizado',
+                    AppLocalizations.of(context)!.tamanoPersonalizado,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
@@ -476,7 +433,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        'Este es un ejemplo',
+                        AppLocalizations.of(context)!.ejemploTexto,
                         style: TextStyle(
                           fontSize: tempTamano,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -527,7 +484,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     ],
                   ),
                   Text(
-                    'Tamaño: ${tempTamano.round()}px',
+                    '${AppLocalizations.of(context)!.tamanoLabel}: ${tempTamano.round()}px',
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 14),
@@ -538,7 +495,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    'Cancelar',
+                    AppLocalizations.of(context)!.cancelar,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface),
                   ),
@@ -563,7 +520,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   child: Text(
-                    'Aplicar',
+                    AppLocalizations.of(context)!.aplicar,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary),
                   ),
@@ -571,273 +528,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
               ],
             );
           },
-        );
-      },
-    );
-  }
-
-  // Popup para selección de idioma
-  void _mostrarPopupIdioma() {
-    final Map<String, List<String>> idiomasConVariantes = {
-      'Español': ['Español'],
-      'Português': ['Português'],
-      'Deutsch': ['Deutsch'],
-      'Italiano': ['Italiano'],
-      'English': ['English'],
-      'Valenciano': ['Valencià', 'Català'],
-    };
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          title: Row(
-            children: [
-              Icon(Icons.language,
-                  color: Theme.of(context).colorScheme.onSurface),
-              const SizedBox(width: 8),
-              Text(
-                'Seleccionar Idioma',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 400,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: idiomasConVariantes.keys.length,
-              itemBuilder: (context, index) {
-                final idioma = idiomasConVariantes.keys.elementAt(index);
-                final esSeleccionado = _idiomaSeleccionado.startsWith(idioma);
-                final isDarkMode =
-                    Theme.of(context).brightness == Brightness.dark;
-
-                final selectedColor = isDarkMode
-                    ? Colors.grey[700]!
-                    : Theme.of(context).primaryColor;
-                final selectedTextColor = isDarkMode
-                    ? Colors.white
-                    : Theme.of(context).colorScheme.onPrimary;
-
-                return Card(
-                  elevation: esSeleccionado ? 4 : 1,
-                  color: esSeleccionado
-                      ? selectedColor
-                      : Theme.of(context).cardColor,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 0,
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      idioma,
-                      style: TextStyle(
-                        color: esSeleccionado
-                            ? selectedTextColor
-                            : Theme.of(context).colorScheme.onSurface,
-                        fontWeight: esSeleccionado
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      color: esSeleccionado
-                          ? selectedTextColor
-                          : Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.5),
-                      size: 16,
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      final variantes = idiomasConVariantes[idioma]!;
-
-                      // Si solo tiene una variante, ir directo a confirmación
-                      if (variantes.length == 1) {
-                        _confirmarCambioIdioma(variantes[0]);
-                      } else {
-                        // Si tiene múltiples variantes, mostrar lista
-                        _mostrarVariantesIdioma(idioma, variantes);
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Cancelar',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Popup para seleccionar variante regional del idioma
-  void _mostrarVariantesIdioma(String idiomaBase, List<String> variantes) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFFFFE8DA),
-          title: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _mostrarPopupIdioma();
-                },
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  idiomaBase,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: variantes.length > 5 ? 400 : null,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: variantes.length,
-              itemBuilder: (context, index) {
-                final variante = variantes[index];
-                final esSeleccionado = _idiomaSeleccionado == variante;
-                final isDarkMode =
-                    Theme.of(context).brightness == Brightness.dark;
-
-                final selectedColor =
-                    isDarkMode ? Colors.grey[700]! : const Color(0xFFFF9350);
-                final selectedTextColor =
-                    isDarkMode ? Colors.white : Colors.black;
-
-                return Card(
-                  elevation: esSeleccionado ? 4 : 1,
-                  color: esSeleccionado ? selectedColor : Colors.white,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 0,
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      variante,
-                      style: TextStyle(
-                        color:
-                            esSeleccionado ? selectedTextColor : Colors.black,
-                        fontWeight: esSeleccionado
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                    trailing: esSeleccionado
-                        ? Icon(Icons.check_circle, color: selectedTextColor)
-                        : null,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _confirmarCambioIdioma(variante);
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _mostrarPopupIdioma();
-              },
-              child: const Text('Atrás', style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Confirmación antes de cambiar el idioma
-  void _confirmarCambioIdioma(String nuevoIdioma) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          title: Row(
-            children: [
-              Icon(Icons.warning_amber_rounded,
-                  color: Theme.of(context).colorScheme.onSurface),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Confirmar cambio',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            '¿Seguro que quieres cambiar el idioma a $nuevoIdioma?',
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                fontSize: 16),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('No',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _idiomaSeleccionado = nuevoIdioma;
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Idioma cambiado a: $nuevoIdioma'),
-                    duration: const Duration(seconds: 2),
-                    backgroundColor: Theme.of(context).primaryColor,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-              ),
-              child: Text('Sí',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary)),
-            ),
-          ],
         );
       },
     );

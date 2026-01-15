@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'api_config.dart';
+import 'http_helper.dart';
 
 class AccesibilidadService {
   /// Guarda las configuraciones de accesibilidad en el backend
@@ -44,6 +45,7 @@ class AccesibilidadService {
           .post(
             Uri.parse(url),
             headers: {
+              ...HttpHelper.getLanguageHeaders(),
               ...ApiConfig.headers,
               if (token.isNotEmpty) 'Authorization': 'Bearer $token',
             },
@@ -77,8 +79,22 @@ class AccesibilidadService {
         );
       }
     } on Exception catch (e) {
-      print('❌ Error guardando configuración de accesibilidad: $e');
-      rethrow;
+      print('❌ Error guardando en backend: $e');
+      // Fallback: Guardar localmente para que la UX no se rompa
+      try {
+        await _guardarConfiguracionLocal(
+          tamanoFuente: tamanoFuente,
+          altoContraste: altoContraste,
+          modoOscuro: modoOscuro,
+          idioma: idioma,
+          tamanoFuentePersonalizado: tamanoFuentePersonalizado,
+        );
+        print('✅ Configuración guardada localmente (modo offline/error)');
+        return true; // Consideramos éxito parcial para la UI
+      } catch (localError) {
+        print('❌ Error guardando localmente: $localError');
+        rethrow;
+      }
     }
   }
 
@@ -102,6 +118,7 @@ class AccesibilidadService {
       final response = await http.get(
         Uri.parse(url),
         headers: {
+          ...HttpHelper.getLanguageHeaders(),
           ...ApiConfig.headers,
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
         },

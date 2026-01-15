@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/services/coche_service.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 // Modelo para representar un coche (MANTENIDO EN EL MISMO ARCHIVO)
 class Coche {
@@ -130,7 +131,8 @@ class _CochesScreenState extends State<CochesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al cargar los coches: $error'),
+            content: Text(AppLocalizations.of(context)!
+                .errorCargarCochesDetalle(error.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -186,8 +188,8 @@ class _CochesScreenState extends State<CochesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                'Coche creado exitosamente: ${_marcaController.text} ${_modeloController.text}'),
+            content: Text(AppLocalizations.of(context)!.cocheCreadoExito(
+                _marcaController.text, _modeloController.text)),
             backgroundColor: Colors.green,
           ),
         );
@@ -199,7 +201,8 @@ class _CochesScreenState extends State<CochesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al crear coche: $error'),
+            content: Text(AppLocalizations.of(context)!
+                .errorCrearCoche(error.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -228,6 +231,7 @@ class _CochesScreenState extends State<CochesScreen> {
   }
 
   void _mostrarModalFormulario() {
+    final l10n = AppLocalizations.of(context)!;
     _marcaController.clear();
     _modeloController.clear();
     _tiposCombustible.updateAll((key, value) => false);
@@ -245,9 +249,9 @@ class _CochesScreenState extends State<CochesScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text(
-                'Añadir Coche',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              title: Text(
+                l10n.anadirCoche,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               content: SingleChildScrollView(
                 child: Form(
@@ -258,15 +262,15 @@ class _CochesScreenState extends State<CochesScreen> {
                     children: [
                       TextFormField(
                         controller: _marcaController,
-                        decoration: const InputDecoration(
-                          labelText: 'Marca',
-                          hintText: 'Ej: Toyota, BMW, Seat...',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.directions_car),
+                        decoration: InputDecoration(
+                          labelText: l10n.marca,
+                          hintText: l10n.ejemploMarca,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.directions_car),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa la marca';
+                            return l10n.ingresaMarca;
                           }
                           return null;
                         },
@@ -274,23 +278,23 @@ class _CochesScreenState extends State<CochesScreen> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _modeloController,
-                        decoration: const InputDecoration(
-                          labelText: 'Modelo',
-                          hintText: 'Ej: Corolla, Serie 3, León...',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.car_crash),
+                        decoration: InputDecoration(
+                          labelText: l10n.modelo,
+                          hintText: l10n.ejemploModelo,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.car_crash),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa el modelo';
+                            return l10n.ingresaModelo;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Tipo de Combustible:',
-                        style: TextStyle(
+                      Text(
+                        l10n.tiposCombustibleLabel,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -308,35 +312,35 @@ class _CochesScreenState extends State<CochesScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           dense: true,
                         );
-                      }).toList(),
+                      }),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _kilometrajeInicialController,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Kilometraje Inicial',
-                          hintText: 'Ej: 50000',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.kilometrajeInicial,
+                          hintText: l10n.ejemploKilometraje,
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _capacidadTanqueController,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Capacidad del Tanque (L)',
-                          hintText: 'Ej: 50',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.capacidadTanque,
+                          hintText: l10n.ejemploTanque,
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _consumoTeoricoController,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Consumo Teórico (L/100km)',
-                          hintText: 'Ej: 5.5',
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.consumoTeorico,
+                          hintText: l10n.ejemploConsumo,
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                     ],
@@ -346,7 +350,7 @@ class _CochesScreenState extends State<CochesScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
+                  child: Text(l10n.cancelar),
                 ),
                 ElevatedButton(
                   onPressed: _isLoading
@@ -358,9 +362,9 @@ class _CochesScreenState extends State<CochesScreen> {
 
                             if (!alMenosUnoCombustible) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'Selecciona al menos un tipo de combustible',
+                                    l10n.seleccionaCombustibleError,
                                   ),
                                   backgroundColor: Colors.orange,
                                 ),
@@ -374,6 +378,7 @@ class _CochesScreenState extends State<CochesScreen> {
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF9350),
+                    foregroundColor: const Color(0xFF3E2723),
                   ),
                   child: _isLoading
                       ? const SizedBox(
@@ -386,7 +391,7 @@ class _CochesScreenState extends State<CochesScreen> {
                             ),
                           ),
                         )
-                      : const Text('Guardar'),
+                      : Text(l10n.guardar),
                 ),
               ],
             );
@@ -403,8 +408,8 @@ class _CochesScreenState extends State<CochesScreen> {
     if (coche.idCoche == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error: El coche no tiene ID'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorCocheSinId),
             backgroundColor: Colors.red,
           ),
         );
@@ -415,25 +420,27 @@ class _CochesScreenState extends State<CochesScreen> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
+        title: Text(AppLocalizations.of(context)!.confirmarEliminacion),
         content: Text(
-          '¿Estás seguro de que quieres eliminar ${coche.marca} ${coche.modelo}?',
-          style: TextStyle(fontSize: 16),
+          AppLocalizations.of(context)!
+              .confirmarEliminarCoche(coche.marca, coche.modelo),
+          style: const TextStyle(fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.black),
+            child: Text(
+              AppLocalizations.of(context)!.cancelar,
+              style: const TextStyle(color: Colors.black),
             ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF9350)),
-            child: const Text(
-              'Eliminar',
-              style: TextStyle(color: Colors.black),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF9350)),
+            child: Text(
+              AppLocalizations.of(context)!.eliminar,
+              style: const TextStyle(color: Colors.black),
             ),
           ),
         ],
@@ -452,7 +459,8 @@ class _CochesScreenState extends State<CochesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Coche eliminado: ${coche.marca} ${coche.modelo}'),
+            content: Text(AppLocalizations.of(context)!
+                .cocheEliminado(coche.marca, coche.modelo)),
             backgroundColor:
                 Theme.of(context).colorScheme.primary, // Usar color primario
           ),
@@ -465,7 +473,8 @@ class _CochesScreenState extends State<CochesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al eliminar coche: $error'),
+            content: Text(AppLocalizations.of(context)!
+                .errorEliminarCoche(error.toString())),
             backgroundColor:
                 Theme.of(context).colorScheme.error, // Usar color de error
           ),
@@ -482,6 +491,7 @@ class _CochesScreenState extends State<CochesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor:
           Theme.of(context).scaffoldBackgroundColor, // Usar fondo del tema
@@ -502,7 +512,7 @@ class _CochesScreenState extends State<CochesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Coches',
+                    l10n.cochesTitulo,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -534,8 +544,8 @@ class _CochesScreenState extends State<CochesScreen> {
                           Icon(Icons.add, size: 28),
                           SizedBox(width: 8),
                           Text(
-                            'Añadir Coche',
-                            style: TextStyle(
+                            l10n.anadirCoche,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -560,8 +570,8 @@ class _CochesScreenState extends State<CochesScreen> {
                           ),
                           SizedBox(height: 16),
                           Text(
-                            'No hay coches añadidos',
-                            style: TextStyle(
+                            l10n.noHayCoches,
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Colors.grey,
                               fontWeight: FontWeight.w500,
@@ -569,8 +579,9 @@ class _CochesScreenState extends State<CochesScreen> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Pulsa el botón "Añadir Coche" para empezar',
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                            l10n.pulsaAnadirCoche,
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -648,7 +659,8 @@ class _CochesScreenState extends State<CochesScreen> {
                                             if (coche.kilometrajeInicial !=
                                                 null)
                                               Text(
-                                                'Kilometraje: ${coche.kilometrajeInicial} km',
+                                                l10n.kilometrajeItem(
+                                                    coche.kilometrajeInicial!),
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.grey,
@@ -656,7 +668,8 @@ class _CochesScreenState extends State<CochesScreen> {
                                               ),
                                             if (coche.capacidadTanque != null)
                                               Text(
-                                                'Tanque: ${coche.capacidadTanque}L',
+                                                l10n.tanqueItem(
+                                                    coche.capacidadTanque!),
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.grey,
@@ -678,7 +691,7 @@ class _CochesScreenState extends State<CochesScreen> {
                                   const Divider(),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Tipos de combustible:',
+                                    l10n.tiposCombustibleLabel,
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,

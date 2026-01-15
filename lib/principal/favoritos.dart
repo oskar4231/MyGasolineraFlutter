@@ -5,6 +5,7 @@ import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart'; // 🆕 Para obtener ubicación
 import 'package:my_gasolinera/services/provincia_service.dart'; // 🆕 Para detectar provincia
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -145,15 +146,17 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   void _mostrarFiltros() {
+    final l10n = AppLocalizations.of(context)!;
+
     // Valores temporales para el diálogo
-    String combustibleTemp = _tipoCombustibleSeleccionado ?? 'Todos';
+    String combustibleTemp = _tipoCombustibleSeleccionado ?? l10n.todos;
     String ordenTemp = _ordenSeleccionado == 'nombre'
-        ? 'Nombre'
+        ? l10n.nombre
         : _ordenSeleccionado == 'precio_asc'
-            ? 'Precio Ascendente'
+            ? l10n.precioAscendente
             : _ordenSeleccionado == 'precio_desc'
-                ? 'Precio Descendente'
-                : 'Nombre';
+                ? l10n.precioDescendente
+                : l10n.nombre;
 
     showDialog(
       context: context,
@@ -177,23 +180,23 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Título "Filtros" en negro
-                      const Text(
-                        'Filtros',
-                        style: TextStyle(
+                      Text(
+                        l10n.filtros,
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Color(0xFF3E2723),
                         ),
                       ),
 
                       const SizedBox(height: 24),
 
                       // Tipo de Combustible
-                      const Text(
-                        'TIPO DE COMBUSTIBLE',
-                        style: TextStyle(
+                      Text(
+                        l10n.tipoCombustible.toUpperCase(),
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.black,
+                          color: Color(0xFF3E2723),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -229,7 +232,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               size: 28,
                             ),
                             style: const TextStyle(
-                              color: Colors.black,
+                              color: Color(0xFF3E2723),
                               fontSize: 16,
                               fontWeight: FontWeight.w500, // 🔧 Más peso
                             ),
@@ -243,7 +246,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               });
                             },
                             items: [
-                              'Todos',
+                              l10n.todos,
                               'Gasolina 95',
                               'Gasolina 98',
                               'Diesel',
@@ -255,7 +258,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 child: Text(
                                   value,
                                   style: const TextStyle(
-                                    color: Colors.black,
+                                    color: Color(0xFF3E2723),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -269,11 +272,11 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       const SizedBox(height: 20),
 
                       // Filtrar Por
-                      const Text(
-                        'FILTRAR POR',
-                        style: TextStyle(
+                      Text(
+                        l10n.filtrarPor.toUpperCase(),
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.black,
+                          color: Color(0xFF3E2723),
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -309,7 +312,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               size: 28,
                             ),
                             style: const TextStyle(
-                              color: Colors.black,
+                              color: Color(0xFF3E2723),
                               fontSize: 16,
                               fontWeight: FontWeight.w500, // 🔧 Más peso
                             ),
@@ -322,35 +325,35 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 ordenTemp = nuevoValor!;
                               });
                             },
-                            items: const [
+                            items: [
                               DropdownMenuItem<String>(
-                                value: 'Nombre',
+                                value: l10n.nombre,
                                 child: Text(
-                                  'Nombre',
-                                  style: TextStyle(
-                                    color: Colors.black,
+                                  l10n.nombre,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3E2723),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                               DropdownMenuItem<String>(
-                                value: 'Precio Ascendente',
+                                value: l10n.precioAscendente,
                                 child: Text(
-                                  'Precio Ascendente',
-                                  style: TextStyle(
-                                    color: Colors.black,
+                                  l10n.precioAscendente,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3E2723),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                               DropdownMenuItem<String>(
-                                value: 'Precio Descendente',
+                                value: l10n.precioDescendente,
                                 child: Text(
-                                  'Precio Descendente',
-                                  style: TextStyle(
-                                    color: Colors.black,
+                                  l10n.precioDescendente,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3E2723),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -378,9 +381,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 vertical: 12,
                               ),
                             ),
-                            child: const Text(
-                              'Cancelar',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.cancelar,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -394,15 +397,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               // Aplicar filtros
                               setState(() {
                                 _tipoCombustibleSeleccionado =
-                                    (combustibleTemp == 'Todos')
+                                    (combustibleTemp == l10n.todos)
                                         ? null
                                         : combustibleTemp;
 
-                                if (ordenTemp == 'Nombre') {
+                                if (ordenTemp == l10n.nombre) {
                                   _ordenSeleccionado = 'nombre';
-                                } else if (ordenTemp == 'Precio Ascendente') {
+                                } else if (ordenTemp == l10n.precioAscendente) {
                                   _ordenSeleccionado = 'precio_asc';
-                                } else if (ordenTemp == 'Precio Descendente') {
+                                } else if (ordenTemp ==
+                                    l10n.precioDescendente) {
                                   _ordenSeleccionado = 'precio_desc';
                                 }
 
@@ -424,9 +428,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 vertical: 12,
                               ),
                             ),
-                            child: const Text(
-                              'Aplicar',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.aplicar,
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -445,7 +449,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     );
   }
 
-  Widget _buildGasolineraItem(Gasolinera gasolinera) {
+  Widget _buildGasolineraItem(Gasolinera gasolinera, AppLocalizations l10n) {
     final formatter = NumberFormat.currency(
       locale: 'es_ES',
       symbol: '€',
@@ -534,7 +538,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            '${gasolinera.rotulo} eliminado de favoritos',
+                            '${gasolinera.rotulo} ${l10n.eliminadoDeFavoritos}',
                           ),
                           backgroundColor: Colors.red,
                           duration: const Duration(seconds: 2),
@@ -626,13 +630,15 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFE2CE),
       appBar: AppBar(
-        title: const Text(
-          'Gasolineras favoritas',
-          style: TextStyle(
-            color: Colors.black,
+        title: Text(
+          l10n.gasolinerasFavoritas,
+          style: const TextStyle(
+            color: Color(0xFF3E2723),
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -642,7 +648,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         actions: [
           IconButton(
             onPressed: _mostrarFiltros,
-            icon: const Icon(Icons.filter_list, color: Colors.black, size: 28),
+            icon: const Icon(Icons.filter_list,
+                color: Color(0xFF3E2723), size: 28),
           ),
         ],
       ),
@@ -660,20 +667,21 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         Icon(Icons.star_border,
                             size: 80, color: Colors.grey[400]),
                         const SizedBox(height: 20),
-                        const Text(
-                          'No hay gasolineras favoritas en tu lista',
+                        Text(
+                          l10n.noHayFavoritos,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             color: Colors.grey,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 12),
-                        const Text(
-                          'Selecciona gasolineras en el mapa para añadirlas aquí',
+                        Text(
+                          l10n.seleccionaGasolinerasEnMapa,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         const SizedBox(height: 30),
                         ElevatedButton.icon(
@@ -681,10 +689,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                             Navigator.pop(context);
                           },
                           icon: const Icon(Icons.map),
-                          label: const Text('Ver mapa'),
+                          label: Text(l10n.verMapa),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF9350),
-                            foregroundColor: Colors.white,
+                            foregroundColor: Colors.brown,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -730,10 +738,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 child: Chip(
                                   label: Text(
                                     _ordenSeleccionado == 'nombre'
-                                        ? 'Orden: Nombre'
+                                        ? l10n.ordenNombre
                                         : _ordenSeleccionado == 'precio_asc'
-                                            ? 'Orden: Precio ↑'
-                                            : 'Orden: Precio ↓',
+                                            ? l10n.ordenPrecioAsc
+                                            : l10n.ordenPrecioDesc,
                                   ),
                                   backgroundColor: const Color(
                                     0xFFFF9350,
@@ -756,7 +764,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         itemCount: _gasolinerasFavoritas.length,
                         itemBuilder: (context, index) {
                           return _buildGasolineraItem(
-                              _gasolinerasFavoritas[index]);
+                              _gasolinerasFavoritas[index], l10n);
                         },
                       ),
                     ),
