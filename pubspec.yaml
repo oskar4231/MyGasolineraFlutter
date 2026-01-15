@@ -24,6 +24,8 @@ dependencies:
   shared_preferences: ^2.5.4
   package_info_plus: ^8.3.1
   
+
+  
   # Database para cache local
   drift: ^2.20.3
   drift_flutter: ^0.2.1
@@ -31,6 +33,13 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.0
   cupertino_icons: ^1.0.8
+  google_mlkit_text_recognition: ^0.15.0
+  excel: ^4.0.6
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  file_picker: ^10.3.8
+  share_plus: ^12.0.1
+  universal_html: ^2.3.0
 
 dev_dependencies:
   flutter_test:

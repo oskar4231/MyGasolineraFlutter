@@ -1,5 +1,5 @@
-/// Configuración centralizada de la URL del backend
-library;
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:my_gasolinera/importante/switchBackend.dart';
 
 ///
@@ -17,23 +17,39 @@ class ApiConfig {
   /// Esta URL se actualiza dinámicamente al iniciar la app usando ConfigService
   /// No incluyas la barra final (/)
   static const String _localUrl = 'http://localhost:3000';
+  static const String _androidEmulatorUrl = 'http://10.0.2.2:3000';
   static const String _ngrokUrl =
       'https://rectricial-dewayne-collusive.ngrok-free.dev';
+
+  // Variable de respaldo por si se actualiza dinámicamente
+  static String? _dynamicUrl;
 
   /// URL base del backend
   ///
   /// Esta URL se determina por el switch en lib/important/switchBackend.dart
-  static String baseUrl = switchBackend == 0 ? _localUrl : _ngrokUrl;
+  static String get baseUrl {
+    // Si se ha establecido una URL dinámica (ej. al inicio), usarla
+    if (_dynamicUrl != null) return _dynamicUrl!;
+
+    if (switchBackend == 1) {
+      return _ngrokUrl;
+    }
+    // Si es localhost (0)
+    if (!kIsWeb && Platform.isAndroid) {
+      return _androidEmulatorUrl;
+    }
+    return _localUrl;
+  }
 
   /// Actualiza la URL base dinámicamente
   static void setBaseUrl(String newUrl) {
     if (newUrl.endsWith('/')) {
-      baseUrl = newUrl.substring(0, newUrl.length - 1);
+      _dynamicUrl = newUrl.substring(0, newUrl.length - 1);
     } else {
-      baseUrl = newUrl;
+      _dynamicUrl = newUrl;
     }
     // ignore: avoid_print
-    print('API Config: URL Base actualizada a: $baseUrl');
+    print('API Config: URL Base actualizada a: $_dynamicUrl');
   }
 
   /// Obtiene la URL completa para un endpoint

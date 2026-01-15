@@ -21,6 +21,53 @@ class FacturaImageWidget extends StatefulWidget {
     this.errorBuilder,
   });
 
+  static void showFullScreen(BuildContext context,
+      {required int? facturaId, required String? serverPath}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.white),
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+          body: Center(
+            child: InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: FacturaImageWidget(
+                facturaId: facturaId,
+                serverPath: serverPath,
+                fit: BoxFit.contain,
+                errorBuilder: (context) => const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 100,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'No se pudo cargar la imagen',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   State<FacturaImageWidget> createState() => _FacturaImageWidgetState();
 }
@@ -42,10 +89,12 @@ class _FacturaImageWidgetState extends State<FacturaImageWidget> {
     }
 
     try {
+      print('Checking local image for id: ${widget.facturaId}');
       final bytes = await LocalImageService.getImageBytes(
         'factura',
         widget.facturaId.toString(),
       );
+      print('Local image found: ${bytes != null}');
       if (mounted) {
         setState(() {
           _localBytes = bytes;
@@ -59,8 +108,29 @@ class _FacturaImageWidgetState extends State<FacturaImageWidget> {
   }
 
   String _buildImageUrl(String path) {
-    final normalizedPath = path.replaceAll('\\', '/');
-    return '${ApiConfig.baseUrl}/$normalizedPath';
+    if (path.isEmpty) return '';
+
+    // Si ya es una URL completa, devolverla
+    if (path.startsWith('http')) return path;
+
+    String normalizedPath = path.replaceAll('\\', '/');
+
+    // INTENTO DE CORRECCIÓN: Si el path es absoluto del servidor (ej C:/Users/.../uploads/foto.jpg)
+    // Intentar extraer la parte relativa desde 'uploads/'
+    if (normalizedPath.contains('uploads/')) {
+      normalizedPath =
+          normalizedPath.substring(normalizedPath.indexOf('uploads/'));
+    }
+
+    // Quitar barra inicial si la hay para evitar doble barra con baseUrl
+    if (normalizedPath.startsWith('/')) {
+      normalizedPath = normalizedPath.substring(1);
+    }
+
+    final url = '${ApiConfig.baseUrl}/$normalizedPath';
+    print(
+        'Building image URL: $url (original path: $path, baseUrl: ${ApiConfig.baseUrl})');
+    return url;
   }
 
   @override

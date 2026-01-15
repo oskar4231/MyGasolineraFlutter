@@ -141,7 +141,8 @@ class DetalleFacturaScreen extends StatelessWidget {
             // Imagen de la factura
             if (factura['imagenPath'] != null ||
                 factura['id_factura'] != null ||
-                factura['id'] != null)
+                factura['id'] != null ||
+                factura['facturaId'] != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -191,7 +192,8 @@ class DetalleFacturaScreen extends StatelessWidget {
                                     maxScale: 4.0,
                                     child: FacturaImageWidget(
                                       facturaId: factura['id_factura'] ??
-                                          factura['id'],
+                                          factura['id'] ??
+                                          factura['facturaId'],
                                       serverPath: factura['imagenPath'],
                                       fit: BoxFit.contain,
                                       errorBuilder: (context) => const Icon(
@@ -207,7 +209,9 @@ class DetalleFacturaScreen extends StatelessWidget {
                           );
                         },
                         child: FacturaImageWidget(
-                          facturaId: factura['id_factura'] ?? factura['id'],
+                          facturaId: factura['id_factura'] ??
+                              factura['id'] ??
+                              factura['facturaId'],
                           serverPath: factura['imagenPath'],
                           fit: BoxFit.cover,
                           errorBuilder: (context) {

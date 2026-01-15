@@ -5,7 +5,7 @@ import 'package:my_gasolinera/services/factura_service.dart';
 import 'package:my_gasolinera/services/coche_service.dart';
 import 'package:my_gasolinera/services/local_image_service.dart';
 import 'package:intl/intl.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/services/ocr_service.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
   const CrearFacturaScreen({super.key});
@@ -113,6 +113,94 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
     }
   }
 
+  Future<void> _procesarEscaneo(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image == null) return;
+
+      setState(() {
+        _isLoading = true;
+        _imagenFactura = image; // Also set as the invoice image
+      });
+
+      final data = await OcrService().scanAndExtract(image.path);
+
+      setState(() {
+        if (data['fecha'] != null) _fechaController.text = data['fecha'];
+        if (data['total'] != null)
+          _costoController.text = data['total'].toString();
+        if (data['litros'] != null)
+          _litrosController.text = data['litros'].toString();
+        if (data['precio_litro'] != null)
+          _precioLitroController.text = data['precio_litro'].toString();
+
+        // Auto-fill title if gas station name found and title is empty
+        if (data['gasolinera'] != null && _tituloController.text.isEmpty) {
+          _tituloController.text = "Repostaje ${data['gasolinera']}";
+        } else if (_tituloController.text.isEmpty) {
+          _tituloController.text = "Repostaje Escaneado";
+        }
+
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('✅ Datos escaneados. Por favor verifica.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al escanear: $e')),
+        );
+      }
+    }
+  }
+
+  void _mostrarOpcionesEscaneo() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: Icon(
+                Icons.photo_library,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              title: Text(
+                'Galería',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _procesarEscaneo(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.camera_alt,
+                  color: Theme.of(context).colorScheme.onSurface),
+              title: Text(
+                'Cámara',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _procesarEscaneo(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _mostrarOpcionesImagen() {
     showModalBottomSheet(
       context: context,
@@ -188,10 +276,19 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
         );
 
         // 2. Si hay imagen, guardar localmente en BBDD intermedia encriptada
-        if (_imagenFactura != null && response['id'] != null) {
+        // Verificar ambos posibles keys para el ID
+        final idFactura =
+            response['id'] ?? response['id_factura'] ?? response['facturaId'];
+
+        print('📝 Respuesta crear factura: $response');
+        print('🆔 ID Factura obtenido para imagen: $idFactura');
+
+        if (_imagenFactura != null && idFactura != null) {
           print('💾 Guardando imagen localmente...');
           await LocalImageService.saveImage(
-              _imagenFactura!, 'factura', response['id'].toString());
+              _imagenFactura!, 'factura', idFactura.toString());
+        } else if (_imagenFactura != null) {
+          print('❌ No se pudo guardar imagen: ID nulo');
         }
 
         if (mounted) {
@@ -258,6 +355,26 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
               key: _formKey,
               child: Column(
                 children: [
+                  // Botón Escanear Factura
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _mostrarOpcionesEscaneo,
+                      icon: const Icon(Icons.document_scanner),
+                      label: const Text('Escanear Factura (Autocompletar)'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
                   // Campo Título
                   TextFormField(
                     controller: _tituloController,

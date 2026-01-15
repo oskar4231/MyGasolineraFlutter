@@ -48,15 +48,26 @@ class LocalImageService {
   static Future<Uint8List?> getImageBytes(String type, String relatedId) async {
     try {
       // Buscar en BD
+      print('🔍 Buscando imagen local (type: $type, id: $relatedId)...');
       final record = await database.getLocalImage(type, relatedId);
+
       if (record == null) {
+        print(
+            '⚠️ No se encontró registro en BD local para: $type / $relatedId');
         return null;
       }
+
+      print(
+          '✅ Registro encontrado. ID: ${record.id}, ContentSize: ${record.content.length} bytes');
 
       // Si tenemos contenido en blob (nueva versión)
       // Drift devuelve Uint8List para BlobColumn
       return _encryptBytes(record.content); // XOR es simétrico
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> main
       // Fallback para versión antigua (si existiera lógica de archivo, pero la hemos eliminado para compatibilidad Web)
       // Si la columna content está vacía, no podemos recuperar la imagen en Web si dependía de FileSystem.
       return null;
