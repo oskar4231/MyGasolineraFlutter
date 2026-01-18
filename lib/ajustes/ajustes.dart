@@ -831,16 +831,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
 class _OpcionItem extends StatefulWidget {
   final IconData icono;
   final String texto;
-  final bool tieneCheckbox;
-  final bool checkboxValue;
   final VoidCallback onTap;
 
   const _OpcionItem({
     required this.icono,
     required this.texto,
     required this.onTap,
-    this.tieneCheckbox = false,
-    this.checkboxValue = false,
   });
 
   @override
@@ -859,7 +855,7 @@ class __OpcionItemState extends State<_OpcionItem> {
       child: Container(
         decoration: BoxDecoration(
           color: _isHovered
-              ? theme.colorScheme.onSurface.withOpacity(0.12)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
@@ -869,14 +865,6 @@ class __OpcionItemState extends State<_OpcionItem> {
             widget.texto,
             style: TextStyle(color: theme.colorScheme.onSurface),
           ),
-          trailing: widget.tieneCheckbox
-              ? Checkbox(
-                  value: widget.checkboxValue,
-                  onChanged: (bool? value) {
-                    widget.onTap();
-                  },
-                )
-              : null,
           onTap: widget.onTap,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,

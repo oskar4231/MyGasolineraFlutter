@@ -128,12 +128,15 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
       setState(() {
         if (data['fecha'] != null) _fechaController.text = data['fecha'];
-        if (data['total'] != null)
+        if (data['total'] != null) {
           _costoController.text = data['total'].toString();
-        if (data['litros'] != null)
+        }
+        if (data['litros'] != null) {
           _litrosController.text = data['litros'].toString();
-        if (data['precio_litro'] != null)
+        }
+        if (data['precio_litro'] != null) {
           _precioLitroController.text = data['precio_litro'].toString();
+        }
 
         // Auto-fill title if gas station name found and title is empty
         if (data['gasolinera'] != null && _tituloController.text.isEmpty) {

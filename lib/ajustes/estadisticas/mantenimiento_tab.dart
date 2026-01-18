@@ -88,11 +88,11 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
           ElevatedButton(
             onPressed: _recargar,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Text(
               AppLocalizations.of(context)!.reintentar,
-              style: const TextStyle(color: Colors.black),
             ),
           ),
         ],
@@ -115,18 +115,21 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
           const SizedBox(height: 10),
           Text(
             AppLocalizations.of(context)!.anadeCochesMantenimiento,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _recargar,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Text(
               AppLocalizations.of(context)!.reintentar,
-              style: const TextStyle(color: Colors.black),
             ),
           ),
         ],
@@ -194,9 +197,12 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                       if (kmActual != null)
                         Text(
                           '${AppLocalizations.of(context)!.kmActual}: $kmActual',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                     ],
@@ -228,7 +234,13 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.kmDesdeCambio,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.6),
+                      ),
                     ),
                     Text(
                       '$kmDesdeCambio km',
@@ -244,7 +256,13 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.kmRestantes,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.6),
+                      ),
                     ),
                     Text(
                       '$kmRestantes km',
@@ -269,9 +287,10 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   children: [
                     Text(
                       '${AppLocalizations.of(context)!.progreso}: ${progreso.toStringAsFixed(1)}%',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -293,7 +312,10 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progreso / 100,
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[700]
+                            : Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(
                       necesitaCambio ? Colors.red : Colors.green,
                     ),

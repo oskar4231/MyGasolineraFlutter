@@ -380,11 +380,12 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFE8DA),
+          backgroundColor: Theme.of(context).dialogBackgroundColor,
           title: Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onSurface),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _mostrarPopupIdioma();
@@ -394,8 +395,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
               Expanded(
                 child: Text(
                   idiomaBase,
-                  style: const TextStyle(
-                    color: Colors.black,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -415,14 +416,18 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                 final isDarkMode =
                     Theme.of(context).brightness == Brightness.dark;
 
-                final selectedColor =
-                    isDarkMode ? Colors.grey[700]! : const Color(0xFFFF9350);
-                final selectedTextColor =
-                    isDarkMode ? Colors.white : Colors.black;
+                final selectedColor = isDarkMode
+                    ? Colors.grey[700]!
+                    : Theme.of(context).primaryColor;
+                final selectedTextColor = isDarkMode
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onPrimary;
 
                 return Card(
                   elevation: esSeleccionado ? 4 : 1,
-                  color: esSeleccionado ? selectedColor : Colors.white,
+                  color: esSeleccionado
+                      ? selectedColor
+                      : Theme.of(context).cardColor,
                   margin: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 0,
@@ -431,8 +436,9 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                     title: Text(
                       variante,
                       style: TextStyle(
-                        color:
-                            esSeleccionado ? selectedTextColor : Colors.black,
+                        color: esSeleccionado
+                            ? selectedTextColor
+                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: esSeleccionado
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -457,7 +463,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                 _mostrarPopupIdioma();
               },
               child: Text(AppLocalizations.of(context)!.atras,
-                  style: const TextStyle(color: Colors.black)),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface)),
             ),
           ],
         );

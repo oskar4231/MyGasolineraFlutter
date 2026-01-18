@@ -2,73 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/services/coche_service.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
-
-// Modelo para representar un coche (MANTENIDO EN EL MISMO ARCHIVO)
-class Coche {
-  final int? idCoche;
-  final String marca;
-  final String modelo;
-  final List<String> tiposCombustible;
-  final int? kilometrajeInicial;
-  final double? capacidadTanque;
-  final double? consumoTeorico;
-  final String? fechaUltimoCambioAceite;
-  final int? kmUltimoCambioAceite;
-  final int intervaloCambioAceiteKm;
-  final int intervaloCambioAceiteMeses;
-
-  Coche({
-    this.idCoche,
-    required this.marca,
-    required this.modelo,
-    required this.tiposCombustible,
-    this.kilometrajeInicial,
-    this.capacidadTanque,
-    this.consumoTeorico,
-    this.fechaUltimoCambioAceite,
-    this.kmUltimoCambioAceite,
-    this.intervaloCambioAceiteKm = 15000,
-    this.intervaloCambioAceiteMeses = 12,
-  });
-
-  // Factory para crear un Coche desde JSON del backend
-  factory Coche.fromJson(Map<String, dynamic> json) {
-    List<String> combustibles = [];
-    if (json['combustible'] != null) {
-      combustibles = json['combustible']
-          .toString()
-          .split(', ')
-          .map((e) => e.trim())
-          .toList();
-    }
-
-    return Coche(
-      idCoche: json['id_coche'],
-      marca: json['marca'] ?? '',
-      modelo: json['modelo'] ?? '',
-      tiposCombustible: combustibles,
-      kilometrajeInicial: json['kilometraje_inicial'] != null
-          ? int.tryParse(json['kilometraje_inicial'].toString())
-          : null,
-      capacidadTanque: json['capacidad_tanque'] != null
-          ? double.tryParse(json['capacidad_tanque'].toString())
-          : null,
-      consumoTeorico: json['consumo_teorico'] != null
-          ? double.tryParse(json['consumo_teorico'].toString())
-          : null,
-      fechaUltimoCambioAceite: json['fecha_ultimo_cambio_aceite'],
-      kmUltimoCambioAceite: json['km_ultimo_cambio_aceite'] != null
-          ? int.tryParse(json['km_ultimo_cambio_aceite'].toString())
-          : null,
-      intervaloCambioAceiteKm: json['intervalo_cambio_aceite_km'] != null
-          ? int.tryParse(json['intervalo_cambio_aceite_km'].toString()) ?? 15000
-          : 15000,
-      intervaloCambioAceiteMeses: json['intervalo_cambio_aceite_meses'] != null
-          ? int.tryParse(json['intervalo_cambio_aceite_meses'].toString()) ?? 12
-          : 12,
-    );
-  }
-}
+import 'package:my_gasolinera/models/coche.dart';
+import 'package:my_gasolinera/coches/widgets/coche_card.dart';
+import 'package:my_gasolinera/metodos/dialog_helper.dart';
 
 class CochesScreen extends StatefulWidget {
   const CochesScreen({super.key});
@@ -84,7 +20,7 @@ class _CochesScreenState extends State<CochesScreen> {
   final _kilometrajeInicialController = TextEditingController();
   final _capacidadTanqueController = TextEditingController();
   final _consumoTeoricoController = TextEditingController();
-  final _fechaUltimoCambioAceiteController = TextEditingController(); // NUEVO
+  final _fechaUltimoCambioAceiteController = TextEditingController();
   final _kmUltimoCambioAceiteController = TextEditingController();
   final _intervaloKmController = TextEditingController(text: '15000');
   final _intervaloMesesController = TextEditingController(text: '12');
@@ -115,7 +51,6 @@ class _CochesScreenState extends State<CochesScreen> {
 
     try {
       final cochesJson = await CocheService.obtenerCoches();
-
       final List<Map<String, dynamic>> cochesList =
           List<Map<String, dynamic>>.from(cochesJson);
 
@@ -129,13 +64,10 @@ class _CochesScreenState extends State<CochesScreen> {
     } catch (error) {
       print('Error al cargar coches: $error');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .errorCargarCochesDetalle(error.toString())),
-            backgroundColor: Colors.red,
-          ),
-        );
+        DialogHelper.showErrorSnackbar(
+            context,
+            AppLocalizations.of(context)!
+                .errorCargarCochesDetalle(error.toString()));
       }
     } finally {
       if (mounted) {
@@ -186,26 +118,18 @@ class _CochesScreenState extends State<CochesScreen> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.cocheCreadoExito(
-                _marcaController.text, _modeloController.text)),
-            backgroundColor: Colors.green,
-          ),
+        DialogHelper.showSuccessSnackbar(
+          context,
+          AppLocalizations.of(context)!
+              .cocheCreadoExito(_marcaController.text, _modeloController.text),
         );
-
         await _cargarCoches();
       }
     } catch (error) {
       print('Error al crear coche: $error');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .errorCrearCoche(error.toString())),
-            backgroundColor: Colors.red,
-          ),
-        );
+        DialogHelper.showErrorSnackbar(context,
+            AppLocalizations.of(context)!.errorCrearCoche(error.toString()));
       }
     } finally {
       if (mounted) {
@@ -225,8 +149,8 @@ class _CochesScreenState extends State<CochesScreen> {
     _consumoTeoricoController.dispose();
     _fechaUltimoCambioAceiteController.dispose();
     _kmUltimoCambioAceiteController.dispose();
-    _intervaloKmController.text = '15000';
-    _intervaloMesesController.text = '12';
+    _intervaloKmController.dispose();
+    _intervaloMesesController.dispose();
     super.dispose();
   }
 
@@ -407,156 +331,137 @@ class _CochesScreenState extends State<CochesScreen> {
 
     if (coche.idCoche == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.errorCocheSinId),
-            backgroundColor: Colors.red,
-          ),
-        );
+        DialogHelper.showErrorSnackbar(
+            context, AppLocalizations.of(context)!.errorCocheSinId);
       }
       return;
     }
 
-    final confirmar = await showDialog<bool>(
+    // Using specialized modular dialog
+    DialogHelper.showConfirmationDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.confirmarEliminacion),
-        content: Text(
-          AppLocalizations.of(context)!
-              .confirmarEliminarCoche(coche.marca, coche.modelo),
-          style: const TextStyle(fontSize: 16),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              AppLocalizations.of(context)!.cancelar,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF9350)),
-            child: Text(
-              AppLocalizations.of(context)!.eliminar,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmar != true) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await CocheService.eliminarCoche(coche.idCoche!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .cocheEliminado(coche.marca, coche.modelo)),
-            backgroundColor:
-                Theme.of(context).colorScheme.primary, // Usar color primario
-          ),
-        );
-
-        await _cargarCoches();
-      }
-    } catch (error) {
-      print('Error al eliminar coche: $error');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .errorEliminarCoche(error.toString())),
-            backgroundColor:
-                Theme.of(context).colorScheme.error, // Usar color de error
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
+      title: AppLocalizations.of(context)!.confirmarEliminacion,
+      content: AppLocalizations.of(context)!
+          .confirmarEliminarCoche(coche.marca, coche.modelo),
+      confirmText: AppLocalizations.of(context)!.eliminar,
+      cancelText: AppLocalizations.of(context)!.cancelar,
+      isDestructive: true,
+      onConfirm: () async {
         setState(() {
-          _isLoading = false;
+          _isLoading = true;
         });
-      }
-    }
+
+        try {
+          await CocheService.eliminarCoche(coche.idCoche!);
+
+          if (mounted) {
+            DialogHelper.showSuccessSnackbar(
+                context,
+                AppLocalizations.of(context)!
+                    .cocheEliminado(coche.marca, coche.modelo));
+
+            await _cargarCoches();
+          }
+        } catch (error) {
+          print('Error al eliminar coche: $error');
+          if (mounted) {
+            DialogHelper.showErrorSnackbar(
+                context,
+                AppLocalizations.of(context)!
+                    .errorEliminarCoche(error.toString()));
+          }
+        } finally {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    // Using Scaffold with SAFEAREA and custom containers for Header/Footer
+    // to match "Image 2" style (Orange Header/Footer with rounded corners)
     return Scaffold(
-      backgroundColor:
-          Theme.of(context).scaffoldBackgroundColor, // Usar fondo del tema
+      backgroundColor: theme.colorScheme.surface,
+      // No AppBar, using custom body header
       body: SafeArea(
         child: Column(
           children: [
+            // Custom Header matching Layouthome style
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .primaryColor, // Usar color primario del tema
+                color: theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    l10n.cochesTitulo,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary, // Texto sobre primario
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _mostrarModalFormulario,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context)
-                            .cardColor, // Usar color de tarjeta para contraste
-                        foregroundColor: Theme.of(context)
-                            .colorScheme
-                            .onSurface, // Texto legible
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back,
+                            color: theme.colorScheme.onPrimary),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      Text(
+                        l10n.cochesTitulo,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimary,
                         ),
-                        elevation: 4,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add, size: 28),
-                          SizedBox(width: 8),
-                          Text(
-                            l10n.anadirCoche,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      // Spacer for balance if needed, or empty SizedBox
+                      const SizedBox(width: 48),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _mostrarModalFormulario,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          theme.colorScheme.onPrimary, // White (usually)
+                      foregroundColor: theme.colorScheme.primary, // Orange
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      elevation:
+                          0, // Flat look often fits better on colored headers
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add, color: theme.colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.anadirCoche,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
+
+            // Body Content
             Expanded(
               child: _coches.isEmpty
                   ? Center(
@@ -566,22 +471,24 @@ class _CochesScreenState extends State<CochesScreen> {
                           Icon(
                             Icons.directions_car_outlined,
                             size: 80,
-                            color: Colors.grey,
+                            color: theme.colorScheme.outline,
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             l10n.noHayCoches,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
-                              color: Colors.grey,
+                              color: theme.colorScheme.onSurface,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             l10n.pulsaAnadirCoche,
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.grey),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.6)),
                           ),
                         ],
                       ),
@@ -590,168 +497,19 @@ class _CochesScreenState extends State<CochesScreen> {
                       padding: const EdgeInsets.all(16),
                       itemCount: _coches.length,
                       itemBuilder: (context, index) {
-                        final coche = _coches[index];
-                        return Card(
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          color: Theme.of(context)
-                              .cardColor, // Usar color de tarjeta del tema
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              // Eliminado gradiente hardcoded para respetar el tema
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context)
-                                              .primaryColor, // Primario
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.directions_car,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary, // Contraste
-                                          size: 32,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              coche.marca,
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface, // Texto principal
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              coche.modelo,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface
-                                                    .withOpacity(
-                                                        0.7), // Texto secundario
-                                              ),
-                                            ),
-                                            if (coche.kilometrajeInicial !=
-                                                null)
-                                              Text(
-                                                l10n.kilometrajeItem(
-                                                    coche.kilometrajeInicial!),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            if (coche.capacidadTanque != null)
-                                              Text(
-                                                l10n.tanqueItem(
-                                                    coche.capacidadTanque!),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () => _eliminarCoche(index),
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  const Divider(),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    l10n.tiposCombustibleLabel,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface, // Texto del tema
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: coche.tiposCombustible.map((
-                                      combustible,
-                                    ) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context)
-                                              .primaryColor
-                                              .withOpacity(
-                                                  0.2), // Tinte del primario
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                          border: Border.all(
-                                            color: Theme.of(context)
-                                                .primaryColor, // Borde primario
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          combustible,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface, // Texto legible
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        return CocheCard(
+                          coche: _coches[index],
+                          onDelete: () => _eliminarCoche(index),
                         );
                       },
                     ),
             ),
+
+            // Footer matching Layouthome style
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color:
-                    Theme.of(context).primaryColor, // Footer con color primario
+                color: theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -765,9 +523,7 @@ class _CochesScreenState extends State<CochesScreen> {
                     icon: Icon(
                       Icons.directions_car,
                       size: 40,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary, // Icono sobre primario
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
                   IconButton(
@@ -775,10 +531,7 @@ class _CochesScreenState extends State<CochesScreen> {
                     icon: Icon(
                       Icons.pin_drop,
                       size: 40,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary
-                          .withOpacity(0.5), // Icono desactivado
+                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.5),
                     ),
                   ),
                   IconButton(
@@ -792,10 +545,7 @@ class _CochesScreenState extends State<CochesScreen> {
                     icon: Icon(
                       Icons.settings,
                       size: 40,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary
-                          .withOpacity(0.5),
+                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.5),
                     ),
                   ),
                 ],

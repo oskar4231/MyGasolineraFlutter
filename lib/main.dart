@@ -10,6 +10,7 @@ import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:my_gasolinera/providers/language_provider.dart';
+import 'package:my_gasolinera/services/auth_service.dart';
 
 // Instancias globales
 late AppDatabase database;
@@ -45,6 +46,9 @@ Future<void> main() async {
 
   // Cargar IDIOMA
   await languageProvider.loadInitialLanguage();
+
+  // Inicializar Auth
+  await AuthService.initialize();
 
   runApp(const MyApp());
 }

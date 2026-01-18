@@ -18,9 +18,14 @@ class FacturasScreen extends StatefulWidget {
 
 class _FacturasScreenState extends State<FacturasScreen>
     with SingleTickerProviderStateMixin {
+  final ScrollController _scrollController = ScrollController();
   List<Map<String, dynamic>> _facturas = [];
   bool _isLoading = true;
+  bool _isLoadingMore = false;
   String? _errorMessage;
+  int _currentPage = 1;
+  bool _hasMore = true;
+  static const int _limit = 10;
 
   // Animation for FAB
   late AnimationController _animationController;
@@ -45,13 +50,24 @@ class _FacturasScreenState extends State<FacturasScreen>
       parent: _animationController,
     ));
 
+    _scrollController.addListener(_onScroll);
     _cargarFacturas();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      if (!_isLoading && !_isLoadingMore && _hasMore) {
+        _cargarFacturas(loadMore: true);
+      }
+    }
   }
 
   void _toggleFab() {
@@ -65,23 +81,55 @@ class _FacturasScreenState extends State<FacturasScreen>
     });
   }
 
-  Future<void> _cargarFacturas() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  Future<void> _cargarFacturas({bool loadMore = false}) async {
+    if (loadMore) {
+      setState(() => _isLoadingMore = true);
+    } else {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+        _currentPage = 1;
+        _hasMore = true;
+        // Don't clear _facturas immediately for better UX if refreshing, unless strict reset needed
+      });
+    }
 
     try {
-      final facturas = await FacturaService.obtenerFacturas();
-      setState(() {
-        _facturas = facturas;
-        _isLoading = false;
-      });
+      final response = await FacturaService.obtenerFacturas(
+        page: _currentPage,
+        limit: _limit,
+      );
+
+      final List<dynamic> data = response['data'] ?? [];
+      final int totalPages = response['totalPages'] ?? 1;
+      final int responsePage = response['currentPage'] ?? 1;
+
+      final List<Map<String, dynamic>> nuevasFacturas =
+          data.map((factura) => factura as Map<String, dynamic>).toList();
+
+      if (mounted) {
+        setState(() {
+          if (loadMore) {
+            _facturas.addAll(nuevasFacturas);
+          } else {
+            _facturas = nuevasFacturas;
+          }
+
+          _hasMore = responsePage < totalPages;
+          if (_hasMore) _currentPage++;
+
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Error al cargar facturas: $e';
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error al cargar facturas: $e';
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
       debugPrint('Error cargando facturas: $e');
     }
   }
@@ -129,7 +177,7 @@ class _FacturasScreenState extends State<FacturasScreen>
 
     if (result == true) {
       if (mounted) {
-        _cargarFacturas();
+        _cargarFacturas(); // Recargar desde inicio
       }
     }
   }
@@ -166,7 +214,6 @@ class _FacturasScreenState extends State<FacturasScreen>
 
             // Convert date to MySQL-compatible format (YYYY-MM-DD)
             if (fecha.contains('T')) {
-              // ISO 8601 format (e.g., 2026-01-12T23:00:00.000Z)
               try {
                 DateTime parsedDate = DateTime.parse(fecha);
                 fecha = DateFormat('yyyy-MM-dd').format(parsedDate);
@@ -174,15 +221,12 @@ class _FacturasScreenState extends State<FacturasScreen>
                 debugPrint('⚠️ Error parsing ISO date: $e');
               }
             } else if (fecha.contains('/')) {
-              // DD/MM/YYYY format
               var parts = fecha.split('/');
               if (parts.length == 3) {
                 fecha = '${parts[2]}-${parts[1]}-${parts[0]}';
               }
             }
 
-            debugPrint(
-                '📥 Creando factura con fecha: $fecha, coste: ${factura['coste']}');
             await FacturaService.crearFactura(
               titulo: factura['titulo'],
               coste: double.tryParse(factura['coste'].toString()) ?? 0.0,
@@ -199,10 +243,8 @@ class _FacturasScreenState extends State<FacturasScreen>
               imagenFile: null,
             );
             count++;
-            debugPrint('✅ Factura creada exitosamente ($count)');
           } catch (e) {
             debugPrint('❌ Error importando factura individual: $e');
-            debugPrint('❌ Datos de la factura: $factura');
           }
         }
 
@@ -212,9 +254,8 @@ class _FacturasScreenState extends State<FacturasScreen>
                 content: Text('Se importaron $count facturas correctamente')),
           );
         }
-        _cargarFacturas();
+        _cargarFacturas(); // Recargar
       } else {
-        debugPrint('⚠️ No se importaron facturas (lista vacía o null)');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -273,7 +314,7 @@ class _FacturasScreenState extends State<FacturasScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Factura eliminada correctamente')),
           );
-          _cargarFacturas();
+          _cargarFacturas(); // Recargar
         }
       } catch (e) {
         if (mounted) {
@@ -305,7 +346,7 @@ class _FacturasScreenState extends State<FacturasScreen>
           IconButton(
             icon: Icon(Icons.refresh,
                 color: Theme.of(context).appBarTheme.iconTheme?.color),
-            onPressed: _cargarFacturas,
+            onPressed: () => _cargarFacturas(),
           ),
         ],
       ),
@@ -334,7 +375,7 @@ class _FacturasScreenState extends State<FacturasScreen>
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: _cargarFacturas,
+                            onPressed: () => _cargarFacturas(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
                             ),
@@ -379,10 +420,23 @@ class _FacturasScreenState extends State<FacturasScreen>
                           ),
                         )
                       : ListView.builder(
+                          controller: _scrollController,
                           padding: const EdgeInsets.only(
                               top: 16, left: 16, right: 16, bottom: 80),
-                          itemCount: _facturas.length,
+                          itemCount:
+                              _facturas.length + (_isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
+                            if (index == _facturas.length) {
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              );
+                            }
+
                             final factura = _facturas[index];
                             return Card(
                               color: Theme.of(context).cardColor,
@@ -402,9 +456,11 @@ class _FacturasScreenState extends State<FacturasScreen>
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: FacturaImageWidget(
-                                      facturaId: factura['id_factura'] ??
-                                          factura['id'] ??
-                                          factura['facturaId'],
+                                      facturaId: int.tryParse(
+                                          (factura['id_factura'] ??
+                                                  factura['id'] ??
+                                                  factura['facturaId'])
+                                              .toString()),
                                       serverPath: factura['imagenPath'],
                                       fit: BoxFit.cover,
                                       errorBuilder: (context) => Icon(
@@ -452,9 +508,11 @@ class _FacturasScreenState extends State<FacturasScreen>
                                       color:
                                           Theme.of(context).colorScheme.error),
                                   onPressed: () => _eliminarFactura(
-                                      factura['id_factura'] ??
-                                          factura['id'] ??
-                                          factura['facturaId']),
+                                    int.tryParse((factura['id_factura'] ??
+                                            factura['id'] ??
+                                            factura['facturaId'])
+                                        .toString())!,
+                                  ),
                                 ),
                                 onTap: () => _verDetalleFactura(factura),
                               ),
@@ -524,8 +582,8 @@ class _FacturasScreenState extends State<FacturasScreen>
                   onPressed: _navegarAExportar,
                   icon: const Icon(Icons.download),
                   label: const Text('Exportar'),
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 ),
               ),
             ),
@@ -544,8 +602,8 @@ class _FacturasScreenState extends State<FacturasScreen>
                   onPressed: _importarExcel,
                   icon: const Icon(Icons.upload_file),
                   label: const Text('Importar'),
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  foregroundColor: Theme.of(context).colorScheme.onTertiary,
                 ),
               ),
             ),

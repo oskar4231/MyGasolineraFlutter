@@ -9,6 +9,16 @@ class AuthService {
   static String? _token;
   static String? _userEmail;
 
+  // Inicializar el servicio recuperando datos de SharedPreferences
+  static Future<void> initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('authToken');
+    _userEmail = prefs.getString('userEmail');
+    if (_token != null) {
+      print('✅ Sesión restaurada para: $_userEmail');
+    }
+  }
+
   // Guardar el token y email del usuario
   static Future<void> saveToken(String token, String email) async {
     _token = token;

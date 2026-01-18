@@ -5,8 +5,7 @@ import 'package:my_gasolinera/services/export_service.dart';
 class SeleccionFacturasScreen extends StatefulWidget {
   final List<Map<String, dynamic>> facturas;
 
-  const SeleccionFacturasScreen({Key? key, required this.facturas})
-      : super(key: key);
+  const SeleccionFacturasScreen({super.key, required this.facturas});
 
   @override
   State<SeleccionFacturasScreen> createState() =>
