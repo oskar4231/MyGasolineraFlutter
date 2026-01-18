@@ -14,6 +14,8 @@ import 'package:my_gasolinera/services/perfil_service.dart';
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/local_image_service.dart';
+import 'package:my_gasolinera/coches/coches.dart';
+import 'package:my_gasolinera/principal/layouthome.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -238,15 +240,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   // Diálogo para elegir entre cámara o galería
   void _showImagePickerDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Cambiar foto de perfil'),
-          content: const SingleChildScrollView(
+          title: Text(l10n.cambiarFotoPerfil),
+          content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Selecciona de dónde quieres tomar la foto:'),
+                Text(l10n.seleccionarFuenteFoto),
               ],
             ),
           ),
@@ -256,18 +259,18 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 Navigator.of(context).pop();
                 _pickImageFromGallery();
               },
-              child: const Text('Galería'),
+              child: Text(l10n.galeria),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _pickImageFromCamera();
               },
-              child: const Text('Cámara'),
+              child: Text(l10n.camara),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(l10n.cancelar),
             ),
           ],
         );
@@ -278,57 +281,126 @@ class _AjustesScreenState extends State<AjustesScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.ajustesTitulo,
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onPrimary,
-          ),
-        ),
-        backgroundColor: theme.colorScheme.primary,
-        iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: _buildAjustesContent(context),
-    );
-  }
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back,
+                        color: theme.colorScheme.onPrimary),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.ajustesTitulo,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-  Widget _buildAjustesContent(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      color: theme.colorScheme.surface,
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSeccionPerfil(),
-                    const SizedBox(height: 24),
-                    _buildSeccionConexion(context),
-                    const SizedBox(height: 24),
-                    _buildSeccionOpciones(context),
-                  ],
+            // Main Content
+            Expanded(
+              child: Container(
+                color: theme.colorScheme.surface,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSeccionPerfil(),
+                        const SizedBox(height: 24),
+                        _buildSeccionConexion(context),
+                        const SizedBox(height: 24),
+                        _buildSeccionOpciones(context),
+                        const SizedBox(height: 24),
+                        _buildBotonCerrarSesion(context),
+                        const SizedBox(height: 24), // Extra space for footer
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildBotonCerrarSesion(context),
-          ),
-        ],
+
+            // Custom Footer
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const CochesScreen(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.directions_car,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const Layouthome(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.pin_drop,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: null, // Ya estamos en Ajustes
+                    icon: Icon(
+                      Icons.settings,
+                      size: 40,
+                      color:
+                          theme.colorScheme.onPrimary, // Seleccionado - claro
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

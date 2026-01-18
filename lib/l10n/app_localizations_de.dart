@@ -866,4 +866,58 @@ class AppLocalizationsDe extends AppLocalizations {
   String errorCargarCochesDetalle(String error) {
     return 'Fehler beim Laden der Autos: $error';
   }
+
+  @override
+  String get gasolina95 => 'Super 95';
+
+  @override
+  String get gasolina98 => 'Super Plus 98';
+
+  @override
+  String get dieselPremium => 'Premium Diesel';
+
+  @override
+  String get glp => 'Autogas (LPG)';
+
+  @override
+  String get escanearFacturaAutocompletar =>
+      'Rechnung scannen (Autovervollständigen)';
+
+  @override
+  String get cambiarFotoPerfil => 'Profilbild ändern';
+
+  @override
+  String get seleccionarFuenteFoto => 'Fotoquelle auswählen:';
+
+  @override
+  String get seleccionarFacturas => 'Rechnungen auswählen';
+
+  @override
+  String get seleccionarTodo => 'Alles auswählen';
+
+  @override
+  String get deseleccionar => 'Abwählen';
+
+  @override
+  String get exportarComo => 'Exportieren als...';
+
+  @override
+  String get exportarExcel => 'Excel (.xlsx)';
+
+  @override
+  String get exportarPdf => 'PDF (.pdf)';
+
+  @override
+  String get exportarExitoExcel => 'Erfolgreich nach Excel exportiert';
+
+  @override
+  String get exportarExitoPdf => 'Erfolgreich nach PDF exportiert';
+
+  @override
+  String get seleccionarAlMenosUna => 'Wählen Sie mindestens eine Rechnung aus';
+
+  @override
+  String exportarConConteo(Object count) {
+    return 'Exportieren ($count)';
+  }
 }

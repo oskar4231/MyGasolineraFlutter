@@ -9,6 +9,7 @@ import 'app_localizations_ca.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_it.dart';
 import 'app_localizations_pt.dart';
 
@@ -102,6 +103,7 @@ abstract class AppLocalizations {
     Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('fr'),
     Locale('it'),
     Locale('pt')
   ];
@@ -1749,6 +1751,108 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Error al cargar los coches: {error}'**
   String errorCargarCochesDetalle(String error);
+
+  /// No description provided for @gasolina95.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasolina 95'**
+  String get gasolina95;
+
+  /// No description provided for @gasolina98.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasolina 98'**
+  String get gasolina98;
+
+  /// No description provided for @dieselPremium.
+  ///
+  /// In es, this message translates to:
+  /// **'Diésel Premium'**
+  String get dieselPremium;
+
+  /// No description provided for @glp.
+  ///
+  /// In es, this message translates to:
+  /// **'GLP (Autogas)'**
+  String get glp;
+
+  /// No description provided for @escanearFacturaAutocompletar.
+  ///
+  /// In es, this message translates to:
+  /// **'Escanear Factura (Autocompletar)'**
+  String get escanearFacturaAutocompletar;
+
+  /// No description provided for @cambiarFotoPerfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar foto de perfil'**
+  String get cambiarFotoPerfil;
+
+  /// No description provided for @seleccionarFuenteFoto.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona de dónde quieres tomar la foto:'**
+  String get seleccionarFuenteFoto;
+
+  /// No description provided for @seleccionarFacturas.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar Facturas'**
+  String get seleccionarFacturas;
+
+  /// No description provided for @seleccionarTodo.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar todo'**
+  String get seleccionarTodo;
+
+  /// No description provided for @deseleccionar.
+  ///
+  /// In es, this message translates to:
+  /// **'Deseleccionar'**
+  String get deseleccionar;
+
+  /// No description provided for @exportarComo.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar como...'**
+  String get exportarComo;
+
+  /// No description provided for @exportarExcel.
+  ///
+  /// In es, this message translates to:
+  /// **'Excel (.xlsx)'**
+  String get exportarExcel;
+
+  /// No description provided for @exportarPdf.
+  ///
+  /// In es, this message translates to:
+  /// **'PDF (.pdf)'**
+  String get exportarPdf;
+
+  /// No description provided for @exportarExitoExcel.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportado a Excel correctamente'**
+  String get exportarExitoExcel;
+
+  /// No description provided for @exportarExitoPdf.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportado a PDF correctamente'**
+  String get exportarExitoPdf;
+
+  /// No description provided for @seleccionarAlMenosUna.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona al menos una factura'**
+  String get seleccionarAlMenosUna;
+
+  /// No description provided for @exportarConConteo.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar ({count})'**
+  String exportarConConteo(Object count);
 }
 
 class _AppLocalizationsDelegate
@@ -1766,6 +1870,7 @@ class _AppLocalizationsDelegate
         'de',
         'en',
         'es',
+        'fr',
         'it',
         'pt'
       ].contains(locale.languageCode);
@@ -1785,6 +1890,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'it':
       return AppLocalizationsIt();
     case 'pt':

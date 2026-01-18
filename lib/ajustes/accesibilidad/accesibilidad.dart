@@ -52,246 +52,270 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.accesibilidad,
-          style: Theme.of(context).appBarTheme.titleTextStyle,
-        ),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        iconTheme: Theme.of(context).appBarTheme.iconTheme,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).appBarTheme.iconTheme?.color),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppLocalizations.of(context)!.accesibilidadConfig,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back,
+                        color: theme.colorScheme.onPrimary),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.accesibilidad,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
 
-            // Tamaño de fuente
-            Card(
-              elevation: 2,
-              color: Theme.of(context).cardColor,
-              child: Padding(
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.text_fields,
-                            color: Theme.of(context).colorScheme.onSurface),
-                        const SizedBox(width: 8),
-                        Text(
-                          AppLocalizations.of(context)!.tamanoFuente,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      l10n.accesibilidadConfig,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    Column(
-                      children: [
-                        Row(
+                    const SizedBox(height: 16),
+
+                    // Tamaño de fuente
+                    Card(
+                      elevation: 2,
+                      color: theme.cardColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                                child: _buildOpcionTamano(
-                                    AppLocalizations.of(context)!.pequeno)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                                child: _buildOpcionTamano(
-                                    AppLocalizations.of(context)!.mediano)),
-                            const SizedBox(width: 8),
-                            Expanded(
-                                child: _buildOpcionTamano(
-                                    AppLocalizations.of(context)!.grande)),
+                            Row(
+                              children: [
+                                Icon(Icons.text_fields,
+                                    color: theme.colorScheme.onSurface),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.tamanoFuente,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child:
+                                            _buildOpcionTamano(l10n.pequeno)),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                        child:
+                                            _buildOpcionTamano(l10n.mediano)),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                        child: _buildOpcionTamano(l10n.grande)),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                _buildOpcionPersonalizada(),
+                              ],
+                            ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        _buildOpcionPersonalizada(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // TEMA DEL PROYECTO
-            Card(
-              elevation: 2,
-              color: Theme.of(context).cardTheme.color,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.palette,
-                            color: Theme.of(context).colorScheme.onSurface),
-                        const SizedBox(width: 8),
-                        Text(
-                          AppLocalizations.of(context)!.tema,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    ListenableBuilder(
-                        listenable: ThemeManager(),
-                        builder: (context, _) {
-                          return DropdownButtonFormField<int>(
-                            initialValue: ThemeManager().currentThemeId,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                              filled: true,
-                              fillColor:
-                                  Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            dropdownColor: Theme.of(context).cardColor,
-                            items: [
-                              DropdownMenuItem(
-                                  value: 0,
-                                  child: Text(AppLocalizations.of(context)!
-                                      .predeterminadoNaranja)),
-                              DropdownMenuItem(
-                                  value: 1,
-                                  child: Text(AppLocalizations.of(context)!
-                                      .modoOscuro)),
-                              DropdownMenuItem(
-                                  value: 2,
-                                  child: Text(AppLocalizations.of(context)!
-                                      .protanopia)),
-                              DropdownMenuItem(
-                                  value: 3,
-                                  child: Text(AppLocalizations.of(context)!
-                                      .deuteranopia)),
-                              DropdownMenuItem(
-                                  value: 4,
-                                  child: Text(AppLocalizations.of(context)!
-                                      .tritanopia)),
-                              DropdownMenuItem(
-                                  value: 5,
-                                  child: Text(AppLocalizations.of(context)!
-                                      .achromatopsia)),
-                            ],
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                ThemeManager().setObjectTheme(newValue);
-                              }
-                            },
-                          );
-                        }),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Botón guardar
-            Center(
-              child: ElevatedButton(
-                onPressed: _cargando
-                    ? null
-                    : () async {
-                        try {
-                          // Mostrar indicador de carga
-                          setState(() {
-                            _cargando = true;
-                          });
-
-                          // Guardar en el backend
-                          final exito =
-                              await _accesibilidadService.guardarConfiguracion(
-                            tamanoFuente: _tamanoFuente,
-                            altoContraste: _altoContraste,
-                            modoOscuro: _modoOscuro,
-                            idioma:
-                                'Español', // Valor por defecto ya que idioma está en otro lado
-                          );
-
-                          setState(() {
-                            _cargando = false;
-                          });
-
-                          if (exito && mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  '✅ Configuración guardada correctamente',
-                                ),
-                                duration: Duration(seconds: 2),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                            Navigator.of(context).pop();
-                          }
-                        } catch (e) {
-                          setState(() {
-                            _cargando = false;
-                          });
-
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '❌ Error al guardar: ${e.toString()}',
-                                ),
-                                duration: const Duration(seconds: 3),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                ),
-                child: _cargando
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context)!.guardarCambios,
-                        style: const TextStyle(fontSize: 16),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // TEMA DEL PROYECTO
+                    Card(
+                      elevation: 2,
+                      color: theme.cardTheme.color,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.palette,
+                                    color: theme.colorScheme.onSurface),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.tema,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            ListenableBuilder(
+                                listenable: ThemeManager(),
+                                builder: (context, _) {
+                                  return DropdownButtonFormField<int>(
+                                    initialValue: ThemeManager().currentThemeId,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                      filled: true,
+                                      fillColor: theme.scaffoldBackgroundColor,
+                                    ),
+                                    dropdownColor: theme.cardColor,
+                                    items: [
+                                      DropdownMenuItem(
+                                          value: 0,
+                                          child:
+                                              Text(l10n.predeterminadoNaranja)),
+                                      DropdownMenuItem(
+                                          value: 1,
+                                          child: Text(l10n.modoOscuro)),
+                                      DropdownMenuItem(
+                                          value: 2,
+                                          child: Text(l10n.protanopia)),
+                                      DropdownMenuItem(
+                                          value: 3,
+                                          child: Text(l10n.deuteranopia)),
+                                      DropdownMenuItem(
+                                          value: 4,
+                                          child: Text(l10n.tritanopia)),
+                                      DropdownMenuItem(
+                                          value: 5,
+                                          child: Text(l10n.achromatopsia)),
+                                    ],
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        ThemeManager().setObjectTheme(newValue);
+                                      }
+                                    },
+                                  );
+                                }),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Botón guardar
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _cargando
+                            ? null
+                            : () async {
+                                try {
+                                  // Mostrar indicador de carga
+                                  setState(() {
+                                    _cargando = true;
+                                  });
+
+                                  // Guardar en el backend
+                                  final exito = await _accesibilidadService
+                                      .guardarConfiguracion(
+                                    tamanoFuente: _tamanoFuente,
+                                    altoContraste: _altoContraste,
+                                    modoOscuro: _modoOscuro,
+                                    idioma: 'Español',
+                                  );
+
+                                  setState(() {
+                                    _cargando = false;
+                                  });
+
+                                  if (exito && mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          '✅ Configuración guardada correctamente',
+                                        ),
+                                        duration: Duration(seconds: 2),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  setState(() {
+                                    _cargando = false;
+                                  });
+
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          '❌ Error al guardar: ${e.toString()}',
+                                        ),
+                                        duration: const Duration(seconds: 3),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primaryColor,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: _cargando
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                l10n.guardarCambios,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

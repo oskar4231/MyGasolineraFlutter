@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
+import 'package:my_gasolinera/principal/layouthome.dart';
+
 import 'package:my_gasolinera/services/coche_service.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:my_gasolinera/models/coche.dart';
@@ -28,14 +30,36 @@ class _CochesScreenState extends State<CochesScreen> {
   final List<Coche> _coches = [];
   bool _isLoading = false;
 
+  // Internal keys for mapping
   final Map<String, bool> _tiposCombustible = {
-    'Gasolina 95': false,
-    'Gasolina 98': false,
-    'Diésel': false,
-    'Diésel Premium': false,
-    'GLP (Autogas)': false,
-    'Híbrido': false,
+    'gasolina95': false,
+    'gasolina98': false,
+    'diesel': false,
+    'dieselPremium': false,
+    'glp': false,
+    'hibrido': false,
   };
+
+  // ... (rest of class)
+
+  String _getLocalizedFuelName(String key, AppLocalizations l10n) {
+    switch (key) {
+      case 'gasolina95':
+        return l10n.gasolina95;
+      case 'gasolina98':
+        return l10n.gasolina98;
+      case 'diesel':
+        return l10n.diesel;
+      case 'dieselPremium':
+        return l10n.dieselPremium;
+      case 'glp':
+        return l10n.glp;
+      case 'hibrido':
+        return l10n.hibrido;
+      default:
+        return key;
+    }
+  }
 
   @override
   void initState() {
@@ -85,10 +109,11 @@ class _CochesScreenState extends State<CochesScreen> {
     });
 
     try {
-      // Obtener los combustibles seleccionados
+      final l10n = AppLocalizations.of(context)!;
+      // Obtener los combustibles seleccionados (nombres localizados)
       final combustiblesSeleccionados = _tiposCombustible.entries
           .where((entry) => entry.value)
-          .map((entry) => entry.key)
+          .map((entry) => _getLocalizedFuelName(entry.key, l10n))
           .toList();
 
       await CocheService.crearCoche(
@@ -224,13 +249,13 @@ class _CochesScreenState extends State<CochesScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ..._tiposCombustible.keys.map((tipo) {
+                      ..._tiposCombustible.keys.map((key) {
                         return CheckboxListTile(
-                          title: Text(tipo),
-                          value: _tiposCombustible[tipo],
+                          title: Text(_getLocalizedFuelName(key, l10n)),
+                          value: _tiposCombustible[key],
                           onChanged: (bool? value) {
                             setDialogState(() {
-                              _tiposCombustible[tipo] = value ?? false;
+                              _tiposCombustible[key] = value ?? false;
                             });
                           },
                           controlAffinity: ListTileControlAffinity.leading,
@@ -427,36 +452,6 @@ class _CochesScreenState extends State<CochesScreen> {
                       const SizedBox(width: 48),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _mostrarModalFormulario,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          theme.colorScheme.onPrimary, // White (usually)
-                      foregroundColor: theme.colorScheme.primary, // Orange
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      elevation:
-                          0, // Flat look often fits better on colored headers
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add, color: theme.colorScheme.primary),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.anadirCoche,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -519,24 +514,32 @@ class _CochesScreenState extends State<CochesScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: null, // Ya estamos en Coches
                     icon: Icon(
                       Icons.directions_car,
                       size: 40,
-                      color: theme.colorScheme.onPrimary,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(
-                      Icons.pin_drop,
-                      size: 40,
-                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.5),
+                      color:
+                          theme.colorScheme.onPrimary, // Seleccionado - claro
                     ),
                   ),
                   IconButton(
                     onPressed: () {
-                      Navigator.of(context).push(
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const Layouthome(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.pin_drop,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const AjustesScreen(),
                         ),
@@ -545,7 +548,8 @@ class _CochesScreenState extends State<CochesScreen> {
                     icon: Icon(
                       Icons.settings,
                       size: 40,
-                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
                     ),
                   ),
                 ],
@@ -554,6 +558,16 @@ class _CochesScreenState extends State<CochesScreen> {
           ],
         ),
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(
+            bottom: 80), // Subir el FAB para no eclipsar el footer
+        child: FloatingActionButton(
+          onPressed: _mostrarModalFormulario,
+          backgroundColor: theme.primaryColor,
+          child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

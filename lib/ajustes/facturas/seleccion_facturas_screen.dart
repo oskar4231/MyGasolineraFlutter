@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:my_gasolinera/services/export_service.dart';
 // import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart'; // Optional if we want images in list
 
@@ -49,9 +50,10 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
   }
 
   Future<void> _exportar() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecciona al menos una factura')),
+        SnackBar(content: Text(l10n.seleccionarAlMenosUna)),
       );
       return;
     }
@@ -66,18 +68,18 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
     final format = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Exportar como...'),
+        title: Text(l10n.exportarComo),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.table_chart, color: Colors.green),
-              title: const Text('Excel (.xlsx)'),
+              title: Text(l10n.exportarExcel),
               onTap: () => Navigator.pop(context, 'excel'),
             ),
             ListTile(
               leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-              title: const Text('PDF (.pdf)'),
+              title: Text(l10n.exportarPdf),
               onTap: () => Navigator.pop(context, 'pdf'),
             ),
           ],
@@ -94,22 +96,21 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
         await ExportService.exportarExcel(selectedFacturas);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Exportado a Excel correctamente')),
+            SnackBar(content: Text(l10n.exportarExitoExcel)),
           );
         }
       } else {
         await ExportService.exportarPDF(selectedFacturas);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Exportado a PDF correctamente')),
+            SnackBar(content: Text(l10n.exportarExitoPdf)),
           );
         }
       }
-      // Close screen after export? Or stay? Let's stay.
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al exportar: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
         );
       }
     } finally {
@@ -119,54 +120,125 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final allSelected = widget.facturas.isNotEmpty &&
         _selectedIds.length == widget.facturas.length;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Seleccionar Facturas'),
-        actions: [
-          TextButton(
-            onPressed: _toggleSelectAll,
-            child: Text(
-              allSelected ? 'Deseleccionar' : 'Seleccionar todo',
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back,
+                            color: theme.colorScheme.onPrimary),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.seleccionarFacturas,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  TextButton(
+                    onPressed: _toggleSelectAll,
+                    child: Text(
+                      allSelected ? l10n.deseleccionar : l10n.seleccionarTodo,
+                      style: TextStyle(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          )
-        ],
-      ),
-      body: _isExporting
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: widget.facturas.length,
-              itemBuilder: (context, index) {
-                final factura = widget.facturas[index];
-                final id = factura['id_factura'] ??
-                    factura['id'] ??
-                    factura['facturaId'];
-                final isSelected = _selectedIds.contains(id);
-                final titulo = factura['titulo'] ?? 'Sin título';
-                final fecha = factura['fecha'] ?? '';
-                final coste = factura['coste']?.toString() ?? '0';
 
-                return CheckboxListTile(
-                  value: isSelected,
-                  onChanged: (val) => _toggleSelection(id),
-                  title: Text(titulo,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('$fecha - $coste €'),
-                  secondary: const Icon(Icons.receipt),
-                );
-              },
+            // Content
+            Expanded(
+              child: _isExporting
+                  ? Center(
+                      child: CircularProgressIndicator(
+                          color: theme.colorScheme.primary))
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: widget.facturas.length,
+                      itemBuilder: (context, index) {
+                        final factura = widget.facturas[index];
+                        final id = factura['id_factura'] ??
+                            factura['id'] ??
+                            factura['facturaId'];
+                        final isSelected = _selectedIds.contains(id);
+                        final titulo = factura['titulo'] ?? l10n.sinDatos;
+                        final fecha = factura['fecha'] ?? '';
+                        final coste = factura['coste']?.toString() ?? '0';
+
+                        return Card(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          margin: const EdgeInsets.only(bottom: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: CheckboxListTile(
+                            value: isSelected,
+                            onChanged: (val) => _toggleSelection(id),
+                            activeColor: theme.colorScheme.primary,
+                            checkColor: theme.colorScheme.onPrimary,
+                            title: Text(titulo,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.onSurface)),
+                            subtitle: Text('$fecha - $coste €',
+                                style: TextStyle(
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.7))),
+                            secondary: Icon(Icons.receipt,
+                                color: theme.colorScheme.primary),
+                          ),
+                        );
+                      },
+                    ),
             ),
+          ],
+        ),
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton.icon(
           onPressed: _selectedIds.isEmpty ? null : _exportar,
-          icon: const Icon(Icons.download),
-          label: Text('Exportar (${_selectedIds.length})'),
+          icon: Icon(Icons.download, color: theme.colorScheme.onPrimary),
+          label: Text(
+            l10n.exportarConConteo(_selectedIds.length),
+            style: TextStyle(color: theme.colorScheme.onPrimary),
+          ),
           style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
             padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ),
