@@ -39,7 +39,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
         return 'Italiano';
       case 'fr':
         return 'Français';
-      case 'va':
+      case 'ca':
         return 'Valencià'; // Cambiado para coincidir con las variantes del popup
       default:
         return 'Español';

@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for Valencian (`va`).
-class AppLocalizationsVa extends AppLocalizations {
-  AppLocalizationsVa([String locale = 'va']) : super(locale);
+/// The translations for Catalan Valencian (`ca`).
+class AppLocalizationsCa extends AppLocalizations {
+  AppLocalizationsCa([String locale = 'ca']) : super(locale);
 
   @override
   String get idioma => 'Idioma';
@@ -657,15 +657,6 @@ class AppLocalizationsVa extends AppLocalizations {
 
   @override
   String get confirmarCerrarSesion => 'Estàs segur que vols tancar sessió?';
-
-  @override
-  String get si => 'Sí';
-
-  @override
-  String get no => 'No';
-
-  @override
-  String get atras => 'Enrere';
 
   @override
   String get confirmarCambio => 'Confirmar canvi';

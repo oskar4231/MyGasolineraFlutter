@@ -83,7 +83,7 @@ class MyApp extends StatelessWidget {
                 Locale('de'), // Alleman
                 Locale('pt'), // Portugues
                 Locale('it'), // Italiano
-                Locale('va'), // Valenciano
+                Locale('ca'), // Valenciano
               ],
               home: const Inicio(),
             );

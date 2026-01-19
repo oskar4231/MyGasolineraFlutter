@@ -17,9 +17,9 @@ class LanguageProvider extends ChangeNotifier {
     'Deutsch': 'de',
     'Português': 'pt',
     'Italiano': 'it',
-    'Valenciano': 'va',
-    'Valencià': 'va', // Variante valenciana
-    'Català': 'va', // Variante catalana
+    'Valenciano': 'ca',
+    'Valencià': 'ca', // Variante valenciana
+    'Català': 'ca', // Variante catalana
   };
 
   /// Cambia el idioma por nombre (ej: "English", "Español")
