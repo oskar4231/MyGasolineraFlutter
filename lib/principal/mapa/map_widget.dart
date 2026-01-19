@@ -56,13 +56,28 @@ class _MapWidgetState extends State<MapWidget> {
     super.initState();
     _markerHelper = MarkerHelper();
     _gasolineraLogic = GasolineraLogic(widget.cacheService);
-    _markerHelper.loadGasStationIcons().then((_) {
-      if (mounted) setState(() {});
-    });
+
+    // ✅ CORRECCIÓN: Esperar a que los iconos se carguen antes de iniciar GPS
+    // Esto asegura que los marcadores tengan iconos cuando se creen
+    _inicializarMapa();
+  }
+
+  /// Inicializa el mapa cargando iconos y favoritos antes de iniciar GPS
+  Future<void> _inicializarMapa() async {
+    // 1. Cargar iconos de marcadores (crítico para mostrar gasolineras)
+    await _markerHelper.loadGasStationIcons();
+    print('✅ MapWidget: Iconos de marcadores cargados');
+
+    // 2. Cargar favoritos
+    await _gasolineraLogic.cargarFavoritos();
+    print(
+        '✅ MapWidget: Favoritos cargados (${_gasolineraLogic.favoritosIds.length} favoritos)');
+
+    // 3. Actualizar UI para mostrar que está listo
+    if (mounted) setState(() {});
+
+    // 4. Iniciar seguimiento GPS (esto cargará las gasolineras)
     _iniciarSeguimiento();
-    _gasolineraLogic.cargarFavoritos().then((_) {
-      if (mounted) setState(() {});
-    });
   }
 
   @override
@@ -134,11 +149,16 @@ class _MapWidgetState extends State<MapWidget> {
               ))
           .toSet();
 
+      print(
+          '🗺️ MapWidget (Progresivo): Creados ${newMarkers.length} marcadores iniciales');
+
       if (mounted) {
         setState(() {
           _gasolinerasMarkers.clear();
           _gasolinerasMarkers.addAll(newMarkers);
         });
+        print(
+            '✅ MapWidget (Progresivo): Marcadores iniciales actualizados (${_gasolinerasMarkers.length} marcadores)');
       }
 
       // Cargar el resto en segundo plano
@@ -153,10 +173,15 @@ class _MapWidgetState extends State<MapWidget> {
                   ))
               .toSet();
 
+          print(
+              '🗺️ MapWidget (Progresivo): Creados ${restoMarkers.length} marcadores adicionales');
+
           setState(() {
             _gasolinerasMarkers.addAll(restoMarkers);
             _gasolineraLogic.setLoadingProgressively(false);
           });
+          print(
+              '✅ MapWidget (Progresivo): Total de marcadores: ${_gasolinerasMarkers.length}');
         }
       });
 
@@ -171,11 +196,16 @@ class _MapWidgetState extends State<MapWidget> {
             ))
         .toSet();
 
+    print(
+        '🗺️ MapWidget: Creados ${newMarkers.length} marcadores para mostrar en el mapa');
+
     if (mounted) {
       setState(() {
         _gasolinerasMarkers.clear();
         _gasolinerasMarkers.addAll(newMarkers);
       });
+      print(
+          '✅ MapWidget: Marcadores actualizados en el estado (${_gasolinerasMarkers.length} marcadores)');
     }
   }
 
