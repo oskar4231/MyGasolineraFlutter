@@ -19,6 +19,8 @@ class MapWidget extends StatefulWidget {
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
   final double radiusKm;
+  final bool gesturesEnabled;
+  final bool markersEnabled;
 
   const MapWidget({
     super.key,
@@ -31,6 +33,8 @@ class MapWidget extends StatefulWidget {
     this.precioHasta,
     this.tipoAperturaSeleccionado,
     this.radiusKm = 25.0,
+    this.gesturesEnabled = true,
+    this.markersEnabled = true,
   });
 
   @override
@@ -131,6 +135,7 @@ class _MapWidgetState extends State<MapWidget> {
                 g,
                 _gasolineraLogic.favoritosIds,
                 _mostrarInfoGasolinera,
+                markersEnabled: widget.markersEnabled,
               ))
           .toSet();
 
@@ -150,6 +155,7 @@ class _MapWidgetState extends State<MapWidget> {
                     g,
                     _gasolineraLogic.favoritosIds,
                     _mostrarInfoGasolinera,
+                    markersEnabled: widget.markersEnabled,
                   ))
               .toSet();
 
@@ -168,6 +174,7 @@ class _MapWidgetState extends State<MapWidget> {
               g,
               _gasolineraLogic.favoritosIds,
               _mostrarInfoGasolinera,
+              markersEnabled: widget.markersEnabled,
             ))
         .toSet();
 
@@ -438,58 +445,55 @@ class _MapWidgetState extends State<MapWidget> {
 
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        height: 300,
-        child: GoogleMap(
-          onMapCreated: (controller) {
-            mapController = controller;
-            if (_ubicacionActual != null) {
-              controller.animateCamera(
-                CameraUpdate.newLatLng(
-                  LatLng(
-                    _ubicacionActual!.latitude,
-                    _ubicacionActual!.longitude,
-                  ),
-                ),
-              );
+    return GoogleMap(
+      onMapCreated: (controller) {
+        mapController = controller;
+        if (_ubicacionActual != null) {
+          controller.animateCamera(
+            CameraUpdate.newLatLng(
+              LatLng(
+                _ubicacionActual!.latitude,
+                _ubicacionActual!.longitude,
+              ),
+            ),
+          );
+        }
+      },
+      onCameraIdle: () async {
+        _cameraDebounceTimer?.cancel();
+        _cameraDebounceTimer = Timer(
+          const Duration(milliseconds: 500),
+          () async {
+            if (mapController != null && mounted) {
+              try {
+                final visibleRegion = await mapController!.getVisibleRegion();
+                final centerLat = (visibleRegion.northeast.latitude +
+                        visibleRegion.southwest.latitude) /
+                    2;
+                final centerLng = (visibleRegion.northeast.longitude +
+                        visibleRegion.southwest.longitude) /
+                    2;
+                await _cargarGasolineras(centerLat, centerLng,
+                    isInitialLoad: false);
+              } catch (e) {}
             }
           },
-          onCameraIdle: () async {
-            _cameraDebounceTimer?.cancel();
-            _cameraDebounceTimer = Timer(
-              const Duration(milliseconds: 500),
-              () async {
-                if (mapController != null && mounted) {
-                  try {
-                    final visibleRegion =
-                        await mapController!.getVisibleRegion();
-                    final centerLat = (visibleRegion.northeast.latitude +
-                            visibleRegion.southwest.latitude) /
-                        2;
-                    final centerLng = (visibleRegion.northeast.longitude +
-                            visibleRegion.southwest.longitude) /
-                        2;
-                    await _cargarGasolineras(centerLat, centerLng,
-                        isInitialLoad: false);
-                  } catch (e) {}
-                }
-              },
-            );
-          },
-          initialCameraPosition: CameraPosition(
-            target: LatLng(
-              _ubicacionActual!.latitude,
-              _ubicacionActual!.longitude,
-            ),
-            zoom: 15,
-          ),
-          markers: allMarkers,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
+        );
+      },
+      initialCameraPosition: CameraPosition(
+        target: LatLng(
+          _ubicacionActual!.latitude,
+          _ubicacionActual!.longitude,
         ),
+        zoom: 15,
       ),
+      markers: allMarkers,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      scrollGesturesEnabled: widget.gesturesEnabled,
+      zoomGesturesEnabled: widget.gesturesEnabled,
+      tiltGesturesEnabled: widget.gesturesEnabled,
+      rotateGesturesEnabled: widget.gesturesEnabled,
     );
   }
 
