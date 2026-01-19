@@ -4,11 +4,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/lista.dart';
-import 'mapa.dart';
+import 'package:my_gasolinera/principal/mapa/map_widget.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/coches/coches.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'favoritos.dart'; // Importar la nueva pantalla de favoritos
+import 'package:my_gasolinera/services/provincia_service.dart'; // 🆕 Para detectar provincia
+import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/main.dart' as app;
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -25,6 +28,7 @@ class _LayouthomeState extends State<Layouthome> {
   Position? _currentPosition;
   DateTime _lastUpdateTime = DateTime.now();
   static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 15);
+  late GasolinerasCacheService _cacheService;
 
   // Filtros
   double? _precioDesde;
@@ -35,6 +39,7 @@ class _LayouthomeState extends State<Layouthome> {
   @override
   void initState() {
     super.initState();
+    _cacheService = GasolinerasCacheService(app.database);
     _initLocationAndGasolineras();
   }
 
@@ -44,8 +49,27 @@ class _LayouthomeState extends State<Layouthome> {
     });
 
     try {
+      // 1. Obtener ubicación actual
       await _getCurrentLocation();
-      final lista = await fetchGasolineras();
+
+      // 2. Detectar provincia (o usar Madrid por defecto)
+      String provinciaId = '28'; // Madrid por defecto
+      if (_currentPosition != null) {
+        try {
+          final provinciaInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(
+            _currentPosition!.latitude,
+            _currentPosition!.longitude,
+          );
+          provinciaId = provinciaInfo.id;
+          print('Provincia detectada: ${provinciaInfo.nombre} ($provinciaId)');
+        } catch (e) {
+          print('Error detectando provincia: $e, usando Madrid por defecto');
+        }
+      }
+
+      // 3. Cargar gasolineras de la provincia detectada
+      final lista = await fetchGasolinerasByProvincia(provinciaId);
 
       if (mounted) {
         setState(() {
@@ -752,6 +776,7 @@ class _LayouthomeState extends State<Layouthome> {
                   padding: const EdgeInsets.all(8.0),
                   child: _showMap
                       ? MapWidget(
+                          cacheService: _cacheService,
                           externalGasolineras: _allGasolineras,
                           onLocationUpdate: _onLocationUpdated,
                           combustibleSeleccionado: _tipoCombustibleSeleccionado,

@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart'; // 🆕 Para obtener ubicación
+import 'package:my_gasolinera/services/provincia_service.dart'; // 🆕 Para detectar provincia
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class FavoritosScreen extends StatefulWidget {
@@ -33,19 +35,57 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     });
 
     try {
-      // 1. Cargar todas las gasolineras
-      _todasLasGasolineras = await fetchGasolineras();
+      // 1. Obtener ubicación actual
+      Position? position;
+      try {
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (serviceEnabled) {
+          LocationPermission permission = await Geolocator.checkPermission();
+          if (permission == LocationPermission.denied) {
+            permission = await Geolocator.requestPermission();
+          }
+          if (permission != LocationPermission.denied &&
+              permission != LocationPermission.deniedForever) {
+            position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.best,
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint('Error obteniendo ubicación: $e');
+      }
 
-      // 2. Cargar IDs de favoritos desde SharedPreferences
+      // 2. Detectar provincia (o usar Madrid por defecto)
+      String provinciaId = '28'; // Madrid por defecto
+      if (position != null) {
+        try {
+          final provinciaInfo =
+              await ProvinciaService.getProvinciaFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          provinciaId = provinciaInfo.id;
+          debugPrint(
+              'Provincia detectada: ${provinciaInfo.nombre} ($provinciaId)');
+        } catch (e) {
+          debugPrint(
+              'Error detectando provincia: $e, usando Madrid por defecto');
+        }
+      }
+
+      // 3. Cargar gasolineras de la provincia detectada
+      _todasLasGasolineras = await fetchGasolinerasByProvincia(provinciaId);
+
+      // 4. Cargar IDs de favoritos desde SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
 
-      // 3. Filtrar gasolineras favoritas
+      // 5. Filtrar gasolineras favoritas
       _gasolinerasFavoritas = _todasLasGasolineras
           .where((g) => idsFavoritos.contains(g.id))
           .toList();
 
-      // 4. Aplicar orden inicial
+      // 6. Aplicar orden inicial
       _aplicarOrden();
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');
