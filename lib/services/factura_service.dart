@@ -5,16 +5,19 @@ import 'auth_service.dart';
 import 'api_config.dart';
 
 class FacturaService {
-  // Obtener todas las facturas del usuario
-  static Future<List<Map<String, dynamic>>> obtenerFacturas() async {
+  // Obtener facturas paginadas
+  static Future<Map<String, dynamic>> obtenerFacturas(
+      {int page = 1, int limit = 10}) async {
     try {
       final token = AuthService.getToken();
       if (token == null) {
         throw Exception('No hay sesión activa');
       }
 
+      final uri = Uri.parse('${ApiConfig.facturasUrl}?page=$page&limit=$limit');
+
       final response = await http.get(
-        Uri.parse(ApiConfig.facturasUrl),
+        uri,
         headers: {
           ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
@@ -22,8 +25,7 @@ class FacturaService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((factura) => factura as Map<String, dynamic>).toList();
+        return json.decode(response.body) as Map<String, dynamic>;
       } else {
         throw Exception('Error al obtener facturas: ${response.statusCode}');
       }

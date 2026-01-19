@@ -128,12 +128,15 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
 
       setState(() {
         if (data['fecha'] != null) _fechaController.text = data['fecha'];
-        if (data['total'] != null)
+        if (data['total'] != null) {
           _costoController.text = data['total'].toString();
-        if (data['litros'] != null)
+        }
+        if (data['litros'] != null) {
           _litrosController.text = data['litros'].toString();
-        if (data['precio_litro'] != null)
+        }
+        if (data['precio_litro'] != null) {
           _precioLitroController.text = data['precio_litro'].toString();
+        }
 
         // Auto-fill title if gas station name found and title is empty
         if (data['gasolinera'] != null && _tituloController.text.isEmpty) {
@@ -331,535 +334,599 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.nuevaFactura,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).colorScheme.onSurface),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  // Botón Escanear Factura
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _mostrarOpcionesEscaneo,
-                      icon: const Icon(Icons.document_scanner),
-                      label: const Text('Escanear Factura (Autocompletar)'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+          SafeArea(
+            child: Column(
+              children: [
+                // Custom Header
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
                     ),
                   ),
-                  const SizedBox(height: 24),
-
-                  // Campo Título
-                  TextFormField(
-                    controller: _tituloController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.titulo,
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.ingreseTitulo;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campo Coste Total
-                  TextFormField(
-                    controller: _costoController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText:
-                          '${AppLocalizations.of(context)!.costeTotal} (€)',
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.ingreseCoste;
-                      }
-                      if (!RegExp(r'^\d+([.,]\d{1,3})?$').hasMatch(value)) {
-                        return AppLocalizations.of(context)!.formatoInvalido;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campos Fecha y Hora en fila
-                  Row(
+                  child: Row(
                     children: [
-                      // Campo Fecha
-                      Expanded(
-                        child: TextFormField(
-                          controller: _fechaController,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.fecha,
-                            labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            filled: true,
-                            fillColor: Theme.of(context).cardColor,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                          readOnly: true,
-                          onTap: () async {
-                            final DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              _fechaController.text = _formatDate(picked);
-                            }
-                          },
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_back,
+                            color: Theme.of(context).colorScheme.onPrimary),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                      const SizedBox(width: 16),
-
-                      // Campo Hora
-                      Expanded(
-                        child: TextFormField(
-                          controller: _horaController,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.hora,
-                            labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            filled: true,
-                            fillColor: Theme.of(context).cardColor,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                          readOnly: true,
-                          onTap: () async {
-                            final TimeOfDay? picked = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-                            if (picked != null) {
-                              _horaController.text =
-                                  '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                            }
-                          },
+                      const SizedBox(width: 8),
+                      Text(
+                        AppLocalizations.of(context)!.nuevaFactura,
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                ),
 
-                  // NUEVA SECCIÓN: Información del Repostaje
-                  Text(
-                    AppLocalizations.of(context)!.infoRepostaje,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Divider(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      thickness: 1),
-                  const SizedBox(height: 16),
-
-                  // Dropdown Coche
-                  DropdownButtonFormField<int>(
-                    initialValue: _cocheSeleccionado,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.coche,
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    items: _coches.map((coche) {
-                      return DropdownMenuItem<int>(
-                        value: coche['id_coche'],
-                        child: Text(
-                          '${coche['marca']} ${coche['modelo']}',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() => _cocheSeleccionado = value);
-                    },
-                    dropdownColor: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    icon: Icon(
-                      Icons.arrow_drop_down,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campo Litros Repostados
-                  TextFormField(
-                    controller: _litrosController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.litros,
-                      hintText: 'Ej: 45.5',
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      hintStyle: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6)),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campo Precio por Litro
-                  TextFormField(
-                    controller: _precioLitroController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText:
-                          '${AppLocalizations.of(context)!.precioLitro} (€)',
-                      hintText: 'Ej: 1.459',
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      hintStyle: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6)),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Campo Kilometraje Actual
-                  TextFormField(
-                    controller: _kilometrajeController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.kilometraje,
-                      hintText: 'Ej: 45230',
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      hintStyle: TextStyle(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6)),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 300, // Ancho mínimo
-                      maxWidth: 400, // Ancho máximo
-                    ),
-                    // Dropdown Tipo de Combustible
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _tipoCombustibleSeleccionado,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText:
-                            AppLocalizations.of(context)!.tipoCombustible,
-                        labelStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface),
-                        filled: true,
-                        fillColor: Theme.of(context).cardColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      items: _tiposCombustible.map((tipo) {
-                        return DropdownMenuItem<String>(
-                          value: tipo,
-                          child: Text(
-                            tipo,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() => _tipoCombustibleSeleccionado = value);
-                      },
-                      dropdownColor: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(10),
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // NUEVA SECCIÓN: Imagen de Factura
-                  Text(
-                    AppLocalizations.of(context)!.imagenFactura,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Divider(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      thickness: 1),
-                  const SizedBox(height: 16),
-
-                  // Botón para agregar imagen
-                  Container(
-                    width: double.infinity,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: _imagenFactura == null
-                        ? TextButton(
-                            onPressed: _mostrarOpcionesImagen,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add_photo_alternate,
-                                  size: 40,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                // Body Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          // Botón Escanear Factura
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: _mostrarOpcionesEscaneo,
+                              icon: const Icon(Icons.document_scanner),
+                              label: Text(AppLocalizations.of(context)!
+                                  .escanearFacturaAutocompletar),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  AppLocalizations.of(context)!.agregarImagen,
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          )
-                        : Stack(
-                            children: [
-                              ClipRRect(
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Campo Título
+                          TextFormField(
+                            controller: _tituloController,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.titulo,
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                child: FutureBuilder(
-                                  future: _imagenFactura!.readAsBytes(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      return Image.memory(
-                                        snapshot.data as Uint8List,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        fit: BoxFit.cover,
-                                      );
-                                    }
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        color: Color(0xFFFF9350),
-                                      ),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.of(context)!
+                                    .ingreseTitulo;
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Campo Coste Total
+                          TextFormField(
+                            controller: _costoController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText:
+                                  '${AppLocalizations.of(context)!.costeTotal} (€)',
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.of(context)!
+                                    .ingreseCoste;
+                              }
+                              if (!RegExp(r'^\d+([.,]\d{1,3})?$')
+                                  .hasMatch(value)) {
+                                return AppLocalizations.of(context)!
+                                    .formatoInvalido;
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Campos Fecha y Hora en fila
+                          Row(
+                            children: [
+                              // Campo Fecha
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _fechaController,
+                                  decoration: InputDecoration(
+                                    labelText:
+                                        AppLocalizations.of(context)!.fecha,
+                                    labelStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                    filled: true,
+                                    fillColor: Theme.of(context).cardColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  readOnly: true,
+                                  onTap: () async {
+                                    final DateTime? picked =
+                                        await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2100),
                                     );
+                                    if (picked != null) {
+                                      _fechaController.text =
+                                          _formatDate(picked);
+                                    }
                                   },
                                 ),
                               ),
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black54,
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                      size: 20,
+                              const SizedBox(width: 16),
+
+                              // Campo Hora
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _horaController,
+                                  decoration: InputDecoration(
+                                    labelText:
+                                        AppLocalizations.of(context)!.hora,
+                                    labelStyle: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _imagenFactura = null;
-                                      });
-                                    },
+                                    filled: true,
+                                    fillColor: Theme.of(context).cardColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
                                   ),
+                                  readOnly: true,
+                                  onTap: () async {
+                                    final TimeOfDay? picked =
+                                        await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+                                    if (picked != null) {
+                                      _horaController.text =
+                                          '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                                    }
+                                  },
                                 ),
                               ),
                             ],
                           ),
-                  ),
-                  const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                  // Campo Descripción
-                  TextFormField(
-                    controller: _descripcionController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      labelText:
-                          AppLocalizations.of(context)!.descripcionOpcional,
-                      labelStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
+                          // NUEVA SECCIÓN: Información del Repostaje
+                          Text(
+                            AppLocalizations.of(context)!.infoRepostaje,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Divider(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              thickness: 1),
+                          const SizedBox(height: 16),
 
-                  // Botón Guardar
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _guardarFactura,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 4,
-                        shadowColor: Theme.of(context)
-                            .shadowColor
-                            .withValues(alpha: 0.3),
-                      ),
-                      child: _isLoading
-                          ? SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Theme.of(context).colorScheme.onPrimary,
-                                ),
+                          // Dropdown Coche
+                          DropdownButtonFormField<int>(
+                            initialValue: _cocheSeleccionado,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.coche,
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
                               ),
-                            )
-                          : Text(
-                              AppLocalizations.of(context)!.guardarFactura,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
                               ),
                             ),
+                            items: _coches.map((coche) {
+                              return DropdownMenuItem<int>(
+                                value: coche['id_coche'],
+                                child: Text(
+                                  '${coche['marca']} ${coche['modelo']}',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() => _cocheSeleccionado = value);
+                            },
+                            dropdownColor: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Campo Litros Repostados
+                          TextFormField(
+                            controller: _litrosController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.litros,
+                              hintText: 'Ej: 45.5',
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              hintStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.6)),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Campo Precio por Litro
+                          TextFormField(
+                            controller: _precioLitroController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText:
+                                  '${AppLocalizations.of(context)!.precioLitro} (€)',
+                              hintText: 'Ej: 1.459',
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              hintStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.6)),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Campo Kilometraje Actual
+                          TextFormField(
+                            controller: _kilometrajeController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText:
+                                  AppLocalizations.of(context)!.kilometraje,
+                              hintText: 'Ej: 45230',
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              hintStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.6)),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              minWidth: 300, // Ancho mínimo
+                              maxWidth: 400, // Ancho máximo
+                            ),
+                            // Dropdown Tipo de Combustible
+                            child: DropdownButtonFormField<String>(
+                              initialValue: _tipoCombustibleSeleccionado,
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!
+                                    .tipoCombustible,
+                                labelStyle: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
+                                filled: true,
+                                fillColor: Theme.of(context).cardColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              items: _tiposCombustible.map((tipo) {
+                                return DropdownMenuItem<String>(
+                                  value: tipo,
+                                  child: Text(
+                                    tipo,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(
+                                    () => _tipoCombustibleSeleccionado = value);
+                              },
+                              dropdownColor: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(10),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // NUEVA SECCIÓN: Imagen de Factura
+                          Text(
+                            AppLocalizations.of(context)!.imagenFactura,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Divider(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              thickness: 1),
+                          const SizedBox(height: 16),
+
+                          // Botón para agregar imagen
+                          Container(
+                            width: double.infinity,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: _imagenFactura == null
+                                ? TextButton(
+                                    onPressed: _mostrarOpcionesImagen,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.add_photo_alternate,
+                                          size: 40,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          AppLocalizations.of(context)!
+                                              .agregarImagen,
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: FutureBuilder(
+                                          future: _imagenFactura!.readAsBytes(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Image.memory(
+                                                snapshot.data as Uint8List,
+                                                width: double.infinity,
+                                                height: double.infinity,
+                                                fit: BoxFit.cover,
+                                              );
+                                            }
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                color: Color(0xFFFF9350),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.black54,
+                                          ),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _imagenFactura = null;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Campo Descripción
+                          TextFormField(
+                            controller: _descripcionController,
+                            maxLines: 4,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!
+                                  .descripcionOpcional,
+                              labelStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+
+                          // Botón Guardar
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _guardarFactura,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 18),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 4,
+                                shadowColor: Theme.of(context)
+                                    .shadowColor
+                                    .withValues(alpha: 0.3),
+                              ),
+                              child: _isLoading
+                                  ? SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 3,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      AppLocalizations.of(context)!
+                                          .guardarFactura,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           if (_isLoading)

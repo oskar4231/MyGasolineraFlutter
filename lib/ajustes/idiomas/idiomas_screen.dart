@@ -37,8 +37,10 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
         return 'Português';
       case 'it':
         return 'Italiano';
+      case 'fr':
+        return 'Français';
       case 'ca':
-        return 'Valenciano';
+        return 'Valencià'; // Cambiado para coincidir con las variantes del popup
       default:
         return 'Español';
     }
@@ -87,172 +89,206 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.idiomas,
-          style: Theme.of(context).appBarTheme.titleTextStyle,
-        ),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        iconTheme: Theme.of(context).appBarTheme.iconTheme,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).appBarTheme.iconTheme?.color),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppLocalizations.of(context)!.configuracionIdioma,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+            // Custom Header (naranja como Accesibilidad)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.idiomas,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
 
-            // Idioma - con popup scrollable
-            Card(
-              elevation: 2,
-              color: Theme.of(context).cardColor,
-              child: InkWell(
-                onTap: () => _mostrarPopupIdioma(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.language,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          size: 28),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.idiomaActual,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.configuracionIdioma,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Idioma - con popup scrollable
+                    Card(
+                      elevation: 2,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF2C2C2C)
+                          : Theme.of(context).cardColor,
+                      child: InkWell(
+                        onTap: () => _mostrarPopupIdioma(),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.language,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                  size: 28),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!
+                                          .idiomaActual,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _idiomaSeleccionado,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _idiomaSeleccionado,
-                              style: TextStyle(
-                                fontSize: 14,
+                              Icon(
+                                Icons.arrow_forward_ios,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.8),
+                                    .withOpacity(0.5),
+                                size: 16,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.5),
-                        size: 16,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Botón guardar
-            Center(
-              child: ElevatedButton(
-                onPressed: _cargando
-                    ? null
-                    : () async {
-                        try {
-                          // Mostrar indicador de carga
-                          setState(() {
-                            _cargando = true;
-                          });
-
-                          // Guardar en el backend
-                          final exito =
-                              await _accesibilidadService.guardarConfiguracion(
-                            idioma: _idiomaSeleccionado,
-                            tamanoFuente: _tamanoFuente,
-                            altoContraste: _altoContraste,
-                            modoOscuro: _modoOscuro,
-                          );
-
-                          setState(() {
-                            _cargando = false;
-                          });
-
-                          if (exito && mounted) {
-                            // Actualizar idioma globalmente
-                            await languageProvider
-                                .changeLanguage(_idiomaSeleccionado);
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(context)!.idiomaGuardado,
-                                ),
-                                duration: const Duration(seconds: 2),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                            Navigator.of(context).pop();
-                          }
-                        } catch (e) {
-                          setState(() {
-                            _cargando = false;
-                          });
-
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '❌ Error al guardar: ${e.toString()}',
-                                ),
-                                duration: const Duration(seconds: 3),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                ),
-                child: _cargando
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
+                            ],
                           ),
                         ),
-                      )
-                    : Text(
-                        AppLocalizations.of(context)!.guardarCambios,
-                        style: const TextStyle(fontSize: 16),
                       ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Botón guardar
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _cargando
+                            ? null
+                            : () async {
+                                try {
+                                  // Mostrar indicador de carga
+                                  setState(() {
+                                    _cargando = true;
+                                  });
+
+                                  // Guardar en el backend
+                                  final exito = await _accesibilidadService
+                                      .guardarConfiguracion(
+                                    idioma: _idiomaSeleccionado,
+                                    tamanoFuente: _tamanoFuente,
+                                    altoContraste: _altoContraste,
+                                    modoOscuro: _modoOscuro,
+                                  );
+
+                                  setState(() {
+                                    _cargando = false;
+                                  });
+
+                                  if (exito && mounted) {
+                                    // Actualizar idioma globalmente
+                                    await languageProvider
+                                        .changeLanguage(_idiomaSeleccionado);
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          AppLocalizations.of(context)!
+                                              .idiomaGuardado,
+                                        ),
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  setState(() {
+                                    _cargando = false;
+                                  });
+
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          '❌ Error al guardar: ${e.toString()}',
+                                        ),
+                                        duration: const Duration(seconds: 3),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: _cargando
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                AppLocalizations.of(context)!.guardarCambios,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -269,14 +305,20 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
       'Deutsch': ['Deutsch'],
       'Italiano': ['Italiano'],
       'English': ['English'],
-      'Valenciano': ['Valencià', 'Català'],
+      'Français': ['Français'],
+      'Valencià': [
+        'Valencià',
+        'Català'
+      ], // Cambiado de 'Valenciano' a 'Valencià'
     };
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF1E1E1E)
+              : Theme.of(context).dialogBackgroundColor,
           title: Row(
             children: [
               Icon(Icons.language,
@@ -301,46 +343,54 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
               itemBuilder: (context, index) {
                 final idioma = idiomasConVariantes.keys.elementAt(index);
                 final esSeleccionado = _idiomaSeleccionado.startsWith(idioma);
+
+                // Colores consistentes con el resto de la app en modo oscuro
                 final isDarkMode =
                     Theme.of(context).brightness == Brightness.dark;
-
-                final selectedColor = isDarkMode
-                    ? Colors.grey[700]!
-                    : Theme.of(context).primaryColor;
-                final selectedTextColor = isDarkMode
-                    ? Colors.white
-                    : Theme.of(context).colorScheme.onPrimary;
+                final backgroundColor = esSeleccionado
+                    ? (isDarkMode
+                        ? const Color(0xFF2C2C2C)
+                        : Theme.of(context).colorScheme.primary)
+                    : (isDarkMode ? const Color(0xFF1E1E1E) : Colors.white);
+                final textColor = esSeleccionado
+                    ? (isDarkMode
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onPrimary)
+                    : (isDarkMode ? Colors.white70 : Colors.black87);
 
                 return Card(
                   elevation: esSeleccionado ? 4 : 1,
-                  color: esSeleccionado
-                      ? selectedColor
-                      : Theme.of(context).cardColor,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 0,
+                  color: backgroundColor,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: esSeleccionado
+                        ? BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2)
+                        : BorderSide.none,
                   ),
                   child: ListTile(
+                    leading: Icon(
+                      Icons.language,
+                      color: esSeleccionado
+                          ? Theme.of(context).colorScheme.primary
+                          : (isDarkMode ? Colors.white70 : Colors.black54),
+                    ),
                     title: Text(
                       idioma,
                       style: TextStyle(
-                        color: esSeleccionado
-                            ? selectedTextColor
-                            : Theme.of(context).colorScheme.onSurface,
                         fontWeight: esSeleccionado
                             ? FontWeight.bold
                             : FontWeight.normal,
+                        color: textColor,
                       ),
                     ),
                     trailing: Icon(
-                      Icons.arrow_forward_ios,
+                      Icons.chevron_right,
                       color: esSeleccionado
-                          ? selectedTextColor
-                          : Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.5),
-                      size: 16,
+                          ? Theme.of(context).colorScheme.primary
+                          : (isDarkMode ? Colors.white70 : Colors.black54),
                     ),
                     onTap: () {
                       Navigator.of(context).pop();
@@ -380,11 +430,14 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFE8DA),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF1E1E1E)
+              : Theme.of(context).dialogBackgroundColor,
           title: Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onSurface),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _mostrarPopupIdioma();
@@ -394,8 +447,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
               Expanded(
                 child: Text(
                   idiomaBase,
-                  style: const TextStyle(
-                    color: Colors.black,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -412,35 +465,49 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
               itemBuilder: (context, index) {
                 final variante = variantes[index];
                 final esSeleccionado = _idiomaSeleccionado == variante;
+
+                // Colores consistentes con el resto de la app en modo oscuro
                 final isDarkMode =
                     Theme.of(context).brightness == Brightness.dark;
-
-                final selectedColor =
-                    isDarkMode ? Colors.grey[700]! : const Color(0xFFFF9350);
-                final selectedTextColor =
-                    isDarkMode ? Colors.white : Colors.black;
+                final backgroundColor = esSeleccionado
+                    ? (isDarkMode
+                        ? const Color(0xFF2C2C2C)
+                        : Theme.of(context).colorScheme.primary)
+                    : (isDarkMode ? const Color(0xFF1E1E1E) : Colors.white);
+                final textColor = esSeleccionado
+                    ? (isDarkMode
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onPrimary)
+                    : (isDarkMode ? Colors.white70 : Colors.black87);
 
                 return Card(
                   elevation: esSeleccionado ? 4 : 1,
-                  color: esSeleccionado ? selectedColor : Colors.white,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 0,
+                  color: backgroundColor,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: esSeleccionado
+                        ? BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2)
+                        : BorderSide.none,
                   ),
                   child: ListTile(
+                    leading: Icon(
+                      Icons.check_circle,
+                      color: esSeleccionado
+                          ? Theme.of(context).colorScheme.primary
+                          : (isDarkMode ? Colors.white70 : Colors.black54),
+                    ),
                     title: Text(
                       variante,
                       style: TextStyle(
-                        color:
-                            esSeleccionado ? selectedTextColor : Colors.black,
                         fontWeight: esSeleccionado
                             ? FontWeight.bold
                             : FontWeight.normal,
+                        color: textColor,
                       ),
                     ),
-                    trailing: esSeleccionado
-                        ? Icon(Icons.check_circle, color: selectedTextColor)
-                        : null,
                     onTap: () {
                       Navigator.of(context).pop();
                       _confirmarCambioIdioma(variante);
@@ -457,7 +524,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                 _mostrarPopupIdioma();
               },
               child: Text(AppLocalizations.of(context)!.atras,
-                  style: const TextStyle(color: Colors.black)),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface)),
             ),
           ],
         );

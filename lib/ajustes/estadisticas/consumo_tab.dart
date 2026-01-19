@@ -114,7 +114,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.totalCoches,
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -131,7 +137,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.facturasTotales,
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -174,7 +186,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Theme.of(context).shadowColor.withOpacity(0.05),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -202,7 +214,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                         AppLocalizations.of(context)!.explainCostoKm,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.6),
                           height: 1.5,
                         ),
                       ),
@@ -252,7 +267,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -304,7 +319,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                             '$numFacturasValidas/$numFacturas ${AppLocalizations.of(context)!.recargasValidas}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
                             ),
                           ),
                         ],
@@ -370,7 +388,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -386,7 +404,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           AppLocalizations.of(context)!.costoMinimo,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                         Text(
@@ -434,7 +455,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
                         const SizedBox(height: 4),
                         Text(
                           AppLocalizations.of(context)!.rangoMinMax,
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
+                          ),
                         ),
                       ],
                     ),
@@ -445,7 +472,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           AppLocalizations.of(context)!.costoMaximo,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                         Text(
@@ -549,7 +579,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
         ),
         const SizedBox(height: 4),
         Text(
@@ -608,7 +641,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
           const SizedBox(height: 10),
           Text(
             AppLocalizations.of(context)!.agregaFacturasConsumo,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),

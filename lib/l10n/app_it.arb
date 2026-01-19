@@ -343,5 +343,22 @@
         "type": "String"
       }
     }
-  }
+  },
+  "gasolina95": "Benzina 95",
+  "gasolina98": "Benzina 98",
+  "dieselPremium": "Diesel Premium",
+  "glp": "GPL (Autogas)",
+  "escanearFacturaAutocompletar": "Scansiona Fattura (Autocompletamento)",
+  "cambiarFotoPerfil": "Cambia foto profilo",
+  "seleccionarFuenteFoto": "Seleziona la sorgente della foto:",
+  "seleccionarFacturas": "Seleziona Fatture",
+  "seleccionarTodo": "Seleziona tutto",
+  "deseleccionar": "Deseleziona",
+  "exportarComo": "Esporta come...",
+  "exportarExcel": "Excel (.xlsx)",
+  "exportarPdf": "PDF (.pdf)",
+  "exportarExitoExcel": "Esportato in Excel con successo",
+  "exportarExitoPdf": "Esportato in PDF con successo",
+  "seleccionarAlMenosUna": "Seleziona almeno una fattura",
+  "exportarConConteo": "Esporta ({count})"
 }
