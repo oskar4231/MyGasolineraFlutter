@@ -10,12 +10,14 @@ import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:my_gasolinera/providers/language_provider.dart';
+import 'package:my_gasolinera/providers/font_size_provider.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 
 // Instancias globales
 late AppDatabase database;
 late BackgroundRefreshService backgroundRefreshService;
 final LanguageProvider languageProvider = LanguageProvider();
+final FontSizeProvider fontSizeProvider = FontSizeProvider();
 
 // Global key para mostrar SnackBars desde cualquier lugar
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -47,6 +49,9 @@ Future<void> main() async {
   // Cargar IDIOMA
   await languageProvider.loadInitialLanguage();
 
+  // Cargar TAMAÑO DE FUENTE
+  await fontSizeProvider.loadInitialFontSize();
+
   // Inicializar Auth
   await AuthService.initialize();
 
@@ -64,28 +69,39 @@ class MyApp extends StatelessWidget {
         return ListenableBuilder(
           listenable: languageProvider,
           builder: (context, _) {
-            return MaterialApp(
-              scaffoldMessengerKey: rootScaffoldMessengerKey,
-              debugShowCheckedModeBanner: false,
-              title: 'MyGasolinera',
-              theme: ThemeManager().currentTheme,
-              locale: languageProvider.currentLocale,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('es'), // Español
-                Locale('fr'), // Frances
-                Locale('en'), // Inglés
-                Locale('de'), // Alleman
-                Locale('pt'), // Portugues
-                Locale('it'), // Italiano
-                Locale('ca'), // Valenciano
-              ],
-              home: const Inicio(),
+            return ListenableBuilder(
+              listenable: fontSizeProvider,
+              builder: (context, _) {
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler:
+                        TextScaler.linear(fontSizeProvider.textScaleFactor),
+                  ),
+                  child: MaterialApp(
+                    scaffoldMessengerKey: rootScaffoldMessengerKey,
+                    debugShowCheckedModeBanner: false,
+                    title: 'MyGasolinera',
+                    theme: ThemeManager().currentTheme,
+                    locale: languageProvider.currentLocale,
+                    localizationsDelegates: const [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: const [
+                      Locale('es'), // Español
+                      Locale('fr'), // Frances
+                      Locale('en'), // Inglés
+                      Locale('de'), // Alleman
+                      Locale('pt'), // Portugues
+                      Locale('it'), // Italiano
+                      Locale('ca'), // Valenciano
+                    ],
+                    home: const Inicio(),
+                  ),
+                );
+              },
             );
           },
         );
