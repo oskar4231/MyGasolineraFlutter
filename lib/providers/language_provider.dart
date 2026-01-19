@@ -13,10 +13,13 @@ class LanguageProvider extends ChangeNotifier {
   static const Map<String, String> _languageCodes = {
     'Español': 'es',
     'English': 'en',
+    'Français': 'fr',
     'Deutsch': 'de',
     'Português': 'pt',
     'Italiano': 'it',
-    'Valenciano': 'ca',
+    'Valenciano': 'va',
+    'Valencià': 'va', // Variante valenciana
+    'Català': 'va', // Variante catalana
   };
 
   /// Cambia el idioma por nombre (ej: "English", "Español")

@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for Catalan Valencian (`ca`).
-class AppLocalizationsCa extends AppLocalizations {
-  AppLocalizationsCa([String locale = 'ca']) : super(locale);
+/// The translations for Valencian (`va`).
+class AppLocalizationsVa extends AppLocalizations {
+  AppLocalizationsVa([String locale = 'va']) : super(locale);
 
   @override
   String get idioma => 'Idioma';

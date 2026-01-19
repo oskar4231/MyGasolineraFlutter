@@ -39,8 +39,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
         return 'Italiano';
       case 'fr':
         return 'Français';
-      case 'ca':
-        return 'Valenciano';
+      case 'va':
+        return 'Valencià'; // Cambiado para coincidir con las variantes del popup
       default:
         return 'Español';
     }
@@ -306,7 +306,10 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
       'Italiano': ['Italiano'],
       'English': ['English'],
       'Français': ['Français'],
-      'Valenciano': ['Valencià', 'Català'],
+      'Valencià': [
+        'Valencià',
+        'Català'
+      ], // Cambiado de 'Valenciano' a 'Valencià'
     };
 
     showDialog(
