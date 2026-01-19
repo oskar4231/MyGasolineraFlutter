@@ -9,8 +9,6 @@ import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
 
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
-  final List<Gasolinera>? externalGasolineras;
-  final Function(double lat, double lng)? onLocationUpdate;
   final Function(String provincia)? onProvinciaUpdate;
 
   // Parámetros para filtros
@@ -23,8 +21,6 @@ class MapWidget extends StatefulWidget {
   const MapWidget({
     super.key,
     required this.cacheService,
-    this.externalGasolineras,
-    this.onLocationUpdate,
     this.onProvinciaUpdate,
     this.combustibleSeleccionado,
     this.precioDesde,
@@ -37,7 +33,10 @@ class MapWidget extends StatefulWidget {
   _MapWidgetState createState() => _MapWidgetState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
+class _MapWidgetState extends State<MapWidget>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true; // ✅ Preservar estado al cambiar de pantalla
   GoogleMapController? mapController;
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
@@ -84,12 +83,11 @@ class _MapWidgetState extends State<MapWidget> {
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Si cambiaron los filtros o la lista externa, recargar gasolineras
+    // Si cambiaron los filtros, recargar gasolineras
     if (oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-        oldWidget.externalGasolineras != widget.externalGasolineras ||
         oldWidget.radiusKm != widget.radiusKm) {
       print(
           '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
@@ -120,7 +118,6 @@ class _MapWidgetState extends State<MapWidget> {
     final gasolinerasEnRadio = await _gasolineraLogic.cargarGasolineras(
       lat,
       lng,
-      externalGasolineras: widget.externalGasolineras,
       combustibleSeleccionado: widget.combustibleSeleccionado,
       precioDesde: widget.precioDesde,
       precioHasta: widget.precioHasta,
@@ -387,46 +384,85 @@ class _MapWidgetState extends State<MapWidget> {
 
   /// Inicia el seguimiento de ubicación GPS
   Future<void> _iniciarSeguimiento() async {
+    print('🌍 MapWidget: Iniciando seguimiento GPS...');
+
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+    if (!serviceEnabled) {
+      print('❌ MapWidget: Servicio de ubicación deshabilitado');
+      return;
+    }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
+      if (permission == LocationPermission.denied) {
+        print('❌ MapWidget: Permisos de ubicación denegados');
+        return;
+      }
     }
-    if (permission == LocationPermission.deniedForever) return;
+    if (permission == LocationPermission.deniedForever) {
+      print('❌ MapWidget: Permisos de ubicación denegados permanentemente');
+      return;
+    }
+
+    Position? posicion;
 
     try {
-      Position posicion = await Geolocator.getCurrentPosition(
+      print('📍 MapWidget: Obteniendo ubicación actual...');
+      posicion = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          print(
+              '⏱️ MapWidget: Timeout obteniendo ubicación actual, intentando última conocida...');
+          throw TimeoutException('GPS timeout');
+        },
       );
-      if (mounted) {
-        setState(() {
-          _ubicacionActual = posicion;
-          _markers.clear();
-          _markers.add(
-            Marker(
-              markerId: const MarkerId('yo'),
-              position: LatLng(posicion.latitude, posicion.longitude),
-              icon: BitmapDescriptor.defaultMarker,
-            ),
-          );
-        });
-        _cargarGasolineras(posicion.latitude, posicion.longitude,
-            isInitialLoad: true);
-
-        // Actualizar provincia inicial
-        _actualizarProvincia(posicion.latitude, posicion.longitude);
-
-        if (widget.onLocationUpdate != null) {
-          widget.onLocationUpdate!(posicion.latitude, posicion.longitude);
-        }
-      }
+      print(
+          '✅ MapWidget: Ubicación actual obtenida: ${posicion.latitude}, ${posicion.longitude}');
     } catch (e) {
-      // ignore
+      print('⚠️ MapWidget: Error obteniendo ubicación actual: $e');
+      print('🔄 MapWidget: Intentando obtener última ubicación conocida...');
+
+      try {
+        posicion = await Geolocator.getLastKnownPosition();
+        if (posicion != null) {
+          print(
+              '✅ MapWidget: Última ubicación conocida obtenida: ${posicion.latitude}, ${posicion.longitude}');
+        } else {
+          print('❌ MapWidget: No hay última ubicación conocida');
+        }
+      } catch (e2) {
+        print('❌ MapWidget: Error obteniendo última ubicación: $e2');
+      }
     }
 
+    if (posicion != null && mounted) {
+      setState(() {
+        _ubicacionActual = posicion;
+        _markers.clear();
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('yo'),
+            position: LatLng(posicion!.latitude, posicion.longitude),
+            icon: BitmapDescriptor.defaultMarker,
+          ),
+        );
+      });
+
+      print('🗺️ MapWidget: Cargando gasolineras para ubicación inicial...');
+      _cargarGasolineras(posicion.latitude, posicion.longitude,
+          isInitialLoad: true);
+
+      // Actualizar provincia inicial
+      _actualizarProvincia(posicion.latitude, posicion.longitude);
+    } else {
+      print('❌ MapWidget: No se pudo obtener ninguna ubicación');
+    }
+
+    // Iniciar stream de actualizaciones de ubicación
+    print('📡 MapWidget: Iniciando stream de actualizaciones GPS...');
     _positionStreamSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.best,
@@ -448,20 +484,13 @@ class _MapWidgetState extends State<MapWidget> {
 
       // Actualizar provincia cada vez que el usuario se mueve >5 metros
       _actualizarProvincia(pos.latitude, pos.longitude);
-
-      if (widget.onLocationUpdate != null) {
-        _debounceTimer?.cancel();
-        _debounceTimer = Timer(const Duration(seconds: 2), () {
-          if (mounted) {
-            widget.onLocationUpdate!(pos.latitude, pos.longitude);
-          }
-        });
-      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // ✅ IMPORTANTE para AutomaticKeepAliveClientMixin
+
     if (_ubicacionActual == null) {
       return const Center(child: CircularProgressIndicator());
     }
