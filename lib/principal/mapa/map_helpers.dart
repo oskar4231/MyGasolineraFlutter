@@ -46,8 +46,9 @@ class MarkerHelper {
   Marker createMarker(
     Gasolinera gasolinera,
     List<String> favoritosIds,
-    Function(Gasolinera, bool) onTap,
-  ) {
+    Function(Gasolinera, bool) onTap, {
+    bool markersEnabled = true,
+  }) {
     bool esFavorita = favoritosIds.contains(gasolinera.id);
 
     BitmapDescriptor icon;
@@ -69,9 +70,11 @@ class MarkerHelper {
       markerId: MarkerId('eess_${gasolinera.id}'),
       position: gasolinera.position,
       icon: icon,
-      onTap: () {
-        onTap(gasolinera, esFavorita);
-      },
+      onTap: markersEnabled
+          ? () {
+              onTap(gasolinera, esFavorita);
+            }
+          : null,
     );
   }
 }
