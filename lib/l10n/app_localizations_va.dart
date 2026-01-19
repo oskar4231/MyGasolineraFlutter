@@ -659,6 +659,15 @@ class AppLocalizationsVa extends AppLocalizations {
   String get confirmarCerrarSesion => 'Estàs segur que vols tancar sessió?';
 
   @override
+  String get si => 'Sí';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get atras => 'Enrere';
+
+  @override
   String get confirmarCambio => 'Confirmar canvi';
 
   @override
