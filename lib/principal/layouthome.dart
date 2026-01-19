@@ -805,7 +805,7 @@ class _LayouthomeState extends State<Layouthome> {
                   // Botón de Coches
                   IconButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const CochesScreen(),
@@ -813,23 +813,24 @@ class _LayouthomeState extends State<Layouthome> {
                       );
                     },
                     icon: Icon(Icons.directions_car,
-                        size: 40, color: theme.colorScheme.onPrimary),
+                        size: 40,
+                        color: theme.colorScheme.onPrimary.withValues(
+                            alpha: 0.5)), // No seleccionado - apagado
                   ),
 
-                  // Botón de Ubicación (Pin)
+                  // Botón de Ubicación (Pin) - Seleccionado
                   IconButton(
-                    onPressed: () {
-                      // Acción para centrar en ubicación actual
-                      // Podrías añadir funcionalidad aquí si lo necesitas
-                    },
+                    onPressed: null, // Ya estamos en Mapa
                     icon: Icon(Icons.pin_drop,
-                        size: 40, color: theme.colorScheme.onPrimary),
+                        size: 40,
+                        color: theme
+                            .colorScheme.onPrimary), // Seleccionado - claro
                   ),
 
                   // Botón de Ajustes
                   IconButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const AjustesScreen(),
@@ -837,7 +838,9 @@ class _LayouthomeState extends State<Layouthome> {
                       );
                     },
                     icon: Icon(Icons.settings,
-                        size: 40, color: theme.colorScheme.onPrimary),
+                        size: 40,
+                        color: theme.colorScheme.onPrimary.withValues(
+                            alpha: 0.5)), // No seleccionado - apagado
                   ),
                 ],
               ),
