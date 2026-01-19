@@ -343,5 +343,25 @@
         "type": "String"
       }
     }
-  }
+  },
+  "gasolina95": "Super 95",
+  "gasolina98": "Super Plus 98",
+  "dieselPremium": "Premium Diesel",
+  "glp": "Autogas (LPG)",
+  "hibrido": "Hybrid",
+  "escanearFacturaAutocompletar": "Rechnung scannen (Autovervollständigen)",
+  "cambiarFotoPerfil": "Profilbild ändern",
+  "seleccionarFuenteFoto": "Fotoquelle auswählen:",
+  "galeria": "Galerie",
+  "camara": "Kamera",
+  "seleccionarFacturas": "Rechnungen auswählen",
+  "seleccionarTodo": "Alles auswählen",
+  "deseleccionar": "Abwählen",
+  "exportarComo": "Exportieren als...",
+  "exportarExcel": "Excel (.xlsx)",
+  "exportarPdf": "PDF (.pdf)",
+  "exportarExitoExcel": "Erfolgreich nach Excel exportiert",
+  "exportarExitoPdf": "Erfolgreich nach PDF exportiert",
+  "seleccionarAlMenosUna": "Wählen Sie mindestens eine Rechnung aus",
+  "exportarConConteo": "Exportieren ({count})"
 }

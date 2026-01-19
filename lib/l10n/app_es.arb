@@ -343,5 +343,25 @@
         "type": "String"
       }
     }
-  }
+  },
+  "gasolina95": "Gasolina 95",
+  "gasolina98": "Gasolina 98",
+  "dieselPremium": "Diésel Premium",
+  "glp": "GLP (Autogas)",
+  "hibrido": "Híbrido",
+  "escanearFacturaAutocompletar": "Escanear Factura (Autocompletar)",
+  "cambiarFotoPerfil": "Cambiar foto de perfil",
+  "seleccionarFuenteFoto": "Selecciona de dónde quieres tomar la foto:",
+  "galeria": "Galería",
+  "camara": "Cámara",
+  "seleccionarFacturas": "Seleccionar Facturas",
+  "seleccionarTodo": "Seleccionar todo",
+  "deseleccionar": "Deseleccionar",
+  "exportarComo": "Exportar como...",
+  "exportarExcel": "Excel (.xlsx)",
+  "exportarPdf": "PDF (.pdf)",
+  "exportarExitoExcel": "Exportado a Excel correctamente",
+  "exportarExitoPdf": "Exportado a PDF correctamente",
+  "seleccionarAlMenosUna": "Selecciona al menos una factura",
+  "exportarConConteo": "Exportar ({count})"
 }

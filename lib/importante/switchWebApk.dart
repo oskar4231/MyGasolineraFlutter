@@ -15,7 +15,7 @@
 ///
 /// 🌐 0 = WEB (usa IndexedDB, sin SQLite nativo)
 /// 📱 1 = APK (usa SQLite nativo con Drift)
-const int modoPlataforma = 1;
+const int modoPlataforma = 0;
 
 /// Verifica si estamos en modo APK
 bool get esAPK => modoPlataforma == 1;

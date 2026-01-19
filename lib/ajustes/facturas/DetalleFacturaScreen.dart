@@ -51,22 +51,23 @@ class DetalleFacturaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE8DA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.detalleFactura,
-          style: const TextStyle(
-            color: Color(0xFF492714),
+          style: TextStyle(
+            color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: Color.fromARGB(255, 2, 1, 1),
+            color: theme.colorScheme.onSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -78,7 +79,7 @@ class DetalleFacturaScreen extends StatelessWidget {
           children: [
             // Información de la factura
             Card(
-              color: const Color(0xFFFFCFB0),
+              color: theme.cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -88,12 +89,13 @@ class DetalleFacturaScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Título
-                    _buildInfoRow(AppLocalizations.of(context)!.titulo,
+                    _buildInfoRow(context, AppLocalizations.of(context)!.titulo,
                         factura['titulo']),
                     const SizedBox(height: 12),
 
                     // Costo Total
                     _buildInfoRow(
+                      context,
                       AppLocalizations.of(context)!.costeTotal,
                       '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
                       isAmount: true,
@@ -105,6 +107,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _buildInfoRow(
+                            context,
                             AppLocalizations.of(context)!.fecha,
                             _formatFecha(factura['fecha']),
                           ),
@@ -112,6 +115,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildInfoRow(
+                            context,
                             AppLocalizations.of(context)!.hora,
                             _formatHora(factura['hora']),
                           ),
@@ -127,6 +131,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildInfoRow(
+                              context,
                               AppLocalizations.of(context)!.descripcion,
                               factura['descripcion']),
                         ],
@@ -150,10 +155,10 @@ class DetalleFacturaScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 4, bottom: 8),
                     child: Text(
                       AppLocalizations.of(context)!.comprobante,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF492714),
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -191,9 +196,11 @@ class DetalleFacturaScreen extends StatelessWidget {
                                     minScale: 0.5,
                                     maxScale: 4.0,
                                     child: FacturaImageWidget(
-                                      facturaId: factura['id_factura'] ??
-                                          factura['id'] ??
-                                          factura['facturaId'],
+                                      facturaId: int.tryParse(
+                                          (factura['id_factura'] ??
+                                                  factura['id'] ??
+                                                  factura['facturaId'])
+                                              .toString()),
                                       serverPath: factura['imagenPath'],
                                       fit: BoxFit.contain,
                                       errorBuilder: (context) => const Icon(
@@ -232,15 +239,17 @@ class DetalleFacturaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value, {bool isAmount = false}) {
+  Widget _buildInfoRow(BuildContext context, String label, String value,
+      {bool isAmount = false}) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Color(0xFF492714),
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -249,7 +258,7 @@ class DetalleFacturaScreen extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: isAmount ? 20 : 16,
-            color: const Color(0xFF492714),
+            color: theme.colorScheme.onSurface,
             fontWeight: isAmount ? FontWeight.bold : FontWeight.normal,
           ),
         ),
