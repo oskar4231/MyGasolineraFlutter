@@ -3,6 +3,7 @@ import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/principal/layouthome.dart';
 
 import 'package:my_gasolinera/services/coche_service.dart';
+import 'package:my_gasolinera/services/vehiculo_service.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:my_gasolinera/models/coche.dart';
 import 'package:my_gasolinera/coches/widgets/coche_card.dart';
@@ -17,8 +18,11 @@ class CochesScreen extends StatefulWidget {
 
 class _CochesScreenState extends State<CochesScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _marcaController = TextEditingController();
+  final _marcaController =
+      TextEditingController(); // Keeps the text for validation
   final _modeloController = TextEditingController();
+  final _versionController =
+      TextEditingController(); // New controller for version/motor
   final _kilometrajeInicialController = TextEditingController();
   final _capacidadTanqueController = TextEditingController();
   final _consumoTeoricoController = TextEditingController();
@@ -29,6 +33,7 @@ class _CochesScreenState extends State<CochesScreen> {
 
   final List<Coche> _coches = [];
   bool _isLoading = false;
+  bool _isDownloadingData = false;
 
   // Internal keys for mapping
   final Map<String, bool> _tiposCombustible = {
@@ -39,8 +44,6 @@ class _CochesScreenState extends State<CochesScreen> {
     'glp': false,
     'hibrido': false,
   };
-
-  // ... (rest of class)
 
   String _getLocalizedFuelName(String key, AppLocalizations l10n) {
     switch (key) {
@@ -65,9 +68,26 @@ class _CochesScreenState extends State<CochesScreen> {
   void initState() {
     super.initState();
     _cargarCoches();
+    _initVehicleData();
   }
 
-  // Función para cargar los coches usando el servicio
+  Future<void> _initVehicleData() async {
+    setState(() {
+      _isDownloadingData = true;
+    });
+    try {
+      await VehicleService.initializeData();
+    } catch (e) {
+      print('Error initializing vehicle data: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDownloadingData = false;
+        });
+      }
+    }
+  }
+
   Future<void> _cargarCoches() async {
     setState(() {
       _isLoading = true;
@@ -102,7 +122,6 @@ class _CochesScreenState extends State<CochesScreen> {
     }
   }
 
-  // Función para crear un coche usando el servicio
   Future<void> _crearCoche() async {
     setState(() {
       _isLoading = true;
@@ -110,15 +129,20 @@ class _CochesScreenState extends State<CochesScreen> {
 
     try {
       final l10n = AppLocalizations.of(context)!;
-      // Obtener los combustibles seleccionados (nombres localizados)
       final combustiblesSeleccionados = _tiposCombustible.entries
           .where((entry) => entry.value)
           .map((entry) => _getLocalizedFuelName(entry.key, l10n))
           .toList();
 
+      // Append version if selected to give more info (cylinders etc)
+      String modelToSave = _modeloController.text;
+      if (_versionController.text.isNotEmpty) {
+        modelToSave = '$modelToSave ${_versionController.text}';
+      }
+
       await CocheService.crearCoche(
         marca: _marcaController.text,
-        modelo: _modeloController.text,
+        modelo: modelToSave, // Save model + version
         tiposCombustible: combustiblesSeleccionados,
         kilometrajeInicial: _kilometrajeInicialController.text.isNotEmpty
             ? int.tryParse(_kilometrajeInicialController.text)
@@ -146,7 +170,7 @@ class _CochesScreenState extends State<CochesScreen> {
         DialogHelper.showSuccessSnackbar(
           context,
           AppLocalizations.of(context)!
-              .cocheCreadoExito(_marcaController.text, _modeloController.text),
+              .cocheCreadoExito(_marcaController.text, modelToSave),
         );
         await _cargarCoches();
       }
@@ -169,6 +193,7 @@ class _CochesScreenState extends State<CochesScreen> {
   void dispose() {
     _marcaController.dispose();
     _modeloController.dispose();
+    _versionController.dispose();
     _kilometrajeInicialController.dispose();
     _capacidadTanqueController.dispose();
     _consumoTeoricoController.dispose();
@@ -181,8 +206,11 @@ class _CochesScreenState extends State<CochesScreen> {
 
   void _mostrarModalFormulario() {
     final l10n = AppLocalizations.of(context)!;
+
+    // Clear all controllers
     _marcaController.clear();
     _modeloController.clear();
+    _versionController.clear();
     _tiposCombustible.updateAll((key, value) => false);
     _kilometrajeInicialController.clear();
     _capacidadTanqueController.clear();
@@ -191,6 +219,11 @@ class _CochesScreenState extends State<CochesScreen> {
     _kmUltimoCambioAceiteController.clear();
     _intervaloKmController.text = '15000';
     _intervaloMesesController.text = '12';
+
+    // Temporary variables for autocomplete state
+    List<String> marcasDisponibles = VehicleService.getMakes();
+    List<String> modelosDisponibles = [];
+    List<Map<String, dynamic>> versionesDisponibles = [];
 
     showDialog(
       context: context,
@@ -202,100 +235,275 @@ class _CochesScreenState extends State<CochesScreen> {
                 l10n.anadirCoche,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              content: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: _marcaController,
-                        decoration: InputDecoration(
-                          labelText: l10n.marca,
-                          hintText: l10n.ejemploMarca,
-                          border: const OutlineInputBorder(),
-                          prefixIcon: const Icon(Icons.directions_car),
+              content: _isDownloadingData
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (marcasDisponibles.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: Text(
+                                  "Descargando base de datos de coches...",
+                                  style: TextStyle(color: Colors.orange),
+                                ),
+                              ),
+                            // MARCA AUTOCOMPLETE
+                            Autocomplete<String>(
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) {
+                                if (textEditingValue.text == '') {
+                                  return const Iterable<String>.empty();
+                                }
+                                return marcasDisponibles.where((String option) {
+                                  return option.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase(),
+                                      );
+                                });
+                              },
+                              onSelected: (String selection) {
+                                setDialogState(() {
+                                  _marcaController.text = selection;
+                                  _modeloController.clear();
+                                  _versionController.clear();
+                                  modelosDisponibles =
+                                      VehicleService.getModels(selection);
+                                });
+                              },
+                              fieldViewBuilder: (context, textEditingController,
+                                  focusNode, onFieldSubmitted) {
+                                // Sync with our main controller if needed, but usually Autocomplete uses its own
+                                // We prefer to update _marcaController on selection or manual edit
+                                textEditingController.text =
+                                    _marcaController.text;
+                                textEditingController.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                        offset: _marcaController.text.length));
+
+                                return TextFormField(
+                                  controller: textEditingController,
+                                  focusNode: focusNode,
+                                  decoration: InputDecoration(
+                                      labelText: l10n.marca,
+                                      hintText: "Ej: Honda",
+                                      border: const OutlineInputBorder(),
+                                      prefixIcon:
+                                          const Icon(Icons.directions_car),
+                                      suffixIcon: _marcaController
+                                              .text.isNotEmpty
+                                          ? IconButton(
+                                              icon: Icon(Icons.clear),
+                                              onPressed: () {
+                                                setDialogState(() {
+                                                  _marcaController.clear();
+                                                  textEditingController.clear();
+                                                  modelosDisponibles = [];
+                                                });
+                                              },
+                                            )
+                                          : null),
+                                  onChanged: (val) {
+                                    _marcaController.text = val;
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return l10n.ingresaMarca;
+                                    }
+                                    return null;
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+
+                            // MODELO AUTOCOMPLETE
+                            Autocomplete<String>(
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) {
+                                // Show all if empty to help discovery
+                                if (modelosDisponibles.isEmpty)
+                                  return const Iterable<String>.empty();
+                                if (textEditingValue.text == '')
+                                  return modelosDisponibles;
+
+                                return modelosDisponibles
+                                    .where((String option) {
+                                  return option.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase(),
+                                      );
+                                });
+                              },
+                              onSelected: (String selection) {
+                                setDialogState(() {
+                                  _modeloController.text = selection;
+                                  _versionController.clear();
+                                  // Fetch Versions
+                                  versionesDisponibles =
+                                      VehicleService.getVersions(
+                                          _marcaController.text, selection);
+                                });
+                              },
+                              fieldViewBuilder: (context, textEditingController,
+                                  focusNode, onFieldSubmitted) {
+                                textEditingController.text =
+                                    _modeloController.text;
+                                textEditingController.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                        offset: _modeloController.text.length));
+
+                                return TextFormField(
+                                  controller: textEditingController,
+                                  focusNode: focusNode,
+                                  enabled: _marcaController.text.isNotEmpty,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.modelo,
+                                    hintText: "Ej: Civic",
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon: const Icon(Icons.car_crash),
+                                  ),
+                                  onChanged: (val) {
+                                    _modeloController.text = val;
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return l10n.ingresaModelo;
+                                    }
+                                    return null;
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+
+                            // VERSION (MOTOR/CILINDROS) DROPDOWN
+                            // Using a DropdownButtonFormField for versions as they are detailed strings and selection is key
+                            // If empty or custom, user can't easily type a new version, but for now let's use Dropdown for the data
+                            if (versionesDisponibles.isNotEmpty)
+                              DropdownButtonFormField<Map<String, dynamic>>(
+                                decoration: InputDecoration(
+                                  labelText: "Version / Motor",
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: const Icon(
+                                      Icons.settings_input_component),
+                                ),
+                                isExpanded: true,
+                                items: versionesDisponibles.map((versionMap) {
+                                  String displayText =
+                                      "${versionMap['engine'] ?? ''} - ${versionMap['year'] ?? ''}";
+                                  if (versionMap['cylinders'] != null) {
+                                    displayText +=
+                                        " (${versionMap['cylinders']} cil)";
+                                  }
+                                  return DropdownMenuItem(
+                                    value: versionMap,
+                                    child: Text(displayText,
+                                        overflow: TextOverflow.ellipsis),
+                                  );
+                                }).toList(),
+                                onChanged:
+                                    (Map<String, dynamic>? selectedVersion) {
+                                  if (selectedVersion == null) return;
+                                  setDialogState(() {
+                                    String displayText =
+                                        "${selectedVersion['engine'] ?? ''} ${selectedVersion['year'] ?? ''}";
+                                    if (selectedVersion['cylinders'] != null) {
+                                      displayText +=
+                                          " (${selectedVersion['cylinders']} cil)";
+                                    }
+                                    _versionController.text = displayText;
+
+                                    // Auto-fill known fields if available
+                                    if (selectedVersion['fuel_type'] != null) {
+                                      // Reset first
+                                      _tiposCombustible
+                                          .updateAll((key, value) => false);
+
+                                      String fuel = selectedVersion['fuel_type']
+                                          .toString()
+                                          .toLowerCase();
+                                      if (fuel.contains('premium') ||
+                                          fuel.contains('98'))
+                                        _tiposCombustible['gasolina98'] = true;
+                                      else if (fuel.contains('gasoline') ||
+                                          fuel.contains('petrol'))
+                                        _tiposCombustible['gasolina95'] = true;
+                                      else if (fuel.contains('diesel'))
+                                        _tiposCombustible['diesel'] = true;
+                                      else if (fuel.contains('hybrid'))
+                                        _tiposCombustible['hibrido'] = true;
+                                      else if (fuel.contains('lpg') ||
+                                          fuel.contains('glp'))
+                                        _tiposCombustible['glp'] = true;
+                                    }
+
+                                    // If DB had tank/consumption we would use it, but ilyasozkurt json might not have consumption in standard L/100km
+                                    // We leave those manual unless we find a specific field
+                                  });
+                                },
+                              ),
+                            if (versionesDisponibles.isNotEmpty)
+                              const SizedBox(height: 16),
+
+                            Text(
+                              l10n.tiposCombustibleLabel,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ..._tiposCombustible.keys.map((key) {
+                              return CheckboxListTile(
+                                title: Text(_getLocalizedFuelName(key, l10n)),
+                                value: _tiposCombustible[key],
+                                onChanged: (bool? value) {
+                                  setDialogState(() {
+                                    _tiposCombustible[key] = value ?? false;
+                                  });
+                                },
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                dense: true,
+                              );
+                            }),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _kilometrajeInicialController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: l10n.kilometrajeInicial,
+                                hintText: l10n.ejemploKilometraje,
+                                border: const OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _capacidadTanqueController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: l10n.capacidadTanque,
+                                hintText: l10n.ejemploTanque,
+                                border: const OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _consumoTeoricoController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: l10n.consumoTeorico,
+                                hintText: l10n.ejemploConsumo,
+                                border: const OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return l10n.ingresaMarca;
-                          }
-                          return null;
-                        },
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _modeloController,
-                        decoration: InputDecoration(
-                          labelText: l10n.modelo,
-                          hintText: l10n.ejemploModelo,
-                          border: const OutlineInputBorder(),
-                          prefixIcon: const Icon(Icons.car_crash),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return l10n.ingresaModelo;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.tiposCombustibleLabel,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      ..._tiposCombustible.keys.map((key) {
-                        return CheckboxListTile(
-                          title: Text(_getLocalizedFuelName(key, l10n)),
-                          value: _tiposCombustible[key],
-                          onChanged: (bool? value) {
-                            setDialogState(() {
-                              _tiposCombustible[key] = value ?? false;
-                            });
-                          },
-                          controlAffinity: ListTileControlAffinity.leading,
-                          dense: true,
-                        );
-                      }),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _kilometrajeInicialController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: l10n.kilometrajeInicial,
-                          hintText: l10n.ejemploKilometraje,
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _capacidadTanqueController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: l10n.capacidadTanque,
-                          hintText: l10n.ejemploTanque,
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _consumoTeoricoController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: l10n.consumoTeorico,
-                          hintText: l10n.ejemploConsumo,
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
