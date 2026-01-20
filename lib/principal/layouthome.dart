@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
-import 'package:my_gasolinera/principal/lista.dart';
 import 'package:my_gasolinera/principal/mapa/map_widget.dart';
 import 'package:my_gasolinera/ajustes/ajustes.dart';
 import 'package:my_gasolinera/coches/coches.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'favoritos.dart'; // Importar la nueva pantalla de favoritos
-import 'package:my_gasolinera/services/provincia_service.dart'; // 🆕 Para detectar provincia
+import 'favoritos.dart';
 import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/main.dart' as app;
 
@@ -22,12 +17,6 @@ class Layouthome extends StatefulWidget {
 
 class _LayouthomeState extends State<Layouthome> {
   bool _showMap = true;
-  List<Gasolinera> _allGasolineras = [];
-  List<Gasolinera> _gasolinerasCercanas = [];
-  bool _loading = false;
-  Position? _currentPosition;
-  DateTime _lastUpdateTime = DateTime.now();
-  static const Duration MIN_UPDATE_INTERVAL = Duration(seconds: 15);
   late GasolinerasCacheService _cacheService;
 
   // Filtros
@@ -43,221 +32,15 @@ class _LayouthomeState extends State<Layouthome> {
   void initState() {
     super.initState();
     _cacheService = GasolinerasCacheService(app.database);
-    _initLocationAndGasolineras();
-  }
-
-  Future<void> _initLocationAndGasolineras() async {
-    setState(() {
-      _loading = true;
-    });
-
-    try {
-      // 1. Obtener ubicación actual
-      await _getCurrentLocation();
-
-      // 2. Detectar provincia (o usar Madrid por defecto)
-      String provinciaId = '28'; // Madrid por defecto
-      if (_currentPosition != null) {
-        try {
-          final provinciaInfo =
-              await ProvinciaService.getProvinciaFromCoordinates(
-            _currentPosition!.latitude,
-            _currentPosition!.longitude,
-          );
-          provinciaId = provinciaInfo.id;
-          print('Provincia detectada: ${provinciaInfo.nombre} ($provinciaId)');
-        } catch (e) {
-          print('Error detectando provincia: $e, usando Madrid por defecto');
-        }
-      }
-
-      // 3. Cargar gasolineras de la provincia detectada
-      final lista = await fetchGasolinerasByProvincia(provinciaId);
-
-      if (mounted) {
-        setState(() {
-          _allGasolineras = lista;
-        });
-      }
-
-      if (_currentPosition != null) {
-        _calcularGasolinerasCercanas();
-      }
-    } catch (e) {
-      print('Error: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _getCurrentLocation() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        print('Servicio de ubicación deshabilitado');
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) return;
-      }
-
-      if (permission == LocationPermission.deniedForever) return;
-
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.best,
-        ),
-      );
-
-      if (mounted) {
-        setState(() {
-          _currentPosition = position;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error getting location: $e');
-    }
-  }
-
-  void _calcularGasolinerasCercanas() {
-    if (_currentPosition == null || _allGasolineras.isEmpty) return;
-
-    final lat = _currentPosition!.latitude;
-    final lng = _currentPosition!.longitude;
-
-    List<Gasolinera> gasolinerasFiltradas = _aplicarFiltros(_allGasolineras);
-
-    final gasolinerasConDistancia = gasolinerasFiltradas.map((g) {
-      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
-      return {'gasolinera': g, 'distance': distance};
-    }).toList();
-
-    gasolinerasConDistancia.sort(
-      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
-    );
-
-    final top15 = gasolinerasConDistancia
-        .take(15)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
-
-    if (mounted) {
-      setState(() {
-        _gasolinerasCercanas = top15;
-      });
-    }
-  }
-
-  void _onLocationUpdated(double lat, double lng) {
-    final now = DateTime.now();
-    final timeSinceLastUpdate = now.difference(_lastUpdateTime);
-
-    if (timeSinceLastUpdate < MIN_UPDATE_INTERVAL) return;
-
-    _lastUpdateTime = now;
-
-    if (mounted) {
-      _recalcularConNuevaUbicacion(lat, lng);
-    }
-  }
-
-  void _recalcularConNuevaUbicacion(double lat, double lng) {
-    if (_allGasolineras.isEmpty) return;
-
-    List<Gasolinera> gasolinerasFiltradas = _aplicarFiltros(_allGasolineras);
-
-    final gasolinerasConDistancia = gasolinerasFiltradas.map((g) {
-      final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
-      return {'gasolinera': g, 'distance': distance};
-    }).toList();
-
-    gasolinerasConDistancia.sort(
-      (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
-    );
-
-    final top15 = gasolinerasConDistancia
-        .take(15)
-        .map((e) => e['gasolinera'] as Gasolinera)
-        .toList();
-
-    if (mounted) {
-      setState(() {
-        _gasolinerasCercanas = top15;
-      });
-    }
-  }
-
-  List<Gasolinera> _aplicarFiltros(List<Gasolinera> gasolineras) {
-    List<Gasolinera> resultado = gasolineras;
-
-    // Filtro de combustible y precio
-    if (_tipoCombustibleSeleccionado != null) {
-      resultado = resultado.where((g) {
-        double precio = _obtenerPrecioCombustible(
-          g,
-          _tipoCombustibleSeleccionado!,
-        );
-
-        if (precio == 0.0) return false;
-
-        if (_precioDesde != null && precio < _precioDesde!) return false;
-        if (_precioHasta != null && precio > _precioHasta!) return false;
-
-        return true;
-      }).toList();
-    }
-
-    // ✅ FILTRO DE APERTURA IMPLEMENTADO
-    if (_tipoAperturaSeleccionado != null) {
-      resultado = resultado.where((g) {
-        switch (_tipoAperturaSeleccionado) {
-          case '24 Horas':
-            return g.es24Horas;
-          case 'Gasolineras atendidas por personal':
-            // Definición del usuario: Las que NO son 24 horas
-            return !g.es24Horas;
-          case 'Gasolineras abiertas ahora':
-            return g.estaAbiertaAhora;
-          case 'Todas':
-            return true;
-          default:
-            return true;
-        }
-      }).toList();
-    }
-
-    return resultado;
-  }
-
-  double _obtenerPrecioCombustible(Gasolinera g, String tipoCombustible) {
-    switch (tipoCombustible) {
-      case 'Gasolina 95':
-        return g.gasolina95;
-      case 'Gasolina 98':
-        return g.gasolina98;
-      case 'Diesel':
-        return g.gasoleoA;
-      case 'Diesel Premium':
-        return g.gasoleoPremium;
-      case 'Gas':
-        return g.glp;
-      default:
-        return 0.0;
-    }
   }
 
   void _recargarDatos() {
-    setState(() {
-      _gasolinerasCercanas = [];
-    });
-    _initLocationAndGasolineras();
+    // Ya no es necesario recargar aquí, MapWidget se encarga de todo
+    if (mounted) {
+      setState(() {
+        // Forzar rebuild para que MapWidget recargue si es necesario
+      });
+    }
   }
 
   Widget _buildCheckboxOption(
@@ -384,7 +167,7 @@ class _LayouthomeState extends State<Layouthome> {
       valorActual: _tipoAperturaSeleccionado,
       onAplicar: (valor) {
         setState(() => _tipoAperturaSeleccionado = valor);
-        _calcularGasolinerasCercanas(); // Actualizar lista
+        // MapWidget se actualizará automáticamente con el nuevo filtro
       },
     );
   }
@@ -409,7 +192,7 @@ class _LayouthomeState extends State<Layouthome> {
             _precioHasta = null;
           }
         });
-        _calcularGasolinerasCercanas();
+        // MapWidget se actualizará automáticamente con el nuevo filtro
       },
     );
   }
@@ -577,7 +360,7 @@ class _LayouthomeState extends State<Layouthome> {
                               ? double.tryParse(hastaText)
                               : null;
                         });
-                        _calcularGasolinerasCercanas();
+                        // MapWidget se actualizará automáticamente con los nuevos filtros
                         Navigator.of(context).pop();
                       },
                       style: ElevatedButton.styleFrom(
@@ -790,6 +573,7 @@ class _LayouthomeState extends State<Layouthome> {
             ),
 
             // Contenido principal (Mapa o Lista)
+            // ✅ OPTIMIZACIÓN: MapWidget maneja sus propios datos
             Expanded(
               child: Container(
                 margin: _showMap
@@ -808,34 +592,22 @@ class _LayouthomeState extends State<Layouthome> {
                   padding:
                       _showMap ? EdgeInsets.zero : const EdgeInsets.all(8.0),
                   child: _showMap
-                      ? AbsorbPointer(
-                          absorbing: _areFiltersOpen,
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              MapWidget(
-                                cacheService: _cacheService,
-                                externalGasolineras: _allGasolineras,
-                                onLocationUpdate: _onLocationUpdated,
-                                combustibleSeleccionado:
-                                    _tipoCombustibleSeleccionado,
-                                precioDesde: _precioDesde,
-                                precioHasta: _precioHasta,
-                                tipoAperturaSeleccionado:
-                                    _tipoAperturaSeleccionado,
-                                gesturesEnabled: !_areFiltersOpen,
-                                markersEnabled: !_areFiltersOpen,
-                              ),
-                              if (_areFiltersOpen)
-                                Positioned.fill(
-                                  child: Container(
-                                    color: Colors.black.withOpacity(0.3),
-                                  ),
-                                ),
-                            ],
-                          ),
+                      ? MapWidget(
+                          cacheService: _cacheService,
+                          combustibleSeleccionado: _tipoCombustibleSeleccionado,
+                          precioDesde: _precioDesde,
+                          precioHasta: _precioHasta,
+                          tipoAperturaSeleccionado: _tipoAperturaSeleccionado,
                         )
-                      : _buildListContent(context),
+                      : Center(
+                          child: Text(
+                            'Vista de lista - Por implementar',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -900,35 +672,5 @@ class _LayouthomeState extends State<Layouthome> {
         ),
       ),
     );
-  }
-
-  Widget _buildListContent(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_gasolinerasCercanas.isEmpty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.location_off, size: 50, color: Colors.grey),
-          const SizedBox(height: 10),
-          Text(
-            l10n.noGasolinerasCercanas,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: _recargarDatos,
-            child: Text(l10n.reintentar),
-          ),
-        ],
-      );
-    }
-
-    return GasolineraListWidget(gasolineras: _gasolinerasCercanas);
   }
 }
