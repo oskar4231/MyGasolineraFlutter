@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/accesibilidad_service.dart';
 import 'package:my_gasolinera/Modos/Temas/theme_manager.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/main.dart' as app;
 
 class AccesibilidadScreen extends StatefulWidget {
   const AccesibilidadScreen({super.key});
@@ -253,6 +254,10 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                     altoContraste: _altoContraste,
                                     modoOscuro: _modoOscuro,
                                     idioma: 'Español',
+                                    tamanoFuentePersonalizado:
+                                        _tamanoFuente == 'Personalizada'
+                                            ? _tamanoFuentePersonalizado
+                                            : null,
                                   );
 
                                   setState(() {
@@ -338,6 +343,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         setState(() {
           _tamanoFuente = tamano;
         });
+        // Aplicar inmediatamente el cambio
+        app.fontSizeProvider.changeFontSizeByPreset(tamano);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -481,9 +488,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       Expanded(
                         child: Slider(
                           value: tempTamano,
-                          min: 10.0,
-                          max: 32.0,
-                          divisions: 22,
+                          min: 12.0,
+                          max: 24.0,
+                          divisions: 12,
                           activeColor: Theme.of(context).primaryColor,
                           inactiveColor: Theme.of(context)
                               .colorScheme
@@ -530,6 +537,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       _tamanoFuente = 'Personalizada';
                       _tamanoFuentePersonalizado = tempTamano;
                     });
+                    // Aplicar inmediatamente el cambio
+                    app.fontSizeProvider.changeFontSizeCustom(tempTamano);
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

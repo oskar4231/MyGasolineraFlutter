@@ -25,6 +25,9 @@ class _LayouthomeState extends State<Layouthome> {
   String? _tipoCombustibleSeleccionado;
   String? _tipoAperturaSeleccionado;
 
+  // Estado para controlar si hay filtros abiertos (para bloquear el mapa)
+  bool _areFiltersOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,15 +66,19 @@ class _LayouthomeState extends State<Layouthome> {
     );
   }
 
-  void _mostrarDialogoFiltro({
+  Future<void> _mostrarDialogoFiltro({
     required String titulo,
     required Map<String, String> opciones, // Key -> Label
     required String? valorActual,
     required Function(String?) onAplicar,
-  }) {
+  }) async {
     String? valorTemporal = valorActual;
 
-    showDialog(
+    setState(() {
+      _areFiltersOpen = true;
+    });
+
+    await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setStateDialog) => Dialog(
@@ -138,7 +145,13 @@ class _LayouthomeState extends State<Layouthome> {
           ),
         ),
       ),
-    );
+    ).then((_) {
+      if (mounted) {
+        setState(() {
+          _areFiltersOpen = false;
+        });
+      }
+    });
   }
 
   void _mostrarFiltroApertura() {
@@ -220,8 +233,13 @@ class _LayouthomeState extends State<Layouthome> {
       text: _precioHasta?.toString().replaceAll('.', ',') ?? '',
     );
 
+    setState(() {
+      _areFiltersOpen = true;
+    });
+
     showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: const Color(0xFFFF9350),
@@ -364,7 +382,13 @@ class _LayouthomeState extends State<Layouthome> {
           ),
         );
       },
-    );
+    ).then((_) {
+      if (mounted) {
+        setState(() {
+          _areFiltersOpen = false;
+        });
+      }
+    });
   }
 
   @override
@@ -425,122 +449,126 @@ class _LayouthomeState extends State<Layouthome> {
         child: Column(
           children: [
             // Header con logo y botones
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "MyGasolinera",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onPrimary,
-                    ),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {}, // Captura eventos para que no lleguen al mapa
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
                   ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "MyGasolinera",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onPrimary,
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: ToggleButtons(
-                            isSelected: [_showMap, !_showMap],
-                            onPressed: (index) {
-                              setState(() {
-                                _showMap = index == 0;
-                              });
-                            },
-                            borderRadius: BorderRadius.circular(8),
-                            selectedColor: theme.colorScheme.onPrimary,
-                            color: theme.colorScheme.onPrimary
-                                .withValues(alpha: 0.7),
-                            fillColor: theme.colorScheme.onPrimary
-                                .withValues(alpha: 0.2),
-                            constraints: const BoxConstraints(
-                              minHeight: 32,
-                              minWidth: 85,
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: ToggleButtons(
+                              isSelected: [_showMap, !_showMap],
+                              onPressed: (index) {
+                                setState(() {
+                                  _showMap = index == 0;
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              selectedColor: theme.colorScheme.onPrimary,
+                              color: theme.colorScheme.onPrimary
+                                  .withValues(alpha: 0.7),
+                              fillColor: theme.colorScheme.onPrimary
+                                  .withValues(alpha: 0.2),
+                              constraints: const BoxConstraints(
+                                minHeight: 32,
+                                minWidth: 85,
+                              ),
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text(
+                                    l10n.mapa,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text(
+                                    l10n.lista,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 6),
-                                child: Text(
-                                  l10n.mapa,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 6),
-                                child: Text(
-                                  l10n.lista,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        // Botón de Favoritos (Estrella)
+                        IconButton(
+                          icon: Icon(Icons.stars,
+                              size: 40, color: theme.colorScheme.onPrimary),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const FavoritosScreen(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        // Botón de filtro de precio (flecha arriba)
+                        IconButton(
+                          icon: Icon(Icons.arrow_upward,
+                              size: 40, color: theme.colorScheme.onPrimary),
+                          onPressed: _mostrarFiltroPrecio,
+                        ),
+
+                        // Botón para abrir el drawer de filtros (+)
+                        IconButton(
+                          icon: Icon(Icons.add,
+                              size: 40, color: theme.colorScheme.onPrimary),
+                          onPressed: () {
+                            scaffoldKey.currentState?.openDrawer();
+                          },
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // Botón de Favoritos (Estrella)
-                      IconButton(
-                        icon: Icon(Icons.stars,
-                            size: 40, color: theme.colorScheme.onPrimary),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const FavoritosScreen(),
-                            ),
-                          );
-                        },
-                      ),
-
-                      // Botón de filtro de precio (flecha arriba)
-                      IconButton(
-                        icon: Icon(Icons.arrow_upward,
-                            size: 40, color: theme.colorScheme.onPrimary),
-                        onPressed: _mostrarFiltroPrecio,
-                      ),
-
-                      // Botón para abrir el drawer de filtros (+)
-                      IconButton(
-                        icon: Icon(Icons.add,
-                            size: 40, color: theme.colorScheme.onPrimary),
-                        onPressed: () {
-                          scaffoldKey.currentState?.openDrawer();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
@@ -548,16 +576,21 @@ class _LayouthomeState extends State<Layouthome> {
             // ✅ OPTIMIZACIÓN: MapWidget maneja sus propios datos
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                margin: _showMap
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                decoration: _showMap
+                    ? null
+                    : BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:
+                      _showMap ? EdgeInsets.zero : const EdgeInsets.all(8.0),
                   child: _showMap
                       ? MapWidget(
                           cacheService: _cacheService,
