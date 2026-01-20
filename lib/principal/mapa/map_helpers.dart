@@ -27,11 +27,11 @@ class MarkerHelper {
   Future<void> loadGasStationIcons() async {
     try {
       final Uint8List iconBytes = await getBytesFromAsset(
-        'lib/assets/location_9351238.png',
+        'assets/images/icono.png',
         100,
       );
       final Uint8List favIconBytes = await getBytesFromAsset(
-        'lib/assets/localizacion_favs.png',
+        'assets/images/iconoFav.png',
         100,
       );
 
@@ -57,7 +57,7 @@ class MarkerHelper {
     if (esFavorita && _favoriteGasStationIcon != null) {
       icon = _favoriteGasStationIcon!;
     }
-    // 2. Para el resto de gasolineras, usar el icono "location_9351238"
+    // 2. Para el resto de gasolineras, usar el icono "assets/images/icono.png"
     else if (_gasStationIcon != null) {
       icon = _gasStationIcon!;
     }

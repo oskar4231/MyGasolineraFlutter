@@ -19,7 +19,7 @@ dependencies:
   permission_handler: ^12.0.1
   google_maps_flutter: ^2.14.0
   geolocator: ^14.0.2
-  geocoding: ^2.1.0
+  geocoding: ^4.0.0
   http: ^1.6.0
   intl: ^0.20.2
   shared_preferences: ^2.5.4
@@ -69,5 +69,5 @@ flutter:
   assets:
     - assets/images/
     - lib/assets/logo.png
-    - lib/assets/location_9351238.png
-    - lib/assets/localizacion_favs.png
+    - assets/images/icono.png
+    - assets/images/iconoFav.png
