@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/principal/mapa/map_widget.dart';
-import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/coches/coches.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+
 import 'favoritos.dart';
 import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/main.dart' as app;
 
 // Importar los nuevos widgets
 import 'widgets/home_header.dart';
-import 'widgets/home_bottom_bar.dart';
+import 'package:my_gasolinera/widgets/app_bottom_navigation.dart';
 import 'widgets/filters_drawer.dart';
 import 'widgets/filter_dialogs/price_filter_dialog.dart';
 import 'widgets/filter_dialogs/fuel_filter_dialog.dart';
@@ -163,24 +161,7 @@ class _LayouthomeState extends State<Layouthome> {
             ),
 
             // Barra inferior con botones
-            HomeBottomBar(
-              onCochesPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CochesScreen(),
-                  ),
-                );
-              },
-              onAjustesPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AjustesScreen(),
-                  ),
-                );
-              },
-            ),
+            const AppBottomNavigation(currentIndex: 1),
           ],
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/principal/layouthome.dart';
+import 'package:my_gasolinera/widgets/app_bottom_navigation.dart';
+import 'package:my_gasolinera/widgets/simple_page_header.dart';
 
 import 'package:my_gasolinera/services/coche_service.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
@@ -420,41 +420,7 @@ class _CochesScreenState extends State<CochesScreen> {
         child: Column(
           children: [
             // Custom Header matching Layouthome style
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back,
-                            color: theme.colorScheme.onPrimary),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      Text(
-                        l10n.cochesTitulo,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                      ),
-                      // Spacer for balance if needed, or empty SizedBox
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            SimplePageHeader(title: l10n.cochesTitulo),
 
             // Body Content
             Expanded(
@@ -501,60 +467,7 @@ class _CochesScreenState extends State<CochesScreen> {
             ),
 
             // Footer matching Layouthome style
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    onPressed: null, // Ya estamos en Coches
-                    icon: Icon(
-                      Icons.directions_car,
-                      size: 40,
-                      color:
-                          theme.colorScheme.onPrimary, // Seleccionado - claro
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const Layouthome(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.pin_drop,
-                      size: 40,
-                      color: theme.colorScheme.onPrimary
-                          .withValues(alpha: 0.5), // No seleccionado - apagado
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const AjustesScreen(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.settings,
-                      size: 40,
-                      color: theme.colorScheme.onPrimary
-                          .withValues(alpha: 0.5), // No seleccionado - apagado
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const AppBottomNavigation(currentIndex: 0),
           ],
         ),
       ),

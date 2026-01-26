@@ -1,21 +1,18 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/widgets/app_bottom_navigation.dart';
+import 'package:my_gasolinera/widgets/simple_page_header.dart';
 import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:typed_data';
-import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
-import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
-import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
-import 'package:my_gasolinera/ajustes/idiomas/idiomas_screen.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
-import 'package:my_gasolinera/services/config_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/local_image_service.dart';
-import 'package:my_gasolinera/coches/coches.dart';
-import 'package:my_gasolinera/principal/layouthome.dart';
+import 'dart:convert';
+import 'package:my_gasolinera/ajustes/widgets/ajustes_perfil.dart';
+import 'package:my_gasolinera/ajustes/widgets/ajustes_conexion.dart';
+import 'package:my_gasolinera/ajustes/widgets/ajustes_opciones.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -38,38 +35,11 @@ class _AjustesScreenState extends State<AjustesScreen> {
   bool _eliminandoCuenta = false;
   bool _subiendoFoto = false;
 
-  // Variables para la sección de conexión y mapa
-  bool _actualizandoUrl = false;
-  DateTime? _lastUrlUpdate;
-  double _radiusKm = 25.0; // Valor por defecto
-
   @override
   void initState() {
     super.initState();
     _cargarFotoPerfil();
     _cargarNombreUsuario();
-    _cargarDatosConexion();
-  }
-
-  Future<void> _cargarDatosConexion() async {
-    final lastTime = await ConfigService.getLastFetchTime();
-    final prefs = await SharedPreferences.getInstance();
-    final savedRadius = prefs.getDouble('radius_km') ?? 25.0;
-
-    if (mounted) {
-      setState(() {
-        _lastUrlUpdate = lastTime;
-        _radiusKm = savedRadius;
-      });
-    }
-  }
-
-  Future<void> _guardarRadio(double valor) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('radius_km', valor);
-    setState(() {
-      _radiusKm = valor;
-    });
   }
 
   // Cargar el nombre del usuario desde el backend
@@ -289,35 +259,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         child: Column(
           children: [
             // Custom Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back,
-                        color: theme.colorScheme.onPrimary),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.ajustesTitulo,
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            SimplePageHeader(title: l10n.ajustesTitulo),
 
             // Main Content
             Expanded(
@@ -329,11 +271,19 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSeccionPerfil(),
+                        AjustesPerfil(
+                          profileImageBytes: _profileImageBytes,
+                          profileImageUrl: _profileImageUrl,
+                          nombreUsuario: _nombreUsuario,
+                          isSubmitting: _subiendoFoto,
+                          onPickImage: _showImagePickerDialog,
+                        ),
                         const SizedBox(height: 24),
-                        _buildSeccionConexion(context),
+                        const AjustesConexion(),
                         const SizedBox(height: 24),
-                        _buildSeccionOpciones(context),
+                        AjustesOpciones(
+                          onBorrarCuenta: _mostrarDialogoBorrarCuenta,
+                        ),
                         const SizedBox(height: 24),
                         _buildBotonCerrarSesion(context),
                         const SizedBox(height: 24), // Extra space for footer
@@ -345,405 +295,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
             ),
 
             // Custom Footer
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const CochesScreen(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.directions_car,
-                      size: 40,
-                      color: theme.colorScheme.onPrimary
-                          .withValues(alpha: 0.5), // No seleccionado - apagado
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const Layouthome(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.pin_drop,
-                      size: 40,
-                      color: theme.colorScheme.onPrimary
-                          .withValues(alpha: 0.5), // No seleccionado - apagado
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: null, // Ya estamos en Ajustes
-                    icon: Icon(
-                      Icons.settings,
-                      size: 40,
-                      color:
-                          theme.colorScheme.onPrimary, // Seleccionado - claro
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const AppBottomNavigation(currentIndex: 2),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSeccionPerfil() {
-    final theme = Theme.of(context);
-    return Card(
-      elevation: 2,
-      color: theme.colorScheme.surfaceContainerHighest,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          children: [
-            // Foto de perfil más grande con indicador de carga
-            GestureDetector(
-              onTap: _subiendoFoto ? null : _showImagePickerDialog,
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 40, // Aumentado de 24 a 40
-                    backgroundColor: Colors.grey,
-                    backgroundImage: _profileImageBytes != null
-                        ? MemoryImage(_profileImageBytes!) as ImageProvider
-                        : _profileImageUrl != null
-                            ? NetworkImage(_profileImageUrl!) as ImageProvider
-                            : null,
-                    child:
-                        _profileImageBytes == null && _profileImageUrl == null
-                            ? Icon(
-                                Icons.person,
-                                color: theme.colorScheme.onSurface,
-                                size: 40,
-                              )
-                            : null,
-                  ),
-                  // Loader mientras sube la foto
-                  if (_subiendoFoto)
-                    Positioned.fill(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.black54,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  // Icono de cámara
-                  if (!_subiendoFoto)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.camera_alt,
-                          size: 16,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 20),
-            // Texto "Hola, [nombre]"
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: theme.colorScheme.onSurface,
-                        fontFamily: 'Roboto',
-                      ),
-                      children: [
-                        TextSpan(
-                          text: AppLocalizations.of(context)!.holaUsuario,
-                          style: const TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                        TextSpan(
-                          text: _nombreUsuario,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSeccionConexion(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.conexionMapa,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Card(
-          elevation: 1,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // 1. Botón Actualizar Servidor
-                Row(
-                  children: [
-                    Icon(Icons.sync, color: theme.colorScheme.primary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.servidorBackend,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            _lastUrlUpdate != null
-                                ? 'Act: ${_lastUrlUpdate!.hour.toString().padLeft(2, '0')}:${_lastUrlUpdate!.minute.toString().padLeft(2, '0')}'
-                                : 'Sin actualizar',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ElevatedButton(
-                      // ... (button logic unchanged)
-                      onPressed: _actualizandoUrl
-                          ? null
-                          : () async {
-                              setState(() => _actualizandoUrl = true);
-                              try {
-                                await ConfigService.forceRefresh();
-                                final lastTime =
-                                    await ConfigService.getLastFetchTime();
-                                if (mounted) {
-                                  setState(() {
-                                    _lastUrlUpdate = lastTime;
-                                    _actualizandoUrl = false;
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('✅ URL actualizada'),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                }
-                              } catch (e) {
-                                if (mounted) {
-                                  setState(() => _actualizandoUrl = false);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('❌ Error: $e')),
-                                  );
-                                }
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                        foregroundColor: theme.colorScheme.primary,
-                        elevation: 0,
-                      ),
-                      child: _actualizandoUrl
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    theme.colorScheme.primary),
-                              ),
-                            )
-                          : Text(AppLocalizations.of(context)!.actualizar),
-                    ),
-                  ],
-                ),
-
-                const Divider(height: 24),
-
-                // 2. Slider Radio
-                Row(
-                  children: [
-                    Icon(Icons.radar, color: theme.colorScheme.primary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.radioBusqueda,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${_radiusKm.toInt()} km',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Slider(
-                            value: _radiusKm,
-                            min: 5,
-                            max: 100,
-                            divisions: 19,
-                            activeColor: theme.colorScheme.primary,
-                            label: '${_radiusKm.toInt()} km',
-                            onChanged: (value) {
-                              setState(() {
-                                _radiusKm = value;
-                              });
-                            },
-                            onChangeEnd: (value) {
-                              _guardarRadio(value);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSeccionOpciones(BuildContext context) {
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.opciones,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _OpcionItem(
-          icono: Icons.language,
-          texto: l10n.idiomas,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const IdiomasScreen(),
-              ),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.query_stats,
-          texto: l10n.estadisticas,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const EstadisticasScreen(),
-              ),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.receipt,
-          texto: l10n.gastosFacturas,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FacturasScreen()),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.accessibility_new,
-          texto: l10n.accesibilidad,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AccesibilidadScreen(),
-              ),
-            );
-          },
-        ),
-        _OpcionItem(
-          icono: Icons.delete_outline,
-          texto: l10n.borrarCuenta,
-          onTap: () => _mostrarDialogoBorrarCuenta(),
-        ),
-      ],
     );
   }
 
