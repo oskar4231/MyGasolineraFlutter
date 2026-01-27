@@ -69,5 +69,5 @@ flutter:
   assets:
     - assets/images/
     - lib/assets/logo.png
-    - assets/images/icono.png
-    - assets/images/iconoFav.png
+    - assets/images/icono_1.png
+    - assets/images/iconoFav_1.png

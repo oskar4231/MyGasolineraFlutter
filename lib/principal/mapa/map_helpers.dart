@@ -25,20 +25,28 @@ class MarkerHelper {
 
   /// Carga los iconos personalizados para gasolineras
   Future<void> loadGasStationIcons() async {
+    // Load standard icon
     try {
       final Uint8List iconBytes = await getBytesFromAsset(
-        'assets/images/icono.png',
+        'assets/images/icono_1.png',
         100,
       );
-      final Uint8List favIconBytes = await getBytesFromAsset(
-        'assets/images/iconoFav.png',
-        100,
-      );
-
       _gasStationIcon = BitmapDescriptor.fromBytes(iconBytes);
-      _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
+      print('✅ Icono normal cargado correctamente');
     } catch (e) {
-      print('Error cargando iconos: $e');
+      print('❌ Error cargando icono normal: $e');
+    }
+
+    // Load favorite icon
+    try {
+      final Uint8List favIconBytes = await getBytesFromAsset(
+        'assets/images/iconoFav_1.png',
+        100,
+      );
+      _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
+      print('✅ Icono favorito cargado correctamente');
+    } catch (e) {
+      print('❌ Error cargando icono favorito: $e');
     }
   }
 
