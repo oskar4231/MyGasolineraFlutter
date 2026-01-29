@@ -7,7 +7,8 @@ ThemeData modoOscuro() {
       seedColor: const Color(0xFFFF9350), // Mantenemos semilla pero en oscuro
       brightness: Brightness.dark,
       primary: const Color(0xFFFF9350),
-      onPrimary: Colors.black, // Texto negro sobre naranja
+      onPrimary: Colors
+          .white, // Texto blanco sobre naranja para mejor visibilidad en modo oscuro
       surface: const Color(0xFF1E1E1E), // Gris oscuro para superficies
       onSurface: Colors.white, // Blanco para texto general
     ),

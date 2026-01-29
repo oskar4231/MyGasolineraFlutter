@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'package:my_gasolinera/widgets/password_requirements.dart';
 import 'package:my_gasolinera/services/api_config.dart';
+import 'package:my_gasolinera/services/http_helper.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 void main() {
   runApp(const Crear());
@@ -93,7 +95,7 @@ class _CrearScreenState extends State<CrearScreen> {
       try {
         final response = await http.post(
           Uri.parse(ApiConfig.registerUrl),
-          headers: ApiConfig.headers,
+          headers: HttpHelper.mergeHeaders(ApiConfig.headers),
           body: json.encode({
             'email': _emailController.text.trim(),
             'password': _passwordController.text,
@@ -171,7 +173,7 @@ class _CrearScreenState extends State<CrearScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Volver'),
+        title: Text(AppLocalizations.of(context)!.volver),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -222,7 +224,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => _handleFieldSubmit('nombre'),
                       decoration: InputDecoration(
-                        hintText: 'Nombre completo',
+                        hintText: AppLocalizations.of(context)!.fullName,
                         hintStyle: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
@@ -244,7 +246,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu nombre';
+                          return AppLocalizations.of(context)!.ingresaNombre;
                         }
                         return null;
                       },
@@ -258,7 +260,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => _handleFieldSubmit('email'),
                       decoration: InputDecoration(
-                        hintText: 'E-mail',
+                        hintText: AppLocalizations.of(context)!.email,
                         hintStyle: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
@@ -281,14 +283,14 @@ class _CrearScreenState extends State<CrearScreen> {
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu email';
+                          return AppLocalizations.of(context)!.ingresaTuEmail;
                         }
                         if (value.contains('@')) {
                           final emailRegex = RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           );
                           if (!emailRegex.hasMatch(value)) {
-                            return 'Ingresa un email válido';
+                            return AppLocalizations.of(context)!.emailValido;
                           }
                         }
                         return null;
@@ -305,7 +307,7 @@ class _CrearScreenState extends State<CrearScreen> {
                       onChanged: (_) => setState(() {}),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
-                        hintText: 'Contraseña',
+                        hintText: AppLocalizations.of(context)!.password,
                         hintStyle: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
@@ -343,10 +345,11 @@ class _CrearScreenState extends State<CrearScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu contraseña';
+                          return AppLocalizations.of(context)!.ingresaPassword;
                         }
                         if (!_isPasswordValid()) {
-                          return 'La contraseña no cumple todos los requisitos';
+                          return AppLocalizations.of(context)!
+                              .passwordRequisitos;
                         }
                         return null;
                       },
@@ -369,7 +372,7 @@ class _CrearScreenState extends State<CrearScreen> {
                           _handleFieldSubmit('confirmPassword'),
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
-                        hintText: 'Confirmar contraseña',
+                        hintText: AppLocalizations.of(context)!.confirmPassword,
                         hintStyle: TextStyle(
                             color: Theme.of(context)
                                 .colorScheme
@@ -408,10 +411,11 @@ class _CrearScreenState extends State<CrearScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor confirma tu contraseña';
+                          return AppLocalizations.of(context)!.confirmaPassword;
                         }
                         if (value != _passwordController.text) {
-                          return 'Las contraseñas no coinciden';
+                          return AppLocalizations.of(context)!
+                              .passwordsNoCoinciden;
                         }
                         return null;
                       },
@@ -449,7 +453,7 @@ class _CrearScreenState extends State<CrearScreen> {
                                 ),
                               )
                             : Text(
-                                'Crear Cuenta',
+                                AppLocalizations.of(context)!.crearCuenta,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,

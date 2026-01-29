@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/api_config.dart';
+import 'http_helper.dart';
 
 class PerfilService {
   /// Sube una foto de perfil al servidor
@@ -27,6 +28,7 @@ class PerfilService {
       );
 
       // Agregar el token en los headers
+      request.headers.addAll(HttpHelper.getLanguageHeaders());
       request.headers.addAll(ApiConfig.headers);
       request.headers['Authorization'] = 'Bearer $token';
 
@@ -108,6 +110,7 @@ class PerfilService {
       final response = await http.get(
         Uri.parse('${ApiConfig.perfilUrl}/profile'),
         headers: {
+          ...HttpHelper.getLanguageHeaders(),
           ...ApiConfig.headers,
           'Authorization': 'Bearer $token',
         },

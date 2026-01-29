@@ -2,11 +2,22 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_config.dart';
+import 'http_helper.dart';
 
 // Servicio para gestionar el token de autenticación y recuperación de contraseña
 class AuthService {
   static String? _token;
   static String? _userEmail;
+
+  // Inicializar el servicio recuperando datos de SharedPreferences
+  static Future<void> initialize() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('authToken');
+    _userEmail = prefs.getString('userEmail');
+    if (_token != null) {
+      print('✅ Sesión restaurada para: $_userEmail');
+    }
+  }
 
   // Guardar el token y email del usuario
   static Future<void> saveToken(String token, String email) async {
@@ -50,7 +61,7 @@ class AuthService {
     try {
       final response = await http.post(
         Uri.parse(ApiConfig.forgotPasswordUrl),
-        headers: ApiConfig.headers,
+        headers: HttpHelper.mergeHeaders(ApiConfig.headers),
         body: jsonEncode({'email': email}),
       );
 
@@ -68,7 +79,7 @@ class AuthService {
     try {
       final response = await http.post(
         Uri.parse(ApiConfig.verifyTokenUrl),
-        headers: ApiConfig.headers,
+        headers: HttpHelper.mergeHeaders(ApiConfig.headers),
         body: jsonEncode({'token': token}),
       );
 
@@ -89,7 +100,7 @@ class AuthService {
     try {
       final response = await http.post(
         Uri.parse(ApiConfig.resetPasswordUrl),
-        headers: ApiConfig.headers,
+        headers: HttpHelper.mergeHeaders(ApiConfig.headers),
         body: jsonEncode({'token': token, 'newPassword': newPassword}),
       );
 

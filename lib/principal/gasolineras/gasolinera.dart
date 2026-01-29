@@ -53,8 +53,9 @@ class Gasolinera {
     }
 
     if (value is String) {
-      if (value.trim().isEmpty || value.trim().toUpperCase() == 'N/A')
+      if (value.trim().isEmpty || value.trim().toUpperCase() == 'N/A') {
         return 0.0;
+      }
       // Reemplazar coma por punto si es necesario
       return double.tryParse(value.replaceAll(',', '.')) ?? 0.0;
     }
@@ -124,8 +125,9 @@ class Gasolinera {
   // 🕐 Verificar si está abierta ahora
   bool get estaAbiertaAhora {
     if (es24Horas) return true;
-    if (horario.isEmpty)
+    if (horario.isEmpty) {
       return false; // Si no hay horario, asumimos cerrada o desconocida
+    }
 
     final now = DateTime.now();
     final currentDay = now.weekday; // 1=Lunes, 7=Domingo

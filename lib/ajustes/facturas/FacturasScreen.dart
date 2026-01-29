@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/factura_service.dart';
-import 'package:my_gasolinera/services/api_config.dart';
+import 'package:my_gasolinera/services/export_service.dart';
+
 import 'CrearFacturaScreen.dart';
 import 'DetalleFacturaScreen.dart';
+import 'seleccion_facturas_screen.dart';
 import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class FacturasScreen extends StatefulWidget {
   const FacturasScreen({super.key});
@@ -13,42 +16,95 @@ class FacturasScreen extends StatefulWidget {
   State<FacturasScreen> createState() => _FacturasScreenState();
 }
 
-class _FacturasScreenState extends State<FacturasScreen> {
+class _FacturasScreenState extends State<FacturasScreen>
+    with SingleTickerProviderStateMixin {
+  final ScrollController _scrollController = ScrollController();
   List<Map<String, dynamic>> _facturas = [];
   bool _isLoading = true;
+  bool _isLoadingMore = false;
   String? _errorMessage;
+  int _currentPage = 1;
+  bool _hasMore = true;
+  static const int _limit = 10;
+  bool _menuOpen = false;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     _cargarFacturas();
   }
 
-  Future<void> _cargarFacturas() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      if (!_isLoading && !_isLoadingMore && _hasMore) {
+        _cargarFacturas(loadMore: true);
+      }
+    }
+  }
+
+  Future<void> _cargarFacturas({bool loadMore = false}) async {
+    if (loadMore) {
+      setState(() => _isLoadingMore = true);
+    } else {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+        _currentPage = 1;
+        _hasMore = true;
+        // Don't clear _facturas immediately for better UX if refreshing, unless strict reset needed
+      });
+    }
 
     try {
-      final facturas = await FacturaService.obtenerFacturas();
-      setState(() {
-        _facturas = facturas;
-        _isLoading = false;
-      });
+      final response = await FacturaService.obtenerFacturas(
+        page: _currentPage,
+        limit: _limit,
+      );
+
+      final List<dynamic> data = response['data'] ?? [];
+      final int totalPages = response['totalPages'] ?? 1;
+      final int responsePage = response['currentPage'] ?? 1;
+
+      final List<Map<String, dynamic>> nuevasFacturas =
+          data.map((factura) => factura as Map<String, dynamic>).toList();
+
+      if (mounted) {
+        setState(() {
+          if (loadMore) {
+            _facturas.addAll(nuevasFacturas);
+          } else {
+            _facturas = nuevasFacturas;
+          }
+
+          _hasMore = responsePage < totalPages;
+          if (_hasMore) _currentPage++;
+
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Error al cargar facturas: $e';
-        _isLoading = false;
-      });
-      print('Error cargando facturas: $e');
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error al cargar facturas: $e';
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
+      debugPrint('Error cargando facturas: $e');
     }
   }
 
   String _formatFecha(String? fecha) {
     if (fecha == null || fecha.isEmpty) return '';
-
-    // Si viene en formato ISO (2025-12-10T23:00:00.000Z) o yyyy-MM-dd
     try {
       DateTime? dateTime;
       if (fecha.contains('T')) {
@@ -59,30 +115,25 @@ class _FacturasScreenState extends State<FacturasScreen> {
           dateTime = DateTime(
             int.parse(partes[0]),
             int.parse(partes[1]),
-            int.parse(partes[2].split(' ')[0]), // Por si viene con hora
+            int.parse(partes[2].split(' ')[0]),
           );
         }
       }
-
       if (dateTime != null) {
         return DateFormat('dd/MM/yyyy').format(dateTime);
       }
     } catch (e) {
-      print('Error parsing date: $e');
+      debugPrint('Error parsing date: $e');
     }
-
     return fecha;
   }
 
   String _formatHora(String? hora) {
     if (hora == null || hora.isEmpty) return '';
-
-    // Si contiene segundos (:00 al final), quitarlos
     if (hora.split(':').length > 2) {
       final partes = hora.split(':');
       return '${partes[0]}:${partes[1]}';
     }
-
     return hora;
   }
 
@@ -93,8 +144,101 @@ class _FacturasScreenState extends State<FacturasScreen> {
     );
 
     if (result == true) {
-      // Si se creó una factura exitosamente, recargar la lista
-      _cargarFacturas();
+      if (mounted) {
+        _cargarFacturas(); // Recargar desde inicio
+      }
+    }
+  }
+
+  void _navegarAExportar() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeleccionFacturasScreen(facturas: _facturas),
+      ),
+    );
+  }
+
+  Future<void> _importarExcel() async {
+    try {
+      setState(() => _isLoading = true);
+
+      final facturasImportadas = await ExportService.importarExcel();
+
+      debugPrint(
+          '📥 Resultado de importación: ${facturasImportadas?.length ?? 'null'} facturas');
+
+      if (facturasImportadas != null && facturasImportadas.isNotEmpty) {
+        debugPrint(
+            '📥 Procesando ${facturasImportadas.length} facturas importadas...');
+        int count = 0;
+        for (var factura in facturasImportadas) {
+          try {
+            debugPrint('📥 Procesando factura: ${factura['titulo']}');
+            String fecha = factura['fecha'] ??
+                DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+            // Convert date to MySQL-compatible format (YYYY-MM-DD)
+            if (fecha.contains('T')) {
+              try {
+                DateTime parsedDate = DateTime.parse(fecha);
+                fecha = DateFormat('yyyy-MM-dd').format(parsedDate);
+              } catch (e) {
+                debugPrint('⚠️ Error parsing ISO date: $e');
+              }
+            } else if (fecha.contains('/')) {
+              var parts = fecha.split('/');
+              if (parts.length == 3) {
+                fecha = '${parts[2]}-${parts[1]}-${parts[0]}';
+              }
+            }
+
+            await FacturaService.crearFactura(
+              titulo: factura['titulo'],
+              coste: double.tryParse(factura['coste'].toString()) ?? 0.0,
+              fecha: fecha,
+              hora: factura['hora'] ?? '00:00',
+              descripcion: factura['descripcion'],
+              litrosRepostados: double.tryParse(
+                  factura['litros_repostados']?.toString() ?? ''),
+              precioPorLitro: double.tryParse(
+                  factura['precio_por_litro']?.toString() ?? ''),
+              kilometrajeActual:
+                  int.tryParse(factura['kilometraje_actual']?.toString() ?? ''),
+              tipoCombustible: factura['tipo_combustible'],
+              imagenFile: null,
+            );
+            count++;
+          } catch (e) {
+            debugPrint('❌ Error importando factura individual: $e');
+          }
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Se importaron $count facturas correctamente')),
+          );
+        }
+        _cargarFacturas(); // Recargar
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('No se encontraron facturas en el archivo')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al importar: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -108,22 +252,22 @@ class _FacturasScreenState extends State<FacturasScreen> {
   }
 
   Future<void> _eliminarFactura(int idFactura) async {
-    // Mostrar diálogo de confirmación
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
-        content: const Text(
-          '¿Estás seguro de que quieres eliminar esta factura?',
+        title: Text(AppLocalizations.of(context)!.confirmarEliminar),
+        content: Text(
+          AppLocalizations.of(context)!.confirmarEliminar,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancelar),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.eliminar,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -132,186 +276,320 @@ class _FacturasScreenState extends State<FacturasScreen> {
     if (confirmar == true) {
       try {
         await FacturaService.eliminarFactura(idFactura);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Factura eliminada correctamente')),
-        );
-        _cargarFacturas(); // Recargar la lista
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Factura eliminada correctamente')),
+          );
+          _cargarFacturas(); // Recargar
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al eliminar factura: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al eliminar factura: $e')),
+          );
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Mis Facturas',
-          style: Theme.of(context).appBarTheme.titleTextStyle,
-        ),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).appBarTheme.iconTheme?.color),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh,
-                color: Theme.of(context).appBarTheme.iconTheme?.color),
-            onPressed: _cargarFacturas,
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
-            )
-          : _errorMessage != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.error_outline,
-                          size: 80, color: Colors.red),
-                      const SizedBox(height: 20),
+                      IconButton(
+                        icon: Icon(Icons.arrow_back,
+                            color: theme.colorScheme.onPrimary),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
                       Text(
-                        _errorMessage!,
+                        l10n.facturas,
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: _cargarFacturas,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                        child: Text(
-                          'Reintentar',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimary,
                         ),
                       ),
-                    ],
-                  ),
-                )
-              : _facturas.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.receipt_long,
-                              size: 80, color: Theme.of(context).primaryColor),
-                          const SizedBox(height: 20),
-                          Text(
-                            'No hay facturas',
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Theme.of(context).colorScheme.onSurface),
+                      // Actions Menu (Refresh, Export, Import)
+                      PopupMenuButton<String>(
+                        icon: Icon(Icons.more_vert,
+                            color: theme.colorScheme.onPrimary),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'refresh':
+                              _cargarFacturas();
+                              break;
+                            case 'export':
+                              _navegarAExportar();
+                              break;
+                            case 'import':
+                              _importarExcel();
+                              break;
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: 'refresh',
+                            child: ListTile(
+                              leading: const Icon(Icons.refresh),
+                              title: Text(l10n.actualizar),
+                            ),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Presiona el botón + para agregar una factura',
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.7)),
-                            textAlign: TextAlign.center,
+                          PopupMenuItem<String>(
+                            value: 'import',
+                            child: ListTile(
+                              leading: const Icon(Icons.upload_file),
+                              title: const Text('Importar'),
+                            ),
                           ),
                         ],
                       ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Body Content
+            Expanded(
+              child: _isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                          color: theme.colorScheme.primary),
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _facturas.length,
-                      itemBuilder: (context, index) {
-                        final factura = _facturas[index];
-                        return Card(
-                          color: Theme.of(context).cardColor,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(16),
-                            leading: Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: FacturaImageWidget(
-                                  facturaId:
-                                      factura['id_factura'] ?? factura['id'],
-                                  serverPath: factura['imagenPath'],
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context) => Icon(
-                                    Icons.receipt,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            title: Text(
-                              factura['titulo'] ?? 'Sin título',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                  : _errorMessage != null
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const SizedBox(height: 4),
+                                Icon(Icons.error_outline,
+                                    size: 60, color: theme.colorScheme.error),
+                                const SizedBox(height: 16),
                                 Text(
-                                  '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
+                                  _errorMessage!,
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                  ),
+                                      color: theme.colorScheme.onSurface),
+                                  textAlign: TextAlign.center,
                                 ),
-                                Text(
-                                  '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface
-                                          .withOpacity(0.7)),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () => _cargarFacturas(),
+                                  child: Text(l10n.reintentar),
                                 ),
                               ],
                             ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete,
-                                  color: Theme.of(context).colorScheme.error),
-                              onPressed: () =>
-                                  _eliminarFactura(factura['id_factura']),
-                            ),
-                            onTap: () => _verDetalleFactura(factura),
                           ),
-                        );
-                      },
-                    ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navegarACrearFactura,
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        child: const Icon(Icons.add),
+                        )
+                      : _facturas.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.receipt_long,
+                                      size: 80,
+                                      color: theme.colorScheme.outline),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    l10n.noFacturas,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: theme.colorScheme.onSurface,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    l10n.presionaBotonFactura,
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.6),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              controller: _scrollController,
+                              padding: const EdgeInsets.all(16),
+                              itemCount:
+                                  _facturas.length + (_isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == _facturas.length) {
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: CircularProgressIndicator(
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                final factura = _facturas[index];
+                                return Card(
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 0,
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.all(16),
+                                    leading: Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            theme.colorScheme.primaryContainer,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: FacturaImageWidget(
+                                          facturaId: int.tryParse(
+                                              (factura['id_factura'] ??
+                                                      factura['id'] ??
+                                                      factura['facturaId'])
+                                                  .toString()),
+                                          serverPath: factura['imagenPath'],
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context) => Icon(
+                                            Icons.receipt,
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      factura['titulo'] ?? l10n.sinDatos,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '€${(factura['coste'] != null ? double.parse(factura['coste'].toString()) : 0.0).toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${_formatFecha(factura['fecha'])} - ${_formatHora(factura['hora'])}',
+                                          style: TextStyle(
+                                              color: theme.colorScheme.onSurface
+                                                  .withValues(alpha: 0.7)),
+                                        ),
+                                      ],
+                                    ),
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.delete_outline,
+                                          color: theme.colorScheme.error),
+                                      onPressed: () => _eliminarFactura(
+                                        int.tryParse((factura['id_factura'] ??
+                                                factura['id'] ??
+                                                factura['facturaId'])
+                                            .toString())!,
+                                      ),
+                                    ),
+                                    onTap: () => _verDetalleFactura(factura),
+                                  ),
+                                );
+                              },
+                            ),
+            ),
+          ],
+        ),
       ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (_menuOpen) ...[
+            FloatingActionButton.extended(
+              heroTag: 'import',
+              onPressed: () {
+                setState(() => _menuOpen = false);
+                _importarExcel();
+              },
+              backgroundColor: theme.colorScheme.surface,
+              foregroundColor: theme.colorScheme.primary,
+              label: const Text('Importar'),
+              icon: const Icon(Icons.upload_file),
+            ),
+            const SizedBox(height: 12),
+            FloatingActionButton.extended(
+              heroTag: 'export',
+              onPressed: () {
+                setState(() => _menuOpen = false);
+                _navegarAExportar();
+              },
+              backgroundColor: theme.colorScheme.surface,
+              foregroundColor: theme.colorScheme.primary,
+              label: const Text('Exportar'),
+              icon: const Icon(Icons.download),
+            ),
+            const SizedBox(height: 12),
+            FloatingActionButton.extended(
+              heroTag: 'create',
+              onPressed: () {
+                setState(() => _menuOpen = false);
+                _navegarACrearFactura();
+              },
+              backgroundColor: theme.colorScheme.surface,
+              foregroundColor: theme.colorScheme.primary,
+              label: Text(l10n.crearFactura),
+              icon: const Icon(Icons.add_circle_outline),
+            ),
+            const SizedBox(height: 12),
+          ],
+          FloatingActionButton(
+            heroTag: 'menu',
+            onPressed: () {
+              setState(() {
+                _menuOpen = !_menuOpen;
+              });
+            },
+            backgroundColor: theme.primaryColor,
+            child: Icon(
+              _menuOpen ? Icons.close : Icons.add,
+              color: theme.colorScheme.onPrimary,
+            ),
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

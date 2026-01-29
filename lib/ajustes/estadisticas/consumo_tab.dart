@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/estadisticas_avanzadas_service.dart';
-import 'package:my_gasolinera/ajustes/estadisticas/widgets/estadisticas_widgets.dart';
+
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class ConsumoTab extends StatefulWidget {
   const ConsumoTab({super.key});
@@ -75,7 +76,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
               children: [
                 // Título principal
                 Text(
-                  'Costo por Kilómetro',
+                  AppLocalizations.of(context)!.costoKilometro,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -84,7 +85,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Análisis detallado por vehículo',
+                  AppLocalizations.of(context)!.analisisVehiculoSubtitle,
                   style: TextStyle(
                     fontSize: 14,
                     color: Theme.of(context)
@@ -111,9 +112,15 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     children: [
                       Column(
                         children: [
-                          const Text(
-                            'Total Coches',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          Text(
+                            AppLocalizations.of(context)!.totalCoches,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -128,9 +135,15 @@ class _ConsumoTabState extends State<ConsumoTab> {
                       ),
                       Column(
                         children: [
-                          const Text(
-                            'Facturas Totales',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          Text(
+                            AppLocalizations.of(context)!.facturasTotales,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -150,7 +163,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
 
                 // Lista de coches
                 Text(
-                  'Análisis por Vehículo',
+                  AppLocalizations.of(context)!.analisisVehiculo,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -162,7 +175,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 ...costosPorCoche.map((cocheData) {
                   final coche = cocheData as Map<String, dynamic>;
                   return _buildCocheCard(coche);
-                }).toList(),
+                }),
 
                 // Información adicional
                 const SizedBox(height: 24),
@@ -173,7 +186,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Theme.of(context).shadowColor.withOpacity(0.05),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -187,7 +200,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           Icon(Icons.info, color: Colors.blue, size: 24),
                           SizedBox(width: 12),
                           Text(
-                            '¿Qué es el costo por kilómetro?',
+                            AppLocalizations.of(context)!.queEsCostoKm,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -198,12 +211,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
                       ),
                       SizedBox(height: 12),
                       Text(
-                        'El costo por kilómetro incluye el gasto en combustible dividido por la distancia recorrida '
-                        'entre repostajes. Es una métrica útil para comparar la eficiencia de diferentes '
-                        'vehículos y hábitos de conducción.',
+                        AppLocalizations.of(context)!.explainCostoKm,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.6),
                           height: 1.5,
                         ),
                       ),
@@ -253,7 +267,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -302,10 +316,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '$numFacturasValidas/${numFacturas} recargas válidas',
+                            '$numFacturasValidas/$numFacturas ${AppLocalizations.of(context)!.recargasValidas}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
                             ),
                           ),
                         ],
@@ -333,7 +350,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Costo promedio por km:',
+                  AppLocalizations.of(context)!.costoPromedioKm,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -366,12 +383,12 @@ class _ConsumoTabState extends State<ConsumoTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Estadísticas Detalladas',
+                Text(
+                  AppLocalizations.of(context)!.estadisticasDetalladas,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF492714),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -383,11 +400,14 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Costo mínimo',
+                        Text(
+                          AppLocalizations.of(context)!.costoMinimo,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                         Text(
@@ -433,20 +453,29 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          '← Mín    Máx →',
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        Text(
+                          AppLocalizations.of(context)!.rangoMinMax,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
+                          ),
                         ),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text(
-                          'Costo máximo',
+                        Text(
+                          AppLocalizations.of(context)!.costoMaximo,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                         Text(
@@ -469,19 +498,19 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   children: [
                     _buildStatItem(
                       icon: Icons.car_crash,
-                      label: 'Kilómetros',
+                      label: AppLocalizations.of(context)!.kilometraje,
                       value: '$kmTotales km',
                       color: Color(0xFFFF9350),
                     ),
                     _buildStatItem(
                       icon: Icons.euro,
-                      label: 'Gasto total',
+                      label: AppLocalizations.of(context)!.gastoTotal,
                       value: '€${_formatNumber(gastoTotal)}',
                       color: const Color(0xFFFF9350),
                     ),
                     _buildStatItem(
                       icon: Icons.attach_money,
-                      label: 'Costo/100km',
+                      label: AppLocalizations.of(context)!.costo100km,
                       value: '€${_formatNumber(costoProm * 100)}',
                       color: Color(0xFFFF9350),
                     ),
@@ -550,7 +579,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
         ),
         const SizedBox(height: 4),
         Text(
@@ -573,7 +605,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
           const Icon(Icons.error_outline, size: 80, color: Colors.red),
           const SizedBox(height: 20),
           Text(
-            'Error al cargar datos: $error',
+            '${AppLocalizations.of(context)!.error}: $error',
             style: TextStyle(
                 fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
@@ -584,7 +616,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: Text('Reintentar',
+            child: Text(AppLocalizations.of(context)!.reintentar,
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
@@ -602,14 +634,17 @@ class _ConsumoTabState extends State<ConsumoTab> {
               size: 80, color: Colors.grey),
           const SizedBox(height: 20),
           Text(
-            'No hay datos de consumo disponibles',
+            AppLocalizations.of(context)!.noDatosConsumo,
             style: TextStyle(
                 fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Agrega facturas con kilometraje para calcular costos',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+          Text(
+            AppLocalizations.of(context)!.agregaFacturasConsumo,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -618,7 +653,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: Text('Reintentar',
+            child: Text(AppLocalizations.of(context)!.reintentar,
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
@@ -649,9 +684,13 @@ class _ConsumoTabState extends State<ConsumoTab> {
   }
 
   String _getEficienciaMensaje(double costoPorKm) {
-    if (costoPorKm < 0.08) return '¡Excelente eficiencia!';
-    if (costoPorKm < 0.12) return 'Eficiencia normal';
-    return 'Eficiencia baja - Considera optimizar';
+    if (costoPorKm < 0.08) {
+      return AppLocalizations.of(context)!.excelenteEficiencia;
+    }
+    if (costoPorKm < 0.12) {
+      return AppLocalizations.of(context)!.eficienciaNormal;
+    }
+    return AppLocalizations.of(context)!.eficienciaBaja;
   }
 
   String _formatNumber(dynamic number) {

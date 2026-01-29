@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/estadisticas_service.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/widgets/estadisticas_widgets.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class GastosTab extends StatefulWidget {
   const GastosTab({super.key});
@@ -38,7 +39,8 @@ class _GastosTabState extends State<GastosTab> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'Error al cargar estadísticas: $e';
+          _errorMessage =
+              '${AppLocalizations.of(context)!.errorCargarEstadisticas}: $e';
           _isLoading = false;
         });
       }
@@ -81,7 +83,7 @@ class _GastosTabState extends State<GastosTab> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
             ),
-            child: Text('Reintentar',
+            child: Text(AppLocalizations.of(context)!.reintentar,
                 style:
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
           ),
@@ -92,7 +94,7 @@ class _GastosTabState extends State<GastosTab> {
 
   Widget _buildEstadisticas() {
     if (_estadisticas == null) {
-      return const Center(child: Text('No hay datos disponibles'));
+      return Center(child: Text(AppLocalizations.of(context)!.sinDatos));
     }
 
     final resumen = _estadisticas!['resumen'];
@@ -112,7 +114,7 @@ class _GastosTabState extends State<GastosTab> {
         children: [
           // 📊 RESUMEN GENERAL
           Text(
-            'Resumen General',
+            AppLocalizations.of(context)!.resumenGeneral,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -124,9 +126,10 @@ class _GastosTabState extends State<GastosTab> {
           // Card: Gasto Total
           EstadisticasWidgets.buildStatCard(
             context: context,
-            title: 'Gasto Total',
+            title: AppLocalizations.of(context)!.gastoTotal,
             value: '€${_formatNumber(resumen['gasto_total'])}',
-            subtitle: '${resumen['total_facturas']} repostajes',
+            subtitle:
+                '${resumen['total_facturas']} ${AppLocalizations.of(context)!.repostajes}',
             icon: Icons.account_balance_wallet,
             color: primaryIconColor,
           ),
@@ -135,9 +138,10 @@ class _GastosTabState extends State<GastosTab> {
           // Card: Mes Actual
           EstadisticasWidgets.buildStatCard(
             context: context,
-            title: 'Mes Actual',
+            title: AppLocalizations.of(context)!.mesActual,
             value: '€${_formatNumber(mesActual['gasto'])}',
-            subtitle: '${mesActual['facturas']} repostajes',
+            subtitle:
+                '${mesActual['facturas']} ${AppLocalizations.of(context)!.repostajes}',
             icon: Icons.calendar_today,
             color: isDarkMode
                 ? Colors.blueAccent
@@ -152,10 +156,10 @@ class _GastosTabState extends State<GastosTab> {
           // Card: Promedio por Factura
           EstadisticasWidgets.buildStatCard(
             context: context,
-            title: 'Promedio por Repostaje',
+            title: AppLocalizations.of(context)!.promedioRepostaje,
             value: '€${_formatNumber(resumen['promedio_por_factura'])}',
             subtitle:
-                'Min: €${_formatNumber(resumen['gasto_minimo'])} - Max: €${_formatNumber(resumen['gasto_maximo'])}',
+                '${AppLocalizations.of(context)!.minimo}: €${_formatNumber(resumen['gasto_minimo'])} - ${AppLocalizations.of(context)!.maximo}: €${_formatNumber(resumen['gasto_maximo'])}',
             icon: Icons.trending_up,
             color: primaryIconColor,
           ),

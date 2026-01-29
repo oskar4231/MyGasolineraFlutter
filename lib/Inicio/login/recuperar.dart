@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Inicio/login/nueva_password.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 // Pantalla para solicitar la recuperacion de la contraseña
 // Muestra un formulario con un campo de correo y un boton de envío
@@ -38,10 +39,10 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
       if (response['status'] == 'success') {
         // Mostrar mensaje de éxito
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Se ha enviado un código a tu correo'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.codigoEnviado),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
 
@@ -85,14 +86,13 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
 
     final maxWidth =
         MediaQuery.of(context).size.width * 0.95; // Aumentado de 0.85 a 0.95
-    final cardWidth = maxWidth > 520.0
-        ? 520.0
-        : maxWidth; // Aumentado de 420 a 520
+    final cardWidth =
+        maxWidth > 520.0 ? 520.0 : maxWidth; // Aumentado de 420 a 520
 
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Recuperar contraseña'),
+        title: Text(AppLocalizations.of(context)!.recuperarPassword),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -156,9 +156,9 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Recuperar contraseña',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.recuperarPassword,
+                    style: const TextStyle(
                       fontSize: 24, // Aumentado de 20 a 24
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF492714),
@@ -176,7 +176,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                     // Añadir el manejador de teclas
                     onFieldSubmitted: (value) => _handleForgotPassword(),
                     decoration: InputDecoration(
-                      hintText: 'e-mail',
+                      hintText: AppLocalizations.of(context)!.email,
                       hintStyle: const TextStyle(color: Color(0xFF492714)),
                       filled: true,
                       fillColor: Colors.white,
@@ -201,10 +201,10 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                     validator: (value) {
                       // Comprueba que el campo del correo no esté vacio
                       if (value == null || value.isEmpty) {
-                        return 'Introduce un correo';
+                        return AppLocalizations.of(context)!.ingresaTuEmail;
                       }
                       if (!value.contains('@')) {
-                        return 'Introduce un correo válido';
+                        return AppLocalizations.of(context)!.emailValido;
                       }
 
                       return null;
@@ -240,7 +240,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                 ),
                               ),
                             )
-                          : const Text('Solicitar recuperación'),
+                          : Text(AppLocalizations.of(context)!.enviarCodigo),
                     ),
                   ),
                 ],

@@ -1,17 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Inicio/login/login.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
 import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
 import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
+import 'package:my_gasolinera/ajustes/idiomas/idiomas_screen.dart';
 import 'package:my_gasolinera/services/auth_service.dart';
 import 'package:my_gasolinera/services/usuario_service.dart';
 import 'package:my_gasolinera/services/perfil_service.dart';
 import 'package:my_gasolinera/services/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/services/local_image_service.dart';
+import 'package:my_gasolinera/coches/coches.dart';
+import 'package:my_gasolinera/principal/layouthome.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -236,15 +240,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   // Diálogo para elegir entre cámara o galería
   void _showImagePickerDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Cambiar foto de perfil'),
-          content: const SingleChildScrollView(
+          title: Text(l10n.cambiarFotoPerfil),
+          content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Selecciona de dónde quieres tomar la foto:'),
+                Text(l10n.seleccionarFuenteFoto),
               ],
             ),
           ),
@@ -254,18 +259,18 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 Navigator.of(context).pop();
                 _pickImageFromGallery();
               },
-              child: const Text('Galería'),
+              child: Text(l10n.galeria),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _pickImageFromCamera();
               },
-              child: const Text('Cámara'),
+              child: Text(l10n.camara),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(l10n.cancelar),
             ),
           ],
         );
@@ -276,57 +281,126 @@ class _AjustesScreenState extends State<AjustesScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          'Ajustes',
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onPrimary,
-          ),
-        ),
-        backgroundColor: theme.colorScheme.primary,
-        iconTheme: IconThemeData(color: theme.colorScheme.onPrimary),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: _buildAjustesContent(context),
-    );
-  }
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back,
+                        color: theme.colorScheme.onPrimary),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.ajustesTitulo,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-  Widget _buildAjustesContent(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      color: theme.colorScheme.surface,
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSeccionPerfil(),
-                    const SizedBox(height: 24),
-                    _buildSeccionConexion(context),
-                    const SizedBox(height: 24),
-                    _buildSeccionOpciones(context),
-                  ],
+            // Main Content
+            Expanded(
+              child: Container(
+                color: theme.colorScheme.surface,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSeccionPerfil(),
+                        const SizedBox(height: 24),
+                        _buildSeccionConexion(context),
+                        const SizedBox(height: 24),
+                        _buildSeccionOpciones(context),
+                        const SizedBox(height: 24),
+                        _buildBotonCerrarSesion(context),
+                        const SizedBox(height: 24), // Extra space for footer
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildBotonCerrarSesion(context),
-          ),
-        ],
+
+            // Custom Footer
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const CochesScreen(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.directions_car,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const Layouthome(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.pin_drop,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: null, // Ya estamos en Ajustes
+                    icon: Icon(
+                      Icons.settings,
+                      size: 40,
+                      color:
+                          theme.colorScheme.onPrimary, // Seleccionado - claro
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -420,9 +494,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         fontFamily: 'Roboto',
                       ),
                       children: [
-                        const TextSpan(
-                          text: 'Hola, ',
-                          style: TextStyle(fontWeight: FontWeight.normal),
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.holaUsuario,
+                          style: const TextStyle(fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
                           text: _nombreUsuario,
@@ -446,7 +520,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Conexión y Mapa',
+          AppLocalizations.of(context)!.conexionMapa,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -471,8 +545,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Servidor Backend',
+                          Text(
+                            AppLocalizations.of(context)!.servidorBackend,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -537,7 +611,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                     theme.colorScheme.primary),
                               ),
                             )
-                          : const Text('Actualizar'),
+                          : Text(AppLocalizations.of(context)!.actualizar),
                     ),
                   ],
                 ),
@@ -556,8 +630,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                'Radio de búsqueda',
+                              Text(
+                                AppLocalizations.of(context)!.radioBusqueda,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -604,11 +678,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   Widget _buildSeccionOpciones(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Opciones',
+          l10n.opciones,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -617,13 +693,20 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         const SizedBox(height: 16),
         _OpcionItem(
-          icono: Icons.local_gas_station,
-          texto: 'Combustible',
-          onTap: () {},
+          icono: Icons.language,
+          texto: l10n.idiomas,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const IdiomasScreen(),
+              ),
+            );
+          },
         ),
         _OpcionItem(
           icono: Icons.query_stats,
-          texto: 'Estadísticas',
+          texto: l10n.estadisticas,
           onTap: () {
             Navigator.push(
               context,
@@ -635,7 +718,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         _OpcionItem(
           icono: Icons.receipt,
-          texto: 'Gasto/Facturas',
+          texto: l10n.gastosFacturas,
           onTap: () {
             Navigator.push(
               context,
@@ -645,7 +728,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         _OpcionItem(
           icono: Icons.accessibility_new,
-          texto: 'Accesibilidad',
+          texto: l10n.accesibilidad,
           onTap: () {
             Navigator.push(
               context,
@@ -657,7 +740,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ),
         _OpcionItem(
           icono: Icons.delete_outline,
-          texto: 'Borrar Cuenta',
+          texto: l10n.borrarCuenta,
           onTap: () => _mostrarDialogoBorrarCuenta(),
         ),
       ],
@@ -677,7 +760,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),
-        label: const Text('Cerrar sesión'),
+        label: Text(AppLocalizations.of(context)!.cerrarSesion),
       ),
     );
   }
@@ -687,12 +770,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Cerrar sesión'),
-          content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+          title: Text(AppLocalizations.of(context)!.cerrarSesion),
+          content: Text(AppLocalizations.of(context)!.confirmarCerrarSesion),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancelar),
             ),
             TextButton(
               onPressed: () {
@@ -703,7 +786,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   (Route<dynamic> route) => false,
                 );
               },
-              child: const Text('Cerrar sesión'),
+              child: Text(AppLocalizations.of(context)!.cerrarSesion),
             ),
           ],
         );
@@ -720,13 +803,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Borrar Cuenta'),
+              title: Text(AppLocalizations.of(context)!.borrarCuenta),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '¿Estás seguro de que quieres eliminar tu cuenta?\n\n'
-                    'Esta acción no se puede deshacer.',
+                    AppLocalizations.of(context)!.confirmarBorrarCuenta,
                     style: TextStyle(
                         color: theme.colorScheme.onSurface.withOpacity(0.87),
                         fontSize: 16),
@@ -735,7 +817,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     const SizedBox(height: 16),
                     const CircularProgressIndicator(),
                     const SizedBox(height: 8),
-                    const Text('Eliminando cuenta...'),
+                    Text(AppLocalizations.of(context)!.eliminandoCuenta),
                   ],
                 ],
               ),
@@ -744,7 +826,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancelar',
+                      AppLocalizations.of(context)!.cancelar,
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ),
@@ -792,7 +874,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Error al eliminar cuenta: ${e.toString()}',
+                                '${AppLocalizations.of(context)!.errorEliminarCuenta}: ${e.toString()}',
                               ),
                               duration: const Duration(seconds: 4),
                               backgroundColor: Colors.red,
@@ -805,7 +887,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                       backgroundColor: theme.colorScheme.primary,
                     ),
                     child: Text(
-                      'Eliminar',
+                      AppLocalizations.of(context)!.eliminar,
                       style: TextStyle(color: theme.colorScheme.onPrimary),
                     ),
                   ),
@@ -821,16 +903,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
 class _OpcionItem extends StatefulWidget {
   final IconData icono;
   final String texto;
-  final bool tieneCheckbox;
-  final bool checkboxValue;
   final VoidCallback onTap;
 
   const _OpcionItem({
     required this.icono,
     required this.texto,
     required this.onTap,
-    this.tieneCheckbox = false,
-    this.checkboxValue = false,
   });
 
   @override
@@ -849,7 +927,7 @@ class __OpcionItemState extends State<_OpcionItem> {
       child: Container(
         decoration: BoxDecoration(
           color: _isHovered
-              ? theme.colorScheme.onSurface.withOpacity(0.12)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
@@ -859,14 +937,6 @@ class __OpcionItemState extends State<_OpcionItem> {
             widget.texto,
             style: TextStyle(color: theme.colorScheme.onSurface),
           ),
-          trailing: widget.tieneCheckbox
-              ? Checkbox(
-                  value: widget.checkboxValue,
-                  onChanged: (bool? value) {
-                    widget.onTap();
-                  },
-                )
-              : null,
           onTap: widget.onTap,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,

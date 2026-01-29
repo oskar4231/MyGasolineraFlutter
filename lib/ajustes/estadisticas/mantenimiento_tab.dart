@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/services/estadisticas_avanzadas_service.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class MantenimientoTab extends StatefulWidget {
   const MantenimientoTab({super.key});
@@ -78,7 +79,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
           const Icon(Icons.error_outline, size: 80, color: Colors.red),
           const SizedBox(height: 20),
           Text(
-            'Error: $error',
+            '${AppLocalizations.of(context)!.error}: $error',
             style: TextStyle(
                 fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
@@ -87,9 +88,12 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
           ElevatedButton(
             onPressed: _recargar,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
-            child: const Text('Reintentar'),
+            child: Text(
+              AppLocalizations.of(context)!.reintentar,
+            ),
           ),
         ],
       ),
@@ -104,23 +108,29 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
           const Icon(Icons.build, size: 80, color: Colors.grey),
           const SizedBox(height: 20),
           Text(
-            'No hay datos de mantenimiento',
+            AppLocalizations.of(context)!.noDatosMantenimiento,
             style: TextStyle(
                 fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Añade coches con información de kilometraje',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+          Text(
+            AppLocalizations.of(context)!.anadeCochesMantenimiento,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _recargar,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
-            child: const Text('Reintentar'),
+            child: Text(
+              AppLocalizations.of(context)!.reintentar,
+            ),
           ),
         ],
       ),
@@ -186,10 +196,13 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                       ),
                       if (kmActual != null)
                         Text(
-                          'KM actual: $kmActual',
-                          style: const TextStyle(
+                          '${AppLocalizations.of(context)!.kmActual}: $kmActual',
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.6),
                           ),
                         ),
                     ],
@@ -203,7 +216,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
             const Divider(),
             const SizedBox(height: 8),
             Text(
-              'Cambio de Aceite',
+              AppLocalizations.of(context)!.cambioAceite,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -219,9 +232,15 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'KM desde último cambio',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    Text(
+                      AppLocalizations.of(context)!.kmDesdeCambio,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.6),
+                      ),
                     ),
                     Text(
                       '$kmDesdeCambio km',
@@ -235,9 +254,15 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text(
-                      'KM restantes',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    Text(
+                      AppLocalizations.of(context)!.kmRestantes,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.6),
+                      ),
                     ),
                     Text(
                       '$kmRestantes km',
@@ -261,14 +286,17 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Progreso: ${progreso.toStringAsFixed(1)}%',
-                      style: const TextStyle(
+                      '${AppLocalizations.of(context)!.progreso}: ${progreso.toStringAsFixed(1)}%',
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
-                      necesitaCambio ? '¡Necesita cambio!' : 'En buen estado',
+                      necesitaCambio
+                          ? AppLocalizations.of(context)!.necesitaCambio
+                          : AppLocalizations.of(context)!.buenEstado,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -284,7 +312,10 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progreso / 100,
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[700]
+                            : Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(
                       necesitaCambio ? Colors.red : Colors.green,
                     ),
@@ -309,7 +340,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Programa el cambio de aceite próximamente',
+                            AppLocalizations.of(context)!.programaCambioAceite,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.red[700],

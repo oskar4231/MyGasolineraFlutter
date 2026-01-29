@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/l10n/app_localizations.dart';
 
 class EstadisticasWidgets {
   static Widget buildStatCard({
@@ -16,7 +17,7 @@ class EstadisticasWidgets {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -39,9 +40,12 @@ class EstadisticasWidgets {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.6),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -87,7 +91,7 @@ class EstadisticasWidgets {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -113,7 +117,7 @@ class EstadisticasWidgets {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'Comparativa Mensual',
+                  AppLocalizations.of(context)!.comparativaMensual,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -131,7 +135,7 @@ class EstadisticasWidgets {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Mes Actual',
+                    AppLocalizations.of(context)!.mesActual,
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -158,7 +162,7 @@ class EstadisticasWidgets {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'Mes Anterior',
+                    AppLocalizations.of(context)!.mesAnterior,
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -228,7 +232,7 @@ class EstadisticasWidgets {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -254,7 +258,7 @@ class EstadisticasWidgets {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'Proyección Fin de Mes',
+                  AppLocalizations.of(context)!.proyeccionFinMes,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -272,7 +276,7 @@ class EstadisticasWidgets {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Gasto Actual',
+                    AppLocalizations.of(context)!.gastoActual,
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -294,7 +298,7 @@ class EstadisticasWidgets {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'Proyección',
+                    AppLocalizations.of(context)!.proyeccion,
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context)
@@ -322,7 +326,8 @@ class EstadisticasWidgets {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Día $diasTranscurridos de $diasTotales',
+                    AppLocalizations.of(context)!
+                        .diaXdeY(diasTranscurridos, diasTotales),
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context)
