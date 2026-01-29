@@ -1,0 +1,182 @@
+[
+    {
+        "id": 1,
+        "nombre": "Volkswagen",
+        "ventas_2023": 1357139,
+        "ranking": 1
+    },
+    {
+        "id": 2,
+        "nombre": "Toyota",
+        "ventas_2023": 888770,
+        "ranking": 2
+    },
+    {
+        "id": 3,
+        "nombre": "Audi",
+        "ventas_2023": 733176,
+        "ranking": 3
+    },
+    {
+        "id": 4,
+        "nombre": "BMW",
+        "ventas_2023": 728991,
+        "ranking": 4
+    },
+    {
+        "id": 5,
+        "nombre": "Mercedes-Benz",
+        "ventas_2023": 710433,
+        "ranking": 5
+    },
+    {
+        "id": 6,
+        "nombre": "Renault",
+        "ventas_2023": 681023,
+        "ranking": 6
+    },
+    {
+        "id": 7,
+        "nombre": "Skoda",
+        "ventas_2023": 680153,
+        "ranking": 7
+    },
+    {
+        "id": 8,
+        "nombre": "Peugeot",
+        "ventas_2023": 639848,
+        "ranking": 8
+    },
+    {
+        "id": 9,
+        "nombre": "Kia",
+        "ventas_2023": 572297,
+        "ranking": 9
+    },
+    {
+        "id": 10,
+        "nombre": "Dacia",
+        "ventas_2023": 557253,
+        "ranking": 10
+    },
+    {
+        "id": 11,
+        "nombre": "Hyundai",
+        "ventas_2023": 534170,
+        "ranking": 11
+    },
+    {
+        "id": 12,
+        "nombre": "Ford",
+        "ventas_2023": 518371,
+        "ranking": 12
+    },
+    {
+        "id": 13,
+        "nombre": "Opel/Vauxhall",
+        "ventas_2023": 458992,
+        "ranking": 13
+    },
+    {
+        "id": 14,
+        "nombre": "Fiat",
+        "ventas_2023": 381026,
+        "ranking": 14
+    },
+    {
+        "id": 15,
+        "nombre": "Citroen",
+        "ventas_2023": 369750,
+        "ranking": 15
+    },
+    {
+        "id": 16,
+        "nombre": "Tesla",
+        "ventas_2023": 366326,
+        "ranking": 16
+    },
+    {
+        "id": 17,
+        "nombre": "Nissan",
+        "ventas_2023": 293476,
+        "ranking": 17
+    },
+    {
+        "id": 18,
+        "nombre": "Seat",
+        "ventas_2023": 247144,
+        "ranking": 18
+    },
+    {
+        "id": 19,
+        "nombre": "Volvo",
+        "ventas_2023": 230694,
+        "ranking": 19
+    },
+    {
+        "id": 20,
+        "nombre": "Cupra",
+        "ventas_2023": 199274,
+        "ranking": 20
+    },
+    {
+        "id": 21,
+        "nombre": "Suzuki",
+        "ventas_2023": 187344,
+        "ranking": 21
+    },
+    {
+        "id": 22,
+        "nombre": "Mini",
+        "ventas_2023": 184852,
+        "ranking": 22
+    },
+    {
+        "id": 23,
+        "nombre": "Mazda",
+        "ventas_2023": 182532,
+        "ranking": 23
+    },
+    {
+        "id": 24,
+        "nombre": "Jeep",
+        "ventas_2023": 126655,
+        "ranking": 24
+    },
+    {
+        "id": 25,
+        "nombre": "MG",
+        "ventas_2023": 109907,
+        "ranking": 25
+    },
+    {
+        "id": 26,
+        "nombre": "Porsche",
+        "ventas_2023": 99046,
+        "ranking": 26
+    },
+    {
+        "id": 27,
+        "nombre": "Honda",
+        "ventas_2023": 60606,
+        "ranking": 27
+    },
+    {
+        "id": 28,
+        "nombre": "Land Rover",
+        "ventas_2023": 56000,
+        "ranking": 28
+    },
+    {
+        "id": 29,
+        "nombre": "Alfa Romeo",
+        "ventas_2023": 50088,
+        "ranking": 29
+    },
+    {
+        "id": 30,
+        "nombre": "DS",
+        "ventas_2023": 48444,
+        "ranking": 30
+    }
+]

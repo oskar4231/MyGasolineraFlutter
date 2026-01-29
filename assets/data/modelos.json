@@ -1,0 +1,2074 @@
+[
+    {
+        "id": 1,
+        "marca_id": 1,
+        "nombre": "Golf",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 2,
+        "marca_id": 1,
+        "nombre": "T-Roc",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 3,
+        "marca_id": 1,
+        "nombre": "Tiguan",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 4,
+        "marca_id": 1,
+        "nombre": "Polo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 5,
+        "marca_id": 1,
+        "nombre": "T-Cross",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 6,
+        "marca_id": 1,
+        "nombre": "Taigo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 7,
+        "marca_id": 1,
+        "nombre": "Passat",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 8,
+        "marca_id": 1,
+        "nombre": "Arteon",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 9,
+        "marca_id": 1,
+        "nombre": "Touareg",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 10,
+        "marca_id": 1,
+        "nombre": "Touran",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 11,
+        "marca_id": 1,
+        "nombre": "ID.3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 12,
+        "marca_id": 1,
+        "nombre": "ID.4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 13,
+        "marca_id": 1,
+        "nombre": "ID.5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 14,
+        "marca_id": 1,
+        "nombre": "ID.7",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 15,
+        "marca_id": 1,
+        "nombre": "ID. Buzz",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 16,
+        "marca_id": 1,
+        "nombre": "Amarok",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 17,
+        "marca_id": 1,
+        "nombre": "Caddy",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 18,
+        "marca_id": 1,
+        "nombre": "Multivan",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 19,
+        "marca_id": 1,
+        "nombre": "California",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 20,
+        "marca_id": 1,
+        "nombre": "Grand California",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 21,
+        "marca_id": 2,
+        "nombre": "Yaris",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 22,
+        "marca_id": 2,
+        "nombre": "Yaris Cross",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 23,
+        "marca_id": 2,
+        "nombre": "Corolla",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 24,
+        "marca_id": 2,
+        "nombre": "C-HR",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 25,
+        "marca_id": 2,
+        "nombre": "Aygo X",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 26,
+        "marca_id": 2,
+        "nombre": "RAV4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 27,
+        "marca_id": 2,
+        "nombre": "Highlander",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 28,
+        "marca_id": 2,
+        "nombre": "bZ4X",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 29,
+        "marca_id": 2,
+        "nombre": "Prius",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 30,
+        "marca_id": 2,
+        "nombre": "Camry",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 31,
+        "marca_id": 2,
+        "nombre": "Land Cruiser",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 32,
+        "marca_id": 2,
+        "nombre": "Hilux",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 33,
+        "marca_id": 2,
+        "nombre": "Proace City",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 34,
+        "marca_id": 2,
+        "nombre": "Proace",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 35,
+        "marca_id": 2,
+        "nombre": "GR86",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 36,
+        "marca_id": 2,
+        "nombre": "Supra",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 37,
+        "marca_id": 2,
+        "nombre": "Mirai",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 38,
+        "marca_id": 3,
+        "nombre": "A1",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 39,
+        "marca_id": 3,
+        "nombre": "A3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 40,
+        "marca_id": 3,
+        "nombre": "A4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 41,
+        "marca_id": 3,
+        "nombre": "A5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 42,
+        "marca_id": 3,
+        "nombre": "A6",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 43,
+        "marca_id": 3,
+        "nombre": "A7",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 44,
+        "marca_id": 3,
+        "nombre": "A8",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 45,
+        "marca_id": 3,
+        "nombre": "Q2",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 46,
+        "marca_id": 3,
+        "nombre": "Q3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 47,
+        "marca_id": 3,
+        "nombre": "Q4 e-tron",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 48,
+        "marca_id": 3,
+        "nombre": "Q5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 49,
+        "marca_id": 3,
+        "nombre": "Q7",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 50,
+        "marca_id": 3,
+        "nombre": "Q8",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 51,
+        "marca_id": 3,
+        "nombre": "Q8 e-tron",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 52,
+        "marca_id": 3,
+        "nombre": "e-tron GT",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 53,
+        "marca_id": 3,
+        "nombre": "Q6 e-tron",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 54,
+        "marca_id": 3,
+        "nombre": "R8",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 55,
+        "marca_id": 3,
+        "nombre": "TT",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 56,
+        "marca_id": 4,
+        "nombre": "1 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 57,
+        "marca_id": 4,
+        "nombre": "2 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 58,
+        "marca_id": 4,
+        "nombre": "3 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 59,
+        "marca_id": 4,
+        "nombre": "4 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 60,
+        "marca_id": 4,
+        "nombre": "5 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 61,
+        "marca_id": 4,
+        "nombre": "6 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 62,
+        "marca_id": 4,
+        "nombre": "7 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 63,
+        "marca_id": 4,
+        "nombre": "8 Series",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 64,
+        "marca_id": 4,
+        "nombre": "X1",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 65,
+        "marca_id": 4,
+        "nombre": "X2",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 66,
+        "marca_id": 4,
+        "nombre": "X3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 67,
+        "marca_id": 4,
+        "nombre": "X4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 68,
+        "marca_id": 4,
+        "nombre": "X5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 69,
+        "marca_id": 4,
+        "nombre": "X6",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 70,
+        "marca_id": 4,
+        "nombre": "X7",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 71,
+        "marca_id": 4,
+        "nombre": "XM",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 72,
+        "marca_id": 4,
+        "nombre": "Z4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 73,
+        "marca_id": 4,
+        "nombre": "iX",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 74,
+        "marca_id": 4,
+        "nombre": "iX1",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 75,
+        "marca_id": 4,
+        "nombre": "iX3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 76,
+        "marca_id": 4,
+        "nombre": "i4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 77,
+        "marca_id": 4,
+        "nombre": "i5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 78,
+        "marca_id": 4,
+        "nombre": "i7",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 79,
+        "marca_id": 5,
+        "nombre": "A-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 80,
+        "marca_id": 5,
+        "nombre": "B-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 81,
+        "marca_id": 5,
+        "nombre": "C-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 82,
+        "marca_id": 5,
+        "nombre": "E-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 83,
+        "marca_id": 5,
+        "nombre": "S-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 84,
+        "marca_id": 5,
+        "nombre": "CLA",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 85,
+        "marca_id": 5,
+        "nombre": "CLS",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 86,
+        "marca_id": 5,
+        "nombre": "GLA",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 87,
+        "marca_id": 5,
+        "nombre": "GLB",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 88,
+        "marca_id": 5,
+        "nombre": "GLC",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 89,
+        "marca_id": 5,
+        "nombre": "GLE",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 90,
+        "marca_id": 5,
+        "nombre": "GLS",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 91,
+        "marca_id": 5,
+        "nombre": "G-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 92,
+        "marca_id": 5,
+        "nombre": "EQA",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 93,
+        "marca_id": 5,
+        "nombre": "EQB",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 94,
+        "marca_id": 5,
+        "nombre": "EQC",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 95,
+        "marca_id": 5,
+        "nombre": "EQE",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 96,
+        "marca_id": 5,
+        "nombre": "EQS",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 97,
+        "marca_id": 5,
+        "nombre": "EQV",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 98,
+        "marca_id": 5,
+        "nombre": "V-Class",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 99,
+        "marca_id": 5,
+        "nombre": "AMG GT",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 100,
+        "marca_id": 5,
+        "nombre": "SL",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 101,
+        "marca_id": 5,
+        "nombre": "CLE",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 102,
+        "marca_id": 6,
+        "nombre": "Clio",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 103,
+        "marca_id": 6,
+        "nombre": "Captur",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 104,
+        "marca_id": 6,
+        "nombre": "Arkana",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 105,
+        "marca_id": 6,
+        "nombre": "Austral",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 106,
+        "marca_id": 6,
+        "nombre": "Espace",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 107,
+        "marca_id": 6,
+        "nombre": "Rafale",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 108,
+        "marca_id": 6,
+        "nombre": "Megane E-Tech",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 109,
+        "marca_id": 6,
+        "nombre": "Scenic E-Tech",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 110,
+        "marca_id": 6,
+        "nombre": "Twingo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 111,
+        "marca_id": 6,
+        "nombre": "Kangoo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 112,
+        "marca_id": 6,
+        "nombre": "Trafic",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 113,
+        "marca_id": 6,
+        "nombre": "R5 E-Tech",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 114,
+        "marca_id": 7,
+        "nombre": "Fabia",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 115,
+        "marca_id": 7,
+        "nombre": "Scala",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 116,
+        "marca_id": 7,
+        "nombre": "Octavia",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 117,
+        "marca_id": 7,
+        "nombre": "Superb",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 118,
+        "marca_id": 7,
+        "nombre": "Kamiq",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 119,
+        "marca_id": 7,
+        "nombre": "Karoq",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 120,
+        "marca_id": 7,
+        "nombre": "Kodiaq",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 121,
+        "marca_id": 7,
+        "nombre": "Enyaq",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 122,
+        "marca_id": 7,
+        "nombre": "Enyaq Coupe",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 123,
+        "marca_id": 8,
+        "nombre": "208",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 124,
+        "marca_id": 8,
+        "nombre": "308",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 125,
+        "marca_id": 8,
+        "nombre": "408",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 126,
+        "marca_id": 8,
+        "nombre": "508",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 127,
+        "marca_id": 8,
+        "nombre": "2008",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 128,
+        "marca_id": 8,
+        "nombre": "3008",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 129,
+        "marca_id": 8,
+        "nombre": "5008",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 130,
+        "marca_id": 8,
+        "nombre": "Rifter",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 131,
+        "marca_id": 8,
+        "nombre": "Traveller",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 132,
+        "marca_id": 9,
+        "nombre": "Picanto",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 133,
+        "marca_id": 9,
+        "nombre": "Rio",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 134,
+        "marca_id": 9,
+        "nombre": "Stonic",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 135,
+        "marca_id": 9,
+        "nombre": "Ceed",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 136,
+        "marca_id": 9,
+        "nombre": "XCeed",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 137,
+        "marca_id": 9,
+        "nombre": "ProCeed",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 138,
+        "marca_id": 9,
+        "nombre": "Niro",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 139,
+        "marca_id": 9,
+        "nombre": "Sportage",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 140,
+        "marca_id": 9,
+        "nombre": "Sorento",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 141,
+        "marca_id": 9,
+        "nombre": "EV6",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 142,
+        "marca_id": 9,
+        "nombre": "EV9",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 143,
+        "marca_id": 9,
+        "nombre": "Soul EV",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 144,
+        "marca_id": 10,
+        "nombre": "Sandero",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 145,
+        "marca_id": 10,
+        "nombre": "Sandero Stepway",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 146,
+        "marca_id": 10,
+        "nombre": "Jogger",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 147,
+        "marca_id": 10,
+        "nombre": "Duster",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 148,
+        "marca_id": 10,
+        "nombre": "Spring",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 149,
+        "marca_id": 11,
+        "nombre": "i10",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 150,
+        "marca_id": 11,
+        "nombre": "i20",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 151,
+        "marca_id": 11,
+        "nombre": "i30",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 152,
+        "marca_id": 11,
+        "nombre": "Bayon",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 153,
+        "marca_id": 11,
+        "nombre": "Kona",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 154,
+        "marca_id": 11,
+        "nombre": "Tucson",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 155,
+        "marca_id": 11,
+        "nombre": "Santa Fe",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 156,
+        "marca_id": 11,
+        "nombre": "IONIQ 5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 157,
+        "marca_id": 11,
+        "nombre": "IONIQ 6",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 158,
+        "marca_id": 11,
+        "nombre": "Staria",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 159,
+        "marca_id": 11,
+        "nombre": "Nexo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 160,
+        "marca_id": 12,
+        "nombre": "Fiesta",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 161,
+        "marca_id": 12,
+        "nombre": "Focus",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 162,
+        "marca_id": 12,
+        "nombre": "Puma",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 163,
+        "marca_id": 12,
+        "nombre": "Kuga",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 164,
+        "marca_id": 12,
+        "nombre": "Mustang Mach-E",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 165,
+        "marca_id": 12,
+        "nombre": "Explorer",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 166,
+        "marca_id": 12,
+        "nombre": "Mustang",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 167,
+        "marca_id": 12,
+        "nombre": "Tourneo Connect",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 168,
+        "marca_id": 12,
+        "nombre": "Tourneo Courier",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 169,
+        "marca_id": 12,
+        "nombre": "Tourneo Custom",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 170,
+        "marca_id": 12,
+        "nombre": "Ranger",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 171,
+        "marca_id": 12,
+        "nombre": "Bronco",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 172,
+        "marca_id": 12,
+        "nombre": "Capri",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 173,
+        "marca_id": 13,
+        "nombre": "Corsa",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 174,
+        "marca_id": 13,
+        "nombre": "Astra",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 175,
+        "marca_id": 13,
+        "nombre": "Mokka",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 176,
+        "marca_id": 13,
+        "nombre": "Crossland",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 177,
+        "marca_id": 13,
+        "nombre": "Grandland",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 178,
+        "marca_id": 13,
+        "nombre": "Combo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 179,
+        "marca_id": 13,
+        "nombre": "Zafira Life",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 180,
+        "marca_id": 13,
+        "nombre": "Vivaro",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 181,
+        "marca_id": 13,
+        "nombre": "Movano",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 182,
+        "marca_id": 13,
+        "nombre": "Frontera",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 183,
+        "marca_id": 14,
+        "nombre": "500",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 184,
+        "marca_id": 14,
+        "nombre": "500e",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 185,
+        "marca_id": 14,
+        "nombre": "Panda",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 186,
+        "marca_id": 14,
+        "nombre": "Tipo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 187,
+        "marca_id": 14,
+        "nombre": "500X",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 188,
+        "marca_id": 14,
+        "nombre": "600",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 189,
+        "marca_id": 14,
+        "nombre": "Topolino",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 190,
+        "marca_id": 14,
+        "nombre": "Doblo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 191,
+        "marca_id": 14,
+        "nombre": "Ulysse",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 192,
+        "marca_id": 15,
+        "nombre": "C3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 193,
+        "marca_id": 15,
+        "nombre": "C3 Aircross",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 194,
+        "marca_id": 15,
+        "nombre": "C4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 195,
+        "marca_id": 15,
+        "nombre": "C4 X",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 196,
+        "marca_id": 15,
+        "nombre": "C5 Aircross",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 197,
+        "marca_id": 15,
+        "nombre": "C5 X",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 198,
+        "marca_id": 15,
+        "nombre": "Berlingo",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 199,
+        "marca_id": 15,
+        "nombre": "SpaceTourer",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 200,
+        "marca_id": 15,
+        "nombre": "Ami",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 201,
+        "marca_id": 16,
+        "nombre": "Model 3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 202,
+        "marca_id": 16,
+        "nombre": "Model Y",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 203,
+        "marca_id": 16,
+        "nombre": "Model S",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 204,
+        "marca_id": 16,
+        "nombre": "Model X",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 205,
+        "marca_id": 17,
+        "nombre": "Juke",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 206,
+        "marca_id": 17,
+        "nombre": "Qashqai",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 207,
+        "marca_id": 17,
+        "nombre": "X-Trail",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 208,
+        "marca_id": 17,
+        "nombre": "Ariya",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 209,
+        "marca_id": 17,
+        "nombre": "Leaf",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 210,
+        "marca_id": 17,
+        "nombre": "Townstar",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 211,
+        "marca_id": 17,
+        "nombre": "Primastar",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 212,
+        "marca_id": 18,
+        "nombre": "Ibiza",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 213,
+        "marca_id": 18,
+        "nombre": "Arona",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 214,
+        "marca_id": 18,
+        "nombre": "Leon",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 215,
+        "marca_id": 18,
+        "nombre": "Ateca",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 216,
+        "marca_id": 18,
+        "nombre": "Tarraco",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 217,
+        "marca_id": 19,
+        "nombre": "EX30",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 218,
+        "marca_id": 19,
+        "nombre": "EX40",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 219,
+        "marca_id": 19,
+        "nombre": "EC40",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 220,
+        "marca_id": 19,
+        "nombre": "XC40",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 221,
+        "marca_id": 19,
+        "nombre": "XC60",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 222,
+        "marca_id": 19,
+        "nombre": "XC90",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 223,
+        "marca_id": 19,
+        "nombre": "S60",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 224,
+        "marca_id": 19,
+        "nombre": "V60",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 225,
+        "marca_id": 19,
+        "nombre": "S90",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 226,
+        "marca_id": 19,
+        "nombre": "V90",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 227,
+        "marca_id": 19,
+        "nombre": "EX90",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 228,
+        "marca_id": 20,
+        "nombre": "Born",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 229,
+        "marca_id": 20,
+        "nombre": "Formentor",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 230,
+        "marca_id": 20,
+        "nombre": "Leon",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 231,
+        "marca_id": 20,
+        "nombre": "Ateca",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 232,
+        "marca_id": 20,
+        "nombre": "Tavascan",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 233,
+        "marca_id": 21,
+        "nombre": "Swift",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 234,
+        "marca_id": 21,
+        "nombre": "Ignis",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 235,
+        "marca_id": 21,
+        "nombre": "Vitara",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 236,
+        "marca_id": 21,
+        "nombre": "S-Cross",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 237,
+        "marca_id": 21,
+        "nombre": "Swace",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 238,
+        "marca_id": 21,
+        "nombre": "Across",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 239,
+        "marca_id": 21,
+        "nombre": "Jimny",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 240,
+        "marca_id": 22,
+        "nombre": "Cooper 3-Door",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 241,
+        "marca_id": 22,
+        "nombre": "Cooper 5-Door",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 242,
+        "marca_id": 22,
+        "nombre": "Cooper Convertible",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 243,
+        "marca_id": 22,
+        "nombre": "Clubman",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 244,
+        "marca_id": 22,
+        "nombre": "Countryman",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 245,
+        "marca_id": 22,
+        "nombre": "Aceman",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 246,
+        "marca_id": 23,
+        "nombre": "Mazda2",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 247,
+        "marca_id": 23,
+        "nombre": "Mazda2 Hybrid",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 248,
+        "marca_id": 23,
+        "nombre": "Mazda3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 249,
+        "marca_id": 23,
+        "nombre": "Mazda6",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 250,
+        "marca_id": 23,
+        "nombre": "CX-30",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 251,
+        "marca_id": 23,
+        "nombre": "CX-5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 252,
+        "marca_id": 23,
+        "nombre": "CX-60",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 253,
+        "marca_id": 23,
+        "nombre": "CX-80",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 254,
+        "marca_id": 23,
+        "nombre": "MX-30",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 255,
+        "marca_id": 23,
+        "nombre": "MX-5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 256,
+        "marca_id": 24,
+        "nombre": "Renegade",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 257,
+        "marca_id": 24,
+        "nombre": "Compass",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 258,
+        "marca_id": 24,
+        "nombre": "Wrangler",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 259,
+        "marca_id": 24,
+        "nombre": "Grand Cherokee",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 260,
+        "marca_id": 24,
+        "nombre": "Avenger",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 261,
+        "marca_id": 24,
+        "nombre": "Gladiator",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 262,
+        "marca_id": 25,
+        "nombre": "MG3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 263,
+        "marca_id": 25,
+        "nombre": "MG4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 264,
+        "marca_id": 25,
+        "nombre": "MG5",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 265,
+        "marca_id": 25,
+        "nombre": "ZS",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 266,
+        "marca_id": 25,
+        "nombre": "HS",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 267,
+        "marca_id": 25,
+        "nombre": "Marvel R",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 268,
+        "marca_id": 25,
+        "nombre": "Cyberster",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 269,
+        "marca_id": 26,
+        "nombre": "718 Cayman",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 270,
+        "marca_id": 26,
+        "nombre": "718 Boxster",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 271,
+        "marca_id": 26,
+        "nombre": "911",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 272,
+        "marca_id": 26,
+        "nombre": "Taycan",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 273,
+        "marca_id": 26,
+        "nombre": "Panamera",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 274,
+        "marca_id": 26,
+        "nombre": "Macan",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 275,
+        "marca_id": 26,
+        "nombre": "Cayenne",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 276,
+        "marca_id": 27,
+        "nombre": "Jazz",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 277,
+        "marca_id": 27,
+        "nombre": "Civic",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 278,
+        "marca_id": 27,
+        "nombre": "HR-V",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 279,
+        "marca_id": 27,
+        "nombre": "ZR-V",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 280,
+        "marca_id": 27,
+        "nombre": "CR-V",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 281,
+        "marca_id": 27,
+        "nombre": "e:Ny1",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 282,
+        "marca_id": 28,
+        "nombre": "Range Rover",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 283,
+        "marca_id": 28,
+        "nombre": "Range Rover Sport",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 284,
+        "marca_id": 28,
+        "nombre": "Range Rover Velar",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 285,
+        "marca_id": 28,
+        "nombre": "Range Rover Evoque",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 286,
+        "marca_id": 28,
+        "nombre": "Discovery",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 287,
+        "marca_id": 28,
+        "nombre": "Discovery Sport",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 288,
+        "marca_id": 28,
+        "nombre": "Defender",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 289,
+        "marca_id": 29,
+        "nombre": "Tonale",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 290,
+        "marca_id": 29,
+        "nombre": "Giulia",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 291,
+        "marca_id": 29,
+        "nombre": "Stelvio",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 292,
+        "marca_id": 29,
+        "nombre": "Junior",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 293,
+        "marca_id": 30,
+        "nombre": "DS 3",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 294,
+        "marca_id": 30,
+        "nombre": "DS 4",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 295,
+        "marca_id": 30,
+        "nombre": "DS 7",
+        "ventas_2023": 0,
+        "ranking": 0
+    },
+    {
+        "id": 296,
+        "marca_id": 30,
+        "nombre": "DS 9",
+        "ventas_2023": 0,
+        "ranking": 0
+    }
+]

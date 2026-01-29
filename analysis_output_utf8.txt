@@ -1,0 +1,33 @@
+﻿Analyzing crearfacturascreen.dart...                            
+
+   info - Don't invoke 'print' in production code - lib\ajustes\facturas\crearfacturascreen.dart:59:11 - avoid_print
+   info - Don't invoke 'print' in production code - lib\ajustes\facturas\crearfacturascreen.dart:63:7 - avoid_print
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\crearfacturascreen.dart:89:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\crearfacturascreen.dart:105:9 - use_build_context_synchronously
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\ajustes\facturas\crearfacturascreen.dart:394:21 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\ajustes\facturas\crearfacturascreen.dart:523:23 - deprecated_member_use
+  error - Methods can't be invoked in constant expressions - lib\ajustes\facturas\crearfacturascreen.dart:707:35 - const_eval_method_invocation
+
+flutter : 7 issues 
+found. (ran in 1.5s)
+En línea: 1 
+Carácter: 1
++ flutter analyze lib
+\ajustes\facturas\Cre
+arFacturaScreen.dart 
+--no-pub ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (7 issue   
+ s found. (ran in    
+ 1.5s):String) [    
+], RemoteExcepti    
+on
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 

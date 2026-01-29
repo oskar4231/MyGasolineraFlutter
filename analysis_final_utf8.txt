@@ -1,0 +1,332 @@
+﻿Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 92.0.0 (93.0.0 available)
+  analyzer 9.0.0 (10.0.0 available)
+  build 4.0.3 (4.0.4 available)
+  build_runner 2.10.4 (2.10.5 available)
+  built_value 8.12.1 (8.12.2 available)
+  characters 1.4.0 (1.4.1 available)
+  drift 2.30.0 (2.30.1 available)
+  drift_dev 2.30.0 (2.30.1 available)
+  flutter_launcher_icons 0.13.1 (0.14.4 available)
+  geolocator_linux 0.2.3 (0.2.4 available)
+  matcher 0.12.17 (0.12.18 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  package_info_plus 8.3.1 (9.0.0 available)
+  sqlite3 2.9.4 (3.1.3 available)
+  sqlparser 0.42.1 (0.43.0 available)
+  test_api 0.7.7 (0.7.9 available)
+Got dependencies!
+16 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing MyGasolineraFlutter-1...                              
+
+   info - Don't use 'BuildContext's across async gaps - lib\Inicio\crear_cuenta\crear.dart:110:32 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\Inicio\crear_cuenta\crear.dart:120:15 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\Inicio\crear_cuenta\crear.dart:129:32 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\Inicio\crear_cuenta\crear.dart:138:30 - use_build_context_synchronously
+   info - Don't invoke 'print' in production code - lib\Inicio\crear_cuenta\crear.dart:144:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\Inicio\login\login.dart:51:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\Inicio\login\login.dart:63:9 - avoid_print
+   info - Don't use 'BuildContext's across async gaps - lib\Inicio\login\login.dart:78:34 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\Inicio\login\login.dart:87:15 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\accesibilidad\accesibilidad.dart:243:50 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\accesibilidad\accesibilidad.dart:252:42 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\accesibilidad\accesibilidad.dart:260:50 - use_build_context_synchronously
+   info - 'dialogBackgroundColor' is deprecated and shouldn't be used. Use DialogThemeData.backgroundColor instead. This feature was deprecated after v3.27.0-0.1.pre - lib\ajustes\accesibilidad\accesibilidad.dart:408:50 - deprecated_member_use
+warning - The value of the field '_perfilService' isn't used - lib\ajustes\ajustes.dart:35:9 - unused_field
+  error - Expected to find ';' - lib\ajustes\ajustes.dart:137:15 - expected_token
+  error - Expected an identifier - lib\ajustes\ajustes.dart:137:76 - missing_identifier
+  error - Expected to find ';' - lib\ajustes\ajustes.dart:137:76 - expected_token
+  error - Unexpected text ',' - lib\ajustes\ajustes.dart:137:76 - unexpected_token
+  error - Expected an identifier - lib\ajustes\ajustes.dart:138:13 - missing_identifier
+  error - Unexpected text ')' - lib\ajustes\ajustes.dart:138:13 - unexpected_token
+   info - Unnecessary empty statement - lib\ajustes\ajustes.dart:138:14 - empty_statements
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:511:56 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:521:56 - use_build_context_synchronously
+   info - Don't invoke 'print' in production code - lib\ajustes\ajustes.dart:769:25 - avoid_print
+   info - Don't invoke 'print' in production code - lib\ajustes\ajustes.dart:777:25 - avoid_print
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:788:42 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:790:31 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:801:40 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:802:48 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\ajustes.dart:805:56 - use_build_context_synchronously
+  error - All final variables must be initialized, but 'checkboxValue' and 'tieneCheckbox' aren't - lib\ajustes\ajustes.dart:838:9 - final_not_initialized_constructor
+   info - The file name 'CrearFacturaScreen.dart' isn't a lower_case_with_underscores identifier - lib\ajustes\facturas\CrearFacturaScreen.dart:1:1 - file_names
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\CrearFacturaScreen.dart:91:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\CrearFacturaScreen.dart:94:40 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\CrearFacturaScreen.dart:109:9 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\CrearFacturaScreen.dart:112:38 - use_build_context_synchronously
+   info - The file name 'DetalleFacturaScreen.dart' isn't a lower_case_with_underscores identifier - lib\ajustes\facturas\DetalleFacturaScreen.dart:1:1 - file_names
+   info - The file name 'FacturasScreen.dart' isn't a lower_case_with_underscores identifier - lib\ajustes\facturas\FacturasScreen.dart:1:1 - file_names
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\FacturasScreen.dart:136:30 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\FacturasScreen.dart:139:44 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\facturas\FacturasScreen.dart:143:30 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\idiomas\idiomas_screen.dart:204:50 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\idiomas\idiomas_screen.dart:207:55 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\ajustes\idiomas\idiomas_screen.dart:213:42 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\ajustes\idiomas\idiomas_screen.dart:221:50 - use_build_context_synchronously
+   info - 'dialogBackgroundColor' is deprecated and shouldn't be used. Use DialogThemeData.backgroundColor instead. This feature was deprecated after v3.27.0-0.1.pre - lib\ajustes\idiomas\idiomas_screen.dart:279:46 - deprecated_member_use
+   info - 'dialogBackgroundColor' is deprecated and shouldn't be used. Use DialogThemeData.backgroundColor instead. This feature was deprecated after v3.27.0-0.1.pre - lib\ajustes\idiomas\idiomas_screen.dart:474:46 - deprecated_member_use
+   info - The file name 'baseDatosApk.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaApk\baseDatosApk.dart:1:1 - file_names
+   info - Don't invoke 'print' in production code - lib\bbdd_intermedia\ParaApk\baseDatosApk.dart:167:5 - avoid_print
+   info - The file name 'tablaCacheProvincias.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaApk\tablaCacheProvincias.dart:1:1 - file_names
+   info - The file name 'tablaGasolineras.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaApk\tablaGasolineras.dart:1:1 - file_names
+   info - The file name 'tablaLocalImages.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaApk\tablaLocalImages.dart:1:1 - file_names
+   info - The file name 'tablaTheme.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaApk\tablaTheme.dart:1:1 - file_names
+   info - The file name 'baseDatosWeb.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaWeb\baseDatosWeb.dart:1:1 - file_names
+   info - Don't invoke 'print' in production code - lib\bbdd_intermedia\ParaWeb\baseDatosWeb.dart:168:5 - avoid_print
+   info - The file name 'tablaCacheProvincias.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaWeb\tablaCacheProvincias.dart:1:1 - file_names
+   info - The file name 'tablaGasolineras.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaWeb\tablaGasolineras.dart:1:1 - file_names
+   info - The file name 'tablaLocalImages.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaWeb\tablaLocalImages.dart:1:1 - file_names
+   info - The file name 'tablaTheme.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\ParaWeb\tablaTheme.dart:1:1 - file_names
+   info - The file name 'baseDatos.dart' isn't a lower_case_with_underscores identifier - lib\bbdd_intermedia\baseDatos.dart:1:1 - file_names
+   info - 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead - lib\browser_console_helper_web.dart:1:1 - deprecated_member_use
+   info - Don't use web-only libraries outside Flutter web plugins - lib\browser_console_helper_web.dart:1:1 - avoid_web_libraries_in_flutter
+   info - Don't invoke 'print' in production code - lib\browser_console_helper_web.dart:18:3 - avoid_print
+   info - The file name 'switchBackend.dart' isn't a lower_case_with_underscores identifier - lib\importante\switchBackend.dart:1:1 - file_names
+   info - The file name 'switchWebApk.dart' isn't a lower_case_with_underscores identifier - lib\importante\switchWebApk.dart:1:1 - file_names
+  error - Expected to find ';' - lib\main.dart:37:78 - expected_token
+  error - Expected an identifier - lib\main.dart:37:79 - missing_identifier
+  error - Unexpected text ';' - lib\main.dart:37:79 - unexpected_token
+   info - Unnecessary empty statement - lib\main.dart:37:80 - empty_statements
+   info - Don't invoke 'print' in production code - lib\principal\gasolineras\api_gasolinera.dart:12:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\principal\gasolineras\api_gasolinera.dart:26:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\principal\gasolineras\api_gasolinera.dart:61:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\principal\gasolineras\api_gasolinera.dart:77:9 - avoid_print
+warning - The declaration '_getProvinciaNombre' isn't referenced - lib\principal\gasolineras\api_gasolinera.dart:100:8 - unused_element
+   info - The constant name 'MIN_UPDATE_INTERVAL' isn't a lowerCamelCase identifier - lib\principal\layouthome.dart:26:25 - constant_identifier_names
+   info - 'desiredAccuracy' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings - lib\principal\layouthome.dart:86:9 - deprecated_member_use
+   info - Invalid use of a private type in a public API - lib\principal\mapa.dart:20:3 - library_private_types_in_public_api
+   info - Invalid use of a private type in a public API - lib\principal\mapa.dart:106:3 - library_private_types_in_public_api
+  error - The class '_MapWidgetState' doesn't have an unnamed constructor - lib\principal\mapa.dart:106:36 - new_with_undefined_constructor_default
+  error - Missing concrete implementation of 'abstract class State<T extends StatefulWidget> with Diagnosticable.build' - lib\principal\mapa.dart:109:7 - non_abstract_class_inherits_abstract_member
+   info - The private field _isBottomSheetOpen could be 'final' - lib\principal\mapa.dart:120:8 - prefer_final_fields
+warning - The value of the field '_isLoadingFromCache' isn't used - lib\principal\mapa.dart:125:8 - unused_field
+   info - The private field _isLoadingProgressively could be 'final' - lib\principal\mapa.dart:128:8 - prefer_final_fields
+warning - The value of the field '_isLoadingProgressively' isn't used - lib\principal\mapa.dart:128:8 - unused_field
+  error - Expected to find ';' - lib\principal\mapa.dart:151:92 - expected_token
+  error - Expected an identifier - lib\principal\mapa.dart:151:93 - missing_identifier
+  error - Unexpected text ')' - lib\principal\mapa.dart:151:93 - unexpected_token
+   info - Unnecessary empty statement - lib\principal\mapa.dart:151:94 - empty_statements
+   info - 'fromBytes' is deprecated and shouldn't be used. Use BitmapDescriptor.bytes method instead - lib\principal\mapa.dart:194:54 - deprecated_member_use
+   info - 'fromBytes' is deprecated and shouldn't be used. Use BitmapDescriptor.bytes method instead - lib\principal\mapa.dart:195:57 - deprecated_member_use
+  error - Expected to find ';' - lib\principal\mapa.dart:318:102 - expected_token
+  error - Expected an identifier - lib\principal\mapa.dart:318:104 - missing_identifier
+  error - Unexpected text ')' - lib\principal\mapa.dart:318:104 - unexpected_token
+   info - Unnecessary empty statement - lib\principal\mapa.dart:318:105 - empty_statements
+  error - Expected to find ';' - lib\principal\mapa.dart:328:15 - expected_token
+  error - Expected an identifier - lib\principal\mapa.dart:328:86 - missing_identifier
+  error - Unexpected text ')' - lib\principal\mapa.dart:328:86 - unexpected_token
+   info - Unnecessary empty statement - lib\principal\mapa.dart:328:87 - empty_statements
+warning - The value of the local variable 'g' isn't used - lib\principal\mapa.dart:351:15 - unused_local_variable
+warning - The value of the local variable 'gasolinerasCercanas' isn't used - lib\principal\mapa.dart:359:11 - unused_local_variable
+  error - The body might complete normally, causing 'null' to be returned, but the return type, 'bool', is a potentially non-nullable type - lib\principal\mapa.dart:362:21 - body_might_complete_normally
+  error - Expected to find ';' - lib\principal\mapa.dart:367:156 - expected_token
+  error - Expected to find '}' - lib\principal\mapa.dart:367:161 - expected_token
+  error - Undefined name 'distance' - lib\principal\mapa.dart:371:26 - undefined_identifier
+  error - Expected a class member - lib\principal\mapa.dart:372:7 - expected_class_member
+   info - An uninitialized field should have an explicit type annotation - lib\principal\mapa.dart:372:14 - prefer_typing_uninitialized_variables
+   info - Missing type annotation - lib\principal\mapa.dart:372:14 - strict_top_level_inference
+  error - Expected to find ';' - lib\principal\mapa.dart:372:14 - expected_token
+  error - The name 'distanceKm' is already defined - lib\principal\mapa.dart:372:14 - duplicate_definition
+  error - Variables must be declared using the keywords 'const', 'final', 'var' or a type name - lib\principal\mapa.dart:372:14 - missing_const_final_var_or_type
+   info - Missing type annotation - lib\principal\mapa.dart:372:25 - strict_top_level_inference
+  error - Methods must have an explicit list of parameters - lib\principal\mapa.dart:372:25 - missing_method_parameters
+  error - Operator '<=' should declare exactly 1 parameters, but 0 found - lib\principal\mapa.dart:372:25 - wrong_number_of_parameters_for_operator
+  error - Operator declarations must be preceded by the keyword 'operator' - lib\principal\mapa.dart:372:25 - missing_keyword_operator
+  error - A function body must be provided - lib\principal\mapa.dart:372:28 - missing_function_body
+  error - Methods must have an explicit list of parameters - lib\principal\mapa.dart:372:28 - missing_method_parameters
+  error - The name of a constructor must match the name of the enclosing class - lib\principal\mapa.dart:372:28 - invalid_constructor_name
+  error - Expected a method, getter, setter or operator declaration - lib\principal\mapa.dart:373:6 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\principal\mapa.dart:373:7 - expected_executable
+   info - Missing type annotation - lib\principal\mapa.dart:373:8 - strict_top_level_inference
+  error - A function body must be provided - lib\principal\mapa.dart:373:16 - missing_function_body
+   info - Missing type annotation - lib\principal\mapa.dart:376:5 - strict_top_level_inference
+  error - Functions must have an explicit list of parameters - lib\principal\mapa.dart:376:5 - missing_function_parameters
+  error - A function body must be provided - lib\principal\mapa.dart:376:24 - missing_function_body
+  error - Expected a method, getter, setter or operator declaration - lib\principal\mapa.dart:376:24 - expected_executable
+   info - Missing type annotation - lib\principal\mapa.dart:376:25 - strict_top_level_inference
+   info - Use the generic function type syntax to declare the parameter '' - lib\principal\mapa.dart:377:7 - use_function_type_syntax_for_parameters
+  error - Expected an identifier - lib\principal\mapa.dart:377:7 - missing_identifier
+  error - Expected to find ')' - lib\principal\mapa.dart:377:14 - expected_token
+  error - A function body must be provided - lib\principal\mapa.dart:378:6 - missing_function_body
+  error - The method 'map' isn't defined for the type 'Function' - lib\principal\mapa.dart:381:29 - undefined_method
+   info - Missing type annotation - lib\principal\mapa.dart:383:5 - strict_top_level_inference
+  error - Expected an identifier - lib\principal\mapa.dart:384:9 - missing_identifier
+  error - Expected to find ')' - lib\principal\mapa.dart:384:26 - expected_token
+  error - A function body must be provided - lib\principal\mapa.dart:384:101 - missing_function_body
+   info - Missing type annotation - lib\principal\mapa.dart:387:5 - strict_top_level_inference
+  error - 'if' can't be used as an identifier because it's a keyword - lib\principal\mapa.dart:387:5 - expected_identifier_but_got_keyword
+   info - Missing type annotation - lib\principal\mapa.dart:387:9 - strict_top_level_inference
+  error - Expected to find ')' - lib\principal\mapa.dart:387:23 - expected_token
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:390:11 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:391:9 - undefined_function
+  error - Undefined name '_isLoadingProgressively' - lib\principal\mapa.dart:392:11 - undefined_identifier
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:400:11 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:401:9 - undefined_function
+  error - Undefined name '_gasolinerasMarkers' - lib\principal\mapa.dart:402:11 - undefined_identifier
+  error - Undefined name '_gasolinerasMarkers' - lib\principal\mapa.dart:403:11 - undefined_identifier
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:409:13 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:413:11 - undefined_function
+  error - Undefined name '_gasolinerasMarkers' - lib\principal\mapa.dart:414:13 - undefined_identifier
+  error - Undefined name '_isLoadingProgressively' - lib\principal\mapa.dart:415:13 - undefined_identifier
+   info - Missing type annotation - lib\principal\mapa.dart:427:5 - strict_top_level_inference
+  error - 'if' can't be used as an identifier because it's a keyword - lib\principal\mapa.dart:427:5 - expected_identifier_but_got_keyword
+  error - The name 'if' is already defined - lib\principal\mapa.dart:427:5 - duplicate_definition
+   info - Missing type annotation - lib\principal\mapa.dart:427:9 - strict_top_level_inference
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:428:7 - undefined_function
+  error - Undefined name '_gasolinerasMarkers' - lib\principal\mapa.dart:429:9 - undefined_identifier
+  error - Undefined name '_gasolinerasMarkers' - lib\principal\mapa.dart:430:9 - undefined_identifier
+  error - Expected a method, getter, setter or operator declaration - lib\principal\mapa.dart:433:3 - expected_executable
+  error - Undefined name '_favoritosIds' - lib\principal\mapa.dart:436:23 - undefined_identifier
+  error - Undefined name '_favoriteGasStationIcon' - lib\principal\mapa.dart:444:23 - undefined_identifier
+  error - Undefined name '_favoriteGasStationIcon' - lib\principal\mapa.dart:445:14 - undefined_identifier
+  error - Undefined name '_gasStationIcon' - lib\principal\mapa.dart:448:14 - undefined_identifier
+  error - Undefined name '_gasStationIcon' - lib\principal\mapa.dart:449:14 - undefined_identifier
+  error - Undefined name '_isBottomSheetOpen' - lib\principal\mapa.dart:471:9 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:473:5 - undefined_function
+  error - Undefined name '_isBottomSheetOpen' - lib\principal\mapa.dart:474:7 - undefined_identifier
+  error - Undefined name 'context' - lib\principal\mapa.dart:478:16 - undefined_identifier
+   info - Don't use 'BuildContext's across async gaps - lib\principal\mapa.dart:504:37 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\principal\mapa.dart:572:35 - use_build_context_synchronously
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:600:9 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:601:7 - undefined_function
+  error - Undefined name '_isBottomSheetOpen' - lib\principal\mapa.dart:602:9 - undefined_identifier
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:619:9 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:620:7 - undefined_function
+  error - Undefined name '_favoritosIds' - lib\principal\mapa.dart:621:9 - undefined_identifier
+  error - Undefined name 'context' - lib\principal\mapa.dart:643:30 - undefined_identifier
+  error - Undefined name 'context' - lib\principal\mapa.dart:651:31 - undefined_identifier
+   info - 'desiredAccuracy' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings - lib\principal\mapa.dart:672:9 - deprecated_member_use
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:674:11 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:675:9 - undefined_function
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:676:11 - undefined_identifier
+  error - Undefined name '_markers' - lib\principal\mapa.dart:677:11 - undefined_identifier
+  error - Undefined name '_markers' - lib\principal\mapa.dart:678:11 - undefined_identifier
+  error - The function '_cargarGasolineras' isn't defined - lib\principal\mapa.dart:686:9 - undefined_function
+  error - Undefined name 'widget' - lib\principal\mapa.dart:689:13 - undefined_identifier
+  error - Undefined name 'widget' - lib\principal\mapa.dart:690:11 - undefined_identifier
+  error - Undefined name '_positionStreamSub' - lib\principal\mapa.dart:697:5 - undefined_identifier
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:703:12 - undefined_identifier
+  error - The function 'setState' isn't defined - lib\principal\mapa.dart:704:7 - undefined_function
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:705:9 - undefined_identifier
+  error - Undefined name '_markers' - lib\principal\mapa.dart:706:9 - undefined_identifier
+  error - Undefined name '_markers' - lib\principal\mapa.dart:707:9 - undefined_identifier
+  error - Undefined name 'widget' - lib\principal\mapa.dart:716:11 - undefined_identifier
+  error - Undefined name '_debounceTimer' - lib\principal\mapa.dart:717:9 - undefined_identifier
+  error - Undefined name '_debounceTimer' - lib\principal\mapa.dart:718:9 - undefined_identifier
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:719:15 - undefined_identifier
+  error - Undefined name 'widget' - lib\principal\mapa.dart:720:13 - undefined_identifier
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:729:9 - undefined_identifier
+  error - Undefined name '_markers' - lib\principal\mapa.dart:733:24 - undefined_identifier
+  error - Undefined name '_gasolinerasMarkers' - lib\principal\mapa.dart:733:39 - undefined_identifier
+  error - Undefined name 'mapController' - lib\principal\mapa.dart:741:13 - undefined_identifier
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:742:17 - undefined_identifier
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:746:21 - undefined_identifier
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:747:21 - undefined_identifier
+  error - Undefined name '_cameraDebounceTimer' - lib\principal\mapa.dart:754:13 - undefined_identifier
+  error - Undefined name '_cameraDebounceTimer' - lib\principal\mapa.dart:755:13 - undefined_identifier
+  error - Undefined name 'mapController' - lib\principal\mapa.dart:758:21 - undefined_identifier
+  error - Undefined name 'mounted' - lib\principal\mapa.dart:758:46 - undefined_identifier
+  error - Undefined name 'mapController' - lib\principal\mapa.dart:761:31 - undefined_identifier
+  error - The function '_cargarGasolineras' isn't defined - lib\principal\mapa.dart:768:27 - undefined_function
+   info - Empty catch block - lib\principal\mapa.dart:770:31 - empty_catches
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:777:15 - undefined_identifier
+  error - Undefined name '_ubicacionActual' - lib\principal\mapa.dart:778:15 - undefined_identifier
+  error - Undefined name '_positionStreamSub' - lib\principal\mapa.dart:792:5 - undefined_identifier
+  error - Undefined name '_debounceTimer' - lib\principal\mapa.dart:793:5 - undefined_identifier
+  error - Undefined name '_cameraDebounceTimer' - lib\principal\mapa.dart:794:5 - undefined_identifier
+  error - Invalid context for 'super' invocation - lib\principal\mapa.dart:806:5 - super_in_invalid_context
+  error - Expected a method, getter, setter or operator declaration - lib\principal\mapa.dart:808:1 - expected_executable
+   info - Don't invoke 'print' in production code - lib\services\accesibilidad_service.dart:42:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\accesibilidad_service.dart:60:7 - avoid_print
+warning - The exception variable 'e' isn't used, so the 'catch' clause can be removed - lib\services\accesibilidad_service.dart:81:27 - unused_catch_clause
+   info - Don't invoke 'print' in production code - lib\services\accesibilidad_service.dart:130:7 - avoid_print
+warning - The exception variable 'e' isn't used, so the 'catch' clause can be removed - lib\services\accesibilidad_service.dart:159:27 - unused_catch_clause
+   info - Don't invoke 'print' in production code - lib\services\auth_service.dart:22:5 - avoid_print
+warning - The value of the field '_db' isn't used - lib\services\background_refresh_service.dart:8:21 - unused_field
+  error - Expected to find ';' - lib\services\background_refresh_service.dart:22:88 - expected_token
+  error - Expected an identifier - lib\services\background_refresh_service.dart:22:97 - missing_identifier
+  error - Unexpected text ';' - lib\services\background_refresh_service.dart:22:97 - unexpected_token
+   info - Unnecessary empty statement - lib\services\background_refresh_service.dart:22:98 - empty_statements
+  error - Expected to find ';' - lib\services\background_refresh_service.dart:48:13 - expected_token
+  error - Expected an identifier - lib\services\background_refresh_service.dart:48:90 - missing_identifier
+  error - Unexpected text ')' - lib\services\background_refresh_service.dart:48:90 - unexpected_token
+   info - Unnecessary empty statement - lib\services\background_refresh_service.dart:48:91 - empty_statements
+   info - Don't invoke 'print' in production code - lib\services\background_refresh_service.dart:65:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\coche_service.dart:19:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\coche_service.dart:29:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\coche_service.dart:67:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\coche_service.dart:92:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\coche_service.dart:121:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\coche_service.dart:131:7 - avoid_print
+  error - Expected to find ';' - lib\services\config_service.dart:28:9 - expected_token
+  error - Expected an identifier - lib\services\config_service.dart:28:79 - missing_identifier
+  error - Unexpected text ';' - lib\services\config_service.dart:28:79 - unexpected_token
+   info - Unnecessary empty statement - lib\services\config_service.dart:28:80 - empty_statements
+  error - Expected to find ';' - lib\services\gasolinera_cache_service.dart:30:86 - expected_token
+  error - Expected an identifier - lib\services\gasolinera_cache_service.dart:30:87 - missing_identifier
+  error - Unexpected text ')' - lib\services\gasolinera_cache_service.dart:30:87 - unexpected_token
+   info - Unnecessary empty statement - lib\services\gasolinera_cache_service.dart:30:88 - empty_statements
+  error - Expected to find ';' - lib\services\gasolinera_cache_service.dart:36:11 - expected_token
+  error - Expected an identifier - lib\services\gasolinera_cache_service.dart:36:87 - missing_identifier
+  error - Unexpected text ')' - lib\services\gasolinera_cache_service.dart:36:87 - unexpected_token
+   info - Unnecessary empty statement - lib\services\gasolinera_cache_service.dart:36:88 - empty_statements
+  error - Expected to find ';' - lib\services\gasolinera_cache_service.dart:47:11 - expected_token
+  error - Expected an identifier - lib\services\gasolinera_cache_service.dart:47:80 - missing_identifier
+  error - Unexpected text ')' - lib\services\gasolinera_cache_service.dart:47:80 - unexpected_token
+   info - Unnecessary empty statement - lib\services\gasolinera_cache_service.dart:47:81 - empty_statements
+   info - Don't invoke 'print' in production code - lib\services\gasolinera_cache_service.dart:80:5 - avoid_print
+  error - Expected to find ';' - lib\services\gasolinera_cache_service.dart:111:66 - expected_token
+  error - Expected an identifier - lib\services\gasolinera_cache_service.dart:111:91 - missing_identifier
+  error - Unexpected text ';' - lib\services\gasolinera_cache_service.dart:111:91 - unexpected_token
+   info - Unnecessary empty statement - lib\services\gasolinera_cache_service.dart:111:92 - empty_statements
+   info - Don't invoke 'print' in production code - lib\services\gasolinera_cache_service.dart:149:5 - avoid_print
+  error - Expected to find ';' - lib\services\gasolinera_cache_service.dart:156:82 - expected_token
+  error - Expected an identifier - lib\services\gasolinera_cache_service.dart:156:86 - missing_identifier
+  error - Unexpected text ')' - lib\services\gasolinera_cache_service.dart:156:86 - unexpected_token
+   info - Unnecessary empty statement - lib\services\gasolinera_cache_service.dart:156:87 - empty_statements
+   info - Don't invoke 'print' in production code - lib\services\local_image_service.dart:38:7 - avoid_print
+warning - Dead code - lib\services\local_image_service.dart:62:7 - dead_code
+   info - Don't invoke 'print' in production code - lib\services\provincia_service.dart:73:5 - avoid_print
+  error - Expected to find ';' - lib\services\provincia_service.dart:218:9 - expected_token
+  error - Expected an identifier - lib\services\provincia_service.dart:218:87 - missing_identifier
+  error - Unexpected text ';' - lib\services\provincia_service.dart:218:87 - unexpected_token
+   info - Unnecessary empty statement - lib\services\provincia_service.dart:218:88 - empty_statements
+   info - Don't invoke 'print' in production code - lib\services\usuario_service.dart:37:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\usuario_service.dart:55:9 - avoid_print
+warning - The exception variable 'e' isn't used, so the 'catch' clause can be removed - lib\services\usuario_service.dart:67:27 - unused_catch_clause
+  error - Expected to find ';' - lib\services\usuario_service.dart:90:75 - expected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:90:77 - missing_identifier
+  error - Expected to find ';' - lib\services\usuario_service.dart:90:77 - expected_token
+  error - Unexpected text ',' - lib\services\usuario_service.dart:90:77 - unexpected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:91:7 - missing_identifier
+  error - Unexpected text ')' - lib\services\usuario_service.dart:91:7 - unexpected_token
+   info - Unnecessary empty statement - lib\services\usuario_service.dart:91:8 - empty_statements
+warning - The exception variable 'e' isn't used, so the 'catch' clause can be removed - lib\services\usuario_service.dart:137:27 - unused_catch_clause
+  error - Expected to find ';' - lib\services\usuario_service.dart:152:86 - expected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:152:88 - missing_identifier
+  error - Expected to find ';' - lib\services\usuario_service.dart:152:88 - expected_token
+  error - Unexpected text ',' - lib\services\usuario_service.dart:152:88 - unexpected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:153:7 - missing_identifier
+  error - Unexpected text ')' - lib\services\usuario_service.dart:153:7 - unexpected_token
+   info - Unnecessary empty statement - lib\services\usuario_service.dart:153:8 - empty_statements
+  error - Expected to find ';' - lib\services\usuario_service.dart:161:88 - expected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:161:90 - missing_identifier
+  error - Expected to find ';' - lib\services\usuario_service.dart:161:90 - expected_token
+  error - Unexpected text ';' - lib\services\usuario_service.dart:161:90 - unexpected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:162:5 - missing_identifier
+  error - Unexpected text ';' - lib\services\usuario_service.dart:162:5 - unexpected_token
+   info - Unnecessary empty statement - lib\services\usuario_service.dart:162:6 - empty_statements
+  error - Expected to find ';' - lib\services\usuario_service.dart:164:99 - expected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:164:101 - missing_identifier
+  error - Expected to find ';' - lib\services\usuario_service.dart:164:101 - expected_token
+  error - Unexpected text ';' - lib\services\usuario_service.dart:164:101 - unexpected_token
+  error - Expected an identifier - lib\services\usuario_service.dart:165:5 - missing_identifier
+  error - Unexpected text ';' - lib\services\usuario_service.dart:165:5 - unexpected_token
+   info - Unnecessary empty statement - lib\services\usuario_service.dart:165:6 - empty_statements
+   info - Don't invoke 'print' in production code - lib\services\usuario_service.dart:205:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\usuario_service.dart:225:9 - avoid_print
+warning - The exception variable 'e' isn't used, so the 'catch' clause can be removed - lib\services\usuario_service.dart:249:27 - unused_catch_clause
+
