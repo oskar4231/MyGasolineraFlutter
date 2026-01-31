@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart'; // 🆕 Para obtener ubicación
-import 'package:my_gasolinera/services/provincia_service.dart'; // 🆕 Para detectar provincia
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart'; // 🆕 Para detectar provincia
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/principal/mapa/map_widget.dart';
-import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/coches/coches.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'favoritos.dart';
-import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/map_widget.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
+import 'package:my_gasolinera/Implementaciones/coches/presentacion/pages/coches.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/favoritos.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/main.dart' as app;
 
 // Importar los nuevos widgets
-import 'widgets/home_header.dart';
-import 'widgets/home_bottom_bar.dart';
-import 'widgets/filters_drawer.dart';
-import 'widgets/filter_dialogs/price_filter_dialog.dart';
-import 'widgets/filter_dialogs/fuel_filter_dialog.dart';
-import 'widgets/filter_dialogs/opening_filter_dialog.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/home_header.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/home_bottom_bar.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/presentacion/widgets/filters_drawer.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/price_filter_dialog.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/fuel_filter_dialog.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/opening_filter_dialog.dart';
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
-class OpeningFilterDialog extends StatefulWidget {
+class FuelFilterDialog extends StatefulWidget {
   final String? valorActual;
 
-  const OpeningFilterDialog({
+  const FuelFilterDialog({
     super.key,
     this.valorActual,
   });
@@ -15,15 +15,15 @@ class OpeningFilterDialog extends StatefulWidget {
   }) async {
     return await showDialog<String>(
       context: context,
-      builder: (context) => OpeningFilterDialog(valorActual: valorActual),
+      builder: (context) => FuelFilterDialog(valorActual: valorActual),
     );
   }
 
   @override
-  State<OpeningFilterDialog> createState() => _OpeningFilterDialogState();
+  State<FuelFilterDialog> createState() => _FuelFilterDialogState();
 }
 
-class _OpeningFilterDialogState extends State<OpeningFilterDialog> {
+class _FuelFilterDialogState extends State<FuelFilterDialog> {
   String? _valorTemporal;
 
   @override
@@ -59,10 +59,11 @@ class _OpeningFilterDialogState extends State<OpeningFilterDialog> {
     final l10n = AppLocalizations.of(context)!;
 
     final opciones = {
-      '24 Horas': l10n.veinticuatroHoras,
-      'Gasolineras atendidas por personal': l10n.atendidasPersonal,
-      'Gasolineras abiertas ahora': l10n.abiertasAhora,
-      'Todas': l10n.todas,
+      'Gasolina 95': '${l10n.gasolina} 95',
+      'Gasolina 98': '${l10n.gasolina} 98',
+      'Diesel': l10n.diesel,
+      'Diesel Premium': '${l10n.diesel} Premium',
+      'Gas': 'Gas (GLP)',
     };
 
     return Dialog(
@@ -77,7 +78,7 @@ class _OpeningFilterDialogState extends State<OpeningFilterDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n.apertura,
+              l10n.tiposCombustible,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

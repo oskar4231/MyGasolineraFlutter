@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/ajustes/ajustes.dart';
-import 'package:my_gasolinera/principal/layouthome.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 
-import 'package:my_gasolinera/services/coche_service.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'package:my_gasolinera/models/coche.dart';
-import 'package:my_gasolinera/coches/widgets/coche_card.dart';
-import 'package:my_gasolinera/metodos/dialog_helper.dart';
+import 'package:my_gasolinera/Implementaciones/coches/data/services/coche_service.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/coches/domain/models/coche.dart';
+import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/coche_card.dart';
+import 'package:my_gasolinera/core/utils/dialog_helper.dart';
 
 class CochesScreen extends StatefulWidget {
   const CochesScreen({super.key});

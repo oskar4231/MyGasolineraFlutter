@@ -5,7 +5,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart' show kIsWeb; // Add this import
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/main.dart';
-import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/baseDatos.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 

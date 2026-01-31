@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
-import 'package:my_gasolinera/services/api_config.dart';
-import 'package:my_gasolinera/services/local_image_service.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/local_image_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class FacturaImageWidget extends StatefulWidget {

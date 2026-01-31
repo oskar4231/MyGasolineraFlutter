@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_image_widget.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;

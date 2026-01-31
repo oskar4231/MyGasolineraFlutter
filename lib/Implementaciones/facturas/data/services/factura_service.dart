@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'auth_service.dart';
-import 'api_config.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
 
 class FacturaService {
   // Obtener facturas paginadas

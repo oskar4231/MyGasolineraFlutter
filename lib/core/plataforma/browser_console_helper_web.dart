@@ -1,5 +1,5 @@
 import 'dart:html' as html;
-import 'package:my_gasolinera/services/config_service.dart';
+import 'package:my_gasolinera/core/config/config_service.dart';
 
 /// Inicializa los listeners de mensajes para la consola del navegador
 /// Versión WEB - Usa dart:html

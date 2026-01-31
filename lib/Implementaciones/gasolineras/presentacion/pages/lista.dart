@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 
 class GasolineraListWidget extends StatelessWidget {
   final List<Gasolinera> gasolineras;

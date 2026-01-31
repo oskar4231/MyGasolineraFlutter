@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_gasolinera/Inicio/login/login.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'dart:typed_data';
-import 'package:my_gasolinera/ajustes/facturas/FacturasScreen.dart';
-import 'package:my_gasolinera/ajustes/estadisticas/estadisticas.dart';
-import 'package:my_gasolinera/ajustes/accesibilidad/accesibilidad.dart';
-import 'package:my_gasolinera/ajustes/idiomas/idiomas_screen.dart';
-import 'package:my_gasolinera/services/auth_service.dart';
-import 'package:my_gasolinera/services/usuario_service.dart';
-import 'package:my_gasolinera/services/perfil_service.dart';
-import 'package:my_gasolinera/services/config_service.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/FacturasScreen.dart';
+import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/pages/estadisticas.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/accesibilidad.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/idiomas_screen.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/usuario_service.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/data/services/perfil_service.dart';
+import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_gasolinera/services/local_image_service.dart';
-import 'package:my_gasolinera/coches/coches.dart';
-import 'package:my_gasolinera/principal/layouthome.dart';
+import 'package:my_gasolinera/core/utils/local_image_service.dart';
+import 'package:my_gasolinera/Implementaciones/coches/presentacion/pages/coches.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Inicio/inicio.dart';
-import 'package:my_gasolinera/services/config_service.dart';
-import 'package:my_gasolinera/services/background_refresh_service.dart';
-import 'package:my_gasolinera/importante/switchWebApk.dart';
-import 'package:my_gasolinera/Modos/Temas/theme_manager.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
+import 'package:my_gasolinera/core/config/config_service.dart';
+import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
+import 'package:my_gasolinera/core/config/importante/switchWebApk.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
 
-import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/baseDatos.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'package:my_gasolinera/providers/language_provider.dart';
-import 'package:my_gasolinera/providers/font_size_provider.dart';
-import 'package:my_gasolinera/services/auth_service.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/providers/language_provider.dart';
+import 'package:my_gasolinera/core/providers/font_size_provider.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 
 // Instancias globales
 late AppDatabase database;

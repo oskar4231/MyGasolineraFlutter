@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Inicio/crear_cuenta/crear.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/crear.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 
 class Inicio extends StatelessWidget {

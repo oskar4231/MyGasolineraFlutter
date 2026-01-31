@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'auth_service.dart';
-import 'package:my_gasolinera/services/api_config.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
 
 class EstadisticasAvanzadasService {
   static Map<String, String> _getHeaders() {

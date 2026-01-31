@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'api_config.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
 
 /// Servicio responsable de gestionar la configuración del backend.
 /// Se ha movido de una actualización dinámica vía Gist a una URL fija de Ngrok.

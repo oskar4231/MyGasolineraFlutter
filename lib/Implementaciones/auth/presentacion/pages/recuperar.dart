@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Inicio/login/nueva_password.dart';
-import 'package:my_gasolinera/services/auth_service.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/nueva_password.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 // Pantalla para solicitar la recuperacion de la contraseña
 // Muestra un formulario con un campo de correo y un boton de envío

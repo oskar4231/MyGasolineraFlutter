@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:my_gasolinera/importante/switchBackend.dart';
+import 'package:my_gasolinera/core/config/importante/switchBackend.dart';
 
 ///
 /// Este archivo contiene la URL base del servidor backend.
