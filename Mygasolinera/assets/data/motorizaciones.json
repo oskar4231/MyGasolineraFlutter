@@ -1,0 +1,4938 @@
+[
+    {
+        "id": 1,
+        "modelo_id": 1,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "130/150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 2,
+        "modelo_id": 1,
+        "nombre": "2.0 TSI GTI",
+        "combustible": "Gasolina",
+        "potencia": "245 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 3,
+        "modelo_id": 1,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "115/150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 4,
+        "modelo_id": 1,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204/245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 5,
+        "modelo_id": 2,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 6,
+        "modelo_id": 2,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 7,
+        "modelo_id": 2,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "115/150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 8,
+        "modelo_id": 3,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "130/150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 9,
+        "modelo_id": 3,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150/200 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 10,
+        "modelo_id": 3,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 11,
+        "modelo_id": 4,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 12,
+        "modelo_id": 4,
+        "nombre": "2.0 TSI GTI",
+        "combustible": "Gasolina",
+        "potencia": "207 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 13,
+        "modelo_id": 5,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 14,
+        "modelo_id": 5,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 15,
+        "modelo_id": 6,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 16,
+        "modelo_id": 6,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 17,
+        "modelo_id": 7,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 18,
+        "modelo_id": 7,
+        "nombre": "1.4 GTE",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "218 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 19,
+        "modelo_id": 8,
+        "nombre": "2.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "190/320 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 20,
+        "modelo_id": 8,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "200 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 21,
+        "modelo_id": 8,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "218 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 22,
+        "modelo_id": 9,
+        "nombre": "3.0 V6 TDI",
+        "combustible": "Diésel",
+        "potencia": "231/286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 23,
+        "modelo_id": 9,
+        "nombre": "3.0 V6 TSI eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "381/462 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 24,
+        "modelo_id": 10,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 25,
+        "modelo_id": 10,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "122/150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 26,
+        "modelo_id": 11,
+        "nombre": "Pro",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 27,
+        "modelo_id": 11,
+        "nombre": "Pro S",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 28,
+        "modelo_id": 12,
+        "nombre": "Pure",
+        "combustible": "Eléctrico",
+        "potencia": "170 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 29,
+        "modelo_id": 12,
+        "nombre": "Pro Performance",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 30,
+        "modelo_id": 12,
+        "nombre": "GTX",
+        "combustible": "Eléctrico",
+        "potencia": "299 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 31,
+        "modelo_id": 13,
+        "nombre": "Pro Performance",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 32,
+        "modelo_id": 13,
+        "nombre": "GTX",
+        "combustible": "Eléctrico",
+        "potencia": "299 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 33,
+        "modelo_id": 14,
+        "nombre": "Pro",
+        "combustible": "Eléctrico",
+        "potencia": "286 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 34,
+        "modelo_id": 15,
+        "nombre": "Pro",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 35,
+        "modelo_id": 16,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "170/205 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 36,
+        "modelo_id": 16,
+        "nombre": "3.0 TDI V6",
+        "combustible": "Diésel",
+        "potencia": "240 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 37,
+        "modelo_id": 17,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "102/122 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 38,
+        "modelo_id": 17,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "114 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 39,
+        "modelo_id": 18,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "218 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 40,
+        "modelo_id": 18,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 41,
+        "modelo_id": 19,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150/204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 42,
+        "modelo_id": 20,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "177 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 43,
+        "modelo_id": 21,
+        "nombre": "1.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "116 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 44,
+        "modelo_id": 21,
+        "nombre": "1.5 Petrol",
+        "combustible": "Gasolina",
+        "potencia": "125 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 45,
+        "modelo_id": 22,
+        "nombre": "1.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "116 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 46,
+        "modelo_id": 22,
+        "nombre": "1.5 Petrol",
+        "combustible": "Gasolina",
+        "potencia": "125 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 47,
+        "modelo_id": 23,
+        "nombre": "1.8 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 48,
+        "modelo_id": 23,
+        "nombre": "2.0 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "196 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 49,
+        "modelo_id": 24,
+        "nombre": "1.8 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 50,
+        "modelo_id": 24,
+        "nombre": "2.0 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "198 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 51,
+        "modelo_id": 24,
+        "nombre": "2.0 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "223 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 52,
+        "modelo_id": 25,
+        "nombre": "1.0 Petrol",
+        "combustible": "Gasolina",
+        "potencia": "72 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 53,
+        "modelo_id": 26,
+        "nombre": "2.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "218 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 54,
+        "modelo_id": 26,
+        "nombre": "2.5 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "306 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 55,
+        "modelo_id": 27,
+        "nombre": "2.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "248 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 56,
+        "modelo_id": 28,
+        "nombre": "FWD",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 57,
+        "modelo_id": 28,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "218 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 58,
+        "modelo_id": 29,
+        "nombre": "2.0 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "223 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 59,
+        "modelo_id": 30,
+        "nombre": "2.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "218 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 60,
+        "modelo_id": 31,
+        "nombre": "2.8 Diesel",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 61,
+        "modelo_id": 32,
+        "nombre": "2.4 Diesel",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 62,
+        "modelo_id": 32,
+        "nombre": "2.8 Diesel",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 63,
+        "modelo_id": 33,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 64,
+        "modelo_id": 33,
+        "nombre": "1.5 Diesel",
+        "combustible": "Diésel",
+        "potencia": "100/130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 65,
+        "modelo_id": 34,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 66,
+        "modelo_id": 34,
+        "nombre": "2.0 Diesel",
+        "combustible": "Diésel",
+        "potencia": "144/177 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 67,
+        "modelo_id": 35,
+        "nombre": "2.4 Boxer",
+        "combustible": "Gasolina",
+        "potencia": "234 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 68,
+        "modelo_id": 36,
+        "nombre": "2.0 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "258 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 69,
+        "modelo_id": 36,
+        "nombre": "3.0 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "340 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 70,
+        "modelo_id": 37,
+        "nombre": "Fuel Cell",
+        "combustible": "Hidrógeno",
+        "potencia": "182 CV",
+        "consumo": "0.9 kg/100km"
+    },
+    {
+        "id": 71,
+        "modelo_id": 38,
+        "nombre": "25 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "95 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 72,
+        "modelo_id": 38,
+        "nombre": "30 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 73,
+        "modelo_id": 39,
+        "nombre": "30 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 74,
+        "modelo_id": 39,
+        "nombre": "35 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 75,
+        "modelo_id": 39,
+        "nombre": "35 TDI",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 76,
+        "modelo_id": 39,
+        "nombre": "40 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 77,
+        "modelo_id": 40,
+        "nombre": "35 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 78,
+        "modelo_id": 40,
+        "nombre": "40 TDI",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 79,
+        "modelo_id": 41,
+        "nombre": "40 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 80,
+        "modelo_id": 41,
+        "nombre": "40 TDI",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 81,
+        "modelo_id": 42,
+        "nombre": "40 TDI",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 82,
+        "modelo_id": 42,
+        "nombre": "50 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "299 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 83,
+        "modelo_id": 43,
+        "nombre": "40 TDI",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 84,
+        "modelo_id": 43,
+        "nombre": "50 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "299 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 85,
+        "modelo_id": 44,
+        "nombre": "50 TDI",
+        "combustible": "Diésel",
+        "potencia": "286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 86,
+        "modelo_id": 44,
+        "nombre": "60 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "462 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 87,
+        "modelo_id": 45,
+        "nombre": "30 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 88,
+        "modelo_id": 45,
+        "nombre": "35 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 89,
+        "modelo_id": 46,
+        "nombre": "35 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 90,
+        "modelo_id": 46,
+        "nombre": "45 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 91,
+        "modelo_id": 47,
+        "nombre": "40 e-tron",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 92,
+        "modelo_id": 47,
+        "nombre": "50 e-tron quattro",
+        "combustible": "Eléctrico",
+        "potencia": "299 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 93,
+        "modelo_id": 48,
+        "nombre": "35 TDI",
+        "combustible": "Diésel",
+        "potencia": "163 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 94,
+        "modelo_id": 48,
+        "nombre": "50 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "299 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 95,
+        "modelo_id": 49,
+        "nombre": "50 TDI",
+        "combustible": "Diésel",
+        "potencia": "286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 96,
+        "modelo_id": 49,
+        "nombre": "55 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "381 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 97,
+        "modelo_id": 50,
+        "nombre": "50 TDI",
+        "combustible": "Diésel",
+        "potencia": "286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 98,
+        "modelo_id": 50,
+        "nombre": "55 TFSI e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "381 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 99,
+        "modelo_id": 51,
+        "nombre": "50 e-tron",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 100,
+        "modelo_id": 51,
+        "nombre": "55 e-tron",
+        "combustible": "Eléctrico",
+        "potencia": "408 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 101,
+        "modelo_id": 52,
+        "nombre": "e-tron GT quattro",
+        "combustible": "Eléctrico",
+        "potencia": "476/530 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 102,
+        "modelo_id": 52,
+        "nombre": "RS e-tron GT",
+        "combustible": "Eléctrico",
+        "potencia": "598/646 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 103,
+        "modelo_id": 53,
+        "nombre": "e-tron",
+        "combustible": "Eléctrico",
+        "potencia": "387 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 104,
+        "modelo_id": 54,
+        "nombre": "V10 Performance",
+        "combustible": "Gasolina",
+        "potencia": "620 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 105,
+        "modelo_id": 55,
+        "nombre": "40 TFSI",
+        "combustible": "Gasolina",
+        "potencia": "197 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 106,
+        "modelo_id": 56,
+        "nombre": "118i",
+        "combustible": "Gasolina",
+        "potencia": "136 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 107,
+        "modelo_id": 56,
+        "nombre": "120d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 108,
+        "modelo_id": 57,
+        "nombre": "218i",
+        "combustible": "Gasolina",
+        "potencia": "136 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 109,
+        "modelo_id": 57,
+        "nombre": "220d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 110,
+        "modelo_id": 58,
+        "nombre": "320i",
+        "combustible": "Gasolina",
+        "potencia": "184 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 111,
+        "modelo_id": 58,
+        "nombre": "320d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 112,
+        "modelo_id": 58,
+        "nombre": "330e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "292 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 113,
+        "modelo_id": 59,
+        "nombre": "420i",
+        "combustible": "Gasolina",
+        "potencia": "184 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 114,
+        "modelo_id": 59,
+        "nombre": "420d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 115,
+        "modelo_id": 60,
+        "nombre": "520i",
+        "combustible": "Gasolina",
+        "potencia": "184 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 116,
+        "modelo_id": 60,
+        "nombre": "520d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 117,
+        "modelo_id": 60,
+        "nombre": "530e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "292 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 118,
+        "modelo_id": 61,
+        "nombre": "630i",
+        "combustible": "Gasolina",
+        "potencia": "258 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 119,
+        "modelo_id": 61,
+        "nombre": "620d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 120,
+        "modelo_id": 62,
+        "nombre": "740d",
+        "combustible": "Diésel",
+        "potencia": "299 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 121,
+        "modelo_id": 62,
+        "nombre": "750e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "490 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 122,
+        "modelo_id": 63,
+        "nombre": "840i",
+        "combustible": "Gasolina",
+        "potencia": "333 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 123,
+        "modelo_id": 63,
+        "nombre": "840d",
+        "combustible": "Diésel",
+        "potencia": "340 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 124,
+        "modelo_id": 64,
+        "nombre": "sDrive18i",
+        "combustible": "Gasolina",
+        "potencia": "136 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 125,
+        "modelo_id": 64,
+        "nombre": "sDrive18d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 126,
+        "modelo_id": 64,
+        "nombre": "xDrive25e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 127,
+        "modelo_id": 65,
+        "nombre": "sDrive20i",
+        "combustible": "Gasolina",
+        "potencia": "170 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 128,
+        "modelo_id": 65,
+        "nombre": "sDrive18d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 129,
+        "modelo_id": 66,
+        "nombre": "xDrive20i",
+        "combustible": "Gasolina",
+        "potencia": "184 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 130,
+        "modelo_id": 66,
+        "nombre": "xDrive20d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 131,
+        "modelo_id": 66,
+        "nombre": "xDrive30e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "292 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 132,
+        "modelo_id": 67,
+        "nombre": "xDrive20i",
+        "combustible": "Gasolina",
+        "potencia": "184 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 133,
+        "modelo_id": 67,
+        "nombre": "xDrive20d",
+        "combustible": "Diésel",
+        "potencia": "190 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 134,
+        "modelo_id": 68,
+        "nombre": "xDrive40i",
+        "combustible": "Gasolina",
+        "potencia": "381 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 135,
+        "modelo_id": 68,
+        "nombre": "xDrive30d",
+        "combustible": "Diésel",
+        "potencia": "298 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 136,
+        "modelo_id": 68,
+        "nombre": "xDrive50e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "489 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 137,
+        "modelo_id": 69,
+        "nombre": "xDrive40i",
+        "combustible": "Gasolina",
+        "potencia": "381 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 138,
+        "modelo_id": 69,
+        "nombre": "xDrive30d",
+        "combustible": "Diésel",
+        "potencia": "298 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 139,
+        "modelo_id": 70,
+        "nombre": "xDrive40i",
+        "combustible": "Gasolina",
+        "potencia": "381 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 140,
+        "modelo_id": 70,
+        "nombre": "xDrive40d",
+        "combustible": "Diésel",
+        "potencia": "352 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 141,
+        "modelo_id": 71,
+        "nombre": "V8 PEHV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "653 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 142,
+        "modelo_id": 72,
+        "nombre": "sDrive20i",
+        "combustible": "Gasolina",
+        "potencia": "197 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 143,
+        "modelo_id": 73,
+        "nombre": "xDrive40",
+        "combustible": "Eléctrico",
+        "potencia": "326 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 144,
+        "modelo_id": 74,
+        "nombre": "xDrive30",
+        "combustible": "Eléctrico",
+        "potencia": "313 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 145,
+        "modelo_id": 75,
+        "nombre": "M Sport",
+        "combustible": "Eléctrico",
+        "potencia": "286 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 146,
+        "modelo_id": 76,
+        "nombre": "eDrive40",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 147,
+        "modelo_id": 77,
+        "nombre": "eDrive40",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 148,
+        "modelo_id": 78,
+        "nombre": "xDrive60",
+        "combustible": "Eléctrico",
+        "potencia": "544 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 149,
+        "modelo_id": 79,
+        "nombre": "A 180",
+        "combustible": "Gasolina",
+        "potencia": "136 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 150,
+        "modelo_id": 79,
+        "nombre": "A 200 d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 151,
+        "modelo_id": 79,
+        "nombre": "A 250 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "218 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 152,
+        "modelo_id": 80,
+        "nombre": "B 180",
+        "combustible": "Gasolina",
+        "potencia": "136 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 153,
+        "modelo_id": 80,
+        "nombre": "B 200 d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 154,
+        "modelo_id": 81,
+        "nombre": "C 200",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 155,
+        "modelo_id": 81,
+        "nombre": "C 220 d",
+        "combustible": "Diésel",
+        "potencia": "200 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 156,
+        "modelo_id": 81,
+        "nombre": "C 300 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "313 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 157,
+        "modelo_id": 82,
+        "nombre": "E 200",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 158,
+        "modelo_id": 82,
+        "nombre": "E 220 d",
+        "combustible": "Diésel",
+        "potencia": "197 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 159,
+        "modelo_id": 82,
+        "nombre": "E 300 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "313 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 160,
+        "modelo_id": 83,
+        "nombre": "S 350 d",
+        "combustible": "Diésel",
+        "potencia": "286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 161,
+        "modelo_id": 83,
+        "nombre": "S 500",
+        "combustible": "Gasolina",
+        "potencia": "435 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 162,
+        "modelo_id": 83,
+        "nombre": "S 580 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "510 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 163,
+        "modelo_id": 84,
+        "nombre": "CLA 180",
+        "combustible": "Gasolina",
+        "potencia": "136 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 164,
+        "modelo_id": 84,
+        "nombre": "CLA 200 d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 165,
+        "modelo_id": 84,
+        "nombre": "CLA 250 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "218 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 166,
+        "modelo_id": 85,
+        "nombre": "CLS 350 d",
+        "combustible": "Diésel",
+        "potencia": "286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 167,
+        "modelo_id": 86,
+        "nombre": "GLA 200",
+        "combustible": "Gasolina",
+        "potencia": "163 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 168,
+        "modelo_id": 86,
+        "nombre": "GLA 200 d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 169,
+        "modelo_id": 86,
+        "nombre": "GLA 250 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "218 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 170,
+        "modelo_id": 87,
+        "nombre": "GLB 200",
+        "combustible": "Gasolina",
+        "potencia": "163 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 171,
+        "modelo_id": 87,
+        "nombre": "GLB 200 d",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 172,
+        "modelo_id": 88,
+        "nombre": "GLC 220 d",
+        "combustible": "Diésel",
+        "potencia": "197 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 173,
+        "modelo_id": 88,
+        "nombre": "GLC 300 e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "313 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 174,
+        "modelo_id": 89,
+        "nombre": "GLE 300 d",
+        "combustible": "Diésel",
+        "potencia": "272 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 175,
+        "modelo_id": 89,
+        "nombre": "GLE 450",
+        "combustible": "Gasolina",
+        "potencia": "367 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 176,
+        "modelo_id": 89,
+        "nombre": "GLE 350 de",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "320 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 177,
+        "modelo_id": 90,
+        "nombre": "GLS 350 d",
+        "combustible": "Diésel",
+        "potencia": "286 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 178,
+        "modelo_id": 91,
+        "nombre": "G 400 d",
+        "combustible": "Diésel",
+        "potencia": "330 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 179,
+        "modelo_id": 92,
+        "nombre": "250",
+        "combustible": "Eléctrico",
+        "potencia": "190 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 180,
+        "modelo_id": 93,
+        "nombre": "250",
+        "combustible": "Eléctrico",
+        "potencia": "190 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 181,
+        "modelo_id": 94,
+        "nombre": "400 4MATIC",
+        "combustible": "Eléctrico",
+        "potencia": "408 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 182,
+        "modelo_id": 95,
+        "nombre": "300",
+        "combustible": "Eléctrico",
+        "potencia": "245 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 183,
+        "modelo_id": 96,
+        "nombre": "450+",
+        "combustible": "Eléctrico",
+        "potencia": "360 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 184,
+        "modelo_id": 97,
+        "nombre": "300",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 185,
+        "modelo_id": 98,
+        "nombre": "220 d",
+        "combustible": "Diésel",
+        "potencia": "163 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 186,
+        "modelo_id": 99,
+        "nombre": "63 S E Performance",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "843 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 187,
+        "modelo_id": 100,
+        "nombre": "43 AMG",
+        "combustible": "Gasolina",
+        "potencia": "381 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 188,
+        "modelo_id": 101,
+        "nombre": "200",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 189,
+        "modelo_id": 102,
+        "nombre": "TCe 90",
+        "combustible": "Gasolina",
+        "potencia": "90 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 190,
+        "modelo_id": 102,
+        "nombre": "E-Tech Full Hybrid 145",
+        "combustible": "Híbrido",
+        "potencia": "145 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 191,
+        "modelo_id": 102,
+        "nombre": "Blue dCi 100",
+        "combustible": "Diésel",
+        "potencia": "100 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 192,
+        "modelo_id": 103,
+        "nombre": "TCe 90",
+        "combustible": "Gasolina",
+        "potencia": "90 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 193,
+        "modelo_id": 103,
+        "nombre": "Mild Hybrid 140",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 194,
+        "modelo_id": 103,
+        "nombre": "E-Tech Full Hybrid 145",
+        "combustible": "Híbrido",
+        "potencia": "145 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 195,
+        "modelo_id": 104,
+        "nombre": "Mild Hybrid 140",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 196,
+        "modelo_id": 104,
+        "nombre": "E-Tech Full Hybrid 145",
+        "combustible": "Híbrido",
+        "potencia": "145 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 197,
+        "modelo_id": 105,
+        "nombre": "Mild Hybrid 160",
+        "combustible": "Híbrido",
+        "potencia": "160 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 198,
+        "modelo_id": 105,
+        "nombre": "E-Tech Full Hybrid 200",
+        "combustible": "Híbrido",
+        "potencia": "200 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 199,
+        "modelo_id": 106,
+        "nombre": "E-Tech Full Hybrid 200",
+        "combustible": "Híbrido",
+        "potencia": "200 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 200,
+        "modelo_id": 107,
+        "nombre": "E-Tech Full Hybrid 200",
+        "combustible": "Híbrido",
+        "potencia": "200 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 201,
+        "modelo_id": 107,
+        "nombre": "E-Tech 4x4 300",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "300 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 202,
+        "modelo_id": 108,
+        "nombre": "EV40",
+        "combustible": "Eléctrico",
+        "potencia": "130 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 203,
+        "modelo_id": 108,
+        "nombre": "EV60",
+        "combustible": "Eléctrico",
+        "potencia": "220 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 204,
+        "modelo_id": 109,
+        "nombre": "Long Range",
+        "combustible": "Eléctrico",
+        "potencia": "220 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 205,
+        "modelo_id": 110,
+        "nombre": "E-Tech Electric",
+        "combustible": "Eléctrico",
+        "potencia": "81 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 206,
+        "modelo_id": 110,
+        "nombre": "SCe 65",
+        "combustible": "Gasolina",
+        "potencia": "65 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 207,
+        "modelo_id": 111,
+        "nombre": "TCe 100",
+        "combustible": "Gasolina",
+        "potencia": "100 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 208,
+        "modelo_id": 111,
+        "nombre": "Blue dCi 95",
+        "combustible": "Diésel",
+        "potencia": "95 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 209,
+        "modelo_id": 111,
+        "nombre": "E-Tech Electric",
+        "combustible": "Eléctrico",
+        "potencia": "120 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 210,
+        "modelo_id": 112,
+        "nombre": "Blue dCi 110",
+        "combustible": "Diésel",
+        "potencia": "110 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 211,
+        "modelo_id": 112,
+        "nombre": "Blue dCi 150",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 212,
+        "modelo_id": 113,
+        "nombre": "Motor 95",
+        "combustible": "Eléctrico",
+        "potencia": "95 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 213,
+        "modelo_id": 113,
+        "nombre": "Motor 120",
+        "combustible": "Eléctrico",
+        "potencia": "120 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 214,
+        "modelo_id": 113,
+        "nombre": "Motor 150",
+        "combustible": "Eléctrico",
+        "potencia": "150 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 215,
+        "modelo_id": 114,
+        "nombre": "1.0 MPI",
+        "combustible": "Gasolina",
+        "potencia": "80 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 216,
+        "modelo_id": 114,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 217,
+        "modelo_id": 114,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 218,
+        "modelo_id": 115,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/115 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 219,
+        "modelo_id": 115,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 220,
+        "modelo_id": 116,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "115/150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 221,
+        "modelo_id": 116,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "115/150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 222,
+        "modelo_id": 116,
+        "nombre": "2.0 TSI RS",
+        "combustible": "Gasolina",
+        "potencia": "265 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 223,
+        "modelo_id": 117,
+        "nombre": "1.5 TSI mHEV",
+        "combustible": "Híbrido",
+        "potencia": "150 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 224,
+        "modelo_id": 117,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150/193 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 225,
+        "modelo_id": 117,
+        "nombre": "1.5 TSI PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 226,
+        "modelo_id": 118,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/115 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 227,
+        "modelo_id": 118,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 228,
+        "modelo_id": 119,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "115 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 229,
+        "modelo_id": 119,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 230,
+        "modelo_id": 119,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 231,
+        "modelo_id": 120,
+        "nombre": "1.5 TSI mHEV",
+        "combustible": "Híbrido",
+        "potencia": "150 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 232,
+        "modelo_id": 120,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150/193 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 233,
+        "modelo_id": 120,
+        "nombre": "1.5 TSI PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 234,
+        "modelo_id": 121,
+        "nombre": "60",
+        "combustible": "Eléctrico",
+        "potencia": "180 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 235,
+        "modelo_id": 121,
+        "nombre": "85",
+        "combustible": "Eléctrico",
+        "potencia": "285 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 236,
+        "modelo_id": 121,
+        "nombre": "85x",
+        "combustible": "Eléctrico",
+        "potencia": "285 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 237,
+        "modelo_id": 121,
+        "nombre": "RS",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 238,
+        "modelo_id": 122,
+        "nombre": "85",
+        "combustible": "Eléctrico",
+        "potencia": "285 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 239,
+        "modelo_id": 122,
+        "nombre": "RS",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 240,
+        "modelo_id": 123,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "75/100 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 241,
+        "modelo_id": 123,
+        "nombre": "Hybrid 100",
+        "combustible": "Híbrido",
+        "potencia": "100 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 242,
+        "modelo_id": 123,
+        "nombre": "E-208",
+        "combustible": "Eléctrico",
+        "potencia": "136/156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 243,
+        "modelo_id": 124,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 244,
+        "modelo_id": 124,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 245,
+        "modelo_id": 124,
+        "nombre": "Plug-in Hybrid 180",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "180 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 246,
+        "modelo_id": 124,
+        "nombre": "E-308",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 247,
+        "modelo_id": 125,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 248,
+        "modelo_id": 125,
+        "nombre": "Plug-in Hybrid 225",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 249,
+        "modelo_id": 126,
+        "nombre": "Plug-in Hybrid 225",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 250,
+        "modelo_id": 126,
+        "nombre": "PSE",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "360 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 251,
+        "modelo_id": 126,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 252,
+        "modelo_id": 127,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "100/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 253,
+        "modelo_id": 127,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 254,
+        "modelo_id": 127,
+        "nombre": "E-2008",
+        "combustible": "Eléctrico",
+        "potencia": "136/156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 255,
+        "modelo_id": 128,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 256,
+        "modelo_id": 128,
+        "nombre": "Plug-in Hybrid 195",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "195 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 257,
+        "modelo_id": 128,
+        "nombre": "Electric 210",
+        "combustible": "Eléctrico",
+        "potencia": "210 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 258,
+        "modelo_id": 129,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 259,
+        "modelo_id": 129,
+        "nombre": "Electric 210",
+        "combustible": "Eléctrico",
+        "potencia": "210 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 260,
+        "modelo_id": 130,
+        "nombre": "E-Rifter",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 261,
+        "modelo_id": 130,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "100/130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 262,
+        "modelo_id": 131,
+        "nombre": "E-Traveller",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 263,
+        "modelo_id": 132,
+        "nombre": "1.0 DPI",
+        "combustible": "Gasolina",
+        "potencia": "67 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 264,
+        "modelo_id": 132,
+        "nombre": "1.2 DPI",
+        "combustible": "Gasolina",
+        "potencia": "84 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 265,
+        "modelo_id": 133,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "100/120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 266,
+        "modelo_id": 134,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "100/120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 267,
+        "modelo_id": 135,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 268,
+        "modelo_id": 135,
+        "nombre": "1.5 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "160 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 269,
+        "modelo_id": 135,
+        "nombre": "1.6 GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "141 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 270,
+        "modelo_id": 136,
+        "nombre": "1.5 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "160 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 271,
+        "modelo_id": 136,
+        "nombre": "1.6 GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "141 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 272,
+        "modelo_id": 137,
+        "nombre": "1.5 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "160 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 273,
+        "modelo_id": 137,
+        "nombre": "1.6 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 274,
+        "modelo_id": 138,
+        "nombre": "1.6 GDi HEV",
+        "combustible": "Híbrido",
+        "potencia": "141 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 275,
+        "modelo_id": 138,
+        "nombre": "1.6 GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "183 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 276,
+        "modelo_id": 138,
+        "nombre": "EV",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 277,
+        "modelo_id": 139,
+        "nombre": "1.6 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "150/180 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 278,
+        "modelo_id": 139,
+        "nombre": "1.6 T-GDi HEV",
+        "combustible": "Híbrido",
+        "potencia": "230 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 279,
+        "modelo_id": 139,
+        "nombre": "1.6 T-GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "265 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 280,
+        "modelo_id": 140,
+        "nombre": "2.2 CRDi",
+        "combustible": "Diésel",
+        "potencia": "194 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 281,
+        "modelo_id": 140,
+        "nombre": "1.6 T-GDi HEV",
+        "combustible": "Híbrido",
+        "potencia": "230 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 282,
+        "modelo_id": 140,
+        "nombre": "1.6 T-GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "265 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 283,
+        "modelo_id": 141,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "229 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 284,
+        "modelo_id": 141,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "325 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 285,
+        "modelo_id": 141,
+        "nombre": "GT",
+        "combustible": "Eléctrico",
+        "potencia": "585 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 286,
+        "modelo_id": 142,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 287,
+        "modelo_id": 142,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "385 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 288,
+        "modelo_id": 143,
+        "nombre": "Long Range",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 289,
+        "modelo_id": 144,
+        "nombre": "TCe 90",
+        "combustible": "Gasolina",
+        "potencia": "90 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 290,
+        "modelo_id": 144,
+        "nombre": "ECO-G 100",
+        "combustible": "GLP",
+        "potencia": "100 CV",
+        "consumo": "N/A"
+    },
+    {
+        "id": 291,
+        "modelo_id": 145,
+        "nombre": "TCe 90",
+        "combustible": "Gasolina",
+        "potencia": "90 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 292,
+        "modelo_id": 145,
+        "nombre": "TCe 110",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 293,
+        "modelo_id": 145,
+        "nombre": "ECO-G 100",
+        "combustible": "GLP",
+        "potencia": "100 CV",
+        "consumo": "N/A"
+    },
+    {
+        "id": 294,
+        "modelo_id": 146,
+        "nombre": "ECO-G 100",
+        "combustible": "GLP",
+        "potencia": "100 CV",
+        "consumo": "N/A"
+    },
+    {
+        "id": 295,
+        "modelo_id": 146,
+        "nombre": "Hybrid 140",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 296,
+        "modelo_id": 147,
+        "nombre": "ECO-G 100",
+        "combustible": "GLP",
+        "potencia": "100 CV",
+        "consumo": "N/A"
+    },
+    {
+        "id": 297,
+        "modelo_id": 147,
+        "nombre": "TCe 130",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 298,
+        "modelo_id": 147,
+        "nombre": "Hybrid 140",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 299,
+        "modelo_id": 148,
+        "nombre": "Electric 45",
+        "combustible": "Eléctrico",
+        "potencia": "45 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 300,
+        "modelo_id": 148,
+        "nombre": "Electric 65",
+        "combustible": "Eléctrico",
+        "potencia": "65 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 301,
+        "modelo_id": 149,
+        "nombre": "1.0 MPi",
+        "combustible": "Gasolina",
+        "potencia": "67 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 302,
+        "modelo_id": 149,
+        "nombre": "1.2 MPi",
+        "combustible": "Gasolina",
+        "potencia": "84 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 303,
+        "modelo_id": 149,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "100 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 304,
+        "modelo_id": 150,
+        "nombre": "1.2 MPi",
+        "combustible": "Gasolina",
+        "potencia": "84 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 305,
+        "modelo_id": 150,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "100/120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 306,
+        "modelo_id": 150,
+        "nombre": "i20 N",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 307,
+        "modelo_id": 151,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 308,
+        "modelo_id": 151,
+        "nombre": "1.5 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "160 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 309,
+        "modelo_id": 151,
+        "nombre": "i30 N",
+        "combustible": "Gasolina",
+        "potencia": "280 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 310,
+        "modelo_id": 152,
+        "nombre": "1.2 MPi",
+        "combustible": "Gasolina",
+        "potencia": "84 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 311,
+        "modelo_id": 152,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "100/120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 312,
+        "modelo_id": 153,
+        "nombre": "1.0 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 313,
+        "modelo_id": 153,
+        "nombre": "1.6 GDi HEV",
+        "combustible": "Híbrido",
+        "potencia": "141 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 314,
+        "modelo_id": 153,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "156/218 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 315,
+        "modelo_id": 154,
+        "nombre": "1.6 T-GDi",
+        "combustible": "Gasolina",
+        "potencia": "150/180 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 316,
+        "modelo_id": 154,
+        "nombre": "1.6 T-GDi HEV",
+        "combustible": "Híbrido",
+        "potencia": "230 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 317,
+        "modelo_id": 154,
+        "nombre": "1.6 T-GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "265 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 318,
+        "modelo_id": 154,
+        "nombre": "1.6 CRDi",
+        "combustible": "Diésel",
+        "potencia": "115/136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 319,
+        "modelo_id": 155,
+        "nombre": "1.6 T-GDi HEV",
+        "combustible": "Híbrido",
+        "potencia": "230 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 320,
+        "modelo_id": 155,
+        "nombre": "1.6 T-GDi PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "265 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 321,
+        "modelo_id": 156,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "170/229 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 322,
+        "modelo_id": 156,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "325 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 323,
+        "modelo_id": 156,
+        "nombre": "IONIQ 5 N",
+        "combustible": "Eléctrico",
+        "potencia": "650 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 324,
+        "modelo_id": 157,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "151/229 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 325,
+        "modelo_id": 157,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "325 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 326,
+        "modelo_id": 158,
+        "nombre": "2.2 CRDi",
+        "combustible": "Diésel",
+        "potencia": "177 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 327,
+        "modelo_id": 159,
+        "nombre": "Fuel Cell",
+        "combustible": "Hidrógeno",
+        "potencia": "163 CV",
+        "consumo": "0.9 kg/100km"
+    },
+    {
+        "id": 328,
+        "modelo_id": 160,
+        "nombre": "1.0 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "100/125/155 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 329,
+        "modelo_id": 160,
+        "nombre": "1.5 EcoBoost ST",
+        "combustible": "Gasolina",
+        "potencia": "200 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 330,
+        "modelo_id": 161,
+        "nombre": "1.0 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "125/155 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 331,
+        "modelo_id": 161,
+        "nombre": "1.5 EcoBlue",
+        "combustible": "Diésel",
+        "potencia": "115 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 332,
+        "modelo_id": 161,
+        "nombre": "2.3 EcoBoost ST",
+        "combustible": "Gasolina",
+        "potencia": "280 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 333,
+        "modelo_id": 162,
+        "nombre": "1.0 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "125/155/170 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 334,
+        "modelo_id": 162,
+        "nombre": "Gen-E",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 335,
+        "modelo_id": 163,
+        "nombre": "1.5 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 336,
+        "modelo_id": 163,
+        "nombre": "2.5 FHEV",
+        "combustible": "Híbrido",
+        "potencia": "190 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 337,
+        "modelo_id": 163,
+        "nombre": "2.5 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 338,
+        "modelo_id": 164,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "269/294 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 339,
+        "modelo_id": 164,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "315/351 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 340,
+        "modelo_id": 164,
+        "nombre": "GT",
+        "combustible": "Eléctrico",
+        "potencia": "487 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 341,
+        "modelo_id": 165,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "170/286 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 342,
+        "modelo_id": 165,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 343,
+        "modelo_id": 166,
+        "nombre": "5.0 V8 GT",
+        "combustible": "Gasolina",
+        "potencia": "446 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 344,
+        "modelo_id": 166,
+        "nombre": "Dark Horse",
+        "combustible": "Gasolina",
+        "potencia": "453 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 345,
+        "modelo_id": 167,
+        "nombre": "1.5 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "114 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 346,
+        "modelo_id": 167,
+        "nombre": "2.0 EcoBlue",
+        "combustible": "Diésel",
+        "potencia": "102/122 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 347,
+        "modelo_id": 168,
+        "nombre": "1.0 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "125 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 348,
+        "modelo_id": 168,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 349,
+        "modelo_id": 169,
+        "nombre": "2.0 EcoBlue",
+        "combustible": "Diésel",
+        "potencia": "136/150/170 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 350,
+        "modelo_id": 169,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "232 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 351,
+        "modelo_id": 169,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136/217 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 352,
+        "modelo_id": 170,
+        "nombre": "2.0 EcoBlue",
+        "combustible": "Diésel",
+        "potencia": "170/205 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 353,
+        "modelo_id": 170,
+        "nombre": "3.0 V6 EcoBlue",
+        "combustible": "Diésel",
+        "potencia": "240 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 354,
+        "modelo_id": 170,
+        "nombre": "3.0 V6 EcoBoost Raptor",
+        "combustible": "Gasolina",
+        "potencia": "292 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 355,
+        "modelo_id": 171,
+        "nombre": "2.3 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "300 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 356,
+        "modelo_id": 171,
+        "nombre": "2.7 V6 EcoBoost",
+        "combustible": "Gasolina",
+        "potencia": "330 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 357,
+        "modelo_id": 172,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "170/286/340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 358,
+        "modelo_id": 173,
+        "nombre": "1.2",
+        "combustible": "Gasolina",
+        "potencia": "75 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 359,
+        "modelo_id": 173,
+        "nombre": "1.2 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "100/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 360,
+        "modelo_id": 173,
+        "nombre": "Hybrid 100/136",
+        "combustible": "Híbrido",
+        "potencia": "100/136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 361,
+        "modelo_id": 173,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136/156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 362,
+        "modelo_id": 174,
+        "nombre": "1.2 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "110/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 363,
+        "modelo_id": 174,
+        "nombre": "1.5 Diesel",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 364,
+        "modelo_id": 174,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "180/225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 365,
+        "modelo_id": 174,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 366,
+        "modelo_id": 175,
+        "nombre": "1.2 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "100/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 367,
+        "modelo_id": 175,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 368,
+        "modelo_id": 175,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136/156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 369,
+        "modelo_id": 176,
+        "nombre": "1.2",
+        "combustible": "Gasolina",
+        "potencia": "83 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 370,
+        "modelo_id": 176,
+        "nombre": "1.2 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "110/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 371,
+        "modelo_id": 176,
+        "nombre": "1.5 Diesel",
+        "combustible": "Diésel",
+        "potencia": "110 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 372,
+        "modelo_id": 177,
+        "nombre": "1.2 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 373,
+        "modelo_id": 177,
+        "nombre": "1.5 Diesel",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 374,
+        "modelo_id": 177,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "225/300 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 375,
+        "modelo_id": 178,
+        "nombre": "1.5 Diesel",
+        "combustible": "Diésel",
+        "potencia": "100/130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 376,
+        "modelo_id": 178,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 377,
+        "modelo_id": 179,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 378,
+        "modelo_id": 180,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 379,
+        "modelo_id": 181,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "270 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 380,
+        "modelo_id": 182,
+        "nombre": "Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "100/136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 381,
+        "modelo_id": 182,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "113 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 382,
+        "modelo_id": 183,
+        "nombre": "1.0 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "70 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 383,
+        "modelo_id": 184,
+        "nombre": "Electric 24kWh",
+        "combustible": "Eléctrico",
+        "potencia": "95 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 384,
+        "modelo_id": 184,
+        "nombre": "Electric 42kWh",
+        "combustible": "Eléctrico",
+        "potencia": "118 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 385,
+        "modelo_id": 185,
+        "nombre": "1.0 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "70 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 386,
+        "modelo_id": 186,
+        "nombre": "1.0 T3",
+        "combustible": "Gasolina",
+        "potencia": "100 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 387,
+        "modelo_id": 186,
+        "nombre": "1.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 388,
+        "modelo_id": 186,
+        "nombre": "1.6 Multijet",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 389,
+        "modelo_id": 187,
+        "nombre": "1.0 T3",
+        "combustible": "Gasolina",
+        "potencia": "120 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 390,
+        "modelo_id": 187,
+        "nombre": "1.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 391,
+        "modelo_id": 187,
+        "nombre": "1.3 Multijet",
+        "combustible": "Diésel",
+        "potencia": "95 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 392,
+        "modelo_id": 188,
+        "nombre": "Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "100 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 393,
+        "modelo_id": 188,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 394,
+        "modelo_id": 189,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "8 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 395,
+        "modelo_id": 190,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 396,
+        "modelo_id": 191,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 397,
+        "modelo_id": 192,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "83/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 398,
+        "modelo_id": 192,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "100 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 399,
+        "modelo_id": 192,
+        "nombre": "ë-C3",
+        "combustible": "Eléctrico",
+        "potencia": "113 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 400,
+        "modelo_id": 193,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "110/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 401,
+        "modelo_id": 193,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "110 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 402,
+        "modelo_id": 194,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "100/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 403,
+        "modelo_id": 194,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 404,
+        "modelo_id": 194,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 405,
+        "modelo_id": 194,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136/156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 406,
+        "modelo_id": 195,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "100/130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 407,
+        "modelo_id": 195,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 408,
+        "modelo_id": 195,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136/156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 409,
+        "modelo_id": 196,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 410,
+        "modelo_id": 196,
+        "nombre": "1.5 BlueHDi",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 411,
+        "modelo_id": 196,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 412,
+        "modelo_id": 196,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "180/225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 413,
+        "modelo_id": 197,
+        "nombre": "1.2 PureTech",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 414,
+        "modelo_id": 197,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "180/225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 415,
+        "modelo_id": 198,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 416,
+        "modelo_id": 199,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "136 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 417,
+        "modelo_id": 200,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "8 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 418,
+        "modelo_id": 201,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "283 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 419,
+        "modelo_id": 201,
+        "nombre": "Long Range AWD",
+        "combustible": "Eléctrico",
+        "potencia": "498 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 420,
+        "modelo_id": 201,
+        "nombre": "Performance",
+        "combustible": "Eléctrico",
+        "potencia": "513 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 421,
+        "modelo_id": 202,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "299 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 422,
+        "modelo_id": 202,
+        "nombre": "Long Range AWD",
+        "combustible": "Eléctrico",
+        "potencia": "514 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 423,
+        "modelo_id": 202,
+        "nombre": "Performance",
+        "combustible": "Eléctrico",
+        "potencia": "534 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 424,
+        "modelo_id": 203,
+        "nombre": "Dual Motor",
+        "combustible": "Eléctrico",
+        "potencia": "670 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 425,
+        "modelo_id": 203,
+        "nombre": "Plaid",
+        "combustible": "Eléctrico",
+        "potencia": "1020 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 426,
+        "modelo_id": 204,
+        "nombre": "Dual Motor",
+        "combustible": "Eléctrico",
+        "potencia": "670 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 427,
+        "modelo_id": 204,
+        "nombre": "Plaid",
+        "combustible": "Eléctrico",
+        "potencia": "1020 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 428,
+        "modelo_id": 205,
+        "nombre": "1.0 DIG-T",
+        "combustible": "Gasolina",
+        "potencia": "114 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 429,
+        "modelo_id": 205,
+        "nombre": "Hybrid 143",
+        "combustible": "Híbrido",
+        "potencia": "143 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 430,
+        "modelo_id": 206,
+        "nombre": "1.3 DIG-T",
+        "combustible": "Gasolina",
+        "potencia": "140/158 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 431,
+        "modelo_id": 206,
+        "nombre": "e-POWER",
+        "combustible": "Híbrido",
+        "potencia": "190 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 432,
+        "modelo_id": 207,
+        "nombre": "e-POWER",
+        "combustible": "Híbrido",
+        "potencia": "204/213 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 433,
+        "modelo_id": 208,
+        "nombre": "63kWh",
+        "combustible": "Eléctrico",
+        "potencia": "218 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 434,
+        "modelo_id": 208,
+        "nombre": "87kWh",
+        "combustible": "Eléctrico",
+        "potencia": "242 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 435,
+        "modelo_id": 208,
+        "nombre": "e-4ORCE",
+        "combustible": "Eléctrico",
+        "potencia": "306/394 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 436,
+        "modelo_id": 209,
+        "nombre": "40kWh",
+        "combustible": "Eléctrico",
+        "potencia": "150 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 437,
+        "modelo_id": 209,
+        "nombre": "62kWh",
+        "combustible": "Eléctrico",
+        "potencia": "217 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 438,
+        "modelo_id": 210,
+        "nombre": "1.3 DIG-T",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 439,
+        "modelo_id": 210,
+        "nombre": "EV",
+        "combustible": "Eléctrico",
+        "potencia": "122 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 440,
+        "modelo_id": 211,
+        "nombre": "2.0 dCi",
+        "combustible": "Diésel",
+        "potencia": "110/150/170 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 441,
+        "modelo_id": 212,
+        "nombre": "1.0 MPI",
+        "combustible": "Gasolina",
+        "potencia": "80 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 442,
+        "modelo_id": 212,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 443,
+        "modelo_id": 212,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 444,
+        "modelo_id": 213,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "95/110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 445,
+        "modelo_id": 213,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 446,
+        "modelo_id": 214,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 447,
+        "modelo_id": 214,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "130/150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 448,
+        "modelo_id": 214,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "115/150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 449,
+        "modelo_id": 214,
+        "nombre": "1.5 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 450,
+        "modelo_id": 215,
+        "nombre": "1.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "110 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 451,
+        "modelo_id": 215,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 452,
+        "modelo_id": 215,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "115/150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 453,
+        "modelo_id": 216,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 454,
+        "modelo_id": 216,
+        "nombre": "2.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "190/245 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 455,
+        "modelo_id": 216,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150/200 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 456,
+        "modelo_id": 216,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 457,
+        "modelo_id": 217,
+        "nombre": "Single Motor",
+        "combustible": "Eléctrico",
+        "potencia": "272 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 458,
+        "modelo_id": 217,
+        "nombre": "Twin Motor Perf",
+        "combustible": "Eléctrico",
+        "potencia": "428 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 459,
+        "modelo_id": 218,
+        "nombre": "Single Motor",
+        "combustible": "Eléctrico",
+        "potencia": "238 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 460,
+        "modelo_id": 218,
+        "nombre": "Twin Motor",
+        "combustible": "Eléctrico",
+        "potencia": "408 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 461,
+        "modelo_id": 219,
+        "nombre": "Single Motor",
+        "combustible": "Eléctrico",
+        "potencia": "238 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 462,
+        "modelo_id": 219,
+        "nombre": "Twin Motor",
+        "combustible": "Eléctrico",
+        "potencia": "408 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 463,
+        "modelo_id": 220,
+        "nombre": "B3",
+        "combustible": "Gasolina",
+        "potencia": "163 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 464,
+        "modelo_id": 220,
+        "nombre": "B4",
+        "combustible": "Gasolina",
+        "potencia": "197 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 465,
+        "modelo_id": 220,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "211/262 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 466,
+        "modelo_id": 221,
+        "nombre": "B4",
+        "combustible": "Diésel",
+        "potencia": "197 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 467,
+        "modelo_id": 221,
+        "nombre": "B5",
+        "combustible": "Gasolina",
+        "potencia": "250 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 468,
+        "modelo_id": 221,
+        "nombre": "T6 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "350 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 469,
+        "modelo_id": 221,
+        "nombre": "T8 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "455 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 470,
+        "modelo_id": 222,
+        "nombre": "B5",
+        "combustible": "Diésel",
+        "potencia": "235 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 471,
+        "modelo_id": 222,
+        "nombre": "T8 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "455 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 472,
+        "modelo_id": 223,
+        "nombre": "B4",
+        "combustible": "Gasolina",
+        "potencia": "197 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 473,
+        "modelo_id": 223,
+        "nombre": "T8 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "455 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 474,
+        "modelo_id": 224,
+        "nombre": "B3",
+        "combustible": "Gasolina",
+        "potencia": "163 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 475,
+        "modelo_id": 224,
+        "nombre": "B4",
+        "combustible": "Diésel",
+        "potencia": "197 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 476,
+        "modelo_id": 224,
+        "nombre": "T6 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "350 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 477,
+        "modelo_id": 225,
+        "nombre": "B4",
+        "combustible": "Diésel",
+        "potencia": "197 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 478,
+        "modelo_id": 225,
+        "nombre": "T8 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "455 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 479,
+        "modelo_id": 226,
+        "nombre": "B4",
+        "combustible": "Diésel",
+        "potencia": "197 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 480,
+        "modelo_id": 226,
+        "nombre": "T6 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "350 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 481,
+        "modelo_id": 227,
+        "nombre": "Twin Motor",
+        "combustible": "Eléctrico",
+        "potencia": "408 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 482,
+        "modelo_id": 227,
+        "nombre": "Twin Motor Perf",
+        "combustible": "Eléctrico",
+        "potencia": "517 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 483,
+        "modelo_id": 228,
+        "nombre": "58kWh",
+        "combustible": "Eléctrico",
+        "potencia": "204/231 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 484,
+        "modelo_id": 228,
+        "nombre": "77kWh",
+        "combustible": "Eléctrico",
+        "potencia": "231 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 485,
+        "modelo_id": 229,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 486,
+        "modelo_id": 229,
+        "nombre": "2.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "190/245/310 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 487,
+        "modelo_id": 229,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204/245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 488,
+        "modelo_id": 229,
+        "nombre": "2.0 TDI",
+        "combustible": "Diésel",
+        "potencia": "150 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 489,
+        "modelo_id": 230,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 490,
+        "modelo_id": 230,
+        "nombre": "2.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "190/245/300 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 491,
+        "modelo_id": 230,
+        "nombre": "1.4 eHybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "204/245 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 492,
+        "modelo_id": 231,
+        "nombre": "1.5 TSI",
+        "combustible": "Gasolina",
+        "potencia": "150 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 493,
+        "modelo_id": 231,
+        "nombre": "2.0 TSI",
+        "combustible": "Gasolina",
+        "potencia": "190/300 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 494,
+        "modelo_id": 232,
+        "nombre": "Endurance",
+        "combustible": "Eléctrico",
+        "potencia": "286 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 495,
+        "modelo_id": 232,
+        "nombre": "VZ",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 496,
+        "modelo_id": 233,
+        "nombre": "1.2 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "83 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 497,
+        "modelo_id": 234,
+        "nombre": "1.2 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "83 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 498,
+        "modelo_id": 235,
+        "nombre": "1.4 Boosterjet",
+        "combustible": "Híbrido",
+        "potencia": "129 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 499,
+        "modelo_id": 235,
+        "nombre": "1.5 Strong Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "115 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 500,
+        "modelo_id": 236,
+        "nombre": "1.4 Boosterjet",
+        "combustible": "Híbrido",
+        "potencia": "129 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 501,
+        "modelo_id": 236,
+        "nombre": "1.5 Strong Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "115 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 502,
+        "modelo_id": 237,
+        "nombre": "1.8 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "140 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 503,
+        "modelo_id": 238,
+        "nombre": "2.5 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "306 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 504,
+        "modelo_id": 239,
+        "nombre": "1.5",
+        "combustible": "Gasolina",
+        "potencia": "102 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 505,
+        "modelo_id": 240,
+        "nombre": "Cooper C",
+        "combustible": "Gasolina",
+        "potencia": "156 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 506,
+        "modelo_id": 240,
+        "nombre": "Cooper S",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 507,
+        "modelo_id": 240,
+        "nombre": "Cooper E",
+        "combustible": "Eléctrico",
+        "potencia": "184 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 508,
+        "modelo_id": 240,
+        "nombre": "Cooper SE",
+        "combustible": "Eléctrico",
+        "potencia": "218 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 509,
+        "modelo_id": 241,
+        "nombre": "Cooper C",
+        "combustible": "Gasolina",
+        "potencia": "156 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 510,
+        "modelo_id": 241,
+        "nombre": "Cooper S",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 511,
+        "modelo_id": 242,
+        "nombre": "Cooper C",
+        "combustible": "Gasolina",
+        "potencia": "156 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 512,
+        "modelo_id": 242,
+        "nombre": "Cooper S",
+        "combustible": "Gasolina",
+        "potencia": "204 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 513,
+        "modelo_id": 243,
+        "nombre": "Cooper S",
+        "combustible": "Gasolina",
+        "potencia": "178 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 514,
+        "modelo_id": 243,
+        "nombre": "JCW",
+        "combustible": "Gasolina",
+        "potencia": "306 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 515,
+        "modelo_id": 244,
+        "nombre": "Cooper C",
+        "combustible": "Gasolina",
+        "potencia": "170 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 516,
+        "modelo_id": 244,
+        "nombre": "Cooper S ALL4",
+        "combustible": "Gasolina",
+        "potencia": "218 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 517,
+        "modelo_id": 244,
+        "nombre": "Cooper SE ALL4",
+        "combustible": "Eléctrico",
+        "potencia": "313 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 518,
+        "modelo_id": 245,
+        "nombre": "E",
+        "combustible": "Eléctrico",
+        "potencia": "184 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 519,
+        "modelo_id": 245,
+        "nombre": "SE",
+        "combustible": "Eléctrico",
+        "potencia": "218 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 520,
+        "modelo_id": 246,
+        "nombre": "1.5 Skyactiv-G",
+        "combustible": "Gasolina",
+        "potencia": "90 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 521,
+        "modelo_id": 247,
+        "nombre": "1.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "116 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 522,
+        "modelo_id": 248,
+        "nombre": "2.0 e-Skyactiv G",
+        "combustible": "Híbrido",
+        "potencia": "122/150 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 523,
+        "modelo_id": 248,
+        "nombre": "2.0 e-Skyactiv X",
+        "combustible": "Híbrido",
+        "potencia": "186 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 524,
+        "modelo_id": 249,
+        "nombre": "2.0 Skyactiv-G",
+        "combustible": "Gasolina",
+        "potencia": "165 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 525,
+        "modelo_id": 250,
+        "nombre": "2.0 e-Skyactiv G",
+        "combustible": "Híbrido",
+        "potencia": "122/150 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 526,
+        "modelo_id": 250,
+        "nombre": "2.0 e-Skyactiv X",
+        "combustible": "Híbrido",
+        "potencia": "186 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 527,
+        "modelo_id": 251,
+        "nombre": "2.0 e-Skyactiv G",
+        "combustible": "Híbrido",
+        "potencia": "165 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 528,
+        "modelo_id": 251,
+        "nombre": "2.2 Skyactiv-D",
+        "combustible": "Diésel",
+        "potencia": "150/184 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 529,
+        "modelo_id": 252,
+        "nombre": "2.5 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "327 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 530,
+        "modelo_id": 252,
+        "nombre": "3.3 e-Skyactiv D",
+        "combustible": "Diésel",
+        "potencia": "200/254 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 531,
+        "modelo_id": 253,
+        "nombre": "2.5 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "327 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 532,
+        "modelo_id": 253,
+        "nombre": "3.3 e-Skyactiv D",
+        "combustible": "Diésel",
+        "potencia": "254 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 533,
+        "modelo_id": 254,
+        "nombre": "e-Skyactiv",
+        "combustible": "Eléctrico",
+        "potencia": "145 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 534,
+        "modelo_id": 254,
+        "nombre": "R-EV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "170 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 535,
+        "modelo_id": 255,
+        "nombre": "1.5 Skyactiv-G",
+        "combustible": "Gasolina",
+        "potencia": "132 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 536,
+        "modelo_id": 255,
+        "nombre": "2.0 Skyactiv-G",
+        "combustible": "Gasolina",
+        "potencia": "184 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 537,
+        "modelo_id": 256,
+        "nombre": "1.5 e-Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 538,
+        "modelo_id": 256,
+        "nombre": "4xe PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "190/240 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 539,
+        "modelo_id": 257,
+        "nombre": "1.5 e-Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 540,
+        "modelo_id": 257,
+        "nombre": "4xe PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "190/240 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 541,
+        "modelo_id": 258,
+        "nombre": "2.0 4xe PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "380 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 542,
+        "modelo_id": 259,
+        "nombre": "2.0 4xe PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "380 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 543,
+        "modelo_id": 260,
+        "nombre": "1.2 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "100 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 544,
+        "modelo_id": 260,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 545,
+        "modelo_id": 261,
+        "nombre": "3.0 V6 Diesel",
+        "combustible": "Diésel",
+        "potencia": "264 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 546,
+        "modelo_id": 262,
+        "nombre": "Hybrid+",
+        "combustible": "Híbrido",
+        "potencia": "195 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 547,
+        "modelo_id": 263,
+        "nombre": "Standard",
+        "combustible": "Eléctrico",
+        "potencia": "170 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 548,
+        "modelo_id": 263,
+        "nombre": "Long Range",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 549,
+        "modelo_id": 263,
+        "nombre": "XPOWER",
+        "combustible": "Eléctrico",
+        "potencia": "435 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 550,
+        "modelo_id": 264,
+        "nombre": "Long Range",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 551,
+        "modelo_id": 265,
+        "nombre": "1.5 VTi-Tech",
+        "combustible": "Gasolina",
+        "potencia": "106 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 552,
+        "modelo_id": 265,
+        "nombre": "1.0 T-GDI",
+        "combustible": "Gasolina",
+        "potencia": "111 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 553,
+        "modelo_id": 265,
+        "nombre": "EV",
+        "combustible": "Eléctrico",
+        "potencia": "156/177 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 554,
+        "modelo_id": 266,
+        "nombre": "1.5 T-GDI",
+        "combustible": "Gasolina",
+        "potencia": "162 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 555,
+        "modelo_id": 266,
+        "nombre": "PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "258 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 556,
+        "modelo_id": 267,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "180 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 557,
+        "modelo_id": 267,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "288 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 558,
+        "modelo_id": 268,
+        "nombre": "RWD",
+        "combustible": "Eléctrico",
+        "potencia": "340 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 559,
+        "modelo_id": 268,
+        "nombre": "AWD",
+        "combustible": "Eléctrico",
+        "potencia": "544 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 560,
+        "modelo_id": 269,
+        "nombre": "2.0",
+        "combustible": "Gasolina",
+        "potencia": "300 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 561,
+        "modelo_id": 269,
+        "nombre": "2.5 S",
+        "combustible": "Gasolina",
+        "potencia": "350 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 562,
+        "modelo_id": 269,
+        "nombre": "4.0 GTS",
+        "combustible": "Gasolina",
+        "potencia": "400 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 563,
+        "modelo_id": 270,
+        "nombre": "2.0",
+        "combustible": "Gasolina",
+        "potencia": "300 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 564,
+        "modelo_id": 270,
+        "nombre": "2.5 S",
+        "combustible": "Gasolina",
+        "potencia": "350 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 565,
+        "modelo_id": 271,
+        "nombre": "Carrera",
+        "combustible": "Gasolina",
+        "potencia": "394 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 566,
+        "modelo_id": 271,
+        "nombre": "Carrera S",
+        "combustible": "Gasolina",
+        "potencia": "450 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 567,
+        "modelo_id": 271,
+        "nombre": "Turbo S",
+        "combustible": "Gasolina",
+        "potencia": "650 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 568,
+        "modelo_id": 272,
+        "nombre": "4S",
+        "combustible": "Eléctrico",
+        "potencia": "544 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 569,
+        "modelo_id": 272,
+        "nombre": "Turbo",
+        "combustible": "Eléctrico",
+        "potencia": "884 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 570,
+        "modelo_id": 273,
+        "nombre": "2.9",
+        "combustible": "Gasolina",
+        "potencia": "353 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 571,
+        "modelo_id": 273,
+        "nombre": "4 E-Hybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "470 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 572,
+        "modelo_id": 274,
+        "nombre": "Macan",
+        "combustible": "Gasolina",
+        "potencia": "265 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 573,
+        "modelo_id": 274,
+        "nombre": "Electric 4",
+        "combustible": "Eléctrico",
+        "potencia": "408 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 574,
+        "modelo_id": 275,
+        "nombre": "3.0",
+        "combustible": "Gasolina",
+        "potencia": "353 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 575,
+        "modelo_id": 275,
+        "nombre": "E-Hybrid",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "470 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 576,
+        "modelo_id": 276,
+        "nombre": "1.5 i-MMD",
+        "combustible": "Híbrido",
+        "potencia": "122 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 577,
+        "modelo_id": 277,
+        "nombre": "2.0 i-MMD",
+        "combustible": "Híbrido",
+        "potencia": "184 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 578,
+        "modelo_id": 277,
+        "nombre": "Type R",
+        "combustible": "Gasolina",
+        "potencia": "329 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 579,
+        "modelo_id": 278,
+        "nombre": "1.5 i-MMD",
+        "combustible": "Híbrido",
+        "potencia": "131 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 580,
+        "modelo_id": 279,
+        "nombre": "2.0 i-MMD",
+        "combustible": "Híbrido",
+        "potencia": "184 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 581,
+        "modelo_id": 280,
+        "nombre": "2.0 i-MMD",
+        "combustible": "Híbrido",
+        "potencia": "184 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 582,
+        "modelo_id": 280,
+        "nombre": "2.0 PHEV",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "184 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 583,
+        "modelo_id": 281,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "204 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 584,
+        "modelo_id": 282,
+        "nombre": "D300",
+        "combustible": "Diésel",
+        "potencia": "300 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 585,
+        "modelo_id": 282,
+        "nombre": "P440e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "440 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 586,
+        "modelo_id": 282,
+        "nombre": "P530",
+        "combustible": "Gasolina",
+        "potencia": "530 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 587,
+        "modelo_id": 283,
+        "nombre": "D300",
+        "combustible": "Diésel",
+        "potencia": "300 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 588,
+        "modelo_id": 283,
+        "nombre": "P440e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "440 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 589,
+        "modelo_id": 284,
+        "nombre": "D200",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 590,
+        "modelo_id": 284,
+        "nombre": "P400e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "404 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 591,
+        "modelo_id": 285,
+        "nombre": "D200",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 592,
+        "modelo_id": 285,
+        "nombre": "P300e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "309 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 593,
+        "modelo_id": 286,
+        "nombre": "D250",
+        "combustible": "Diésel",
+        "potencia": "249 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 594,
+        "modelo_id": 286,
+        "nombre": "D300",
+        "combustible": "Diésel",
+        "potencia": "300 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 595,
+        "modelo_id": 287,
+        "nombre": "D200",
+        "combustible": "Diésel",
+        "potencia": "204 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 596,
+        "modelo_id": 287,
+        "nombre": "P300e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "309 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 597,
+        "modelo_id": 288,
+        "nombre": "D250",
+        "combustible": "Diésel",
+        "potencia": "249 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 598,
+        "modelo_id": 288,
+        "nombre": "P400e",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "404 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 599,
+        "modelo_id": 289,
+        "nombre": "1.5 Hybrid",
+        "combustible": "Híbrido",
+        "potencia": "130/160 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 600,
+        "modelo_id": 289,
+        "nombre": "1.6 Diesel",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 601,
+        "modelo_id": 289,
+        "nombre": "PHEV Q4",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "280 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 602,
+        "modelo_id": 290,
+        "nombre": "2.2 Diesel",
+        "combustible": "Diésel",
+        "potencia": "160/210 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 603,
+        "modelo_id": 290,
+        "nombre": "2.0 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "280 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 604,
+        "modelo_id": 290,
+        "nombre": "Quadrifoglio",
+        "combustible": "Gasolina",
+        "potencia": "510 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 605,
+        "modelo_id": 291,
+        "nombre": "2.2 Diesel",
+        "combustible": "Diésel",
+        "potencia": "160/210 CV",
+        "consumo": "6.8 l/100km"
+    },
+    {
+        "id": 606,
+        "modelo_id": 291,
+        "nombre": "2.0 Turbo",
+        "combustible": "Gasolina",
+        "potencia": "280 CV",
+        "consumo": "7.8 l/100km"
+    },
+    {
+        "id": 607,
+        "modelo_id": 291,
+        "nombre": "Quadrifoglio",
+        "combustible": "Gasolina",
+        "potencia": "510 CV",
+        "consumo": "9.5 l/100km"
+    },
+    {
+        "id": 608,
+        "modelo_id": 292,
+        "nombre": "Hybrid 136",
+        "combustible": "Híbrido",
+        "potencia": "136 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 609,
+        "modelo_id": 292,
+        "nombre": "Electric",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 610,
+        "modelo_id": 293,
+        "nombre": "PureTech 100",
+        "combustible": "Gasolina",
+        "potencia": "100 CV",
+        "consumo": "5.5 l/100km"
+    },
+    {
+        "id": 611,
+        "modelo_id": 293,
+        "nombre": "E-Tense",
+        "combustible": "Eléctrico",
+        "potencia": "156 CV",
+        "consumo": "17.5 kWh/100km"
+    },
+    {
+        "id": 612,
+        "modelo_id": 294,
+        "nombre": "PureTech 130",
+        "combustible": "Gasolina",
+        "potencia": "130 CV",
+        "consumo": "6.5 l/100km"
+    },
+    {
+        "id": 613,
+        "modelo_id": 294,
+        "nombre": "E-Tense 225",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "225 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 614,
+        "modelo_id": 295,
+        "nombre": "BlueHDi 130",
+        "combustible": "Diésel",
+        "potencia": "130 CV",
+        "consumo": "4.8 l/100km"
+    },
+    {
+        "id": 615,
+        "modelo_id": 295,
+        "nombre": "E-Tense 300",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "300 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 616,
+        "modelo_id": 296,
+        "nombre": "E-Tense 250",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "250 CV",
+        "consumo": "1.5 l/100km"
+    },
+    {
+        "id": 617,
+        "modelo_id": 296,
+        "nombre": "E-Tense 360",
+        "combustible": "Híbrido Enchufable",
+        "potencia": "360 CV",
+        "consumo": "1.5 l/100km"
+    }
+]
