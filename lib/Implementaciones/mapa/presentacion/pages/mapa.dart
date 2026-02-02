@@ -15,7 +15,7 @@ class MapaTiempoReal extends StatefulWidget {
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
   double _radiusKm = 25.0;
-  Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
+  final Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
   String _provinciaActual = 'Detectando...'; // 🆕 Provincia actual del usuario
   late GasolinerasCacheService _cacheService;
 

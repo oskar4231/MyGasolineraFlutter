@@ -29,6 +29,7 @@ class Gasolinera {
     required this.direccion,
     required this.lat,
     required this.lng,
+    required this.provincia,
     required this.horario,
     required this.gasolina95,
     required this.gasolina95E10,
@@ -40,7 +41,6 @@ class Gasolinera {
     required this.bioetanol,
     required this.esterMetilico,
     required this.hidrogeno,
-    this.provincia = '',
     this.idProvincia = '',
   });
 
