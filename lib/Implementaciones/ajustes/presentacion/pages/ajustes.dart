@@ -151,7 +151,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
   // Función para seleccionar imagen desde galería
   Future<void> _pickImageFromGallery() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
 
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
@@ -196,7 +201,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
   // Función para tomar foto con cámara
   Future<void> _pickImageFromCamera() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
 
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
