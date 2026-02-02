@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/ajustes/estadisticas/gastos_tab.dart';
-import 'package:my_gasolinera/ajustes/estadisticas/consumo_tab.dart';
-import 'package:my_gasolinera/ajustes/estadisticas/mantenimiento_tab.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/widgets/gastos_tab.dart';
+import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/widgets/consumo_tab.dart';
+import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/widgets/mantenimiento_tab.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class EstadisticasScreen extends StatefulWidget {
   const EstadisticasScreen({super.key});

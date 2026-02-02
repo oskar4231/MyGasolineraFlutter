@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Inicio/login/login.dart';
-import 'package:my_gasolinera/services/auth_service.dart';
-import 'package:my_gasolinera/widgets/password_requirements.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/password_requirements.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class NuevaPasswordScreen extends StatefulWidget {
   final String email;

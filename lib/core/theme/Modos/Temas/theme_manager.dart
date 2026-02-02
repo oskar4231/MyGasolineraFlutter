@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Modos/Temas/predeterminado.dart';
-import 'package:my_gasolinera/Modos/Temas/modo_oscuro.dart';
-import 'package:my_gasolinera/Modos/Temas/daltonismo.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/modo_oscuro.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/daltonismo.dart';
 import 'package:my_gasolinera/main.dart' as main;
 
 class ThemeManager extends ChangeNotifier {

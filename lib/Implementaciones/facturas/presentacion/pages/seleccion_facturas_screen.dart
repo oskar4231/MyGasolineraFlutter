@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'package:my_gasolinera/services/export_service.dart';
-// import 'package:my_gasolinera/ajustes/facturas/factura_image_widget.dart'; // Optional if we want images in list
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/data/services/export_service.dart';
+// import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_image_widget.dart'; // Optional if we want images in list
 
 class SeleccionFacturasScreen extends StatefulWidget {
   final List<Map<String, dynamic>> facturas;

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'api_config.dart';
-import 'http_helper.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/http_helper.dart';
 
 // Servicio para gestionar el token de autenticación y recuperación de contraseña
 class AuthService {

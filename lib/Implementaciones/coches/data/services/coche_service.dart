@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:my_gasolinera/services/auth_service.dart';
-import 'api_config.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
 
 class CocheService {
   // Obtener todos los coches del usuario - devuelve List<dynamic> en lugar de List<Coche>

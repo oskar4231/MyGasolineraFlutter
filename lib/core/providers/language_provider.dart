@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/services/accesibilidad_service.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilidad_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageProvider extends ChangeNotifier {

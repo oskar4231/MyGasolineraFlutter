@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:my_gasolinera/Inicio/login/login.dart';
-import 'package:my_gasolinera/widgets/password_requirements.dart';
-import 'package:my_gasolinera/services/api_config.dart';
-import 'package:my_gasolinera/services/http_helper.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/password_requirements.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/http_helper.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 void main() {
   runApp(const Crear());

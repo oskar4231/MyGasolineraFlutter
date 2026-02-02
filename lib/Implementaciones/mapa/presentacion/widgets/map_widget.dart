@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
-import 'package:my_gasolinera/principal/mapa/map_helpers.dart';
-import 'package:my_gasolinera/principal/mapa/gasolinera_logic.dart';
-import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/data/services/gasolinera_logic.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;

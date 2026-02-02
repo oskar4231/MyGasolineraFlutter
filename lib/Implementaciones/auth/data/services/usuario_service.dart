@@ -1,9 +1,9 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_gasolinera/services/auth_service.dart';
-import 'api_config.dart';
-import 'http_helper.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/http_helper.dart';
 
 class UsuarioService {
   /// Obtiene el nombre del usuario desde el backend

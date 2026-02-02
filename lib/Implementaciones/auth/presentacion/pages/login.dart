@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:my_gasolinera/Inicio/inicio.dart';
-import 'package:my_gasolinera/Inicio/login/recuperar.dart';
-import 'package:my_gasolinera/principal/layouthome.dart';
-import 'package:my_gasolinera/services/auth_service.dart';
-import 'package:my_gasolinera/services/api_config.dart';
-import 'package:my_gasolinera/services/http_helper.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/recuperar.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/http_helper.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

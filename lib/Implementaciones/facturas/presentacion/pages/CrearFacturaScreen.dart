@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'controllers/crear_factura_controller.dart';
-import 'widgets/factura_header.dart';
-import 'widgets/factura_form.dart';
-import 'widgets/info_repostaje.dart';
-import 'widgets/imagen_factura.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/controllers/crear_factura_controller.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_header.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_form.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/info_repostaje.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/imagen_factura.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
   const CrearFacturaScreen({super.key});

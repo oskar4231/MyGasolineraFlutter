@@ -1,5 +1,5 @@
 import 'package:geocoding/geocoding.dart';
-import 'package:my_gasolinera/services/provincia_service.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
 
 /// 🌍 Servicio de Geocodificación Inversa
 /// Convierte coordenadas GPS (lat, lng) → Dirección (provincia, ciudad, calle)

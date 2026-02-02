@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'polygon_utils.dart';
+import 'package:my_gasolinera/core/utils/polygon_utils.dart';
 
 /// Servicio para detectar y gestionar la provincia actual del usuario
 class ProvinciaService {

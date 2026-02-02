@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:my_gasolinera/bbdd_intermedia/baseDatos.dart';
-import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
-import 'package:my_gasolinera/services/provincia_service.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/baseDatos.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
 
 /// Servicio para actualizar el cache de gasolineras en segundo plano
 class BackgroundRefreshService {

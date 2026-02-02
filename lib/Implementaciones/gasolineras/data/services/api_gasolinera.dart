@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
-import 'package:my_gasolinera/services/api_config.dart';
+import 'package:my_gasolinera/core/config/api_config.dart';
 import 'dart:convert';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 
 /// Obtiene gasolineras cercanas a una ubicación (lat, lng)
 Future<List<Gasolinera>> fetchGasolinerasPorCercania(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
-import 'package:my_gasolinera/services/accesibilidad_service.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilidad_service.dart';
 import 'package:my_gasolinera/main.dart'; // Para languageProvider
 
 class IdiomasScreen extends StatefulWidget {
