@@ -71,3 +71,4 @@ flutter:
     - lib/assets/logo.png
     - assets/images/icono_1.png
     - assets/images/iconoFav_1.png
+    - assets/data/

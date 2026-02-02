@@ -8,7 +8,16 @@ import 'widgets/info_repostaje.dart';
 import 'widgets/imagen_factura.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
-  const CrearFacturaScreen({super.key});
+  final String? prefilledGasolineraName;
+  final double? prefilledPrecioLitro;
+  final String? prefilledCombustibleLabel;
+
+  const CrearFacturaScreen({
+    super.key,
+    this.prefilledGasolineraName,
+    this.prefilledPrecioLitro,
+    this.prefilledCombustibleLabel,
+  });
 
   @override
   State<CrearFacturaScreen> createState() => _CrearFacturaScreenState();
@@ -45,7 +54,44 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
     final now = DateTime.now();
     _fechaController.text = _controller.formatDate(now);
     _horaController.text = _controller.formatTime(now);
+
+    // Apply pre-filled data
+    if (widget.prefilledGasolineraName != null) {
+      _tituloController.text = "Repostaje ${widget.prefilledGasolineraName}";
+    }
+    if (widget.prefilledPrecioLitro != null) {
+      _precioLitroController.text = widget.prefilledPrecioLitro.toString();
+    }
+    if (widget.prefilledCombustibleLabel != null) {
+      _mapCombustibleLabelToKey(widget.prefilledCombustibleLabel!);
+    }
+
     await _cargarCoches();
+  }
+
+  void _mapCombustibleLabelToKey(String label) {
+    // Map UI labels to internal keys
+    // 'Gasolina 95' -> 'gasolina95'
+    // 'Diesel' -> 'diesel'
+    // 'Gasolina 98' -> 'gasolina98'
+    // 'GLP' -> 'glp'
+    // 'Diesel Premium' -> 'dieselPremium'
+
+    if (label.contains("95")) {
+      _tipoCombustibleSeleccionado = 'gasolina95';
+    } else if (label.contains("98")) {
+      _tipoCombustibleSeleccionado = 'gasolina98';
+    } else if (label.toLowerCase().contains("diesel") ||
+        label.toLowerCase().contains("gasóleo")) {
+      if (label.toLowerCase().contains("plus") ||
+          label.toLowerCase().contains("premium")) {
+        _tipoCombustibleSeleccionado = 'dieselPremium';
+      } else {
+        _tipoCombustibleSeleccionado = 'diesel';
+      }
+    } else if (label.toLowerCase().contains("glp")) {
+      _tipoCombustibleSeleccionado = 'glp';
+    }
   }
 
   Future<void> _cargarCoches() async {
@@ -309,8 +355,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                   Theme.of(context).colorScheme.primary,
                               foregroundColor:
                                   Theme.of(context).colorScheme.onPrimary,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -369,12 +414,10 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _guardarFactura,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).primaryColor,
+                              backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor:
                                   Theme.of(context).colorScheme.onPrimary,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 18),
+                              padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -386,11 +429,8 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                     width: 24,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 3,
-                                      valueColor:
-                                          AlwaysStoppedAnimation<Color>(
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Theme.of(context).colorScheme.onPrimary,
                                       ),
                                     ),
                                   )

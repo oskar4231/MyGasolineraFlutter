@@ -7,6 +7,7 @@ import 'package:my_gasolinera/l10n/app_localizations.dart';
 import 'package:my_gasolinera/models/coche.dart';
 import 'package:my_gasolinera/coches/widgets/coche_card.dart';
 import 'package:my_gasolinera/metodos/dialog_helper.dart';
+import 'package:my_gasolinera/services/car_data_service.dart';
 
 class CochesScreen extends StatefulWidget {
   const CochesScreen({super.key});
@@ -31,6 +32,7 @@ class _CochesScreenState extends State<CochesScreen> {
   bool _isLoading = false;
 
   // Internal keys for mapping
+  // Map of combustible keys. If dynamic data introduces new types, logic needs to handle it.
   final Map<String, bool> _tiposCombustible = {
     'gasolina95': false,
     'gasolina98': false,
@@ -61,9 +63,9 @@ class _CochesScreenState extends State<CochesScreen> {
     }
   }
 
-  @override
   void initState() {
     super.initState();
+    CarDataService().loadData(); // Cargar datos de coches
     _cargarCoches();
   }
 
@@ -181,6 +183,8 @@ class _CochesScreenState extends State<CochesScreen> {
 
   void _mostrarModalFormulario() {
     final l10n = AppLocalizations.of(context)!;
+
+    // Reset controllers
     _marcaController.clear();
     _modeloController.clear();
     _tiposCombustible.updateAll((key, value) => false);
@@ -192,11 +196,25 @@ class _CochesScreenState extends State<CochesScreen> {
     _intervaloKmController.text = '15000';
     _intervaloMesesController.text = '12';
 
+    // State variables for dropdowns
+    int? selectedMarcaId;
+    int? selectedModeloId;
+    dynamic selectedMotorizacion;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            final carService = CarDataService();
+            final marcas = carService.getMarcas();
+            final modelos = selectedMarcaId != null
+                ? carService.getModelos(selectedMarcaId!)
+                : [];
+            final motorizaciones = selectedModeloId != null
+                ? carService.getMotorizaciones(selectedModeloId!)
+                : [];
+
             return AlertDialog(
               title: Text(
                 l10n.anadirCoche,
@@ -209,38 +227,156 @@ class _CochesScreenState extends State<CochesScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextFormField(
-                        controller: _marcaController,
+                      // Marca Dropdown
+                      DropdownButtonFormField<int>(
                         decoration: InputDecoration(
                           labelText: l10n.marca,
                           hintText: l10n.ejemploMarca,
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.directions_car),
                         ),
+                        value: selectedMarcaId,
+                        items: marcas.map<DropdownMenuItem<int>>((marca) {
+                          return DropdownMenuItem<int>(
+                            value: marca['id'],
+                            child: Text(marca['nombre']),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setDialogState(() {
+                            selectedMarcaId = value;
+                            selectedModeloId = null; // Reset dependants
+                            selectedMotorizacion = null;
+                            _marcaController.text = marcas
+                                .firstWhere((m) => m['id'] == value)['nombre'];
+                            _modeloController.clear();
+                            _consumoTeoricoController.clear();
+                            _tiposCombustible.updateAll((key, val) => false);
+                          });
+                        },
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null) {
                             return l10n.ingresaMarca;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _modeloController,
+
+                      // Modelo Dropdown
+                      DropdownButtonFormField<int>(
                         decoration: InputDecoration(
                           labelText: l10n.modelo,
                           hintText: l10n.ejemploModelo,
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.car_crash),
                         ),
+                        value: selectedModeloId,
+                        items: modelos.map<DropdownMenuItem<int>>((modelo) {
+                          return DropdownMenuItem<int>(
+                            value: modelo['id'],
+                            child: Text(modelo['nombre']),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setDialogState(() {
+                            selectedModeloId = value;
+                            selectedMotorizacion = null;
+                            _modeloController.text = modelos
+                                .firstWhere((m) => m['id'] == value)['nombre'];
+                            _consumoTeoricoController.clear();
+                            _tiposCombustible.updateAll((key, val) => false);
+                          });
+                        },
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null) {
                             return l10n.ingresaModelo;
                           }
                           return null;
                         },
+                        onTap: selectedMarcaId == null
+                            ? () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Por favor, seleccione una marca primero.')),
+                                );
+                              }
+                            : null,
                       ),
                       const SizedBox(height: 16),
+
+                      // Motorización Dropdown
+                      if (selectedModeloId != null) ...[
+                        DropdownButtonFormField<dynamic>(
+                          decoration: InputDecoration(
+                            labelText: 'Motorización',
+                            hintText: 'Selecciona una motorización',
+                            border: const OutlineInputBorder(),
+                            prefixIcon:
+                                const Icon(Icons.settings_input_component),
+                          ),
+                          value: selectedMotorizacion,
+                          items: motorizaciones
+                              .map<DropdownMenuItem<dynamic>>((moto) {
+                            return DropdownMenuItem<dynamic>(
+                              value: moto,
+                              child: Text(
+                                  '${moto['nombre']} (${moto['potencia']})'),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setDialogState(() {
+                                selectedMotorizacion = value;
+                                // Update Consumo
+                                if (value['consumo'] != null) {
+                                  // Extract number from string like "5.5 l/100km" or "17.5 kWh/100km"
+                                  final consumoStr = value['consumo'] as String;
+                                  final match = RegExp(r'(\d+[.,]?\d*)')
+                                      .firstMatch(consumoStr);
+                                  if (match != null) {
+                                    _consumoTeoricoController.text =
+                                        match.group(0)!.replaceAll(',', '.');
+                                  }
+                                }
+
+                                // Update Combustible
+                                final combustible =
+                                    value['combustible'] as String;
+                                _tiposCombustible.updateAll(
+                                    (key, val) => false); // Reset all
+
+                                // Map string to internal keys
+                                if (combustible == 'Gasolina') {
+                                  _tiposCombustible['gasolina95'] = true;
+                                } else if (combustible == 'Diésel' ||
+                                    combustible == 'Diesel') {
+                                  _tiposCombustible['diesel'] = true;
+                                } else if (combustible == 'Híbrido') {
+                                  _tiposCombustible['hibrido'] = true;
+                                } else if (combustible ==
+                                    'Híbrido Enchufable') {
+                                  _tiposCombustible['hibrido'] = true;
+                                } else if (combustible == 'Eléctrico') {
+                                  _tiposCombustible['hibrido'] =
+                                      true; // Eléctrico mapped to hibrido logic for now
+                                } else if (combustible == 'GLP') {
+                                  _tiposCombustible['glp'] = true;
+                                }
+                              });
+                            }
+                          },
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Seleccione una motorización';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
                       Text(
                         l10n.tiposCombustibleLabel,
                         style: const TextStyle(
@@ -438,7 +574,11 @@ class _CochesScreenState extends State<CochesScreen> {
                       IconButton(
                         icon: Icon(Icons.arrow_back,
                             color: theme.colorScheme.onPrimary),
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const Layouthome(),
+                          ),
+                        ),
                       ),
                       Text(
                         l10n.cochesTitulo,

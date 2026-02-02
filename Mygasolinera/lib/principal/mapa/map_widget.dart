@@ -6,6 +6,7 @@ import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
 import 'package:my_gasolinera/principal/mapa/map_helpers.dart';
 import 'package:my_gasolinera/principal/mapa/gasolinera_logic.dart';
 import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/ajustes/facturas/CrearFacturaScreen.dart';
 
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
@@ -287,6 +288,7 @@ class _MapWidgetState extends State<MapWidget>
                       gasolinera.gasolina95,
                       Icons.local_gas_station,
                       Colors.green,
+                      gasolinera.rotulo,
                     ),
                   if (gasolinera.gasoleoA > 0)
                     _buildPrecioItem(
@@ -294,6 +296,7 @@ class _MapWidgetState extends State<MapWidget>
                       gasolinera.gasoleoA,
                       Icons.directions_car,
                       Theme.of(context).colorScheme.onSurface,
+                      gasolinera.rotulo,
                     ),
                   if (gasolinera.gasolina98 > 0)
                     _buildPrecioItem(
@@ -301,6 +304,7 @@ class _MapWidgetState extends State<MapWidget>
                       gasolinera.gasolina98,
                       Icons.local_gas_station,
                       Colors.blue,
+                      gasolinera.rotulo,
                     ),
                   if (gasolinera.glp > 0)
                     _buildPrecioItem(
@@ -308,6 +312,7 @@ class _MapWidgetState extends State<MapWidget>
                       gasolinera.glp,
                       Icons.local_fire_department,
                       Colors.orange,
+                      gasolinera.rotulo,
                     ),
                 ],
               ),
@@ -343,6 +348,40 @@ class _MapWidgetState extends State<MapWidget>
                   ),
                 ),
               ),
+
+              const SizedBox(height: 12),
+
+              // Botón de Repostaje Rápido Genérico
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // Cerrar bottom sheet
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CrearFacturaScreen(
+                          prefilledGasolineraName: gasolinera.rotulo,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.flash_on, color: Colors.white),
+                  label: const Text(
+                    'Repostaje Rápido',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        const Color(0xFFFF9350), // Color naranja/principal
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -361,6 +400,7 @@ class _MapWidgetState extends State<MapWidget>
     double precio,
     IconData icon,
     Color color,
+    String gasolineraNombre,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
