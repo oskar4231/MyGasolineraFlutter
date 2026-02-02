@@ -65,7 +65,7 @@ class CrearFacturaController {
       fecha: formattedFecha,
       hora: hora,
       descripcion: descripcion,
-      imagenFile: null,
+      imagenFile: imagen,
       litrosRepostados: litrosRepostados,
       precioPorLitro: precioPorLitro,
       kilometrajeActual: kilometrajeActual,
@@ -78,7 +78,10 @@ class CrearFacturaController {
 
     if (imagen != null && idFactura != null) {
       await LocalImageService.saveImage(
-          imagen, 'factura', idFactura.toString());
+        imagen,
+        'factura',
+        idFactura.toString(),
+      );
     }
 
     return response;

@@ -94,7 +94,7 @@ class ApiConfig {
   static String get estadisticasUrl => getUrl('/estadisticas');
 
   /// URL para el endpoint de perfil
-  static String get perfilUrl => getUrl('/perfil');
+  static String get perfilUrl => getUrl('/api/perfil');
 
   /// URL para el endpoint de accesibilidad
   static String get accesibilidadUrl => getUrl('/accesibilidad');
@@ -103,8 +103,8 @@ class ApiConfig {
   ///
   /// Incluye el header para saltar el aviso de ngrok
   static Map<String, String> get headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
-      };
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
 }

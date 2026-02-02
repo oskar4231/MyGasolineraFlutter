@@ -100,8 +100,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
     try {
       // 1. Intentar cargar desde local (intermedia/encriptada)
       print('🔍 Intentando cargar foto de perfil localmente...');
-      final localBytes =
-          await LocalImageService.getImageBytes('perfil', _emailUsuario);
+      final localBytes = await LocalImageService.getImageBytes(
+        'perfil',
+        _emailUsuario,
+      );
 
       if (localBytes != null && mounted) {
         setState(() {
@@ -116,8 +118,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (fotoData != null && mounted) {
         if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-          final base64String =
-              fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
+          final base64String = fotoData.contains(',')
+              ? fotoData.split(',')[1]
+              : fotoData;
           final bytes = base64Decode(base64String);
           setState(() {
             _profileImageBytes = bytes;
@@ -165,20 +168,24 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _subiendoFoto = true;
       });
 
-      // CAMBIO: Guardar localmente en lugar de subir
-      print('💾 Guardando foto de perfil en local (encriptada)...');
-      final path = await LocalImageService.saveImage(
-          pickedFile, 'perfil', _emailUsuario);
-      final exito = path != null;
+      // Intentar subir al servidor primero
+      print('☁️ Subiendo foto de perfil al servidor...');
+      final subidaExitosa = await _perfilService.subirFotoPerfil(pickedFile);
+
+      if (subidaExitosa) {
+        // Si sube bien, actualizamos la caché local
+        print('💾 Guardando copia local (cache)...');
+        await LocalImageService.saveImage(pickedFile, 'perfil', _emailUsuario);
+      }
 
       setState(() {
         _subiendoFoto = false;
       });
 
-      if (exito && mounted) {
+      if (subidaExitosa && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Foto de perfil guardada localmente (segura)'),
+            content: Text('✅ Foto de perfil subida y guardada'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -186,14 +193,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('❌ Error al guardar la foto localmente'),
+            content: Text('❌ Error al subir la foto al servidor'),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 2),
           ),
         );
-        setState(() {
-          _profileImageBytes = null;
-        });
+        // Si falla la subida, revertimos la vista previa (opcional, o dejamos la local)
+        // setState(() { _profileImageBytes = null; });
       }
     }
   }
@@ -215,20 +221,24 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _subiendoFoto = true;
       });
 
-      // CAMBIO: Guardar localmente en lugar de subir
-      print('💾 Guardando foto de perfil en local (encriptada)...');
-      final path = await LocalImageService.saveImage(
-          pickedFile, 'perfil', _emailUsuario);
-      final exito = path != null;
+      // Intentar subir al servidor primero
+      print('☁️ Subiendo foto de perfil al servidor...');
+      final subidaExitosa = await _perfilService.subirFotoPerfil(pickedFile);
+
+      if (subidaExitosa) {
+        // Si sube bien, actualizamos la caché local
+        print('💾 Guardando copia local (cache)...');
+        await LocalImageService.saveImage(pickedFile, 'perfil', _emailUsuario);
+      }
 
       setState(() {
         _subiendoFoto = false;
       });
 
-      if (exito && mounted) {
+      if (subidaExitosa && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Foto de perfil guardada localmente (segura)'),
+            content: Text('✅ Foto de perfil subida y guardada'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -236,14 +246,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('❌ Error al guardar la foto localmente'),
+            content: Text('❌ Error al subir la foto al servidor'),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 2),
           ),
         );
-        setState(() {
-          _profileImageBytes = null;
-        });
+        // Si falla la subida, revertimos la vista previa
+        // setState(() { _profileImageBytes = null; });
       }
     }
   }
@@ -258,9 +267,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           title: Text(l10n.cambiarFotoPerfil),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                Text(l10n.seleccionarFuenteFoto),
-              ],
+              children: <Widget>[Text(l10n.seleccionarFuenteFoto)],
             ),
           ),
           actions: [
@@ -311,8 +318,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.arrow_back,
-                        color: theme.colorScheme.onPrimary),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.colorScheme.onPrimary,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   const SizedBox(width: 8),
@@ -378,8 +387,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     icon: Icon(
                       Icons.directions_car,
                       size: 40,
-                      color: theme.colorScheme.onPrimary
-                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                      color: theme.colorScheme.onPrimary.withValues(
+                        alpha: 0.5,
+                      ), // No seleccionado - apagado
                     ),
                   ),
                   IconButton(
@@ -393,8 +403,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     icon: Icon(
                       Icons.pin_drop,
                       size: 40,
-                      color: theme.colorScheme.onPrimary
-                          .withValues(alpha: 0.5), // No seleccionado - apagado
+                      color: theme.colorScheme.onPrimary.withValues(
+                        alpha: 0.5,
+                      ), // No seleccionado - apagado
                     ),
                   ),
                   IconButton(
@@ -435,16 +446,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
-                            ? NetworkImage(_profileImageUrl!) as ImageProvider
-                            : null,
+                        ? NetworkImage(_profileImageUrl!) as ImageProvider
+                        : null,
                     child:
                         _profileImageBytes == null && _profileImageUrl == null
-                            ? Icon(
-                                Icons.person,
-                                color: theme.colorScheme.onSurface,
-                                size: 40,
-                              )
-                            : null,
+                        ? Icon(
+                            Icons.person,
+                            color: theme.colorScheme.onSurface,
+                            size: 40,
+                          )
+                        : null,
                   ),
                   // Loader mientras sube la foto
                   if (_subiendoFoto)
@@ -540,8 +551,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
         const SizedBox(height: 16),
         Card(
           elevation: 1,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -568,8 +580,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                 : 'Sin actualizar',
                             style: TextStyle(
                               fontSize: 12,
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.6,
+                              ),
                             ),
                           ),
                         ],
@@ -618,7 +631,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                    theme.colorScheme.primary),
+                                  theme.colorScheme.primary,
+                                ),
                               ),
                             )
                           : Text(AppLocalizations.of(context)!.actualizar),
@@ -708,9 +722,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const IdiomasScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const IdiomasScreen()),
             );
           },
         ),
@@ -820,8 +832,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   Text(
                     AppLocalizations.of(context)!.confirmarBorrarCuenta,
                     style: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.87),
-                        fontSize: 16),
+                      color: theme.colorScheme.onSurface.withOpacity(0.87),
+                      fontSize: 16,
+                    ),
                   ),
                   if (_eliminandoCuenta) ...[
                     const SizedBox(height: 16),
@@ -845,8 +858,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     onPressed: () async {
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
-                        final email =
-                            await _usuarioService.obtenerEmailGuardado();
+                        final email = await _usuarioService
+                            .obtenerEmailGuardado();
 
                         print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
                         print('🔍 DEBUG - Longitud del email: ${email.length}');
