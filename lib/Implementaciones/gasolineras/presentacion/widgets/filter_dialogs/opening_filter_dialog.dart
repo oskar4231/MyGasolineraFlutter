@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class OpeningFilterDialog extends StatefulWidget {
   final String? valorActual;

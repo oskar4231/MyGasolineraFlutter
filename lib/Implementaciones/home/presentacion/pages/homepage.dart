@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Implementaciones/mapa/data/presentacion/pages/mapa.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/presentacion/pages/mapa.dart';
 
 /// HomePage ahora abre el mapa en tiempo real automáticamente.
 class HomePage extends StatelessWidget {

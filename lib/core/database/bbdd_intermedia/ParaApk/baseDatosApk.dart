@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaGasolineras.dart';
-import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaCacheProvincias.dart';
-import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaLocalImages.dart';
-import 'package:my_gasolinera/bbdd_intermedia/ParaApk/tablaTheme.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaCacheProvincias.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaGasolineras.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaLocalImages.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaTheme.dart';
 
 part 'baseDatosApk.g.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
-import 'package:my_gasolinera/services/geocoding_service.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/data/services/geocoding_service.dart';
 
 /// Helper class para gestionar marcadores del mapa
 class MarkerHelper {

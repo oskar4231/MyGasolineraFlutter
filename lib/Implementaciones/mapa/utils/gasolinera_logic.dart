@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_gasolinera/principal/gasolineras/api_gasolinera.dart' as api;
-import 'package:my_gasolinera/principal/gasolineras/gasolinera.dart';
-import 'package:my_gasolinera/services/gasolinera_cache_service.dart';
-import 'package:my_gasolinera/services/provincia_service.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart' as api;
+import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
 
 /// Clase que maneja toda la lógica de negocio relacionada con gasolineras
 class GasolineraLogic {
