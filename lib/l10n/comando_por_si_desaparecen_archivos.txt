@@ -1,1 +1,0 @@
-Si tienes problemas porque los archivos desaparecen, asegúrate de ejecutar "flutter gen-l10n" después de limpiar o cambiar de rama.
