@@ -6,6 +6,7 @@ import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/passwor
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 void main() {
   runApp(const Crear());
@@ -105,33 +106,41 @@ class _CrearScreenState extends State<CrearScreen> {
 
         final responseData = json.decode(response.body);
 
+        if (!mounted) return;
+
         if (response.statusCode == 201) {
           // Registro exitoso
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(responseData['message']),
-              backgroundColor: Colors.green,
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(responseData['message']),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
 
           // Navegar automáticamente a login después de 2 segundos
           Future.delayed(const Duration(seconds: 2), () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-            );
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            }
           });
 
           // Limpiar formulario
           _formKey.currentState!.reset();
         } else {
           // Error del servidor
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(responseData['message'] ?? 'Error desconocido'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(responseData['message'] ?? 'Error desconocido'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       } catch (error) {
         // Error de conexión
@@ -141,7 +150,7 @@ class _CrearScreenState extends State<CrearScreen> {
             backgroundColor: Colors.red,
           ),
         );
-        print('Error de conexión: $error');
+        AppLogger.error('Error de conexión', tag: 'CrearScreen', error: error);
       } finally {
         setState(() {
           _isLoading = false;
@@ -229,12 +238,12 @@ class _CrearScreenState extends State<CrearScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6)),
+                                .withValues(alpha: 0.6)),
                         filled: true,
                         fillColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.15),
+                            .withValues(alpha: 0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -265,12 +274,12 @@ class _CrearScreenState extends State<CrearScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6)),
+                                .withValues(alpha: 0.6)),
                         filled: true,
                         fillColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.15),
+                            .withValues(alpha: 0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -312,12 +321,12 @@ class _CrearScreenState extends State<CrearScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6)),
+                                .withValues(alpha: 0.6)),
                         filled: true,
                         fillColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.15),
+                            .withValues(alpha: 0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -334,7 +343,7 @@ class _CrearScreenState extends State<CrearScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.7),
+                                .withValues(alpha: 0.7),
                           ),
                           onPressed: () {
                             setState(() {
@@ -377,12 +386,12 @@ class _CrearScreenState extends State<CrearScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6)),
+                                .withValues(alpha: 0.6)),
                         filled: true,
                         fillColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.15),
+                            .withValues(alpha: 0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -399,7 +408,7 @@ class _CrearScreenState extends State<CrearScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.7),
+                                .withValues(alpha: 0.7),
                           ),
                           onPressed: () {
                             setState(() {

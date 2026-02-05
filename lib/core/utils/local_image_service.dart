@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:drift/drift.dart' as drift;
-import 'package:flutter/foundation.dart' show kIsWeb; // Add this import
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/main.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/baseDatos.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class LocalImageService {
   static const int _xorKey = 157; // Clave simple para "encriptar"
@@ -38,9 +39,10 @@ class LocalImageService {
         final file = File(filePath);
         await file.writeAsBytes(encryptedBytes);
 
-        print('📁 (Nativo) Imagen guardada en Archivo: $filePath');
+        AppLogger.database('(Nativo) Imagen guardada en Archivo: $filePath');
       } else {
-        print('🌐 (Web) Guardando imagen directamente en IndexedDB (BLOB)');
+        AppLogger.database(
+            '(Web) Guardando imagen directamente en IndexedDB (BLOB)');
         fileName = 'web_blob_${DateTime.now().millisecondsSinceEpoch}';
       }
 
@@ -57,11 +59,11 @@ class LocalImageService {
         createdAt: drift.Value(DateTime.now()),
       ));
 
-      print('🔐 Referencia guardada en BD ($type / $relatedId)');
+      AppLogger.database('Referencia guardada en BD ($type / $relatedId)');
       return fileName;
     } catch (e) {
-      // ignore: avoid_print
-      print('❌ Error guardando imagen local: $e');
+      AppLogger.error('Error guardando imagen local',
+          tag: 'LocalImageService', error: e);
       return null;
     }
   }
@@ -104,7 +106,8 @@ class LocalImageService {
 
       // 3. Fallback Nativo (Migración): Cargar desde BD si existe
       if (record.content.isNotEmpty) {
-        print('⚠️ Migrando imagen legacy a FileSystem: $relatedId');
+        AppLogger.warning('Migrando imagen legacy a FileSystem: $relatedId',
+            tag: 'LocalImageService');
         // Migramos 'al vuelo' para limpiar la DB poco a poco
         final decryptedBytes = _encryptBytes(record.content);
         await _migrateSingleImage(record, record.content);
@@ -113,7 +116,8 @@ class LocalImageService {
 
       return null;
     } catch (e) {
-      print('Error leyendo imagen local: $e');
+      AppLogger.error('Error leyendo imagen local',
+          tag: 'LocalImageService', error: e);
       return null;
     }
   }
@@ -140,7 +144,8 @@ class LocalImageService {
 
       // Actualizar DB (Pendiente de implementación robusta de update)
     } catch (e) {
-      print('Error migrando imagen: $e');
+      AppLogger.error('Error migrando imagen',
+          tag: 'LocalImageService', error: e);
     }
   }
 

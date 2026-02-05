@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class UsuarioService {
   /// Obtiene el nombre del usuario desde el backend
@@ -20,7 +21,8 @@ class UsuarioService {
       final token = prefs.getString('authToken') ?? '';
 
       final url = ApiConfig.getUrl('/usuarios/perfil/$email');
-      print('🔍 DEBUG - Obteniendo nombre de usuario desde: $url');
+      AppLogger.debug('Obteniendo nombre de usuario desde: $url',
+          tag: 'UsuarioService');
 
       final response = await http.get(
         Uri.parse(url),
@@ -34,8 +36,9 @@ class UsuarioService {
         onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
       );
 
-      print('🔍 DEBUG - Status code: ${response.statusCode}');
-      print('🔍 DEBUG - Response body: ${response.body}');
+      AppLogger.debug('Status code: ${response.statusCode}',
+          tag: 'UsuarioService');
+      AppLogger.debug('Response body: ${response.body}', tag: 'UsuarioService');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -52,20 +55,22 @@ class UsuarioService {
               email.split('@')[0];
         }
 
-        print('🔍 DEBUG - Nombre obtenido: $nombre');
+        AppLogger.debug('Nombre obtenido: $nombre', tag: 'UsuarioService');
 
         // Guardar el nombre localmente
         await prefs.setString('userName', nombre);
 
         return nombre;
       } else if (response.statusCode == 404) {
-        print('⚠️ Usuario no encontrado, usando email como nombre');
+        AppLogger.warning('Usuario no encontrado, usando email como nombre',
+            tag: 'UsuarioService');
         return email.split('@')[0];
       } else {
         throw Exception('Error al obtener nombre: ${response.statusCode}');
       }
     } on Exception catch (e) {
-      print('❌ Error obteniendo nombre de usuario: $e');
+      AppLogger.error('Error obteniendo nombre de usuario',
+          tag: 'UsuarioService', error: e);
 
       // Fallback: intentar obtener nombre guardado localmente
       try {
@@ -86,16 +91,17 @@ class UsuarioService {
   Future<bool> eliminarCuenta(String email) async {
     try {
       // DEBUG: Imprimir el email recibido
-      print(
-        '🔍 DEBUG - UsuarioService.eliminarCuenta() recibió email: "$email"',
-      );
-      print('🔍 DEBUG - Longitud del email recibido: ${email.length}');
+      AppLogger.debug('UsuarioService.eliminarCuenta() recibió email: "$email"',
+          tag: 'UsuarioService');
+      AppLogger.debug('Longitud del email recibido: ${email.length}',
+          tag: 'UsuarioService');
 
       // Validar y formatear el email si no contiene @
       String emailFormateado = email;
       if (!email.contains('@')) {
         emailFormateado = '$email@$email.com';
-        print('🔍 DEBUG - Email sin @, formateado a: "$emailFormateado"');
+        AppLogger.debug('Email sin @, formateado a: "$emailFormateado"',
+            tag: 'UsuarioService');
       }
 
       // Obtener el token si lo necesitas para autorización
@@ -103,7 +109,7 @@ class UsuarioService {
       final token = prefs.getString('authToken') ?? '';
 
       final url = ApiConfig.getUrl('/usuarios/$emailFormateado');
-      print('🔍 DEBUG - URL construida: $url');
+      AppLogger.debug('URL construida: $url', tag: 'UsuarioService');
 
       final response = await http
           .delete(
@@ -121,8 +127,9 @@ class UsuarioService {
                 throw Exception('Timeout al conectar con el servidor'),
           );
       // DEBUG: Imprimir la respuesta del servidor
-      print('🔍 DEBUG - Status code: ${response.statusCode}');
-      print('🔍 DEBUG - Response body: ${response.body}');
+      AppLogger.debug('Status code: ${response.statusCode}',
+          tag: 'UsuarioService');
+      AppLogger.debug('Response body: ${response.body}', tag: 'UsuarioService');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -135,8 +142,8 @@ class UsuarioService {
         throw Exception('Error al eliminar cuenta: ${response.statusCode}');
       }
     } on Exception catch (e) {
-      // ignore: avoid_print
-      print('Error eliminando cuenta: $e');
+      AppLogger.error('Error eliminando cuenta',
+          tag: 'UsuarioService', error: e);
       rethrow;
     }
   }
@@ -145,24 +152,25 @@ class UsuarioService {
   Future<String> obtenerEmailGuardado() async {
     // Intentar obtener del AuthService primero (está en memoria tras login)
     final email = AuthService.getUserEmail();
-    print('🔍 DEBUG - obtenerEmailGuardado() - Email de AuthService: "$email"');
+    AppLogger.debug('obtenerEmailGuardado() - Email de AuthService: "$email"',
+        tag: 'UsuarioService');
 
     if (email != null && email.isNotEmpty) {
-      print(
-        '🔍 DEBUG - obtenerEmailGuardado() - Retornando email de AuthService: "$email"',
-      );
+      AppLogger.debug(
+          'obtenerEmailGuardado() - Retornando email de AuthService: "$email"',
+          tag: 'UsuarioService');
       return email;
     }
 
     // Fallback a SharedPreferences si no está en AuthService
     final prefs = await SharedPreferences.getInstance();
     final emailFromPrefs = prefs.getString('userEmail') ?? '';
-    print(
-      '🔍 DEBUG - obtenerEmailGuardado() - Email de SharedPreferences: "$emailFromPrefs"',
-    );
-    print(
-      '🔍 DEBUG - obtenerEmailGuardado() - Retornando email de SharedPreferences: "$emailFromPrefs"',
-    );
+    AppLogger.debug(
+        'obtenerEmailGuardado() - Email de SharedPreferences: "$emailFromPrefs"',
+        tag: 'UsuarioService');
+    AppLogger.debug(
+        'obtenerEmailGuardado() - Retornando email de SharedPreferences: "$emailFromPrefs"',
+        tag: 'UsuarioService');
     return emailFromPrefs;
   }
 
@@ -188,7 +196,8 @@ class UsuarioService {
       }
 
       final url = ApiConfig.getUrl('/cargarImagen/$email');
-      print('🔍 DEBUG - Cargando imagen de perfil desde: $url');
+      AppLogger.debug('Cargando imagen de perfil desde: $url',
+          tag: 'UsuarioService');
 
       final response = await http.get(
         Uri.parse(url),
@@ -202,8 +211,9 @@ class UsuarioService {
         onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
       );
 
-      print('🔍 DEBUG - Status code: ${response.statusCode}');
-      print('🔍 DEBUG - Response body: ${response.body}');
+      AppLogger.debug('Status code: ${response.statusCode}',
+          tag: 'UsuarioService');
+      AppLogger.debug('Response body: ${response.body}', tag: 'UsuarioService');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -218,11 +228,13 @@ class UsuarioService {
         }
 
         if (fotoPerfil == null) {
-          print('🔍 DEBUG - Usuario no tiene foto de perfil');
+          AppLogger.debug('Usuario no tiene foto de perfil',
+              tag: 'UsuarioService');
           return null;
         }
 
-        print('🔍 DEBUG - Foto de perfil obtenida: $fotoPerfil');
+        AppLogger.debug('Foto de perfil obtenida: $fotoPerfil',
+            tag: 'UsuarioService');
 
         // Verificar si es una ruta de archivo o base64
         if (fotoPerfil.toString().startsWith('data:image') ||
@@ -235,7 +247,7 @@ class UsuarioService {
           final imageUrl = fotoPerfil.toString().startsWith('http')
               ? fotoPerfil
               : '${ApiConfig.baseUrl}/$fotoPerfil';
-          print('🔍 DEBUG - URL de imagen: $imageUrl');
+          AppLogger.debug('URL de imagen: $imageUrl', tag: 'UsuarioService');
           return imageUrl;
         } else {
           // Asumir que es base64 sin prefijo
@@ -247,7 +259,8 @@ class UsuarioService {
         throw Exception('Error al cargar imagen: ${response.statusCode}');
       }
     } on Exception catch (e) {
-      print('❌ Error cargando imagen de perfil: $e');
+      AppLogger.error('Error cargando imagen de perfil',
+          tag: 'UsuarioService', error: e);
       rethrow;
     }
   }

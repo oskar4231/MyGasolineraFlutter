@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
 
 class FacturaForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -57,8 +56,7 @@ class FacturaForm extends StatelessWidget {
             controller: costoController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText:
-                  '${AppLocalizations.of(context)!.costeTotal} (€)',
+              labelText: '${AppLocalizations.of(context)!.costeTotal} (€)',
               labelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.onSurface),
               filled: true,
@@ -155,8 +153,7 @@ class FacturaForm extends StatelessWidget {
             controller: descripcionController,
             maxLines: 4,
             decoration: InputDecoration(
-              labelText:
-                  AppLocalizations.of(context)!.descripcionOpcional,
+              labelText: AppLocalizations.of(context)!.descripcionOpcional,
               labelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.onSurface),
               filled: true,

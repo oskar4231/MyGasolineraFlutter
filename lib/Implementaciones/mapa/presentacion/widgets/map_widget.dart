@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/CrearFacturaScreen.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/crear_factura_screen.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/gasolinera_logic.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
@@ -35,7 +36,7 @@ class MapWidget extends StatefulWidget {
   });
 
   @override
-  _MapWidgetState createState() => _MapWidgetState();
+  State<MapWidget> createState() => _MapWidgetState();
 }
 
 class _MapWidgetState extends State<MapWidget>
@@ -70,12 +71,14 @@ class _MapWidgetState extends State<MapWidget>
   Future<void> _inicializarMapa() async {
     // 1. Cargar iconos de marcadores (crítico para mostrar gasolineras)
     await _markerHelper.loadGasStationIcons();
-    print('✅ MapWidget: Iconos de marcadores cargados');
+    AppLogger.info('Iconos de marcadores cargados', tag: 'MapWidget');
 
     // 2. Cargar favoritos
     await _gasolineraLogic.cargarFavoritos();
-    print(
-        '✅ MapWidget: Favoritos cargados (${_gasolineraLogic.favoritosIds.length} favoritos)');
+    AppLogger.info(
+      'Favoritos cargados (${_gasolineraLogic.favoritosIds.length} favoritos)',
+      tag: 'MapWidget',
+    );
 
     // 3. Actualizar UI para mostrar que está listo
     if (mounted) setState(() {});
@@ -94,8 +97,10 @@ class _MapWidgetState extends State<MapWidget>
         oldWidget.precioHasta != widget.precioHasta ||
         oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
         oldWidget.radiusKm != widget.radiusKm) {
-      print(
-          '🔄 MapWidget: Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}');
+      AppLogger.debug(
+        'Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}',
+        tag: 'MapWidget',
+      );
 
       if (_ubicacionActual != null) {
         _cargarGasolineras(
@@ -152,16 +157,20 @@ class _MapWidgetState extends State<MapWidget>
               ))
           .toSet();
 
-      print(
-          '🗺️ MapWidget (Progresivo): Creados ${newMarkers.length} marcadores iniciales');
+      AppLogger.debug(
+        'MapWidget (Progresivo): Creados ${newMarkers.length} marcadores iniciales',
+        tag: 'MapWidget',
+      );
 
       if (mounted) {
         setState(() {
           _gasolinerasMarkers.clear();
           _gasolinerasMarkers.addAll(newMarkers);
         });
-        print(
-            '✅ MapWidget (Progresivo): Marcadores iniciales actualizados (${_gasolinerasMarkers.length} marcadores)');
+        AppLogger.info(
+          'MapWidget (Progresivo): Marcadores iniciales actualizados (${_gasolinerasMarkers.length} marcadores)',
+          tag: 'MapWidget',
+        );
       }
 
       // Cargar el resto en segundo plano
@@ -177,15 +186,19 @@ class _MapWidgetState extends State<MapWidget>
                   ))
               .toSet();
 
-          print(
-              '🗺️ MapWidget (Progresivo): Creados ${restoMarkers.length} marcadores adicionales');
+          AppLogger.debug(
+            'MapWidget (Progresivo): Creados ${restoMarkers.length} marcadores adicionales',
+            tag: 'MapWidget',
+          );
 
           setState(() {
             _gasolinerasMarkers.addAll(restoMarkers);
             _gasolineraLogic.setLoadingProgressively(false);
           });
-          print(
-              '✅ MapWidget (Progresivo): Total de marcadores: ${_gasolinerasMarkers.length}');
+          AppLogger.info(
+            'MapWidget (Progresivo): Total de marcadores: ${_gasolinerasMarkers.length}',
+            tag: 'MapWidget',
+          );
         }
       });
 
@@ -201,16 +214,20 @@ class _MapWidgetState extends State<MapWidget>
             ))
         .toSet();
 
-    print(
-        '🗺️ MapWidget: Creados ${newMarkers.length} marcadores para mostrar en el mapa');
+    AppLogger.debug(
+      'Creados ${newMarkers.length} marcadores para mostrar en el mapa',
+      tag: 'MapWidget',
+    );
 
     if (mounted) {
       setState(() {
         _gasolinerasMarkers.clear();
         _gasolinerasMarkers.addAll(newMarkers);
       });
-      print(
-          '✅ MapWidget: Marcadores actualizados en el estado (${_gasolinerasMarkers.length} marcadores)');
+      AppLogger.info(
+        'Marcadores actualizados en el estado (${_gasolinerasMarkers.length} marcadores)',
+        tag: 'MapWidget',
+      );
     }
   }
 
@@ -252,8 +269,10 @@ class _MapWidgetState extends State<MapWidget>
                   IconButton(
                     onPressed: () async {
                       await _gasolineraLogic.toggleFavorito(gasolinera.id);
-                      setState(() {});
-                      Navigator.pop(context);
+                      if (context.mounted) {
+                        setState(() {});
+                        Navigator.pop(context);
+                      }
                     },
                     icon: Icon(
                       esFavorita ? Icons.star : Icons.star_border,
@@ -273,7 +292,7 @@ class _MapWidgetState extends State<MapWidget>
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.6)),
+                        .withValues(alpha: 0.6)),
               ),
 
               const SizedBox(height: 20),
@@ -325,8 +344,10 @@ class _MapWidgetState extends State<MapWidget>
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     await _gasolineraLogic.toggleFavorito(gasolinera.id);
-                    setState(() {});
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      setState(() {});
+                      Navigator.pop(context);
+                    }
                   },
                   icon: Icon(
                     esFavorita ? Icons.star : Icons.star_border,
@@ -412,8 +433,10 @@ class _MapWidgetState extends State<MapWidget>
             '$nombre: ',
             style: TextStyle(
                 fontSize: 16,
-                color:
-                    Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.7)),
           ),
           const Spacer(),
           Text(
@@ -431,11 +454,12 @@ class _MapWidgetState extends State<MapWidget>
 
   /// Inicia el seguimiento de ubicación GPS
   Future<void> _iniciarSeguimiento() async {
-    print('🌍 MapWidget: Iniciando seguimiento GPS...');
+    AppLogger.info('Iniciando seguimiento GPS...', tag: 'MapWidget');
 
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      print('❌ MapWidget: Servicio de ubicación deshabilitado');
+      AppLogger.warning('Servicio de ubicación deshabilitado',
+          tag: 'MapWidget');
       return;
     }
 
@@ -443,45 +467,58 @@ class _MapWidgetState extends State<MapWidget>
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print('❌ MapWidget: Permisos de ubicación denegados');
+        AppLogger.warning('Permisos de ubicación denegados', tag: 'MapWidget');
         return;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      print('❌ MapWidget: Permisos de ubicación denegados permanentemente');
+      AppLogger.warning('Permisos de ubicación denegados permanentemente',
+          tag: 'MapWidget');
       return;
     }
 
     Position? posicion;
 
     try {
-      print('📍 MapWidget: Obteniendo ubicación actual...');
+      AppLogger.debug('Obteniendo ubicación actual...', tag: 'MapWidget');
       posicion = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.best,
+        ),
       ).timeout(
         const Duration(seconds: 10),
         onTimeout: () {
-          print(
-              '⏱️ MapWidget: Timeout obteniendo ubicación actual, intentando última conocida...');
+          AppLogger.warning(
+            'Timeout obteniendo ubicación actual, intentando última conocida...',
+            tag: 'MapWidget',
+          );
           throw TimeoutException('GPS timeout');
         },
       );
-      print(
-          '✅ MapWidget: Ubicación actual obtenida: ${posicion.latitude}, ${posicion.longitude}');
+      AppLogger.info(
+        'Ubicación actual obtenida: ${posicion.latitude}, ${posicion.longitude}',
+        tag: 'MapWidget',
+      );
     } catch (e) {
-      print('⚠️ MapWidget: Error obteniendo ubicación actual: $e');
-      print('🔄 MapWidget: Intentando obtener última ubicación conocida...');
+      AppLogger.warning('Error obteniendo ubicación actual',
+          tag: 'MapWidget', error: e);
+      AppLogger.debug('Intentando obtener última ubicación conocida...',
+          tag: 'MapWidget');
 
       try {
         posicion = await Geolocator.getLastKnownPosition();
         if (posicion != null) {
-          print(
-              '✅ MapWidget: Última ubicación conocida obtenida: ${posicion.latitude}, ${posicion.longitude}');
+          AppLogger.info(
+            'Última ubicación conocida obtenida: ${posicion.latitude}, ${posicion.longitude}',
+            tag: 'MapWidget',
+          );
         } else {
-          print('❌ MapWidget: No hay última ubicación conocida');
+          AppLogger.warning('No hay última ubicación conocida',
+              tag: 'MapWidget');
         }
       } catch (e2) {
-        print('❌ MapWidget: Error obteniendo última ubicación: $e2');
+        AppLogger.error('Error obteniendo última ubicación',
+            tag: 'MapWidget', error: e2);
       }
     }
 
@@ -498,18 +535,20 @@ class _MapWidgetState extends State<MapWidget>
         );
       });
 
-      print('🗺️ MapWidget: Cargando gasolineras para ubicación inicial...');
+      AppLogger.info('Cargando gasolineras para ubicación inicial...',
+          tag: 'MapWidget');
       _cargarGasolineras(posicion.latitude, posicion.longitude,
           isInitialLoad: true);
 
       // Actualizar provincia inicial
       _actualizarProvincia(posicion.latitude, posicion.longitude);
     } else {
-      print('❌ MapWidget: No se pudo obtener ninguna ubicación');
+      AppLogger.error('No se pudo obtener ninguna ubicación', tag: 'MapWidget');
     }
 
     // Iniciar stream de actualizaciones de ubicación
-    print('📡 MapWidget: Iniciando stream de actualizaciones GPS...');
+    AppLogger.info('Iniciando stream de actualizaciones GPS...',
+        tag: 'MapWidget');
     _positionStreamSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.best,
@@ -574,7 +613,11 @@ class _MapWidgetState extends State<MapWidget>
                     2;
                 await _cargarGasolineras(centerLat, centerLng,
                     isInitialLoad: false);
-              } catch (e) {}
+              } catch (e) {
+                AppLogger.warning(
+                    'Error actualizando gasolineras por movimiento de cámara',
+                    error: e);
+              }
             }
           },
         );

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:my_gasolinera/core/config/importante/switchBackend.dart';
+import 'package:my_gasolinera/core/config/importante/switch_backend.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 ///
 /// Este archivo contiene la URL base del servidor backend.
@@ -26,7 +27,7 @@ class ApiConfig {
 
   /// URL base del backend
   ///
-  /// Esta URL se determina por el switch en lib/important/switchBackend.dart
+  /// Esta URL se determina por el switch en lib/important/switch_backend.dart
   static String get baseUrl {
     // Si se ha establecido una URL dinámica (ej. al inicio), usarla
     if (_dynamicUrl != null) return _dynamicUrl!;
@@ -48,8 +49,7 @@ class ApiConfig {
     } else {
       _dynamicUrl = newUrl;
     }
-    // ignore: avoid_print
-    print('API Config: URL Base actualizada a: $_dynamicUrl');
+    AppLogger.info('URL Base actualizada a: $_dynamicUrl', tag: 'ApiConfig');
   }
 
   /// Obtiene la URL completa para un endpoint
@@ -94,7 +94,7 @@ class ApiConfig {
   static String get estadisticasUrl => getUrl('/estadisticas');
 
   /// URL para el endpoint de perfil
-  static String get perfilUrl => getUrl('/perfil');
+  static String get perfilUrl => getUrl('/api/perfil');
 
   /// URL para el endpoint de accesibilidad
   static String get accesibilidadUrl => getUrl('/accesibilidad');

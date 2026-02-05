@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   # Se actualiza el SDK para que sea compatible con las últimas versiones de las dependencias.
-  sdk: ^3.0.0
+  sdk: ^3.4.0
 
 dependencies:
   flutter:
@@ -42,6 +42,7 @@ dependencies:
   share_plus: ^12.0.1
   universal_html: ^2.3.0
   cached_network_image: ^3.4.1
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:

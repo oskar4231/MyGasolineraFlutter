@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/estadisticas/data/services/estadisticas_service.dart';
 import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/widgets/estadisticas_widgets.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class GastosTab extends StatefulWidget {
   const GastosTab({super.key});
@@ -44,7 +45,8 @@ class _GastosTabState extends State<GastosTab> {
           _isLoading = false;
         });
       }
-      print('Error cargando estadísticas: $e');
+      AppLogger.error('Error cargando estadísticas',
+          tag: 'GastosTab', error: e);
     }
   }
 

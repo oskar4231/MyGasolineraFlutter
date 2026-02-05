@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tablaGasolineras.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tablaCacheProvincias.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tablaLocalImages.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tablaTheme.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tabla_gasolineras.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tabla_cache_provincias.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tabla_local_images.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaWeb/tabla_theme.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-part 'baseDatosWeb.g.dart';
+part 'base_datos_web.g.dart';
 
 /// Base de datos local para cache de gasolineras (VERSIÓN WEB)
 /// Usa IndexedDB a través de drift_flutter
@@ -38,9 +39,14 @@ class AppDatabase extends _$AppDatabase {
 
   /// Abre la conexión para Web usando drift_flutter (que gestiona WASM/IndexedDB automáticamente)
   static QueryExecutor _openConnection() {
-    print('----------------------------------------------------------------');
-    print('🌐 INICIANDO BASE DE DATOS WEB (DRIFT_FLUTTER)');
-    print('----------------------------------------------------------------');
+    AppLogger.info(
+        '----------------------------------------------------------------',
+        tag: 'Database');
+    AppLogger.info('INICIANDO BASE DE DATOS WEB (DRIFT_FLUTTER)',
+        tag: 'Database');
+    AppLogger.info(
+        '----------------------------------------------------------------',
+        tag: 'Database');
     return driftDatabase(
       name: 'gasolinera_cache_db',
       web: DriftWebOptions(
@@ -155,9 +161,10 @@ class AppDatabase extends _$AppDatabase {
         .go();
   }
 
-  /// Borra TODO el caché de gasolineras (útil para forzar recarga completa)
+  /// Borra el caché de gasolineras (útil para forzar recarga completa)
   Future<void> clearAllCache() async {
-    print('WEB: 🗑️ Borrando TODO el caché de gasolineras...');
+    AppLogger.info('WEB: Borrando TODO el caché de gasolineras...',
+        tag: 'Database');
 
     // Eliminar todas las gasolineras
     await delete(gasolinerasTable).go();
@@ -165,7 +172,7 @@ class AppDatabase extends _$AppDatabase {
     // Eliminar todos los registros de provincia cache
     await delete(provinciaCacheTable).go();
 
-    print('✅ Caché completamente borrado');
+    AppLogger.info('Caché completamente borrado', tag: 'Database');
   }
 
   // ==================== TEMA ====================

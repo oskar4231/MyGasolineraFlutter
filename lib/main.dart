@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
 import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
-import 'package:my_gasolinera/core/config/importante/switchWebApk.dart';
+import 'package:my_gasolinera/core/config/importante/switch_web_apk.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-import 'package:my_gasolinera/core/database/bbdd_intermedia/baseDatos.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
@@ -27,17 +28,20 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Mostrar modo de plataforma
-  print('═══════════════════════════════════════════════════════════');
-  print('🔧 MODO PLATAFORMA: ${esAPK ? "📱 APK" : "🌐 WEB"}');
-  print('═══════════════════════════════════════════════════════════');
+  AppLogger.info('═══════════════════════════════════════════════════════════',
+      tag: 'Main');
+  AppLogger.info('MODO PLATAFORMA: ${esAPK ? "APK" : "WEB"}', tag: 'Main');
+  AppLogger.info('═══════════════════════════════════════════════════════════',
+      tag: 'Main');
 
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
 
   // Inicializar base de datos (APK o Web según configuración)
   database = AppDatabase();
-  print(
-      '✅ Base de datos inicializada: ${esAPK ? "SQLite nativo" : "IndexedDB"}');
+  AppLogger.info(
+      'Base de datos inicializada: ${esAPK ? "SQLite nativo" : "IndexedDB"}',
+      tag: 'Main');
 
   // Inicializar servicio de actualización en segundo plano
   backgroundRefreshService = BackgroundRefreshService(database);

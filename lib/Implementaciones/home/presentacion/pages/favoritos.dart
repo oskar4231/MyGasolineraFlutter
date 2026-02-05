@@ -47,7 +47,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           if (permission != LocationPermission.denied &&
               permission != LocationPermission.deniedForever) {
             position = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.best,
+              locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.best,
+              ),
             );
           }
         }
@@ -211,7 +213,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           boxShadow: [
                             // 🔧 Añadida sombra sutil
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -291,7 +293,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           boxShadow: [
                             // 🔧 Añadida sombra sutil
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -467,7 +469,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF492714).withOpacity(0.1),
+            color: const Color(0xFF492714).withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -724,7 +726,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 label: Text(_tipoCombustibleSeleccionado!),
                                 backgroundColor: const Color(
                                   0xFFFF9350,
-                                ).withOpacity(0.2),
+                                ).withValues(alpha: 0.2),
                                 onDeleted: () {
                                   setState(() {
                                     _tipoCombustibleSeleccionado = null;
@@ -745,7 +747,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                   ),
                                   backgroundColor: const Color(
                                     0xFFFF9350,
-                                  ).withOpacity(0.2),
+                                  ).withValues(alpha: 0.2),
                                   onDeleted: () {
                                     setState(() {
                                       _ordenSeleccionado = null;

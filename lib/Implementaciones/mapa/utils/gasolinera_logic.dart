@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart' as api;
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart'
+    as api;
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Clase que maneja toda la lógica de negocio relacionada con gasolineras
 class GasolineraLogic {
@@ -140,11 +142,15 @@ class GasolineraLogic {
             await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
         _currentProvinciaId = provinciaInfo.id;
 
-        print(
-            '🔎 DEBUG GasolineraLogic: Provincia detectada para ($lat, $lng): ${provinciaInfo.nombre} (ID: $_currentProvinciaId)');
+        AppLogger.debug(
+          'DEBUG GasolineraLogic: Provincia detectada para ($lat, $lng): ${provinciaInfo.nombre} (ID: $_currentProvinciaId)',
+          tag: 'GasolineraLogic',
+        );
 
-        print(
-            'GasolineraLogic: Cargando gasolineras para provincia ${provinciaInfo.nombre}');
+        AppLogger.info(
+          'Cargando gasolineras para provincia ${provinciaInfo.nombre}',
+          tag: 'GasolineraLogic',
+        );
 
         // Cargar gasolineras de la provincia actual y vecinas
         final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
@@ -155,29 +161,39 @@ class GasolineraLogic {
           forceRefresh: false, // Usar caché para mejor rendimiento
         );
 
-        print(
-            'GasolineraLogic: Cargadas ${listaGasolineras.length} gasolineras desde cache');
+        AppLogger.info(
+          'Cargadas ${listaGasolineras.length} gasolineras desde cache',
+          tag: 'GasolineraLogic',
+        );
       } catch (e) {
-        print('GasolineraLogic: Error al cargar desde cache, usando API: $e');
+        AppLogger.warning('Error al cargar desde cache, usando API',
+            tag: 'GasolineraLogic', error: e);
 
         // Intentar detectar provincia de nuevo para asegurar que tenemos la correcta para ESTA ubicación
         try {
           final detectedInfo =
               await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
           _currentProvinciaId = detectedInfo.id;
-          print(
-              'GasolineraLogic: (Fallback API) Provincia detectada: ${detectedInfo.nombre} ($_currentProvinciaId)');
+          AppLogger.info(
+            '(Fallback API) Provincia detectada: ${detectedInfo.nombre} ($_currentProvinciaId)',
+            tag: 'GasolineraLogic',
+          );
         } catch (e2) {
-          print(
-              'GasolineraLogic: Error al re-detectar provincia en catch: $e2');
+          AppLogger.error(
+            'Error al re-detectar provincia en catch',
+            tag: 'GasolineraLogic',
+            error: e2,
+          );
         }
 
         if (_currentProvinciaId != null) {
           listaGasolineras =
               await api.fetchGasolinerasByProvincia(_currentProvinciaId!);
         } else {
-          print(
-              'GasolineraLogic: No se pudo determinar provincia, cargando lista vacía o default');
+          AppLogger.warning(
+            'No se pudo determinar provincia, cargando lista vacía o default',
+            tag: 'GasolineraLogic',
+          );
           listaGasolineras = [];
         }
       } finally {
@@ -194,20 +210,26 @@ class GasolineraLogic {
       tipoAperturaSeleccionado: tipoAperturaSeleccionado,
     );
 
-    print(
-        '📍 Filtrando ${listaGasolineras.length} gasolineras por radio de $radiusKm km');
+    AppLogger.debug(
+      'Filtrando ${listaGasolineras.length} gasolineras por radio de $radiusKm km',
+      tag: 'GasolineraLogic',
+    );
 
     if (listaGasolineras.isNotEmpty) {
-      print('🔍 DEBUG: Primeras 3 gasolineras recibidas (sin filtrar):');
+      AppLogger.debug('DEBUG: Primeras 3 gasolineras recibidas (sin filtrar):',
+          tag: 'GasolineraLogic');
       for (var i = 0;
           i < (listaGasolineras.length > 3 ? 3 : listaGasolineras.length);
           i++) {
         final g = listaGasolineras[i];
-        print('   - ${g.rotulo}: ${g.lat}, ${g.lng} (Prov: ${g.provincia})');
+        AppLogger.debug(
+            '   - ${g.rotulo}: ${g.lat}, ${g.lng} (Prov: ${g.provincia})',
+            tag: 'GasolineraLogic');
       }
     }
 
-    print('📍 Calculando distancias desde origen: $lat, $lng');
+    AppLogger.debug('Calculando distancias desde origen: $lat, $lng',
+        tag: 'GasolineraLogic');
 
     // Calcular distancias y filtrar por radio
     final gasolinerasCercanas = listaGasolineras.map((g) {
@@ -217,8 +239,10 @@ class GasolineraLogic {
       final distance = item['distance'] as double;
       // DEBUG: Imprimir distancia de los primeros 3 elementos antes de filtrar
       if (listaGasolineras.indexOf(item['gasolinera'] as Gasolinera) < 3) {
-        print(
-            '   -> Distancia a ${(item['gasolinera'] as Gasolinera).rotulo}: ${distance.toStringAsFixed(2)} metros (${(distance / 1000).toStringAsFixed(2)} km)');
+        AppLogger.debug(
+          '   -> Distancia a ${(item['gasolinera'] as Gasolinera).rotulo}: ${distance.toStringAsFixed(2)} metros (${(distance / 1000).toStringAsFixed(2)} km)',
+          tag: 'GasolineraLogic',
+        );
       }
 
       // Filtrar por radio (convertir metros a km)
@@ -234,8 +258,10 @@ class GasolineraLogic {
     final gasolinerasEnRadio =
         gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
 
-    print(
-        'GasolineraLogic: Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${radiusKm}km');
+    AppLogger.info(
+      'Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${radiusKm}km',
+      tag: 'GasolineraLogic',
+    );
 
     return gasolinerasEnRadio;
   }

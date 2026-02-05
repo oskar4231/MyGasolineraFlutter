@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 // Servicio para gestionar el token de autenticación y recuperación de contraseña
 class AuthService {
@@ -15,7 +16,7 @@ class AuthService {
     _token = prefs.getString('authToken');
     _userEmail = prefs.getString('userEmail');
     if (_token != null) {
-      print('✅ Sesión restaurada para: $_userEmail');
+      AppLogger.info('Sesión restaurada para: $_userEmail', tag: 'AuthService');
     }
   }
 
@@ -29,7 +30,7 @@ class AuthService {
     await prefs.setString('authToken', token);
     await prefs.setString('userEmail', email);
 
-    print('Token guardado para: $email');
+    AppLogger.debug('Token guardado para: $email', tag: 'AuthService');
   }
 
   // Obtener el token
@@ -51,7 +52,7 @@ class AuthService {
   static void logout() {
     _token = null;
     _userEmail = null;
-    print('Sesión cerrada');
+    AppLogger.info('Sesión cerrada', tag: 'AuthService');
   }
 
   // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
@@ -66,10 +67,10 @@ class AuthService {
       );
 
       final data = jsonDecode(response.body);
-      print('Respuesta forgot-password: $data');
+      AppLogger.debug('Respuesta forgot-password: $data', tag: 'AuthService');
       return data;
     } catch (e) {
-      print('Error en forgotPassword: $e');
+      AppLogger.error('Error en forgotPassword', tag: 'AuthService', error: e);
       return {'status': 'error', 'message': 'Error de conexión: $e'};
     }
   }
@@ -84,10 +85,10 @@ class AuthService {
       );
 
       final data = jsonDecode(response.body);
-      print('Respuesta verify-token: $data');
+      AppLogger.debug('Respuesta verify-token: $data', tag: 'AuthService');
       return data;
     } catch (e) {
-      print('Error en verifyToken: $e');
+      AppLogger.error('Error en verifyToken', tag: 'AuthService', error: e);
       return {'status': 'error', 'message': 'Error de conexión: $e'};
     }
   }
@@ -105,10 +106,10 @@ class AuthService {
       );
 
       final data = jsonDecode(response.body);
-      print('Respuesta reset-password: $data');
+      AppLogger.debug('Respuesta reset-password: $data', tag: 'AuthService');
       return data;
     } catch (e) {
-      print('Error en resetPassword: $e');
+      AppLogger.error('Error en resetPassword', tag: 'AuthService', error: e);
       return {'status': 'error', 'message': 'Error de conexión: $e'};
     }
   }

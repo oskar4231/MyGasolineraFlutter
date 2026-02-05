@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/geocoding_service.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Helper class para gestionar marcadores del mapa
 class MarkerHelper {
@@ -31,10 +32,11 @@ class MarkerHelper {
         'assets/images/icono_1.png',
         100,
       );
-      _gasStationIcon = BitmapDescriptor.fromBytes(iconBytes);
-      print('✅ Icono normal cargado correctamente');
+      _gasStationIcon = BitmapDescriptor.bytes(iconBytes);
+      AppLogger.info('Icono normal cargado correctamente', tag: 'MapHelpers');
     } catch (e) {
-      print('❌ Error cargando icono normal: $e');
+      AppLogger.error('Error cargando icono normal',
+          tag: 'MapHelpers', error: e);
     }
 
     // Load favorite icon
@@ -43,10 +45,11 @@ class MarkerHelper {
         'assets/images/iconoFav_1.png',
         100,
       );
-      _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
-      print('✅ Icono favorito cargado correctamente');
+      _favoriteGasStationIcon = BitmapDescriptor.bytes(favIconBytes);
+      AppLogger.info('Icono favorito cargado correctamente', tag: 'MapHelpers');
     } catch (e) {
-      print('❌ Error cargando icono favorito: $e');
+      AppLogger.error('Error cargando icono favorito',
+          tag: 'MapHelpers', error: e);
     }
   }
 
@@ -93,17 +96,21 @@ class ProvinciaHelper {
   /// Notifica mediante el callback onProvinciaUpdate
   static Future<String> actualizarProvincia(double lat, double lng) async {
     try {
-      print('🔄 ProvinciaHelper: Actualizando provincia para ($lat, $lng)...');
+      AppLogger.debug(
+          'ProvinciaHelper: Actualizando provincia para ($lat, $lng)...',
+          tag: 'MapHelpers');
 
       // Llamar al servicio de geocodificación
       final nombreProvincia =
           await GeocodingService.obtenerProvinciaDesdeCoords(lat, lng);
 
-      print('✅ ProvinciaHelper: Provincia detectada: $nombreProvincia');
+      AppLogger.info('ProvinciaHelper: Provincia detectada: $nombreProvincia',
+          tag: 'MapHelpers');
 
       return nombreProvincia;
     } catch (e) {
-      print('❌ ProvinciaHelper: Error actualizando provincia: $e');
+      AppLogger.error('ProvinciaHelper: Error actualizando provincia',
+          tag: 'MapHelpers', error: e);
       return 'Detectando...';
     }
   }

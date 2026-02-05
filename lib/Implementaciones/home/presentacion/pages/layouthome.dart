@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/map_widget.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
 import 'package:my_gasolinera/Implementaciones/coches/presentacion/pages/coches.dart';
-import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/favoritos.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/main.dart' as app;

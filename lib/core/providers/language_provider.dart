@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilidad_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class LanguageProvider extends ChangeNotifier {
   Locale _currentLocale = const Locale('es');
@@ -70,23 +71,26 @@ class LanguageProvider extends ChangeNotifier {
         // Usar idioma guardado localmente
         _languageCode = savedLanguage;
         _currentLocale = Locale(savedLanguage);
-        print('✅ Idioma cargado desde SharedPreferences: $savedLanguage');
+        AppLogger.info('Idioma cargado desde SharedPreferences: $savedLanguage',
+            tag: 'LanguageProvider');
       } else {
         // Intentar cargar desde AccesibilidadService (backend)
         final config = await AccesibilidadService().obtenerConfiguracion();
         if (config != null && config['idioma'] != null) {
           await changeLanguage(config['idioma']);
-          print('✅ Idioma cargado desde backend: ${config['idioma']}');
+          AppLogger.info('Idioma cargado desde backend: ${config['idioma']}',
+              tag: 'LanguageProvider');
         } else {
           // Valor por defecto
           await _saveLanguagePreference('es');
-          print('✅ Idioma por defecto: es');
+          AppLogger.info('Idioma por defecto: es', tag: 'LanguageProvider');
         }
       }
 
       notifyListeners();
     } catch (e) {
-      print('⚠️ Error cargando idioma inicial: $e');
+      AppLogger.warning('Error cargando idioma inicial',
+          tag: 'LanguageProvider', error: e);
       // Continuar con español por defecto
       _languageCode = 'es';
       _currentLocale = const Locale('es');
@@ -98,9 +102,11 @@ class LanguageProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('app_language', languageCode);
-      print('✅ Idioma guardado en SharedPreferences: $languageCode');
+      AppLogger.debug('Idioma guardado en SharedPreferences: $languageCode',
+          tag: 'LanguageProvider');
     } catch (e) {
-      print('❌ Error guardando idioma en SharedPreferences: $e');
+      AppLogger.error('Error guardando idioma en SharedPreferences',
+          tag: 'LanguageProvider', error: e);
     }
   }
 }

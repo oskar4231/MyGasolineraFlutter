@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class AccesibilidadService {
   /// Guarda las configuraciones de accesibilidad en el backend
@@ -26,8 +27,9 @@ class AccesibilidadService {
       final token = prefs.getString('authToken') ?? '';
 
       final url = ApiConfig.accesibilidadUrl;
-      print('🔍 DEBUG - Guardando configuración de accesibilidad');
-      print('🔍 DEBUG - URL: $url');
+      AppLogger.debug('Guardando configuración de accesibilidad',
+          tag: 'AccesibilidadService');
+      AppLogger.debug('URL: $url', tag: 'AccesibilidadService');
 
       final body = {
         'email': email,
@@ -39,7 +41,7 @@ class AccesibilidadService {
           'tamanoFuentePersonalizado': tamanoFuentePersonalizado,
       };
 
-      print('🔍 DEBUG - Body: ${jsonEncode(body)}');
+      AppLogger.debug('Body: ${jsonEncode(body)}', tag: 'AccesibilidadService');
 
       final response = await http
           .post(
@@ -57,8 +59,10 @@ class AccesibilidadService {
                 throw Exception('Timeout al conectar con el servidor'),
           );
 
-      print('🔍 DEBUG - Status code: ${response.statusCode}');
-      print('🔍 DEBUG - Response body: ${response.body}');
+      AppLogger.debug('Status code: ${response.statusCode}',
+          tag: 'AccesibilidadService');
+      AppLogger.debug('Response body: ${response.body}',
+          tag: 'AccesibilidadService');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -79,7 +83,8 @@ class AccesibilidadService {
         );
       }
     } on Exception catch (e) {
-      print('❌ Error guardando en backend: $e');
+      AppLogger.error('Error guardando en backend',
+          tag: 'AccesibilidadService', error: e);
       // Fallback: Guardar localmente para que la UX no se rompa
       try {
         await _guardarConfiguracionLocal(
@@ -89,10 +94,12 @@ class AccesibilidadService {
           idioma: idioma,
           tamanoFuentePersonalizado: tamanoFuentePersonalizado,
         );
-        print('✅ Configuración guardada localmente (modo offline/error)');
+        AppLogger.info('Configuración guardada localmente (modo offline/error)',
+            tag: 'AccesibilidadService');
         return true; // Consideramos éxito parcial para la UI
       } catch (localError) {
-        print('❌ Error guardando localmente: $localError');
+        AppLogger.error('Error guardando localmente',
+            tag: 'AccesibilidadService', error: localError);
         rethrow;
       }
     }
@@ -112,8 +119,9 @@ class AccesibilidadService {
       final token = prefs.getString('authToken') ?? '';
 
       final url = '${ApiConfig.accesibilidadUrl}/$email';
-      print('🔍 DEBUG - Obteniendo configuración de accesibilidad');
-      print('🔍 DEBUG - URL: $url');
+      AppLogger.debug('Obteniendo configuración de accesibilidad',
+          tag: 'AccesibilidadService');
+      AppLogger.debug('URL: $url', tag: 'AccesibilidadService');
 
       final response = await http.get(
         Uri.parse(url),
@@ -127,8 +135,10 @@ class AccesibilidadService {
         onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
       );
 
-      print('🔍 DEBUG - Status code: ${response.statusCode}');
-      print('🔍 DEBUG - Response body: ${response.body}');
+      AppLogger.debug('Status code: ${response.statusCode}',
+          tag: 'AccesibilidadService');
+      AppLogger.debug('Response body: ${response.body}',
+          tag: 'AccesibilidadService');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -149,7 +159,9 @@ class AccesibilidadService {
         return data['configuracion'];
       } else if (response.statusCode == 404) {
         // No hay configuración guardada, usar valores por defecto
-        print('ℹ️ No hay configuración guardada, usando valores por defecto');
+        AppLogger.info(
+            'No hay configuración guardada, usando valores por defecto',
+            tag: 'AccesibilidadService');
         return null;
       } else {
         throw Exception(
@@ -157,7 +169,8 @@ class AccesibilidadService {
         );
       }
     } on Exception catch (e) {
-      print('❌ Error obteniendo configuración de accesibilidad: $e');
+      AppLogger.error('Error obteniendo configuración de accesibilidad',
+          tag: 'AccesibilidadService', error: e);
       // Intentar cargar configuración local como fallback
       return await _obtenerConfiguracionLocal();
     }
@@ -182,7 +195,8 @@ class AccesibilidadService {
         tamanoFuentePersonalizado,
       );
     }
-    print('✅ Configuración guardada localmente');
+    AppLogger.debug('Configuración guardada localmente',
+        tag: 'AccesibilidadService');
   }
 
   /// Obtiene la configuración local de SharedPreferences
@@ -205,7 +219,8 @@ class AccesibilidadService {
         ),
       };
     } catch (e) {
-      print('❌ Error obteniendo configuración local: $e');
+      AppLogger.error('Error obteniendo configuración local',
+          tag: 'AccesibilidadService', error: e);
       return null;
     }
   }
@@ -217,6 +232,7 @@ class AccesibilidadService {
     await prefs.remove('accesibilidad_altoContraste');
     await prefs.remove('accesibilidad_modoOscuro');
     await prefs.remove('accesibilidad_idioma');
-    print('✅ Configuración local limpiada');
+    AppLogger.debug('Configuración local limpiada',
+        tag: 'AccesibilidadService');
   }
 }

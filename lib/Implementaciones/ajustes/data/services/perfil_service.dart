@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class PerfilService {
   /// Sube una foto de perfil al servidor
@@ -17,7 +18,7 @@ class PerfilService {
       final token = AuthService.getToken();
 
       if (token == null || token.isEmpty) {
-        print('❌ No hay token de autenticación');
+        AppLogger.error('No hay token de autenticación', tag: 'PerfilService');
         return false;
       }
 
@@ -61,22 +62,27 @@ class PerfilService {
       request.files.add(multipartFile);
 
       // Enviar la petición
-      print('📤 Subiendo foto de perfil...');
-      print('🔗 URL: ${ApiConfig.perfilUrl}/upload-photo');
-      print('🔑 Token presente: ${token.isNotEmpty}');
+      AppLogger.debug('Subiendo foto de perfil...', tag: 'PerfilService');
+      AppLogger.debug('URL: ${ApiConfig.perfilUrl}/upload-photo',
+          tag: 'PerfilService');
+      AppLogger.debug('Token presente: ${token.isNotEmpty}',
+          tag: 'PerfilService');
 
       var response = await request.send();
 
       // Leer la respuesta
       var responseData = await response.stream.bytesToString();
-      print('📊 Status Code: ${response.statusCode}');
-      print('📄 Response: $responseData');
+      AppLogger.debug('Status Code: ${response.statusCode}',
+          tag: 'PerfilService');
+      AppLogger.debug('Response: $responseData', tag: 'PerfilService');
 
       var jsonResponse = json.decode(responseData);
 
       if (response.statusCode == 200) {
-        print('✅ Foto de perfil subida exitosamente');
-        print('📷 URL de la foto: ${jsonResponse['photoUrl']}');
+        AppLogger.info('Foto de perfil subida exitosamente',
+            tag: 'PerfilService');
+        AppLogger.debug('URL de la foto: ${jsonResponse['photoUrl']}',
+            tag: 'PerfilService');
 
         // Guardar la URL de la foto en SharedPreferences
         final prefs = await SharedPreferences.getInstance();
@@ -84,12 +90,15 @@ class PerfilService {
 
         return true;
       } else {
-        print('❌ Error al subir foto: ${jsonResponse['message']}');
+        AppLogger.error('Error al subir foto: ${jsonResponse['message']}',
+            tag: 'PerfilService');
         return false;
       }
     } catch (e) {
-      print('❌ Error en subirFotoPerfil: $e');
-      print('❌ Stack trace: ${StackTrace.current}');
+      AppLogger.error('Error en subirFotoPerfil',
+          tag: 'PerfilService', error: e);
+      AppLogger.debug('Stack trace: ${StackTrace.current}',
+          tag: 'PerfilService');
       return false;
     }
   }
@@ -103,7 +112,7 @@ class PerfilService {
       final token = AuthService.getToken();
 
       if (token == null || token.isEmpty) {
-        print('❌ No hay token de autenticación');
+        AppLogger.error('No hay token de autenticación', tag: 'PerfilService');
         return null;
       }
 
@@ -129,7 +138,8 @@ class PerfilService {
 
       return null;
     } catch (e) {
-      print('❌ Error en obtenerFotoPerfil: $e');
+      AppLogger.error('Error en obtenerFotoPerfil',
+          tag: 'PerfilService', error: e);
       return null;
     }
   }

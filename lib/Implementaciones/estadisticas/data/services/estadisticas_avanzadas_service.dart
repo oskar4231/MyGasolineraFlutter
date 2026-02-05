@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class EstadisticasAvanzadasService {
   static Map<String, String> _getHeaders() {
@@ -26,7 +27,8 @@ class EstadisticasAvanzadasService {
         throw Exception('Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en obtenerConsumoReal: $e');
+      AppLogger.error('Error en obtenerConsumoReal',
+          tag: 'EstadisticasAvanzadasService', error: e);
       rethrow;
     }
   }
@@ -46,7 +48,8 @@ class EstadisticasAvanzadasService {
         throw Exception('Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en obtenerConsejos: $e');
+      AppLogger.error('Error en obtenerConsejos',
+          tag: 'EstadisticasAvanzadasService', error: e);
       return [];
     }
   }
@@ -71,7 +74,8 @@ class EstadisticasAvanzadasService {
         throw Exception('Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en obtenerCostoPorKm: $e');
+      AppLogger.error('Error en obtenerCostoPorKm',
+          tag: 'EstadisticasAvanzadasService', error: e);
       rethrow;
     }
   }
@@ -90,7 +94,8 @@ class EstadisticasAvanzadasService {
         throw Exception('Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en obtenerMantenimiento: $e');
+      AppLogger.error('Error en obtenerMantenimiento',
+          tag: 'EstadisticasAvanzadasService', error: e);
       rethrow;
     }
   }

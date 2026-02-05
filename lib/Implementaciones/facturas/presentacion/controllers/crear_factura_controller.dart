@@ -17,11 +17,21 @@ class CrearFacturaController {
   }
 
   Future<XFile?> seleccionarImagenGaleria() async {
-    return await _picker.pickImage(source: ImageSource.gallery);
+    return await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 80,
+    );
   }
 
   Future<XFile?> tomarFoto() async {
-    return await _picker.pickImage(source: ImageSource.camera);
+    return await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 80,
+    );
   }
 
   Future<Map<String, dynamic>> procesarEscaneo(String imagePath) async {
@@ -55,7 +65,7 @@ class CrearFacturaController {
       fecha: formattedFecha,
       hora: hora,
       descripcion: descripcion,
-      imagenFile: null,
+      imagenFile: imagen,
       litrosRepostados: litrosRepostados,
       precioPorLitro: precioPorLitro,
       kilometrajeActual: kilometrajeActual,
@@ -63,10 +73,15 @@ class CrearFacturaController {
       idCoche: idCoche,
     );
 
-    final idFactura = response['id'] ?? response['id_factura'] ?? response['facturaId'];
+    final idFactura =
+        response['id'] ?? response['id_factura'] ?? response['facturaId'];
 
     if (imagen != null && idFactura != null) {
-      await LocalImageService.saveImage(imagen, 'factura', idFactura.toString());
+      await LocalImageService.saveImage(
+        imagen,
+        'factura',
+        idFactura.toString(),
+      );
     }
 
     return response;
