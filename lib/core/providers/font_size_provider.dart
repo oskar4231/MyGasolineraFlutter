@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilidad_service.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class FontSizeProvider extends ChangeNotifier {
   double _textScaleFactor = 1.0;
@@ -72,8 +73,9 @@ class FontSizeProvider extends ChangeNotifier {
           _textScaleFactor = _presetToScaleFactor(savedPreset);
         }
 
-        print(
-            '✅ Tamaño de fuente cargado: $_currentSizePreset (factor: $_textScaleFactor)');
+        AppLogger.info(
+            'Tamaño de fuente cargado: $_currentSizePreset (factor: $_textScaleFactor)',
+            tag: 'FontSizeProvider');
       } else {
         // Intentar cargar desde AccesibilidadService
         final config = await AccesibilidadService().obtenerConfiguracion();
@@ -86,13 +88,15 @@ class FontSizeProvider extends ChangeNotifier {
                 config['tamanoFuentePersonalizado'].toDouble());
           }
 
-          print('✅ Tamaño de fuente cargado desde backend');
+          AppLogger.info('Tamaño de fuente cargado desde backend',
+              tag: 'FontSizeProvider');
         }
       }
 
       notifyListeners();
     } catch (e) {
-      print('⚠️ Error cargando tamaño de fuente: $e');
+      AppLogger.warning('Error cargando tamaño de fuente',
+          tag: 'FontSizeProvider', error: e);
       // Continuar con valores por defecto
       _textScaleFactor = 1.0;
       _currentSizePreset = 'Mediano';
@@ -104,9 +108,11 @@ class FontSizeProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('font_size_$key', value);
-      print('✅ Tamaño de fuente guardado: $key = $value');
+      AppLogger.debug('Tamaño de fuente guardado: $key = $value',
+          tag: 'FontSizeProvider');
     } catch (e) {
-      print('❌ Error guardando tamaño de fuente: $e');
+      AppLogger.error('Error guardando tamaño de fuente',
+          tag: 'FontSizeProvider', error: e);
     }
   }
 }

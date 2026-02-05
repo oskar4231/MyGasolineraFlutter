@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'dart:convert';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Obtiene gasolineras cercanas a una ubicación (lat, lng)
 Future<List<Gasolinera>> fetchGasolinerasPorCercania(
@@ -15,7 +16,8 @@ Future<List<Gasolinera>> fetchGasolinerasPorCercania(
       },
     );
 
-    print('🌐 API Backend: Solicitando gasolineras por cercanía...');
+    AppLogger.network('Solicitando gasolineras por cercanía',
+        tag: 'ApiGasolinera');
 
     final response = await http
         .get(uri, headers: ApiConfig.headers)
@@ -29,8 +31,9 @@ Future<List<Gasolinera>> fetchGasolinerasPorCercania(
         final List<dynamic> listaGasolineras =
             jsonResponse['gasolineras'] ?? [];
 
-        print(
-            '✅ API Backend: Recibidas ${listaGasolineras.length} gasolineras por cercanía');
+        AppLogger.network(
+            'Recibidas ${listaGasolineras.length} gasolineras por cercanía',
+            tag: 'ApiGasolinera');
 
         return listaGasolineras
             .map((jsonItem) => Gasolinera.fromJson(jsonItem))
@@ -38,10 +41,11 @@ Future<List<Gasolinera>> fetchGasolinerasPorCercania(
             .toList();
       }
     }
-    print('❌ API Backend Error HTTP: ${response.statusCode}');
+    AppLogger.error('API Backend Error HTTP: ${response.statusCode}',
+        tag: 'ApiGasolinera');
     return [];
   } catch (e) {
-    print('❌ API Backend Excepción: $e');
+    AppLogger.error('API Backend Excepción', tag: 'ApiGasolinera', error: e);
     return [];
   }
 }
@@ -60,8 +64,8 @@ Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
     final uri = Uri.parse('$baseUrl/api/gasolineras')
         .replace(queryParameters: {'id_provincia': provinciaId});
 
-    print(
-        '🌐 API Backend: Solicitando gasolineras para provincia $provinciaId...');
+    AppLogger.network('Solicitando gasolineras para provincia $provinciaId',
+        tag: 'ApiGasolinera');
 
     // 3. Realizar petición con timeout corto (el backend debería ser rápido)
     final response = await http
@@ -76,23 +80,25 @@ Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
         final List<dynamic> listaGasolineras =
             jsonResponse['gasolineras'] ?? [];
 
-        print(
-            '✅ API Backend: Recibidas ${listaGasolineras.length} gasolineras');
+        AppLogger.network('Recibidas ${listaGasolineras.length} gasolineras',
+            tag: 'ApiGasolinera');
 
         return listaGasolineras
             .map((jsonItem) => Gasolinera.fromJson(jsonItem))
             .where((g) => g.lat != 0.0 && g.lng != 0.0)
             .toList();
       } else {
-        print('❌ API Backend Error lógico: ${jsonResponse['message']}');
+        AppLogger.error('API Backend Error lógico: ${jsonResponse['message']}',
+            tag: 'ApiGasolinera');
         return [];
       }
     } else {
-      print('❌ API Backend Error HTTP: ${response.statusCode}');
+      AppLogger.error('API Backend Error HTTP: ${response.statusCode}',
+          tag: 'ApiGasolinera');
       return [];
     }
   } catch (e) {
-    print('❌ API Backend Excepción: $e');
+    AppLogger.error('API Backend Excepción', tag: 'ApiGasolinera', error: e);
     // Fallback silencioso: devolver lista vacía para que la UI use caché si tiene
     return [];
   }
@@ -183,7 +189,8 @@ class ProvinciaMapper {
       return provinciaMap[nombreProvincia];
     }
 
-    print('⚠️ Provincia no encontrada: $nombreProvincia');
+    AppLogger.warning('Provincia no encontrada: $nombreProvincia',
+        tag: 'ProvinciaMapper');
     return null;
   }
 
@@ -209,8 +216,9 @@ class ProvinciaMapper {
       }
     }
 
-    print(
-        '⚠️ Provincia no mapeada (ni siquiera normalizada): $nombreProvincia');
+    AppLogger.warning(
+        'Provincia no mapeada (ni siquiera normalizada): $nombreProvincia',
+        tag: 'ProvinciaMapper');
     return null;
   }
 

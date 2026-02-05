@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaCacheProvincias.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaGasolineras.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaLocalImages.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tablaTheme.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tabla_cache_provincias.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tabla_gasolineras.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tabla_local_images.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/ParaApk/tabla_theme.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-part 'baseDatosApk.g.dart';
+part 'base_datos_apk.g.dart';
 
 /// Base de datos local para cache de gasolineras (VERSIÓN APK)
 /// Usa SQLite nativo con drift_flutter
@@ -45,7 +46,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Abre la conexión a la base de datos SQLite nativa
   static QueryExecutor _openConnection() {
-    print('📱 INICIANDO BASE DE DATOS APK (NATIVA)');
+    AppLogger.info('INICIANDO BASE DE DATOS APK (NATIVA)', tag: 'Database');
     return driftDatabase(name: 'gasolinera_cache_db');
   }
 
@@ -154,9 +155,10 @@ class AppDatabase extends _$AppDatabase {
         .go();
   }
 
-  /// Borra TODO el caché de gasolineras (útil para forzar recarga completa)
+  /// Borra el caché de gasolineras (útil para forzar recarga completa)
   Future<void> clearAllCache() async {
-    print('APK: 🗑️ Borrando TODO el caché de gasolineras...');
+    AppLogger.info('APK: Borrando TODO el caché de gasolineras...',
+        tag: 'Database');
 
     // Eliminar todas las gasolineras
     await delete(gasolinerasTable).go();
@@ -164,7 +166,7 @@ class AppDatabase extends _$AppDatabase {
     // Eliminar todos los registros de provincia cache
     await delete(provinciaCacheTable).go();
 
-    print('✅ Caché completamente borrado');
+    AppLogger.info('Caché completamente borrado', tag: 'Database');
   }
 
   // ==================== TEMA ====================

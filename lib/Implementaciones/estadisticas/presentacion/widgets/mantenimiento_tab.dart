@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/estadisticas/data/services/estadisticas_avanzadas_service.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class MantenimientoTab extends StatefulWidget {
   const MantenimientoTab({super.key});
@@ -23,7 +24,8 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
       return await EstadisticasAvanzadasService.obtenerMantenimiento();
     } catch (e) {
       // Si hay error, devolver lista vacía
-      print('Error cargando mantenimiento: $e');
+      AppLogger.error('Error cargando mantenimiento',
+          tag: 'MantenimientoTab', error: e);
       return [];
     }
   }
@@ -117,7 +119,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
             AppLocalizations.of(context)!.anadeCochesMantenimiento,
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -171,8 +173,8 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: necesitaCambio
-                        ? errorIconColor.withOpacity(0.2)
-                        : primaryIconColor.withOpacity(0.2),
+                        ? errorIconColor.withValues(alpha: 0.2)
+                        : primaryIconColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -202,7 +204,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6),
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                     ],
@@ -239,7 +241,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6),
+                            .withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
@@ -261,7 +263,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6),
+                            .withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
@@ -331,7 +333,7 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.red.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(

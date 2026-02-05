@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'baseDatosWeb.dart';
+part of 'base_datos_apk.dart';
 
 // ignore_for_file: type=lint
 class $GasolinerasTableTable extends GasolinerasTable

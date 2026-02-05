@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/estadisticas/data/services/estadisticas_avanzadas_service.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
@@ -24,7 +25,8 @@ class _ConsumoTabState extends State<ConsumoTab> {
     try {
       return await EstadisticasAvanzadasService.obtenerCostoPorKm();
     } catch (e) {
-      print('Error cargando costo por km: $e');
+      AppLogger.error('Error cargando costo por km',
+          tag: 'ConsumoTab', error: e);
       return {'costos_por_coche': [], 'total_coches': 0};
     }
   }
@@ -91,7 +93,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -100,10 +102,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -119,7 +121,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.6),
+                                  .withValues(alpha: 0.6),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -142,7 +144,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.6),
+                                  .withValues(alpha: 0.6),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -186,7 +188,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor.withOpacity(0.05),
+                        color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -217,7 +219,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.6),
+                              .withValues(alpha: 0.6),
                           height: 1.5,
                         ),
                       ),
@@ -267,7 +269,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -284,7 +286,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: primaryIconColor.withOpacity(0.2),
+                    color: primaryIconColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -322,7 +324,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.6),
+                                  .withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -338,7 +340,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: costoColor.withOpacity(0.1),
+              color: costoColor.withValues(alpha: 0.1),
               border: Border.symmetric(
                 horizontal: BorderSide(
                   color: Colors.grey.shade200,
@@ -407,7 +409,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6),
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                         Text(
@@ -460,7 +462,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6),
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -475,7 +477,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6),
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                         Text(
@@ -523,10 +525,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _getEficienciaColor(costoProm).withOpacity(0.1),
+                      color: _getEficienciaColor(costoProm).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: _getEficienciaColor(costoProm).withOpacity(0.3),
+                        color: _getEficienciaColor(costoProm).withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -571,7 +573,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 24),
@@ -581,7 +583,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -643,7 +645,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
             AppLocalizations.of(context)!.agregaFacturasConsumo,
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),

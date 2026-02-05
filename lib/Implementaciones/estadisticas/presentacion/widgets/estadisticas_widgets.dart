@@ -17,7 +17,7 @@ class EstadisticasWidgets {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -28,7 +28,7 @@ class EstadisticasWidgets {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 32),
@@ -45,7 +45,7 @@ class EstadisticasWidgets {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.6),
+                        .withValues(alpha: 0.6),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -66,7 +66,7 @@ class EstadisticasWidgets {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.6),
+                        .withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -91,7 +91,7 @@ class EstadisticasWidgets {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -105,7 +105,7 @@ class EstadisticasWidgets {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -141,7 +141,7 @@ class EstadisticasWidgets {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6)),
+                            .withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(mesActual)}',
@@ -168,7 +168,7 @@ class EstadisticasWidgets {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6)),
+                            .withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(mesAnterior)}',
@@ -187,8 +187,8 @@ class EstadisticasWidgets {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: isPositive
-                  ? Colors.red.withOpacity(0.1)
-                  : Colors.green.withOpacity(0.1),
+                  ? Colors.red.withValues(alpha: 0.1)
+                  : Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -232,7 +232,7 @@ class EstadisticasWidgets {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -246,7 +246,7 @@ class EstadisticasWidgets {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -282,7 +282,7 @@ class EstadisticasWidgets {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6)),
+                            .withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(gastoActual)}',
@@ -304,7 +304,7 @@ class EstadisticasWidgets {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6)),
+                            .withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(proyeccionFin)}',
@@ -333,7 +333,7 @@ class EstadisticasWidgets {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6)),
+                            .withValues(alpha: 0.6)),
                   ),
                   Text(
                     '${(progreso * 100).toStringAsFixed(0)}%',
@@ -351,7 +351,7 @@ class EstadisticasWidgets {
                 child: LinearProgressIndicator(
                   value: progreso,
                   backgroundColor:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     Theme.of(context).primaryColor,
                   ),

@@ -70,7 +70,7 @@ class Inicio extends StatelessWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onPrimary
-                                .withOpacity(0.5),
+                                .withValues(alpha: 0.5),
                             width: 2.0,
                           ),
                         ),
@@ -102,7 +102,7 @@ class Inicio extends StatelessWidget {
                         backgroundColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                         foregroundColor:
                             Theme.of(context).colorScheme.onSurface,
                         padding: const EdgeInsets.symmetric(vertical: 30),

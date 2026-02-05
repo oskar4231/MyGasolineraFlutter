@@ -6,6 +6,7 @@ import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/fac
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_form.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/info_repostaje.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/imagen_factura.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class CrearFacturaScreen extends StatefulWidget {
   final String? prefilledGasolineraName;
@@ -100,11 +101,13 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
       if (mounted) {
         setState(() {
           _coches = coches;
-          print('✅ ${_coches.length} coches cargados');
+          AppLogger.info('${_coches.length} coches cargados',
+              tag: 'CrearFacturaScreen');
         });
       }
     } catch (e) {
-      print('❌ Error cargando coches: $e');
+      AppLogger.error('Error cargando coches',
+          tag: 'CrearFacturaScreen', error: e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al cargar coches: $e')),

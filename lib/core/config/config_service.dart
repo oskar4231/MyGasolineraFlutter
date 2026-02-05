@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Servicio responsable de gestionar la configuración del backend.
 /// Se ha movido de una actualización dinámica vía Gist a una URL fija de Ngrok.
@@ -13,7 +14,8 @@ class ConfigService {
 
   /// Inicializa la configuración de la aplicación con la URL fija definida en ApiConfig
   static Future<void> initialize() async {
-    print('ConfigService: Inicializando con URL fija: ${ApiConfig.baseUrl}');
+    AppLogger.info('Inicializando con URL fija: ${ApiConfig.baseUrl}',
+        tag: 'ConfigService');
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefsKeyBackendUrl, ApiConfig.baseUrl);
@@ -24,8 +26,8 @@ class ConfigService {
   /// Inicia actualización periódica (Desactivado para URL fija)
   static void startPeriodicRefresh(
       {Duration interval = const Duration(seconds: 15)}) {
-    print(
-        'ConfigService: Actualización periódica desactivada (usando URL fija)');
+    AppLogger.info('Actualización periódica desactivada (usando URL fija)',
+        tag: 'ConfigService');
   }
 
   /// Detiene la actualización periódica
@@ -35,7 +37,8 @@ class ConfigService {
 
   /// Fuerza una actualización de los metadatos de conexión local
   static Future<void> forceRefresh() async {
-    print('ConfigService: Refresh solicitado - Manteniendo URL fija');
+    AppLogger.info('Refresh solicitado - Manteniendo URL fija',
+        tag: 'ConfigService');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefsKeyBackendUrl, ApiConfig.baseUrl);
     await prefs.setInt(

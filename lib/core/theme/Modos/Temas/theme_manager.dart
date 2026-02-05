@@ -3,6 +3,7 @@ import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/modo_oscuro.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/daltonismo.dart';
 import 'package:my_gasolinera/main.dart' as main;
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class ThemeManager extends ChangeNotifier {
   static final ThemeManager _instance = ThemeManager._internal();
@@ -37,9 +38,11 @@ class ThemeManager extends ChangeNotifier {
     try {
       _currentThemeId = await main.database.getThemeId();
       notifyListeners();
-      print('🎨 Tema inicial cargado: $_currentThemeId');
+      AppLogger.info('Tema inicial cargado: $_currentThemeId',
+          tag: 'ThemeManager');
     } catch (e) {
-      print('❌ Error cargando tema inicial: $e');
+      AppLogger.error('Error cargando tema inicial',
+          tag: 'ThemeManager', error: e);
     }
   }
 

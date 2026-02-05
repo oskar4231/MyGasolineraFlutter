@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class CarDataService {
   List<dynamic> _marcas = [];
@@ -29,10 +30,12 @@ class CarDataService {
           await rootBundle.loadString('assets/data/motorizaciones.json');
       _motorizaciones = json.decode(motorizacionesString);
 
-      print(
-          'Datos de coches cargados: ${_marcas.length} marcas, ${_modelos.length} modelos, ${_motorizaciones.length} motorizaciones');
+      AppLogger.info(
+          'Datos de coches cargados: ${_marcas.length} marcas, ${_modelos.length} modelos, ${_motorizaciones.length} motorizaciones',
+          tag: 'CarDataService');
     } catch (e) {
-      print('Error cargando datos de coches: $e');
+      AppLogger.error('Error cargando datos de coches',
+          tag: 'CarDataService', error: e);
       // Initialize with empty lists to avoid null errors
       _marcas = [];
       _modelos = [];

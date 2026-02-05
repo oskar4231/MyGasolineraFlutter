@@ -1,5 +1,6 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// 🌍 Servicio de Geocodificación Inversa
 /// Convierte coordenadas GPS (lat, lng) → Dirección (provincia, ciudad, calle)
@@ -27,14 +28,17 @@ class GeocodingService {
   static Future<String> obtenerProvinciaDesdeCoords(
       double lat, double lng) async {
     try {
-      print('🔎 Geocoding: Detectando provincia para ($lat, $lng)...');
+      AppLogger.debug('Geocoding: Detectando provincia para ($lat, $lng)...',
+          tag: 'GeocodingService');
 
       // 1. Llamar a la API de geocodificación inversa
       // Esto convierte coordenadas → dirección completa
       List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
 
       if (placemarks.isEmpty) {
-        print('⚠️ Geocoding: No se encontraron resultados, usando fallback');
+        AppLogger.warning(
+            'Geocoding: No se encontraron resultados, usando fallback',
+            tag: 'GeocodingService');
         return await _usarFallback(lat, lng);
       }
 
@@ -46,24 +50,32 @@ class GeocodingService {
       String? provincia = lugar.administrativeArea;
 
       // Debug: Mostrar todos los campos disponibles
-      print('📍 Geocoding Debug:');
-      print('   - País: ${lugar.country}');
-      print('   - Provincia (administrativeArea): ${lugar.administrativeArea}');
-      print('   - Ciudad (locality): ${lugar.locality}');
-      print('   - Subadministrativa: ${lugar.subAdministrativeArea}');
-      print('   - Código postal: ${lugar.postalCode}');
+      AppLogger.debug('Geocoding Debug:', tag: 'GeocodingService');
+      AppLogger.debug('   - País: ${lugar.country}', tag: 'GeocodingService');
+      AppLogger.debug(
+          '   - Provincia (administrativeArea): ${lugar.administrativeArea}',
+          tag: 'GeocodingService');
+      AppLogger.debug('   - Ciudad (locality): ${lugar.locality}',
+          tag: 'GeocodingService');
+      AppLogger.debug('   - Subadministrativa: ${lugar.subAdministrativeArea}',
+          tag: 'GeocodingService');
+      AppLogger.debug('   - Código postal: ${lugar.postalCode}',
+          tag: 'GeocodingService');
 
       if (provincia != null && provincia.isNotEmpty) {
-        print('✅ Geocoding: Provincia detectada: $provincia');
+        AppLogger.info('Geocoding: Provincia detectada: $provincia',
+            tag: 'GeocodingService');
         return provincia;
       } else {
-        print('⚠️ Geocoding: Campo provincia vacío, usando fallback');
+        AppLogger.warning('Geocoding: Campo provincia vacío, usando fallback',
+            tag: 'GeocodingService');
         return await _usarFallback(lat, lng);
       }
     } catch (e) {
       // Manejo de errores (sin conexión, límite de API, etc.)
-      print('❌ Geocoding Error: $e');
-      print('   Usando fallback (ProvinciaService)...');
+      AppLogger.error('Geocoding Error', tag: 'GeocodingService', error: e);
+      AppLogger.debug('   Usando fallback (ProvinciaService)...',
+          tag: 'GeocodingService');
       return await _usarFallback(lat, lng);
     }
   }
@@ -74,11 +86,13 @@ class GeocodingService {
     try {
       final provinciaInfo =
           await ProvinciaService.getProvinciaFromCoordinates(lat, lng);
-      print(
-          '✅ Fallback: Provincia detectada por polígonos: ${provinciaInfo.nombre}');
+      AppLogger.info(
+        'Fallback: Provincia detectada por polígonos: ${provinciaInfo.nombre}',
+        tag: 'GeocodingService',
+      );
       return provinciaInfo.nombre;
     } catch (e) {
-      print('❌ Fallback Error: $e');
+      AppLogger.error('Fallback Error', tag: 'GeocodingService', error: e);
       return 'Desconocida';
     }
   }
@@ -119,7 +133,8 @@ class GeocodingService {
 
       return partes.join(', ');
     } catch (e) {
-      print('❌ Error obteniendo dirección completa: $e');
+      AppLogger.error('Error obteniendo dirección completa',
+          tag: 'GeocodingService', error: e);
       return 'Dirección no disponible';
     }
   }

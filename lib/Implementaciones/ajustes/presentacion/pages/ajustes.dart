@@ -4,7 +4,7 @@ import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'dart:typed_data';
-import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/FacturasScreen.dart';
+import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/facturas_screen.dart';
 import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/pages/estadisticas.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/accesibilidad.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/idiomas_screen.dart';
@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/core/utils/local_image_service.dart';
 import 'package:my_gasolinera/Implementaciones/coches/presentacion/pages/coches.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class AjustesScreen extends StatefulWidget {
   const AjustesScreen({super.key});
@@ -80,10 +81,12 @@ class _AjustesScreenState extends State<AjustesScreen> {
         setState(() {
           _nombreUsuario = nombre;
         });
-        print('✅ Nombre de usuario cargado: $nombre');
+        AppLogger.info('Nombre de usuario cargado: $nombre',
+            tag: 'AjustesScreen');
       }
     } catch (e) {
-      print('❌ Error cargando nombre de usuario: $e');
+      AppLogger.error('Error cargando nombre de usuario',
+          tag: 'AjustesScreen', error: e);
       // Fallback al email si falla
       if (mounted) {
         final emailFallback =
@@ -99,7 +102,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
   Future<void> _cargarFotoPerfil() async {
     try {
       // 1. Intentar cargar desde local (intermedia/encriptada)
-      print('🔍 Intentando cargar foto de perfil localmente...');
+      AppLogger.debug('Intentando cargar foto de perfil localmente...',
+          tag: 'AjustesScreen');
       final localBytes = await LocalImageService.getImageBytes(
         'perfil',
         _emailUsuario,
@@ -109,7 +113,9 @@ class _AjustesScreenState extends State<AjustesScreen> {
         setState(() {
           _profileImageBytes = localBytes;
         });
-        print('✅ Foto de perfil cargada desde almacenamiento local encriptado');
+        AppLogger.info(
+            'Foto de perfil cargada desde almacenamiento local encriptado',
+            tag: 'AjustesScreen');
         return;
       }
 
@@ -118,36 +124,41 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (fotoData != null && mounted) {
         if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-          final base64String = fotoData.contains(',')
-              ? fotoData.split(',')[1]
-              : fotoData;
+          final base64String =
+              fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
           final bytes = base64Decode(base64String);
           setState(() {
             _profileImageBytes = bytes;
           });
-          print('📷 Foto de perfil cargada exitosamente (base64)');
+          AppLogger.info('Foto de perfil cargada exitosamente (base64)',
+              tag: 'AjustesScreen');
         } else if (fotoData.startsWith('http')) {
-          print('📷 Cargando foto desde URL: $fotoData');
+          AppLogger.info('Cargando foto desde URL: $fotoData',
+              tag: 'AjustesScreen');
           setState(() {
             _profileImageUrl = fotoData;
           });
-          print('📷 Foto de perfil cargada exitosamente (URL)');
+          AppLogger.info('Foto de perfil cargada exitosamente (URL)',
+              tag: 'AjustesScreen');
         } else {
           try {
             final bytes = base64Decode(fotoData);
             setState(() {
               _profileImageBytes = bytes;
             });
-            print(
-              '📷 Foto de perfil cargada exitosamente (base64 sin prefijo)',
+            AppLogger.info(
+              'Foto de perfil cargada exitosamente (base64 sin prefijo)',
+              tag: 'AjustesScreen',
             );
           } catch (e) {
-            print('⚠️ No se pudo decodificar la imagen: $e');
+            AppLogger.warning('No se pudo decodificar la imagen',
+                tag: 'AjustesScreen', error: e);
           }
         }
       }
     } catch (e) {
-      print('Error cargando foto de perfil: $e');
+      AppLogger.error('Error cargando foto de perfil',
+          tag: 'AjustesScreen', error: e);
     }
   }
 
@@ -169,12 +180,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
       });
 
       // Intentar subir al servidor primero
-      print('☁️ Subiendo foto de perfil al servidor...');
+      AppLogger.info('Subiendo foto de perfil al servidor...',
+          tag: 'AjustesScreen');
       final subidaExitosa = await _perfilService.subirFotoPerfil(pickedFile);
 
       if (subidaExitosa) {
         // Si sube bien, actualizamos la caché local
-        print('💾 Guardando copia local (cache)...');
+        AppLogger.info('Guardando copia local (cache)...',
+            tag: 'AjustesScreen');
         await LocalImageService.saveImage(pickedFile, 'perfil', _emailUsuario);
       }
 
@@ -222,12 +235,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
       });
 
       // Intentar subir al servidor primero
-      print('☁️ Subiendo foto de perfil al servidor...');
+      AppLogger.info('Subiendo foto de perfil al servidor...',
+          tag: 'AjustesScreen');
       final subidaExitosa = await _perfilService.subirFotoPerfil(pickedFile);
 
       if (subidaExitosa) {
         // Si sube bien, actualizamos la caché local
-        print('💾 Guardando copia local (cache)...');
+        AppLogger.info('Guardando copia local (cache)...',
+            tag: 'AjustesScreen');
         await LocalImageService.saveImage(pickedFile, 'perfil', _emailUsuario);
       }
 
@@ -387,9 +402,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     icon: Icon(
                       Icons.directions_car,
                       size: 40,
-                      color: theme.colorScheme.onPrimary.withValues(
-                        alpha: 0.5,
-                      ), // No seleccionado - apagado
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
                     ),
                   ),
                   IconButton(
@@ -403,9 +417,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     icon: Icon(
                       Icons.pin_drop,
                       size: 40,
-                      color: theme.colorScheme.onPrimary.withValues(
-                        alpha: 0.5,
-                      ), // No seleccionado - apagado
+                      color: theme.colorScheme.onPrimary
+                          .withValues(alpha: 0.5), // No seleccionado - apagado
                     ),
                   ),
                   IconButton(
@@ -446,16 +459,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
                     backgroundImage: _profileImageBytes != null
                         ? MemoryImage(_profileImageBytes!) as ImageProvider
                         : _profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!) as ImageProvider
-                        : null,
+                            ? NetworkImage(_profileImageUrl!) as ImageProvider
+                            : null,
                     child:
                         _profileImageBytes == null && _profileImageUrl == null
-                        ? Icon(
-                            Icons.person,
-                            color: theme.colorScheme.onSurface,
-                            size: 40,
-                          )
-                        : null,
+                            ? Icon(
+                                Icons.person,
+                                color: theme.colorScheme.onSurface,
+                                size: 40,
+                              )
+                            : null,
                   ),
                   // Loader mientras sube la foto
                   if (_subiendoFoto)
@@ -580,8 +593,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                 : 'Sin actualizar',
                             style: TextStyle(
                               fontSize: 12,
-                              color: theme.colorScheme.onSurface.withOpacity(
-                                0.6,
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
                               ),
                             ),
                           ),
@@ -594,26 +607,29 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           ? null
                           : () async {
                               setState(() => _actualizandoUrl = true);
+                              final messenger = ScaffoldMessenger.of(context);
                               try {
                                 await ConfigService.forceRefresh();
                                 final lastTime =
                                     await ConfigService.getLastFetchTime();
+
                                 if (mounted) {
                                   setState(() {
                                     _lastUrlUpdate = lastTime;
                                     _actualizandoUrl = false;
                                   });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('✅ URL actualizada'),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
                                 }
+
+                                messenger.showSnackBar(
+                                  const SnackBar(
+                                    content: Text('✅ URL actualizada'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
                               } catch (e) {
                                 if (mounted) {
                                   setState(() => _actualizandoUrl = false);
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  messenger.showSnackBar(
                                     SnackBar(content: Text('❌ Error: $e')),
                                   );
                                 }
@@ -832,7 +848,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                   Text(
                     AppLocalizations.of(context)!.confirmarBorrarCuenta,
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.87),
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.87),
                       fontSize: 16,
                     ),
                   ),
@@ -846,32 +863,23 @@ class _AjustesScreenState extends State<AjustesScreen> {
               ),
               actions: [
                 if (!_eliminandoCuenta)
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancelar,
-                      style: TextStyle(color: theme.colorScheme.onSurface),
-                    ),
-                  ),
-                if (!_eliminandoCuenta)
                   ElevatedButton(
                     onPressed: () async {
+                      final messenger = ScaffoldMessenger.of(context);
+                      final navigator = Navigator.of(context);
+                      final localizations = AppLocalizations.of(context)!;
+
                       setDialogState(() => _eliminandoCuenta = true);
                       try {
-                        final email = await _usuarioService
-                            .obtenerEmailGuardado();
+                        final email = AuthService.getUserEmail() ?? '';
 
-                        print('🔍 DEBUG - Email obtenido en ajustes: "$email"');
-                        print('🔍 DEBUG - Longitud del email: ${email.length}');
-                        print('🔍 DEBUG - Email está vacío: ${email.isEmpty}');
+                        AppLogger.debug('Email obtenido en ajustes: "$email"',
+                            tag: 'AjustesScreen');
 
                         if (email.isEmpty) {
                           throw Exception('No se encontró email del usuario');
                         }
 
-                        print(
-                          '🔍 DEBUG - Enviando email al servicio: "$email"',
-                        );
                         final exito = await _usuarioService.eliminarCuenta(
                           email,
                         );
@@ -879,25 +887,22 @@ class _AjustesScreenState extends State<AjustesScreen> {
                         if (exito) {
                           await _usuarioService.limpiarDatosUsuario();
 
-                          if (mounted) {
-                            Navigator.of(context).pop();
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                          }
+                          navigator.pop();
+                          navigator.pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                            (Route<dynamic> route) => false,
+                          );
                         }
                       } catch (e) {
                         setDialogState(() => _eliminandoCuenta = false);
                         if (mounted) {
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          navigator.pop();
+                          messenger.showSnackBar(
                             SnackBar(
                               content: Text(
-                                '${AppLocalizations.of(context)!.errorEliminarCuenta}: ${e.toString()}',
+                                '${localizations.errorEliminarCuenta}: ${e.toString()}',
                               ),
                               duration: const Duration(seconds: 4),
                               backgroundColor: Colors.red,

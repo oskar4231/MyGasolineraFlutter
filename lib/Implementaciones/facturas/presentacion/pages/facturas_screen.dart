@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/data/services/factura_service.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/data/services/export_service.dart';
 
-import 'CrearFacturaScreen.dart';
-import 'DetalleFacturaScreen.dart';
+import 'crear_factura_screen.dart';
+import 'detalle_factura_screen.dart';
 import 'seleccion_facturas_screen.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_image_widget.dart';
 import 'package:intl/intl.dart';

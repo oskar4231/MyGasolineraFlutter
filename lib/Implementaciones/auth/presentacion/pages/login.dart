@@ -8,6 +8,7 @@ import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.d
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -48,8 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
         // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/login for iOS Simulator or Web
         final url = Uri.parse(ApiConfig.loginUrl);
 
-        print('Intentando login en: $url');
-        print('Email: ${_emailController.text.trim()}');
+        AppLogger.debug('Intentando login en: $url', tag: 'LoginScreen');
+        AppLogger.debug('Email: ${_emailController.text.trim()}',
+            tag: 'LoginScreen');
 
         final response = await http.post(
           url,
@@ -60,8 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
           }),
         );
 
-        print('Respuesta status: ${response.statusCode}');
-        print('Respuesta body: ${response.body}');
+        AppLogger.debug('Respuesta status: ${response.statusCode}',
+            tag: 'LoginScreen');
+        AppLogger.debug('Respuesta body: ${response.body}', tag: 'LoginScreen');
 
         final responseData = json.decode(response.body);
 
@@ -72,21 +75,23 @@ class _LoginScreenState extends State<LoginScreen> {
             final token = responseData['token'];
             if (token != null) {
               await AuthService.saveToken(token, _emailController.text.trim());
-              print('✅ Token guardado exitosamente');
+              AppLogger.info('Token guardado exitosamente', tag: 'LoginScreen');
             }
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Login exitoso'),
-                backgroundColor: Colors.green,
-              ),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Login exitoso'),
+                  backgroundColor: Colors.green,
+                ),
+              );
 
-            // Navegar al mapa
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const Layouthome()),
-            );
+              // Navegar al mapa
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Layouthome()),
+              );
+            }
           }
         } else {
           // Login fallido (400, 401, 500)
@@ -102,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
       } catch (error) {
-        print('Error de conexión: $error');
+        AppLogger.error('Error de conexión', tag: 'LoginScreen', error: error);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -203,12 +208,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6)),
+                                .withValues(alpha: 0.6)),
                         filled: true,
                         fillColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.15),
+                            .withValues(alpha: 0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -248,12 +253,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.6)),
+                                .withValues(alpha: 0.6)),
                         filled: true,
                         fillColor: Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.15),
+                            .withValues(alpha: 0.15),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,

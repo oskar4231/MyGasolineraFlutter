@@ -3,6 +3,7 @@ import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilid
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/main.dart' as app;
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class AccesibilidadScreen extends StatefulWidget {
   const AccesibilidadScreen({super.key});
@@ -42,7 +43,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         });
       }
     } catch (e) {
-      print('Error cargando configuración: $e');
+      AppLogger.error('Error cargando configuración',
+          tag: 'AccesibilidadScreen', error: e);
       if (mounted) {
         setState(() {
           _cargando = false;
@@ -241,6 +243,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         onPressed: _cargando
                             ? null
                             : () async {
+                                final messenger = ScaffoldMessenger.of(context);
+                                final navigator = Navigator.of(context);
                                 try {
                                   // Mostrar indicador de carga
                                   setState(() {
@@ -260,12 +264,14 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                             : null,
                                   );
 
-                                  setState(() {
-                                    _cargando = false;
-                                  });
+                                  if (mounted) {
+                                    setState(() {
+                                      _cargando = false;
+                                    });
+                                  }
 
-                                  if (exito && mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                  if (exito) {
+                                    messenger.showSnackBar(
                                       const SnackBar(
                                         content: Text(
                                           '✅ Configuración guardada correctamente',
@@ -274,15 +280,14 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                         backgroundColor: Colors.green,
                                       ),
                                     );
-                                    Navigator.of(context).pop();
+                                    navigator.pop();
                                   }
                                 } catch (e) {
-                                  setState(() {
-                                    _cargando = false;
-                                  });
-
                                   if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    setState(() {
+                                      _cargando = false;
+                                    });
+                                    messenger.showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           '❌ Error al guardar: ${e.toString()}',
@@ -436,7 +441,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: Theme.of(context).dialogBackgroundColor,
+              backgroundColor: Theme.of(context).dialogTheme.backgroundColor ??
+                  Theme.of(context).colorScheme.surface,
               title: Row(
                 children: [
                   Icon(Icons.format_size,
@@ -483,7 +489,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                       ),
                       Expanded(
                         child: Slider(
@@ -495,7 +501,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           inactiveColor: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                           label: tempTamano.round().toString(),
                           onChanged: (double value) {
                             setDialogState(() {
@@ -510,7 +516,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                       ),
                     ],
                   ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilidad_service.dart';
 import 'package:my_gasolinera/main.dart'; // Para languageProvider
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class IdiomasScreen extends StatefulWidget {
   const IdiomasScreen({super.key});
@@ -72,7 +73,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
         });
       }
     } catch (e) {
-      print('Error cargando configuración: $e');
+      AppLogger.error('Error cargando configuración',
+          tag: 'IdiomasScreen', error: e);
       if (mounted) {
         // Fallback al idioma del provider
         final currentLanguageCode = languageProvider.languageCode;
@@ -177,10 +179,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                       _idiomaSeleccionado,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.8),
+                                        color:
+                                            Colors.white.withValues(alpha: 0.9),
                                       ),
                                     ),
                                   ],
@@ -191,7 +191,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.5),
+                                    .withValues(alpha: 0.5),
                                 size: 16,
                               ),
                             ],
@@ -207,6 +207,11 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                         onPressed: _cargando
                             ? null
                             : () async {
+                                final messenger = ScaffoldMessenger.of(context);
+                                final navigator = Navigator.of(context);
+                                final localizations =
+                                    AppLocalizations.of(context)!;
+
                                 try {
                                   // Mostrar indicador de carga
                                   setState(() {
@@ -221,35 +226,34 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                     altoContraste: _altoContraste,
                                     modoOscuro: _modoOscuro,
                                   );
+                                  if (exito) {
+                                    if (mounted) {
+                                      setState(() {
+                                        _cargando = false;
+                                      });
+                                    }
 
-                                  setState(() {
-                                    _cargando = false;
-                                  });
-
-                                  if (exito && mounted) {
                                     // Actualizar idioma globalmente
                                     await languageProvider
                                         .changeLanguage(_idiomaSeleccionado);
 
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    messenger.showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          AppLocalizations.of(context)!
-                                              .idiomaGuardado,
+                                          localizations.idiomaGuardado,
                                         ),
                                         duration: const Duration(seconds: 2),
                                         backgroundColor: Colors.green,
                                       ),
                                     );
-                                    Navigator.of(context).pop();
+                                    navigator.pop();
                                   }
                                 } catch (e) {
-                                  setState(() {
-                                    _cargando = false;
-                                  });
-
                                   if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    setState(() {
+                                      _cargando = false;
+                                    });
+                                    messenger.showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           '❌ Error al guardar: ${e.toString()}',
@@ -318,7 +322,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
         return AlertDialog(
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? const Color(0xFF1E1E1E)
-              : Theme.of(context).dialogBackgroundColor,
+              : Theme.of(context).dialogTheme.backgroundColor ??
+                  Theme.of(context).colorScheme.surface,
           title: Row(
             children: [
               Icon(Icons.language,
@@ -432,7 +437,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
         return AlertDialog(
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? const Color(0xFF1E1E1E)
-              : Theme.of(context).dialogBackgroundColor,
+              : Theme.of(context).dialogTheme.backgroundColor ??
+                  Theme.of(context).colorScheme.surface,
           title: Row(
             children: [
               IconButton(
@@ -539,7 +545,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
+          backgroundColor: Theme.of(context).dialogTheme.backgroundColor ??
+              Theme.of(context).colorScheme.surface,
           title: Row(
             children: [
               Icon(Icons.warning_amber_rounded,
@@ -560,7 +567,10 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
           content: Text(
             AppLocalizations.of(context)!.seguroCambiarIdioma(nuevoIdioma),
             style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.8),
                 fontSize: 16),
           ),
           actions: [

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_image_widget.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class DetalleFacturaScreen extends StatelessWidget {
   final Map<String, dynamic> factura;
@@ -31,7 +32,8 @@ class DetalleFacturaScreen extends StatelessWidget {
         return DateFormat('dd/MM/yyyy').format(dateTime);
       }
     } catch (e) {
-      print('Error parsing date in detalle: $e');
+      AppLogger.error('Error parsing date in detalle',
+          tag: 'DetalleFacturaScreen', error: e);
     }
 
     return fecha;
@@ -169,7 +171,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -249,7 +251,7 @@ class DetalleFacturaScreen extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             fontWeight: FontWeight.w500,
           ),
         ),

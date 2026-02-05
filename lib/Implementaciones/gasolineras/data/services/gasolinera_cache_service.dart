@@ -1,8 +1,10 @@
-import 'package:my_gasolinera/core/database/bbdd_intermedia/baseDatos.dart';
+import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart' as api;
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart'
+    as api;
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Servicio de cache para gasolineras con estrategia offline-first
 class GasolinerasCacheService {
@@ -26,14 +28,14 @@ class GasolinerasCacheService {
           maxMinutes: cacheFreshnessMinutes);
 
       if (!forceRefresh && isFresh) {
-        print(
-            'GasolinerasCacheService: Usando cache fresco para provincia $provinciaId');
+        AppLogger.database('Usando cache fresco para provincia $provinciaId',
+            tag: 'GasolinerasCacheService');
         return await _loadFromCache(provinciaId);
       }
 
       // 2. Cache obsoleto o no existe, cargar desde API
-      print(
-          'GasolinerasCacheService: Cache obsoleto o no existe, cargando desde API...');
+      AppLogger.database('Cache obsoleto o no existe, cargando desde API...',
+          tag: 'GasolinerasCacheService');
       final gasolineras = await api.fetchGasolinerasByProvincia(provinciaId);
 
       if (gasolineras.isNotEmpty) {
@@ -43,11 +45,12 @@ class GasolinerasCacheService {
       }
 
       // 3. API no devolvió datos, intentar usar cache antiguo
-      print(
-          'GasolinerasCacheService: API sin datos, intentando cache antiguo...');
+      AppLogger.database('API sin datos, intentando cache antiguo...',
+          tag: 'GasolinerasCacheService');
       return await _loadFromCache(provinciaId);
     } catch (e) {
-      print('GasolinerasCacheService: Error al obtener gasolineras: $e');
+      AppLogger.error('Error al obtener gasolineras',
+          tag: 'GasolinerasCacheService', error: e);
       // Fallback a cache en caso de error
       return await _loadFromCache(provinciaId);
     }
@@ -73,12 +76,13 @@ class GasolinerasCacheService {
     final cachedData = await _db.getGasolinerasByProvincia(provinciaId);
 
     if (cachedData.isEmpty) {
-      print('GasolinerasCacheService: No hay datos en cache para $provinciaId');
+      AppLogger.database('No hay datos en cache para $provinciaId',
+          tag: 'GasolinerasCacheService');
       return [];
     }
 
-    print(
-        'GasolinerasCacheService: Cargadas ${cachedData.length} gasolineras desde cache');
+    AppLogger.database('Cargadas ${cachedData.length} gasolineras desde cache',
+        tag: 'GasolinerasCacheService');
 
     return cachedData.map((data) {
       return Gasolinera(
@@ -107,8 +111,9 @@ class GasolinerasCacheService {
   /// Guarda gasolineras en cache local
   Future<void> _saveToCache(
       String provinciaId, List<Gasolinera> gasolineras) async {
-    print(
-        'GasolinerasCacheService: Guardando ${gasolineras.length} gasolineras en cache...');
+    AppLogger.database(
+        'Guardando ${gasolineras.length} gasolineras en cache...',
+        tag: 'GasolinerasCacheService');
 
     // Eliminar datos antiguos de esta provincia
     await _db.deleteGasolinerasByProvincia(provinciaId);
@@ -146,17 +151,19 @@ class GasolinerasCacheService {
     await _db.updateProvinciaCache(
         provinciaId, provinciaNombre, gasolineras.length);
 
-    print('GasolinerasCacheService: Cache actualizado exitosamente');
+    AppLogger.database('Cache actualizado exitosamente',
+        tag: 'GasolinerasCacheService');
   }
 
   /// Refresca el cache en segundo plano
   Future<void> refreshCache(String provinciaId) async {
     try {
-      print(
-          'GasolinerasCacheService: Refrescando cache para provincia $provinciaId...');
+      AppLogger.database('Refrescando cache para provincia $provinciaId...',
+          tag: 'GasolinerasCacheService');
       await getGasolineras(provinciaId, forceRefresh: true);
     } catch (e) {
-      print('GasolinerasCacheService: Error al refrescar cache: $e');
+      AppLogger.error('Error al refrescar cache',
+          tag: 'GasolinerasCacheService', error: e);
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/core/utils/polygon_utils.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Servicio para detectar y gestionar la provincia actual del usuario
 class ProvinciaService {
@@ -70,7 +71,8 @@ class ProvinciaService {
       double lat, double lng) async {
     final prefs = await SharedPreferences.getInstance();
 
-    print('ProvinciaService: Detectando (Polígonos) para Lat: $lat, Lng: $lng');
+    AppLogger.debug('Detectando (Polígonos) para Lat: $lat, Lng: $lng',
+        tag: 'ProvinciaService');
 
     // 1. Definir Polígonos Simplificados (Lat, Lng)
     // Estos puntos forman el "Mapa Invisible" aproximado
@@ -143,42 +145,48 @@ class ProvinciaService {
 
     // Check Castellón first (more specific, northern province)
     if (PolygonUtils.isPointInPolygon(lat, lng, castellonPolygon)) {
-      print('ProvinciaService: ¡Detectado CASTELLÓN (por polígono)!');
+      AppLogger.info('¡Detectado CASTELLÓN (por polígono)!',
+          tag: 'ProvinciaService');
       final info = ProvinciaInfo('12', 'Castellón');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     if (PolygonUtils.isPointInPolygon(lat, lng, valenciaPolygon)) {
-      print('ProvinciaService: ¡Detectado VALENCIA (por polígono)!');
+      AppLogger.info('¡Detectado VALENCIA (por polígono)!',
+          tag: 'ProvinciaService');
       final info = ProvinciaInfo('46', 'Valencia');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     if (PolygonUtils.isPointInPolygon(lat, lng, madridPolygon)) {
-      print('ProvinciaService: ¡Detectado MADRID (por polígono)!');
+      AppLogger.info('¡Detectado MADRID (por polígono)!',
+          tag: 'ProvinciaService');
       final info = ProvinciaInfo('28', 'Madrid');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     if (PolygonUtils.isPointInPolygon(lat, lng, alicantePolygon)) {
-      print('ProvinciaService: ¡Detectado ALICANTE (por polígono)!');
+      AppLogger.info('¡Detectado ALICANTE (por polígono)!',
+          tag: 'ProvinciaService');
       final info = ProvinciaInfo('03', 'Alicante');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     if (PolygonUtils.isPointInPolygon(lat, lng, albacetePolygon)) {
-      print('ProvinciaService: ¡Detectado ALBACETE (por polígono)!');
+      AppLogger.info('¡Detectado ALBACETE (por polígono)!',
+          tag: 'ProvinciaService');
       final info = ProvinciaInfo('02', 'Albacete');
       await _saveLastProvincia(prefs, info);
       return info;
     }
 
     if (PolygonUtils.isPointInPolygon(lat, lng, murciaPolygon)) {
-      print('ProvinciaService: ¡Detectado MURCIA (por polígono)!');
+      AppLogger.info('¡Detectado MURCIA (por polígono)!',
+          tag: 'ProvinciaService');
       final info = ProvinciaInfo('30', 'Murcia');
       await _saveLastProvincia(prefs, info);
       return info;
@@ -214,20 +222,22 @@ class ProvinciaService {
     }
 
     // Fallback: Si no cae en ningún polígono, mantener la lógica antigua o devolver la más cercana (o última)
-    print(
-        'ProvinciaService: No detectado en polígonos, comprobando caché o fallback...');
+    AppLogger.debug(
+        'No detectado en polígonos, comprobando caché o fallback...',
+        tag: 'ProvinciaService');
 
     // Si no se detecta, usar última conocida
     final lastId = prefs.getString(_prefsKeyLastProvincia);
     final lastNombre = prefs.getString(_prefsKeyLastProvinciaNombre);
 
     if (lastId != null && lastNombre != null) {
-      print('ProvinciaService: Usando última conocida: $lastNombre');
+      AppLogger.info('Usando última conocida: $lastNombre',
+          tag: 'ProvinciaService');
       return ProvinciaInfo(lastId, lastNombre);
     }
 
     // Por defecto: Madrid
-    print('ProvinciaService: Usando Default (Madrid)');
+    AppLogger.info('Usando Default (Madrid)', tag: 'ProvinciaService');
     final defaultInfo = ProvinciaInfo('28', 'Madrid');
     await _saveLastProvincia(prefs, defaultInfo);
     return defaultInfo;

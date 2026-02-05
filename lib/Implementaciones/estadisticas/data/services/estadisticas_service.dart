@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 /// Servicio para obtener estadísticas de gastos de combustible
 class EstadisticasService {
@@ -30,7 +31,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerGastoTotal: $e');
+      AppLogger.error('Error en obtenerGastoTotal',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -49,7 +51,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerGastoMesActual: $e');
+      AppLogger.error('Error en obtenerGastoMesActual',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -68,7 +71,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerPromedioMensual: $e');
+      AppLogger.error('Error en obtenerPromedioMensual',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -87,7 +91,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerGastoAnual: $e');
+      AppLogger.error('Error en obtenerGastoAnual',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -106,7 +111,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerComparacionMensual: $e');
+      AppLogger.error('Error en obtenerComparacionMensual',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -126,7 +132,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerGastosPorMes: $e');
+      AppLogger.error('Error en obtenerGastosPorMes',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -145,7 +152,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerPromedioFactura: $e');
+      AppLogger.error('Error en obtenerPromedioFactura',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -164,7 +172,8 @@ class EstadisticasService {
         throw Exception('Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Error en obtenerProyeccionFinMes: $e');
+      AppLogger.error('Error en obtenerProyeccionFinMes',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }
@@ -235,7 +244,8 @@ class EstadisticasService {
         },
       };
     } catch (e) {
-      print('Error en obtenerTodasEstadisticas: $e');
+      AppLogger.error('Error en obtenerTodasEstadisticas',
+          tag: 'EstadisticasService', error: e);
       rethrow;
     }
   }

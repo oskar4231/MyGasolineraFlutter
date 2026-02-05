@@ -4,13 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
 import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
-import 'package:my_gasolinera/Implementaciones/mapa/presentacion/pages/mapa.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class MapaTiempoReal extends StatefulWidget {
   const MapaTiempoReal({super.key});
 
   @override
-  _MapaTiempoRealState createState() => _MapaTiempoRealState();
+  State<MapaTiempoReal> createState() => _MapaTiempoRealState();
 }
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
@@ -42,7 +42,8 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
       setState(() {
         _provinciaActual = nombreProvincia;
       });
-      print('✅ AppBar: Provincia actualizada: $_provinciaActual');
+      AppLogger.info('AppBar: Provincia actualizada: $_provinciaActual',
+          tag: 'MapaTiempoReal');
     }
   }
 

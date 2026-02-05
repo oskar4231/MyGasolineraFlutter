@@ -93,8 +93,8 @@ class PasswordRequirements extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isMet
-                  ? successColor.withOpacity(0.1)
-                  : errorColor.withOpacity(0.1),
+                  ? successColor.withValues(alpha: 0.1)
+                  : errorColor.withValues(alpha: 0.1),
               border: Border.all(
                 color: isMet ? successColor : errorColor,
                 width: 2,

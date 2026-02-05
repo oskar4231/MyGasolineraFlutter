@@ -72,7 +72,6 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     // Validación: requiere tipo de combustible
     if (widget.tipoCombustible == null) {

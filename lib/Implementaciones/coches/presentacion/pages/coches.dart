@@ -63,6 +63,7 @@ class _CochesScreenState extends State<CochesScreen> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     CarDataService().loadData(); // Cargar datos de coches
@@ -86,9 +87,9 @@ class _CochesScreenState extends State<CochesScreen> {
           cochesList.map((json) => Coche.fromJson(json)).toList(),
         );
       });
-      print('✅ ${_coches.length} coches cargados');
+      // print('✅ ${_coches.length} coches cargados'); // Debug only
     } catch (error) {
-      print('Error al cargar coches: $error');
+      // print('Error al cargar coches: $error'); // Debug only
       if (mounted) {
         DialogHelper.showErrorSnackbar(
             context,
@@ -153,7 +154,7 @@ class _CochesScreenState extends State<CochesScreen> {
         await _cargarCoches();
       }
     } catch (error) {
-      print('Error al crear coche: $error');
+      // print('Error al crear coche: $error'); // Debug only
       if (mounted) {
         DialogHelper.showErrorSnackbar(context,
             AppLocalizations.of(context)!.errorCrearCoche(error.toString()));
@@ -235,7 +236,7 @@ class _CochesScreenState extends State<CochesScreen> {
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.directions_car),
                         ),
-                        value: selectedMarcaId,
+                        initialValue: selectedMarcaId,
                         items: marcas.map<DropdownMenuItem<int>>((marca) {
                           return DropdownMenuItem<int>(
                             value: marca['id'],
@@ -271,7 +272,7 @@ class _CochesScreenState extends State<CochesScreen> {
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.car_crash),
                         ),
-                        value: selectedModeloId,
+                        initialValue: selectedModeloId,
                         items: modelos.map<DropdownMenuItem<int>>((modelo) {
                           return DropdownMenuItem<int>(
                             value: modelo['id'],
@@ -316,7 +317,7 @@ class _CochesScreenState extends State<CochesScreen> {
                             prefixIcon:
                                 const Icon(Icons.settings_input_component),
                           ),
-                          value: selectedMotorizacion,
+                          initialValue: selectedMotorizacion,
                           items: motorizaciones
                               .map<DropdownMenuItem<dynamic>>((moto) {
                             return DropdownMenuItem<dynamic>(
@@ -524,7 +525,7 @@ class _CochesScreenState extends State<CochesScreen> {
             await _cargarCoches();
           }
         } catch (error) {
-          print('Error al eliminar coche: $error');
+          // print('Error al eliminar coche: $error'); // Debug only
           if (mounted) {
             DialogHelper.showErrorSnackbar(
                 context,

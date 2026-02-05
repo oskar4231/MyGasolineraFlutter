@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class FacturaService {
   // Obtener facturas paginadas
@@ -30,7 +31,8 @@ class FacturaService {
         throw Exception('Error al obtener facturas: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en obtenerFacturas: $e');
+      AppLogger.error('Error en obtenerFacturas',
+          tag: 'FacturaService', error: e);
       rethrow;
     }
   }
@@ -109,7 +111,8 @@ class FacturaService {
 
           request.files.add(multipartFile);
         } catch (e) {
-          print('Error al leer la imagen: $e');
+          AppLogger.error('Error al leer la imagen',
+              tag: 'FacturaService', error: e);
           // Continuar sin imagen si hay error
         }
       }
@@ -127,7 +130,7 @@ class FacturaService {
         );
       }
     } catch (e) {
-      print('Error en crearFactura: $e');
+      AppLogger.error('Error en crearFactura', tag: 'FacturaService', error: e);
       rethrow;
     }
   }
@@ -152,7 +155,8 @@ class FacturaService {
         throw Exception('Error al eliminar factura: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en eliminarFactura: $e');
+      AppLogger.error('Error en eliminarFactura',
+          tag: 'FacturaService', error: e);
       rethrow;
     }
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class CocheService {
   // Obtener todos los coches del usuario - devuelve List<dynamic> en lugar de List<Coche>
@@ -10,13 +11,14 @@ class CocheService {
       final token = AuthService.getToken();
 
       if (token == null || token.isEmpty) {
-        print('No hay token, usuario no autenticado');
+        AppLogger.warning('No hay token, usuario no autenticado',
+            tag: 'CocheService');
         return [];
       }
 
       final url = Uri.parse(ApiConfig.cochesUrl);
 
-      print('Cargando coches desde: $url');
+      AppLogger.debug('Cargando coches desde: $url', tag: 'CocheService');
 
       final response = await http.get(
         url,
@@ -26,17 +28,20 @@ class CocheService {
         },
       );
 
-      print('Respuesta status: ${response.statusCode}');
+      AppLogger.debug('Respuesta status: ${response.statusCode}',
+          tag: 'CocheService');
 
       if (response.statusCode == 200) {
         final List<dynamic> cochesJson = json.decode(response.body);
         return cochesJson; // Devuelve List<dynamic> directamente
       } else {
-        print('Error al cargar coches: ${response.statusCode}');
+        AppLogger.error('Error al cargar coches: ${response.statusCode}',
+            tag: 'CocheService');
         throw Exception('Error al cargar coches: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error de conexión al cargar coches: $error');
+      AppLogger.error('Error de conexión al cargar coches',
+          tag: 'CocheService', error: error);
       rethrow;
     }
   }
@@ -64,10 +69,10 @@ class CocheService {
       final url = Uri.parse(ApiConfig.getUrl('/insertCar'));
       final combustibleString = tiposCombustible.join(', ');
 
-      print('Intentando crear coche en: $url');
-      print('Marca: $marca');
-      print('Modelo: $modelo');
-      print('Combustible: $combustibleString');
+      AppLogger.debug('Intentando crear coche en: $url', tag: 'CocheService');
+      AppLogger.debug('Marca: $marca', tag: 'CocheService');
+      AppLogger.debug('Modelo: $modelo', tag: 'CocheService');
+      AppLogger.debug('Combustible: $combustibleString', tag: 'CocheService');
 
       final response = await http.post(
         url,
@@ -89,8 +94,9 @@ class CocheService {
         }),
       );
 
-      print('Respuesta status: ${response.statusCode}');
-      print('Respuesta body: ${response.body}');
+      AppLogger.debug('Respuesta status: ${response.statusCode}',
+          tag: 'CocheService');
+      AppLogger.debug('Respuesta body: ${response.body}', tag: 'CocheService');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = json.decode(response.body);
@@ -102,7 +108,8 @@ class CocheService {
         throw Exception(errorMessage);
       }
     } catch (error) {
-      print('Error de conexión al crear coche: $error');
+      AppLogger.error('Error de conexión al crear coche',
+          tag: 'CocheService', error: error);
       rethrow;
     }
   }
@@ -118,7 +125,7 @@ class CocheService {
 
       final url = Uri.parse('${ApiConfig.cochesUrl}/$idCoche');
 
-      print('Eliminando coche: $idCoche');
+      AppLogger.debug('Eliminando coche: $idCoche', tag: 'CocheService');
 
       final response = await http.delete(
         url,
@@ -128,8 +135,9 @@ class CocheService {
         },
       );
 
-      print('Respuesta status: ${response.statusCode}');
-      print('Respuesta body: ${response.body}');
+      AppLogger.debug('Respuesta status: ${response.statusCode}',
+          tag: 'CocheService');
+      AppLogger.debug('Respuesta body: ${response.body}', tag: 'CocheService');
 
       if (response.statusCode != 200) {
         final responseData = json.decode(response.body);
@@ -138,7 +146,8 @@ class CocheService {
         throw Exception(errorMessage);
       }
     } catch (error) {
-      print('Error al eliminar coche: $error');
+      AppLogger.error('Error al eliminar coche',
+          tag: 'CocheService', error: error);
       rethrow;
     }
   }
