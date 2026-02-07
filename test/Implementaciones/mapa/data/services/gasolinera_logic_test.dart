@@ -252,5 +252,90 @@ void main() {
     // Debería devolver lista vacía (ninguna cumple)
     expect(resultado.length, 0);
     });
+
+    test('Filtro debe excluir gasolineras con todos los precios en 0', () {
+    final gasolineraSinPrecios = Gasolinera(
+        id: '999',
+        rotulo: 'Sin Precios',
+        direccion: 'Test',
+        lat: 40.4168,
+        lng: -3.7038,
+        provincia: 'Madrid',
+        horario: 'L-D: 08:00-22:00',
+        gasolina95: 0,  // ⚠️ Todos en 0
+        gasolina95E10: 0,
+        gasolina98: 0,
+        gasoleoA: 0,
+        gasoleoPremium: 0,
+        glp: 0,
+        biodiesel: 0,
+        bioetanol: 0,
+        esterMetilico: 0,
+        hidrogeno: 0,
+    );
+    final todasLasGasolineras = [gasolineraBarata, gasolineraSinPrecios];
+    final resultado = logic.aplicarFiltros(
+        todasLasGasolineras,
+        combustibleSeleccionado: 'Gasolina 95',
+    );
+    // Solo debe quedar la barata (la otra tiene precio 0)
+    expect(resultado.length, 1);
+    expect(resultado.first.id, '1');
+    });
+
+    test('Filtro triple: debe aplicar combustible + precio + apertura correctamente', () {
+    // Crear gasolinera que cumple TODOS los criterios
+    final gasolineraPerfecta = Gasolinera(
+        id: '100',
+        rotulo: 'Perfecta',
+        direccion: 'Test',
+        lat: 40.4168,
+        lng: -3.7038,
+        provincia: 'Madrid',
+        horario: 'L-D: 24H',  // ✅ 24 horas
+        gasolina95: 1.40,  // ✅ Precio medio
+        gasolina95E10: 0,
+        gasolina98: 0,
+        gasoleoA: 0,
+        gasoleoPremium: 0,
+        glp: 0,
+        biodiesel: 0,
+        bioetanol: 0,
+        esterMetilico: 0,
+        hidrogeno: 0,
+    );
+    final todasLasGasolineras = [
+        gasolineraBarata,  // NO cumple (no es 24h)
+        gasolineraCara,    // NO cumple (precio muy alto)
+        gasolineraPerfecta,  // ✅ CUMPLE TODO
+    ];
+    final resultado = logic.aplicarFiltros(
+        todasLasGasolineras,
+        combustibleSeleccionado: 'Gasolina 95',
+        precioDesde: 1.30,
+        precioHasta: 1.50,
+        tipoAperturaSeleccionado: '24 Horas',
+    );
+    // Solo debe quedar la perfecta
+    expect(resultado.length, 1);
+    expect(resultado.first.id, '100');
+    expect(resultado.first.rotulo, 'Perfecta');
+    });
+
+    test('Filtro sin parámetros debe devolver todas las gasolineras', () {
+    final todasLasGasolineras = [
+        gasolineraBarata,
+        gasolineraCara,
+        gasolineraSinGasolina,
+    ];
+    // Llamar sin ningún filtro
+    final resultado = logic.aplicarFiltros(
+        todasLasGasolineras,
+        // Todos los parámetros opcionales = null
+    );
+    // Debe devolver TODAS (sin filtrar)
+    expect(resultado.length, 3);
+    expect(resultado, equals(todasLasGasolineras));
+    });
   });
 }

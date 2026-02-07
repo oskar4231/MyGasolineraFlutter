@@ -237,6 +237,84 @@ void main() {
     expect(gasolinera.rotulo, 'Sin Rótulo');  // Valor por defecto
     expect(gasolinera.gasolina95, 0.0);  // Precio por defecto
     });
+
+    test('fromJson debe manejar coordenadas inválidas sin crashear', () {
+    final jsonInvalido = {
+        'IDEESS': '88888',
+        'Rótulo': 'Coordenadas Raras',
+        'Dirección': 'Test',
+        'Latitud': '999.999',  // ⚠️ Fuera de rango (-90 a 90)
+        'Longitud (WGS84)': '-999.999',  // ⚠️ Fuera de rango (-180 a 180)
+        'Horario': 'L-D: 08:00-22:00',
+        'Precio Gasolina 95 E5': '1.50',
+        'Precio Gasolina 95 E10': '0',
+        'Precio Gasolina 98 E5': '0',
+        'Precio Gasoleo A': '0',
+        'Precio Gasoleo Premium': '0',
+        'Precio Gases licuados del petróleo': '0',
+        'Precio Biodiesel': '0',
+        'Precio Bioetanol': '0',
+        'Precio Éster metílico': '0',
+        'Precio Hidrogeno': '0',
+        'Provincia': 'Madrid',
+    };
+    // No debe crashear
+    final gasolinera = Gasolinera.fromJson(jsonInvalido);
+    // Verificar que parsea (aunque sean inválidas)
+    expect(gasolinera.lat, 999.999);
+    expect(gasolinera.lng, -999.999);
+    });
+
+    test('_parsePrecio debe manejar strings con espacios y caracteres raros', () {
+    final jsonConEspacios = {
+        'IDEESS': '77777',
+        'Rótulo': 'Precio Raro',
+        'Dirección': 'Test',
+        'Latitud': '40.4168',
+        'Longitud (WGS84)': '-3.7038',
+        'Horario': 'L-D: 08:00-22:00',
+        'Precio Gasolina 95 E5': '  1,459  ',  // ⚠️ Espacios antes/después
+        'Precio Gasolina 95 E10': '0',
+        'Precio Gasolina 98 E5': '0',
+        'Precio Gasoleo A': '0',
+        'Precio Gasoleo Premium': '0',
+        'Precio Gases licuados del petróleo': '0',
+        'Precio Biodiesel': '0',
+        'Precio Bioetanol': '0',
+        'Precio Éster metílico': '0',
+        'Precio Hidrogeno': '0',
+        'Provincia': 'Madrid',
+    };
+    final gasolinera = Gasolinera.fromJson(jsonConEspacios);
+    // Debe parsear correctamente eliminando espacios
+    expect(gasolinera.gasolina95, 1.459);
+    });
+
+    test('_parsePrecio debe manejar valores negativos', () {
+    final jsonNegativo = {
+        'IDEESS': '55555',
+        'Rótulo': 'Precio Negativo',
+        'Dirección': 'Test',
+        'Latitud': '40.4168',
+        'Longitud (WGS84)': '-3.7038',
+        'Horario': 'L-D: 08:00-22:00',
+        'Precio Gasolina 95 E5': '-1.50',  // ⚠️ Negativo (error de API)
+        'Precio Gasolina 95 E10': '0',
+        'Precio Gasolina 98 E5': '0',
+        'Precio Gasoleo A': '0',
+        'Precio Gasoleo Premium': '0',
+        'Precio Gases licuados del petróleo': '0',
+        'Precio Biodiesel': '0',
+        'Precio Bioetanol': '0',
+        'Precio Éster metílico': '0',
+        'Precio Hidrogeno': '0',
+        'Provincia': 'Madrid',
+    };
+    final gasolinera = Gasolinera.fromJson(jsonNegativo);
+    // Debería parsear el valor (aunque sea negativo)
+    // Tu código puede decidir si convertirlo a 0 o mantenerlo
+    expect(gasolinera.gasolina95, -1.50);
+    });
   });
 
 
