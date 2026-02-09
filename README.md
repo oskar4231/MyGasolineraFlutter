@@ -20,6 +20,22 @@
 
 **MyGasolinera** es una aplicación móvil desarrollada en Flutter que permite a los usuarios localizar gasolineras cercanas, gestionar sus vehículos, registrar repostajes y administrar facturas de combustible. La aplicación integra mapas interactivos, geolocalización y un sistema completo de autenticación de usuarios.
 
+## 📜 Changelog (v1.7.0 - Feb 2026)
+
+Cambios realizados desde la versión anterior (1.6.0):
+
+### 🎨 Frontend & UI
+- **Refactorización de Arquitectura**: Reorganización integral de la estructura de carpetas (`lib/Implementaciones`, `lib/core`) para mejorar la mantenibilidad y seguir principios Clean.
+- **Mejoras en el Mapa**: Implementación de la lógica para obtener provincias directamente desde la API oficial de gasolineras.
+- **Gestión de Favoritos**: Nueva funcionalidad de persistencia local para guardar y gestionar gasolineras favoritas.
+- **Optimización Visual**: Resolución masiva de advertencias de lint y limpieza de código en múltiples pantallas y componentes.
+
+### ⚙️ Core & Sistema
+- **Actualización de Dependencias**: Paquetes principales (`google_maps_flutter`, `drift`, `geolocator`, `http`) actualizados a sus versiones más recientes (Diciembre 2024).
+- **Control de Entorno**: Implementación de `switch_web_apk.dart` y `switch_backend.dart` para facilitar la transición entre desarrollo local, web y móvil.
+- **Base de Datos Intermedia**: Capa de persistencia mejorada para manejar IndexedDB (Web) y SQLite (Android/Windows) de forma transparente para el desarrollador.
+- **Pruebas y Calidad**: Añadidos nuevos tests unitarios y de integración (ej. `favoritos_test.dart`) para asegurar la estabilidad del proyecto.
+
 ## ✨ Características Principales
 
 - 🔐 **Sistema de Autenticación**
