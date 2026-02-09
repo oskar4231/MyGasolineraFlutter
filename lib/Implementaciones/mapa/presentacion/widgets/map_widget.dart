@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/crear_factura_screen.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
@@ -12,6 +13,7 @@ import 'package:my_gasolinera/core/utils/app_logger.dart';
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
   final Function(String provincia)? onProvinciaUpdate;
+  final Function(List<Gasolinera> gasolineras)? onGasolinerasLoaded;
 
   // Parámetros para filtros
   final String? combustibleSeleccionado;
@@ -26,6 +28,7 @@ class MapWidget extends StatefulWidget {
     super.key,
     required this.cacheService,
     this.onProvinciaUpdate,
+    this.onGasolinerasLoaded,
     this.combustibleSeleccionado,
     this.precioDesde,
     this.precioHasta,
@@ -228,6 +231,9 @@ class _MapWidgetState extends State<MapWidget>
         'Marcadores actualizados en el estado (${_gasolinerasMarkers.length} marcadores)',
         tag: 'MapWidget',
       );
+
+      // Notificar al widget padre que las gasolineras han sido cargadas
+      widget.onGasolinerasLoaded?.call(gasolinerasEnRadio);
     }
   }
 
@@ -403,6 +409,43 @@ class _MapWidgetState extends State<MapWidget>
                   ),
                 ),
               ),
+
+              const SizedBox(height: 12),
+
+              // Botón de Cómo Llegar
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    await _abrirGoogleMaps(
+                      gasolinera.lat,
+                      gasolinera.lng,
+                      gasolinera.rotulo,
+                    );
+                  },
+                  icon: Icon(
+                    Icons.directions,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  label: Text(
+                    'Cómo llegar',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -413,6 +456,22 @@ class _MapWidgetState extends State<MapWidget>
       setState(() {
         _isBottomSheetOpen = false;
       });
+    }
+  }
+
+  /// Abre Google Maps con dirección para navegar a la gasolinera
+  Future<void> _abrirGoogleMaps(double lat, double lng, String nombre) async {
+    // URL para navegación en coche con Google Maps
+    final Uri mapsWebUri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving',
+    );
+
+    try {
+      // Abrir Google Maps (app si está disponible, si no en navegador)
+      await launchUrl(mapsWebUri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      // Fallback: abrir en navegador si falla
+      await launchUrl(mapsWebUri, mode: LaunchMode.platformDefault);
     }
   }
 
