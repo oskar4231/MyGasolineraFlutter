@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:statsfl/statsfl.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
 import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
@@ -67,49 +68,54 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: ThemeManager(),
-      builder: (context, _) {
-        return ListenableBuilder(
-          listenable: languageProvider,
-          builder: (context, _) {
-            return ListenableBuilder(
-              listenable: fontSizeProvider,
-              builder: (context, _) {
-                return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaler:
-                        TextScaler.linear(fontSizeProvider.textScaleFactor),
-                  ),
-                  child: MaterialApp(
-                    scaffoldMessengerKey: rootScaffoldMessengerKey,
-                    debugShowCheckedModeBanner: false,
-                    title: 'MyGasolinera',
-                    theme: ThemeManager().currentTheme,
-                    locale: languageProvider.currentLocale,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: const [
-                      Locale('es'), // Español
-                      Locale('fr'), // Frances
-                      Locale('en'), // Inglés
-                      Locale('de'), // Alleman
-                      Locale('pt'), // Portugues
-                      Locale('it'), // Italiano
-                      Locale('ca'), // Valenciano
-                    ],
-                    home: const Inicio(),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
+    return StatsFl(
+      isEnabled: true,
+      align: Alignment.topLeft,
+      child: ListenableBuilder(
+        listenable: ThemeManager(),
+        builder: (context, _) {
+          return ListenableBuilder(
+            listenable: languageProvider,
+            builder: (context, _) {
+              return ListenableBuilder(
+                listenable: fontSizeProvider,
+                builder: (context, _) {
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      textScaler:
+                          TextScaler.linear(fontSizeProvider.textScaleFactor),
+                    ),
+                    child: MaterialApp(
+                      scaffoldMessengerKey: rootScaffoldMessengerKey,
+                      debugShowCheckedModeBanner: false,
+                      title: 'MyGasolinera',
+                      // showPerformanceOverlay removed
+                      theme: ThemeManager().currentTheme,
+                      locale: languageProvider.currentLocale,
+                      localizationsDelegates: const [
+                        AppLocalizations.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                      ],
+                      supportedLocales: const [
+                        Locale('es'), // Español
+                        Locale('fr'), // Frances
+                        Locale('en'), // Inglés
+                        Locale('de'), // Alleman
+                        Locale('pt'), // Portugues
+                        Locale('it'), // Italiano
+                        Locale('ca'), // Valenciano
+                      ],
+                      home: const Inicio(),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
