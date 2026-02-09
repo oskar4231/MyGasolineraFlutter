@@ -47,3 +47,8 @@ app.*.map.json
 
 # APK files
 /la_apk/
+*.apk
+*.aab
+*.7z
+/apk debug/
+/apk release/
