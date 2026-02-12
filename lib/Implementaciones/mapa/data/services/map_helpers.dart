@@ -30,7 +30,7 @@ class MarkerHelper {
     try {
       final Uint8List iconBytes = await getBytesFromAsset(
         'assets/images/iconoFinal.png',
-        180,
+        140,
       );
       _gasStationIcon = BitmapDescriptor.fromBytes(iconBytes);
       AppLogger.info('Icono normal cargado correctamente', tag: 'MapHelpers');
@@ -43,7 +43,7 @@ class MarkerHelper {
     try {
       final Uint8List favIconBytes = await getBytesFromAsset(
         'assets/images/iconoFavFinal.png',
-        210,
+        160,
       );
       _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
       AppLogger.info('Icono favorito cargado correctamente', tag: 'MapHelpers');
