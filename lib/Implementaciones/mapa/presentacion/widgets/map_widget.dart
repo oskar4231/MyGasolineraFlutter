@@ -33,7 +33,7 @@ class MapWidget extends StatefulWidget {
     this.precioDesde,
     this.precioHasta,
     this.tipoAperturaSeleccionado,
-    this.radiusKm = 25.0,
+    this.radiusKm = 8.0,
     this.gesturesEnabled = true,
     this.markersEnabled = true,
   });
@@ -54,7 +54,7 @@ class _MapWidgetState extends State<MapWidget>
   Timer? _debounceTimer;
   Timer? _cameraDebounceTimer;
   bool _isBottomSheetOpen = false;
-  double _currentZoom = 15.0; // Track current zoom level
+  double _currentZoom = 8.0; // Track current zoom level
 
   // Helpers y lógica
   late MarkerHelper _markerHelper;

@@ -123,7 +123,7 @@ class GasolineraLogic {
     double? precioDesde,
     double? precioHasta,
     String? tipoAperturaSeleccionado,
-    double radiusKm = 25.0,
+    double radiusKm = 8.0,
     bool isInitialLoad = false,
     Function(bool)? onLoadingStateChange,
   }) async {
