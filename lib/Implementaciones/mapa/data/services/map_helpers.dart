@@ -29,10 +29,10 @@ class MarkerHelper {
     // Load standard icon
     try {
       final Uint8List iconBytes = await getBytesFromAsset(
-        'assets/images/icono_1.png',
-        100,
+        'assets/images/iconoFinal.png',
+        180,
       );
-      _gasStationIcon = BitmapDescriptor.bytes(iconBytes);
+      _gasStationIcon = BitmapDescriptor.fromBytes(iconBytes);
       AppLogger.info('Icono normal cargado correctamente', tag: 'MapHelpers');
     } catch (e) {
       AppLogger.error('Error cargando icono normal',
@@ -42,10 +42,10 @@ class MarkerHelper {
     // Load favorite icon
     try {
       final Uint8List favIconBytes = await getBytesFromAsset(
-        'assets/images/iconoFav_1.png',
-        100,
+        'assets/images/iconoFavFinal.png',
+        210,
       );
-      _favoriteGasStationIcon = BitmapDescriptor.bytes(favIconBytes);
+      _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
       AppLogger.info('Icono favorito cargado correctamente', tag: 'MapHelpers');
     } catch (e) {
       AppLogger.error('Error cargando icono favorito',

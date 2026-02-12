@@ -54,6 +54,7 @@ class _MapWidgetState extends State<MapWidget>
   Timer? _debounceTimer;
   Timer? _cameraDebounceTimer;
   bool _isBottomSheetOpen = false;
+  double _currentZoom = 15.0; // Track current zoom level
 
   // Helpers y lógica
   late MarkerHelper _markerHelper;
@@ -125,6 +126,42 @@ class _MapWidgetState extends State<MapWidget>
     }
   }
 
+  /// Filtra marcadores según el nivel de zoom para evitar saturación
+  /// Zoom más bajo = menos marcadores visibles
+  List<Gasolinera> _filterMarkersByZoom(List<Gasolinera> gasolineras) {
+    if (gasolineras.isEmpty) return gasolineras;
+
+    // Definir cuántos marcadores mostrar según el zoom
+    int maxMarkers;
+    if (_currentZoom >= 15) {
+      // Zoom alto (cerca): mostrar todos
+      return gasolineras;
+    } else if (_currentZoom >= 13) {
+      // Zoom medio: mostrar 50%
+      maxMarkers = (gasolineras.length * 0.5).ceil();
+    } else if (_currentZoom >= 11) {
+      // Zoom medio-bajo: mostrar 25%
+      maxMarkers = (gasolineras.length * 0.25).ceil();
+    } else if (_currentZoom >= 9) {
+      // Zoom bajo: mostrar 15%
+      maxMarkers = (gasolineras.length * 0.15).ceil();
+    } else {
+      // Zoom muy bajo: mostrar 10%
+      maxMarkers = (gasolineras.length * 0.10).ceil();
+    }
+
+    // Asegurar al menos 1 marcador
+    maxMarkers = maxMarkers.clamp(1, gasolineras.length);
+
+    AppLogger.debug(
+      'Filtrado de marcadores: Zoom=$_currentZoom, Total=${gasolineras.length}, Mostrando=$maxMarkers',
+      tag: 'MapWidget',
+    );
+
+    // Retornar las más cercanas (ya vienen ordenadas por distancia)
+    return gasolineras.take(maxMarkers).toList();
+  }
+
   /// Carga gasolineras cercanas
   Future<void> _cargarGasolineras(double lat, double lng,
       {bool isInitialLoad = false}) async {
@@ -142,15 +179,18 @@ class _MapWidgetState extends State<MapWidget>
       },
     );
 
+    // Aplicar filtrado basado en zoom
+    final gasolinerasFiltradas = _filterMarkersByZoom(gasolinerasEnRadio);
+
     // Carga progresiva: SOLO en carga inicial para dar feedback rápido
     if (isInitialLoad &&
         !_gasolineraLogic.isLoadingProgressively &&
-        gasolinerasEnRadio.length > 10) {
+        gasolinerasFiltradas.length > 10) {
       _gasolineraLogic.setLoadingProgressively(true);
       if (mounted) setState(() {});
 
       // Mostrar primero las 10 más cercanas
-      final primeras10 = gasolinerasEnRadio.take(10).toList();
+      final primeras10 = gasolinerasFiltradas.take(10).toList();
       final newMarkers = primeras10
           .map((g) => _markerHelper.createMarker(
                 g,
@@ -179,7 +219,7 @@ class _MapWidgetState extends State<MapWidget>
       // Cargar el resto en segundo plano
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
-          final resto = gasolinerasEnRadio.skip(10).toList();
+          final resto = gasolinerasFiltradas.skip(10).toList();
           final restoMarkers = resto
               .map((g) => _markerHelper.createMarker(
                     g,
@@ -208,7 +248,7 @@ class _MapWidgetState extends State<MapWidget>
       return;
     }
 
-    final newMarkers = gasolinerasEnRadio
+    final newMarkers = gasolinerasFiltradas
         .map((g) => _markerHelper.createMarker(
               g,
               _gasolineraLogic.favoritosIds,
@@ -663,6 +703,12 @@ class _MapWidgetState extends State<MapWidget>
           () async {
             if (mapController != null && mounted) {
               try {
+                // Obtener nivel de zoom actual
+                final zoomLevel = await mapController!.getZoomLevel();
+                setState(() {
+                  _currentZoom = zoomLevel;
+                });
+
                 final visibleRegion = await mapController!.getVisibleRegion();
                 final centerLat = (visibleRegion.northeast.latitude +
                         visibleRegion.southwest.latitude) /
