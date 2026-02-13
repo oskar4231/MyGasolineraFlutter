@@ -20,7 +20,6 @@ class MapWidget extends StatefulWidget {
   final double? precioDesde;
   final double? precioHasta;
   final String? tipoAperturaSeleccionado;
-  final double radiusKm;
   final bool gesturesEnabled;
   final bool markersEnabled;
 
@@ -33,7 +32,6 @@ class MapWidget extends StatefulWidget {
     this.precioDesde,
     this.precioHasta,
     this.tipoAperturaSeleccionado,
-    this.radiusKm = 8.0,
     this.gesturesEnabled = true,
     this.markersEnabled = true,
   });
@@ -99,10 +97,9 @@ class _MapWidgetState extends State<MapWidget>
     if (oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
         oldWidget.precioDesde != widget.precioDesde ||
         oldWidget.precioHasta != widget.precioHasta ||
-        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado ||
-        oldWidget.radiusKm != widget.radiusKm) {
+        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado) {
       AppLogger.debug(
-        'Detectado cambio en configuración. Radio nuevo: ${widget.radiusKm}',
+        'Detectado cambio en configuración de filtros',
         tag: 'MapWidget',
       );
 
@@ -172,7 +169,6 @@ class _MapWidgetState extends State<MapWidget>
       precioDesde: widget.precioDesde,
       precioHasta: widget.precioHasta,
       tipoAperturaSeleccionado: widget.tipoAperturaSeleccionado,
-      radiusKm: widget.radiusKm,
       isInitialLoad: isInitialLoad,
       onLoadingStateChange: (isLoading) {
         if (mounted) setState(() {});
