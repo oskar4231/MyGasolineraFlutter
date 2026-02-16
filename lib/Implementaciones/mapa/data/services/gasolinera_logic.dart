@@ -257,4 +257,88 @@ class GasolineraLogic {
   void setLoadingProgressively(bool value) {
     _isLoadingProgressively = value;
   }
+
+  /// Carga gasolineras dentro de un bounding box (región visible del mapa)
+  Future<List<Gasolinera>> cargarGasolinerasPorBounds({
+    required double swLat,
+    required double swLng,
+    required double neLat,
+    required double neLng,
+    String? combustibleSeleccionado,
+    double? precioDesde,
+    double? precioHasta,
+    String? tipoAperturaSeleccionado,
+    Function(bool)? onLoadingStateChange,
+  }) async {
+    onLoadingStateChange?.call(true);
+
+    try {
+      AppLogger.info(
+        'Cargando gasolineras por bounding box: SW($swLat, $swLng) - NE($neLat, $neLng)',
+        tag: 'GasolineraLogic',
+      );
+
+      // Llamar a la API con el bounding box
+      List<Gasolinera> listaGasolineras = await api.fetchGasolinerasByBounds(
+        swLat: swLat,
+        swLng: swLng,
+        neLat: neLat,
+        neLng: neLng,
+      );
+
+      AppLogger.debug(
+        'Recibidas ${listaGasolineras.length} gasolineras desde API',
+        tag: 'GasolineraLogic',
+      );
+
+      // Aplicar filtros
+      listaGasolineras = aplicarFiltros(
+        listaGasolineras,
+        combustibleSeleccionado: combustibleSeleccionado,
+        precioDesde: precioDesde,
+        precioHasta: precioHasta,
+        tipoAperturaSeleccionado: tipoAperturaSeleccionado,
+      );
+
+      AppLogger.debug(
+        'Después de filtros: ${listaGasolineras.length} gasolineras',
+        tag: 'GasolineraLogic',
+      );
+
+      // Calcular centro del bounding box para ordenar por distancia
+      final centerLat = (swLat + neLat) / 2;
+      final centerLng = (swLng + neLng) / 2;
+
+      // Ordenar por distancia desde el centro
+      final gasolinerasConDistancia = listaGasolineras.map((g) {
+        final distance =
+            Geolocator.distanceBetween(centerLat, centerLng, g.lat, g.lng);
+        return {'gasolinera': g, 'distance': distance};
+      }).toList();
+
+      gasolinerasConDistancia.sort(
+        (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+      );
+
+      final gasolinerasOrdenadas = gasolinerasConDistancia
+          .map((e) => e['gasolinera'] as Gasolinera)
+          .toList();
+
+      AppLogger.info(
+        'Retornando ${gasolinerasOrdenadas.length} gasolineras ordenadas por distancia',
+        tag: 'GasolineraLogic',
+      );
+
+      return gasolinerasOrdenadas;
+    } catch (e) {
+      AppLogger.error(
+        'Error cargando gasolineras por bounding box',
+        tag: 'GasolineraLogic',
+        error: e,
+      );
+      return [];
+    } finally {
+      onLoadingStateChange?.call(false);
+    }
+  }
 }

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_cluster_manager/google_maps_cluster_manager.dart'
+    as cluster_manager;
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/crear_factura_screen.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
@@ -48,15 +50,18 @@ class _MapWidgetState extends State<MapWidget>
   Position? _ubicacionActual;
   StreamSubscription<Position>? _positionStreamSub;
   final Set<Marker> _markers = {};
-  final Set<Marker> _gasolinerasMarkers = {};
+  Set<Marker> _clusterMarkers = {}; // 🔷 Marcadores del cluster manager
   Timer? _debounceTimer;
   Timer? _cameraDebounceTimer;
   bool _isBottomSheetOpen = false;
-  double _currentZoom = 8.0; // Track current zoom level
+  double _currentZoom = 15.0; // Track current zoom level
+  CameraPosition? _currentCameraPosition;
 
   // Helpers y lógica
   late MarkerHelper _markerHelper;
   late GasolineraLogic _gasolineraLogic;
+  cluster_manager.ClusterManager<Gasolinera>?
+      _clusterManager; // 🔷 Cluster manager
 
   @override
   void initState() {
@@ -64,9 +69,83 @@ class _MapWidgetState extends State<MapWidget>
     _markerHelper = MarkerHelper();
     _gasolineraLogic = GasolineraLogic(widget.cacheService);
 
+    // 🔷 Inicializar ClusterManager
+    _initClusterManager();
+
     // ✅ CORRECCIÓN: Esperar a que los iconos se carguen antes de iniciar GPS
     // Esto asegura que los marcadores tengan iconos cuando se creen
     _inicializarMapa();
+  }
+
+  /// 🔷 Inicializa el ClusterManager para clustering de marcadores
+  void _initClusterManager() {
+    _clusterManager = cluster_manager.ClusterManager<Gasolinera>(
+      [],
+      _updateClusterMarkers,
+      markerBuilder: _markerBuilder,
+      levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0],
+      extraPercent: 0.2,
+    );
+    AppLogger.info('ClusterManager inicializado', tag: 'MapWidget');
+  }
+
+  /// 🔷 Callback para actualizar marcadores del cluster
+  void _updateClusterMarkers(Set<Marker> markers) {
+    if (mounted) {
+      setState(() {
+        _clusterMarkers = markers;
+      });
+      AppLogger.debug(
+        'Marcadores de cluster actualizados: ${markers.length}',
+        tag: 'MapWidget',
+      );
+    }
+  }
+
+  /// 🔷 Builder de marcadores para clustering
+  Future<Marker> _markerBuilder(
+      cluster_manager.Cluster<Gasolinera> cluster) async {
+    if (cluster.isMultiple) {
+      // Marcador de cluster (múltiples gasolineras)
+      return Marker(
+        markerId: MarkerId(cluster.getId()),
+        position: cluster.location,
+        icon: await _getClusterBitmap(cluster.count),
+        onTap: () {
+          // Hacer zoom al cluster
+          if (mapController != null) {
+            mapController!.animateCamera(
+              CameraUpdate.newLatLngZoom(
+                cluster.location,
+                _currentZoom + 2,
+              ),
+            );
+          }
+        },
+      );
+    } else {
+      // Marcador individual
+      final gasolinera = cluster.items.first;
+      return _markerHelper.createMarker(
+        gasolinera,
+        _gasolineraLogic.favoritosIds,
+        _mostrarInfoGasolinera,
+        markersEnabled: widget.markersEnabled,
+      );
+    }
+  }
+
+  /// 🔷 Genera el icono para un cluster
+  Future<BitmapDescriptor> _getClusterBitmap(int count) async {
+    // Por ahora, usar un marcador por defecto con color según cantidad
+    // En el futuro, puedes crear un icono personalizado con el número
+    return BitmapDescriptor.defaultMarkerWithHue(
+      count < 10
+          ? BitmapDescriptor.hueBlue
+          : (count < 100
+              ? BitmapDescriptor.hueOrange
+              : BitmapDescriptor.hueRed),
+    );
   }
 
   /// Inicializa el mapa cargando iconos y favoritos antes de iniciar GPS
@@ -123,43 +202,43 @@ class _MapWidgetState extends State<MapWidget>
     }
   }
 
-  /// Filtra marcadores según el nivel de zoom para evitar saturación
-  /// Zoom más bajo = menos marcadores visibles
-  List<Gasolinera> _filterMarkersByZoom(List<Gasolinera> gasolineras) {
-    if (gasolineras.isEmpty) return gasolineras;
-
-    // Definir cuántos marcadores mostrar según el zoom
-    int maxMarkers;
-    if (_currentZoom >= 15) {
-      // Zoom alto (cerca): mostrar todos
-      return gasolineras;
-    } else if (_currentZoom >= 13) {
-      // Zoom medio: mostrar 50%
-      maxMarkers = (gasolineras.length * 0.5).ceil();
-    } else if (_currentZoom >= 11) {
-      // Zoom medio-bajo: mostrar 25%
-      maxMarkers = (gasolineras.length * 0.25).ceil();
-    } else if (_currentZoom >= 9) {
-      // Zoom bajo: mostrar 15%
-      maxMarkers = (gasolineras.length * 0.15).ceil();
-    } else {
-      // Zoom muy bajo: mostrar 10%
-      maxMarkers = (gasolineras.length * 0.10).ceil();
-    }
-
-    // Asegurar al menos 1 marcador
-    maxMarkers = maxMarkers.clamp(1, gasolineras.length);
-
-    AppLogger.debug(
-      'Filtrado de marcadores: Zoom=$_currentZoom, Total=${gasolineras.length}, Mostrando=$maxMarkers',
-      tag: 'MapWidget',
+  /// 🔷 Carga gasolineras por bounding box (región visible)
+  Future<void> _cargarGasolinerasPorBounds(
+    double swLat,
+    double swLng,
+    double neLat,
+    double neLng,
+  ) async {
+    final gasolineras = await _gasolineraLogic.cargarGasolinerasPorBounds(
+      swLat: swLat,
+      swLng: swLng,
+      neLat: neLat,
+      neLng: neLng,
+      combustibleSeleccionado: widget.combustibleSeleccionado,
+      precioDesde: widget.precioDesde,
+      precioHasta: widget.precioHasta,
+      tipoAperturaSeleccionado: widget.tipoAperturaSeleccionado,
+      onLoadingStateChange: (isLoading) {
+        if (mounted) setState(() {});
+      },
     );
 
-    // Retornar las más cercanas (ya vienen ordenadas por distancia)
-    return gasolineras.take(maxMarkers).toList();
+    if (mounted) {
+      // Actualizar cluster manager con nuevas gasolineras
+      _clusterManager?.setItems(gasolineras);
+      _clusterManager?.updateMap();
+
+      AppLogger.info(
+        'ClusterManager actualizado con ${gasolineras.length} gasolineras',
+        tag: 'MapWidget',
+      );
+
+      // Notificar al widget padre
+      widget.onGasolinerasLoaded?.call(gasolineras);
+    }
   }
 
-  /// Carga gasolineras cercanas
+  /// Carga gasolineras cercanas (método legacy para carga inicial)
   Future<void> _cargarGasolineras(double lat, double lng,
       {bool isInitialLoad = false}) async {
     final gasolinerasEnRadio = await _gasolineraLogic.cargarGasolineras(
@@ -175,96 +254,13 @@ class _MapWidgetState extends State<MapWidget>
       },
     );
 
-    // Aplicar filtrado basado en zoom
-    final gasolinerasFiltradas = _filterMarkersByZoom(gasolinerasEnRadio);
-
-    // Carga progresiva: SOLO en carga inicial para dar feedback rápido
-    if (isInitialLoad &&
-        !_gasolineraLogic.isLoadingProgressively &&
-        gasolinerasFiltradas.length > 10) {
-      _gasolineraLogic.setLoadingProgressively(true);
-      if (mounted) setState(() {});
-
-      // Mostrar primero las 10 más cercanas
-      final primeras10 = gasolinerasFiltradas.take(10).toList();
-      final newMarkers = primeras10
-          .map((g) => _markerHelper.createMarker(
-                g,
-                _gasolineraLogic.favoritosIds,
-                _mostrarInfoGasolinera,
-                markersEnabled: widget.markersEnabled,
-              ))
-          .toSet();
-
-      AppLogger.debug(
-        'MapWidget (Progresivo): Creados ${newMarkers.length} marcadores iniciales',
-        tag: 'MapWidget',
-      );
-
-      if (mounted) {
-        setState(() {
-          _gasolinerasMarkers.clear();
-          _gasolinerasMarkers.addAll(newMarkers);
-        });
-        AppLogger.info(
-          'MapWidget (Progresivo): Marcadores iniciales actualizados (${_gasolinerasMarkers.length} marcadores)',
-          tag: 'MapWidget',
-        );
-      }
-
-      // Cargar el resto en segundo plano
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          final resto = gasolinerasFiltradas.skip(10).toList();
-          final restoMarkers = resto
-              .map((g) => _markerHelper.createMarker(
-                    g,
-                    _gasolineraLogic.favoritosIds,
-                    _mostrarInfoGasolinera,
-                    markersEnabled: widget.markersEnabled,
-                  ))
-              .toSet();
-
-          AppLogger.debug(
-            'MapWidget (Progresivo): Creados ${restoMarkers.length} marcadores adicionales',
-            tag: 'MapWidget',
-          );
-
-          setState(() {
-            _gasolinerasMarkers.addAll(restoMarkers);
-            _gasolineraLogic.setLoadingProgressively(false);
-          });
-          AppLogger.info(
-            'MapWidget (Progresivo): Total de marcadores: ${_gasolinerasMarkers.length}',
-            tag: 'MapWidget',
-          );
-        }
-      });
-
-      return;
-    }
-
-    final newMarkers = gasolinerasFiltradas
-        .map((g) => _markerHelper.createMarker(
-              g,
-              _gasolineraLogic.favoritosIds,
-              _mostrarInfoGasolinera,
-              markersEnabled: widget.markersEnabled,
-            ))
-        .toSet();
-
-    AppLogger.debug(
-      'Creados ${newMarkers.length} marcadores para mostrar en el mapa',
-      tag: 'MapWidget',
-    );
-
+    // 🔷 Actualizar cluster manager en lugar de marcadores individuales
     if (mounted) {
-      setState(() {
-        _gasolinerasMarkers.clear();
-        _gasolinerasMarkers.addAll(newMarkers);
-      });
+      _clusterManager?.setItems(gasolinerasEnRadio);
+      _clusterManager?.updateMap();
+
       AppLogger.info(
-        'Marcadores actualizados en el estado (${_gasolinerasMarkers.length} marcadores)',
+        'ClusterManager actualizado con ${gasolinerasEnRadio.length} gasolineras (carga inicial)',
         tag: 'MapWidget',
       );
 
@@ -676,11 +672,13 @@ class _MapWidgetState extends State<MapWidget>
       return const Center(child: CircularProgressIndicator());
     }
 
-    final allMarkers = _markers.union(_gasolinerasMarkers);
+    // 🔷 Combinar marcadores del usuario con los del cluster
+    final allMarkers = _markers.union(_clusterMarkers);
 
     return GoogleMap(
       onMapCreated: (controller) {
         mapController = controller;
+        _clusterManager?.setMapId(controller.mapId);
         if (_ubicacionActual != null) {
           controller.animateCamera(
             CameraUpdate.newLatLng(
@@ -692,32 +690,50 @@ class _MapWidgetState extends State<MapWidget>
           );
         }
       },
+      onCameraMove: (CameraPosition position) {
+        _currentCameraPosition = position;
+        _currentZoom = position.zoom;
+      },
       onCameraIdle: () async {
+        // 🔷 Actualizar cluster manager con la posición actual
+        if (_currentCameraPosition != null) {
+          _clusterManager?.onCameraMove(_currentCameraPosition!);
+        }
+
+        // 🔷 Cargar gasolineras por bounding box con debounce
         _cameraDebounceTimer?.cancel();
         _cameraDebounceTimer = Timer(
-          const Duration(milliseconds: 500),
+          const Duration(milliseconds: 800),
           () async {
             if (mapController != null && mounted) {
               try {
-                // Obtener nivel de zoom actual
-                final zoomLevel = await mapController!.getZoomLevel();
-                setState(() {
-                  _currentZoom = zoomLevel;
-                });
-
+                // Obtener región visible
                 final visibleRegion = await mapController!.getVisibleRegion();
-                final centerLat = (visibleRegion.northeast.latitude +
-                        visibleRegion.southwest.latitude) /
-                    2;
-                final centerLng = (visibleRegion.northeast.longitude +
-                        visibleRegion.southwest.longitude) /
-                    2;
-                await _cargarGasolineras(centerLat, centerLng,
-                    isInitialLoad: false);
+
+                // Extraer coordenadas del bounding box
+                final swLat = visibleRegion.southwest.latitude;
+                final swLng = visibleRegion.southwest.longitude;
+                final neLat = visibleRegion.northeast.latitude;
+                final neLng = visibleRegion.northeast.longitude;
+
+                AppLogger.debug(
+                  'Bounding box: SW($swLat, $swLng) - NE($neLat, $neLng)',
+                  tag: 'MapWidget',
+                );
+
+                // Cargar gasolineras por bounding box
+                await _cargarGasolinerasPorBounds(swLat, swLng, neLat, neLng);
+
+                // Actualizar provincia para el centro del mapa
+                final centerLat = (swLat + neLat) / 2;
+                final centerLng = (swLng + neLng) / 2;
+                await _actualizarProvincia(centerLat, centerLng);
               } catch (e) {
                 AppLogger.warning(
-                    'Error actualizando gasolineras por movimiento de cámara',
-                    error: e);
+                  'Error actualizando gasolineras por bounding box',
+                  tag: 'MapWidget',
+                  error: e,
+                );
               }
             }
           },
