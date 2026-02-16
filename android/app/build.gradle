@@ -45,15 +45,25 @@ android {
         versionName = flutter.versionName
     }
 
+    // ✅ Generar APKs separados por arquitectura (reduce tamaño 50%)
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+            universalApk false
+        }
+    }
+
     buildTypes {
         release {
             // Use release signing if keystore exists, otherwise use debug signing
             signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
 
-            // Optimizaciones deshabilitadas temporalmente para evitar errores de build
-            minifyEnabled false
-            shrinkResources false
-            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // ✅ Optimizaciones habilitadas para reducir tamaño y mejorar rendimiento
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
