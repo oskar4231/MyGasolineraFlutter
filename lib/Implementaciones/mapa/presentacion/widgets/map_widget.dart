@@ -103,20 +103,21 @@ class _MapWidgetState extends State<MapWidget>
   }
 
   /// 🔷 Builder de marcadores para clustering
-  Future<Marker> _markerBuilder(
-      cluster_manager.Cluster<Gasolinera> cluster) async {
-    if (cluster.isMultiple) {
+  Future<Marker> _markerBuilder(dynamic cluster) async {
+    // Cast to the correct type
+    final typedCluster = cluster as cluster_manager.Cluster<Gasolinera>;
+    if (typedCluster.isMultiple) {
       // Marcador de cluster (múltiples gasolineras)
       return Marker(
-        markerId: MarkerId(cluster.getId()),
-        position: cluster.location,
-        icon: await _getClusterBitmap(cluster.count),
+        markerId: MarkerId(typedCluster.getId()),
+        position: typedCluster.location,
+        icon: await _getClusterBitmap(typedCluster.count),
         onTap: () {
           // Hacer zoom al cluster
           if (mapController != null) {
             mapController!.animateCamera(
               CameraUpdate.newLatLngZoom(
-                cluster.location,
+                typedCluster.location,
                 _currentZoom + 2,
               ),
             );
@@ -125,7 +126,7 @@ class _MapWidgetState extends State<MapWidget>
       );
     } else {
       // Marcador individual
-      final gasolinera = cluster.items.first;
+      final gasolinera = typedCluster.items.first;
       return _markerHelper.createMarker(
         gasolinera,
         _gasolineraLogic.favoritosIds,
