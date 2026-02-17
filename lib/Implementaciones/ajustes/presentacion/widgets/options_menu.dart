@@ -3,7 +3,7 @@ import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/idiomas_screen.dart';
 import 'package:my_gasolinera/Implementaciones/estadisticas/presentacion/pages/estadisticas.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/facturas_screen.dart';
-import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/accesibilidad.dart';
+import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/accesibilidad_screen.dart';
 
 class OptionsMenu extends StatelessWidget {
   final VoidCallback onDeleteAccount;
