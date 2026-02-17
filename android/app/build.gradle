@@ -45,16 +45,10 @@ android {
         versionName = flutter.versionName
     }
 
-    // ⚠️ APK Splits deshabilitados temporalmente por conflicto con Flutter Gradle Plugin
-    // Para habilitar: remover ndk.abiFilters del defaultConfig
-    // splits {
-    //     abi {
-    //         enable true
-    //         reset()
-    //         include 'arm64-v8a', 'armeabi-v7a', 'x86_64'
-    //         universalApk false
-    //     }
-    // }
+
+    // ✅ ABI Splits - Flutter maneja esto automáticamente
+    // No necesitamos configuración manual de splits
+    // Flutter genera APKs separados por defecto cuando se usa --split-per-abi
 
     buildTypes {
         release {

@@ -73,50 +73,8 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-// ✅ OPTIMIZACIÓN: Convertido a StatefulWidget para gestionar ciclo de vida
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    // ✅ Registrar observer para escuchar cambios de ciclo de vida
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    // ✅ Limpiar observer
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    // ✅ OPTIMIZACIÓN: Pausar/reanudar actualizaciones según estado de la app
-    switch (state) {
-      case AppLifecycleState.resumed:
-        // App en foreground - reanudar actualizaciones
-        backgroundRefreshService.resume();
-        AppLogger.info('App resumed - actualizaciones reanudadas', tag: 'Main');
-        break;
-      case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.detached:
-      case AppLifecycleState.hidden:
-        // App en background - pausar actualizaciones
-        backgroundRefreshService.pause();
-        AppLogger.info('App paused - actualizaciones pausadas', tag: 'Main');
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
