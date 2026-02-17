@@ -617,21 +617,6 @@ class _MapWidgetState extends State<MapWidget>
 
     // 1. Intentar obtener última ubicación conocida (RÁPIDO) para mostrar mapa inmediatamente
     try {
-<<<<<<< HEAD
-      AppLogger.debug('Obteniendo ubicación actual...', tag: 'MapWidget');
-      // ✅ OPTIMIZACIÓN: Precisión media es suficiente para gasolineras
-      // Reduce uso de batería en 40% vs LocationAccuracy.best
-      posicion = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium, // ±10-30m es suficiente
-        ),
-      ).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          AppLogger.warning(
-            'Timeout obteniendo ubicación actual, intentando última conocida...',
-            tag: 'MapWidget',
-=======
       Position? lastKnown = await Geolocator.getLastKnownPosition();
       if (lastKnown != null && mounted) {
         AppLogger.info(
@@ -647,7 +632,6 @@ class _MapWidgetState extends State<MapWidget>
               icon: BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueOrange),
             ),
->>>>>>> be0ff196f607ee7899da0548c852a8171e1d4341
           );
         });
 
