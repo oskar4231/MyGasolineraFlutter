@@ -123,7 +123,6 @@ class GasolineraLogic {
     double? precioDesde,
     double? precioHasta,
     String? tipoAperturaSeleccionado,
-    double radiusKm = 8.0,
     bool isInitialLoad = false,
     Function(bool)? onLoadingStateChange,
   }) async {
@@ -211,7 +210,7 @@ class GasolineraLogic {
     );
 
     AppLogger.debug(
-      'Filtrando ${listaGasolineras.length} gasolineras por radio de $radiusKm km',
+      'Procesando ${listaGasolineras.length} gasolineras de la provincia',
       tag: 'GasolineraLogic',
     );
 
@@ -231,39 +230,27 @@ class GasolineraLogic {
     AppLogger.debug('Calculando distancias desde origen: $lat, $lng',
         tag: 'GasolineraLogic');
 
-    // Calcular distancias y filtrar por radio
-    final gasolinerasCercanas = listaGasolineras.map((g) {
+    // Calcular distancias (sin filtrar por radio)
+    final gasolinerasConDistancia = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
-    }).where((item) {
-      final distance = item['distance'] as double;
-      // DEBUG: Imprimir distancia de los primeros 3 elementos antes de filtrar
-      if (listaGasolineras.indexOf(item['gasolinera'] as Gasolinera) < 3) {
-        AppLogger.debug(
-          '   -> Distancia a ${(item['gasolinera'] as Gasolinera).rotulo}: ${distance.toStringAsFixed(2)} metros (${(distance / 1000).toStringAsFixed(2)} km)',
-          tag: 'GasolineraLogic',
-        );
-      }
-
-      // Filtrar por radio (convertir metros a km)
-      final distanceKm = distance / 1000;
-      return distanceKm <= radiusKm;
     }).toList();
 
-    // Ordenar por distancia
-    gasolinerasCercanas.sort(
+    // Ordenar por distancia (más cercanas primero)
+    gasolinerasConDistancia.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final gasolinerasEnRadio =
-        gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
+    final gasolinerasOrdenadas = gasolinerasConDistancia
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
 
     AppLogger.info(
-      'Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${radiusKm}km',
+      'Mostrando ${gasolinerasOrdenadas.length} gasolineras de la provincia ordenadas por distancia',
       tag: 'GasolineraLogic',
     );
 
-    return gasolinerasEnRadio;
+    return gasolinerasOrdenadas;
   }
 
   /// Indica si se está cargando progresivamente
