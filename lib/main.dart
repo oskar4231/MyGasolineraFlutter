@@ -59,6 +59,9 @@ Future<void> main() async {
   // Inicializar Auth
   await AuthService.initialize();
 
+  await AppLogger.init(); // ← Agregar esta línea
+
+
   runApp(const MyApp());
 }
 
