@@ -2,7 +2,7 @@
 
 **Fecha:** 17 de Febrero, 2026
 **Módulo:** Mapa (Flutter) + Backend (Node.js/MariaDB)
-**Responsable:** Equipo de Desarrollo (Antigravity)
+**Responsable:** David Caballero
 
 ---
 
