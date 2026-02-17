@@ -15,12 +15,15 @@ class GasolineraLogic {
   String? _currentProvinciaId;
   bool _isLoadingFromCache = false;
   bool _isLoadingProgressively = false;
+  List<Gasolinera> _gasolinerasEnRadio =
+      []; // Almacena las gasolineras cargadas
 
   GasolineraLogic(this._cacheService);
 
   List<String> get favoritosIds => _favoritosIds;
   bool get isLoadingFromCache => _isLoadingFromCache;
   bool get isLoadingProgressively => _isLoadingProgressively;
+  List<Gasolinera> get gasolinerasEnRadio => _gasolinerasEnRadio;
 
   /// Carga la lista de IDs de gasolineras favoritas desde SharedPreferences
   Future<void> cargarFavoritos() async {
@@ -249,6 +252,9 @@ class GasolineraLogic {
       'Mostrando ${gasolinerasOrdenadas.length} gasolineras de la provincia ordenadas por distancia',
       tag: 'GasolineraLogic',
     );
+
+    // Almacenar las gasolineras cargadas
+    _gasolinerasEnRadio = gasolinerasOrdenadas;
 
     return gasolinerasOrdenadas;
   }
