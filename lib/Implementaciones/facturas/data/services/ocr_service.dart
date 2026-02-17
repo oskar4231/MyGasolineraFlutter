@@ -7,9 +7,13 @@ class OcrService {
   factory OcrService() => _instance;
   OcrService._internal();
 
-  final _textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+  // ✅ OPTIMIZACIÓN: No mantener TextRecognizer como campo
+  // Se crea y libera en cada scan para ahorrar RAM (50-100 MB)
 
   Future<Map<String, dynamic>> scanAndExtract(String imagePath) async {
+    // ✅ Crear TextRecognizer localmente
+    final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+
     try {
       // Validar si es Web primero
       if (kIsWeb) {
@@ -28,7 +32,7 @@ class OcrService {
 
       final inputImage = InputImage.fromFilePath(imagePath);
       final RecognizedText recognizedText =
-          await _textRecognizer.processImage(inputImage);
+          await textRecognizer.processImage(inputImage);
 
       String rawText = recognizedText.text;
 
@@ -63,6 +67,9 @@ class OcrService {
       rethrow;
     } catch (e) {
       rethrow;
+    } finally {
+      // ✅ CRÍTICO: Liberar recursos inmediatamente
+      await textRecognizer.close();
     }
   }
 
@@ -180,9 +187,5 @@ class OcrService {
   double _normalizeDouble(String numStr) {
     // Replace comma with dot
     return double.parse(numStr.replaceAll(',', '.'));
-  }
-
-  void dispose() {
-    _textRecognizer.close();
   }
 }

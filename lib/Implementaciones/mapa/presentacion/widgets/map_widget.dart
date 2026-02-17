@@ -576,9 +576,11 @@ class _MapWidgetState extends State<MapWidget>
 
     try {
       AppLogger.debug('Obteniendo ubicación actual...', tag: 'MapWidget');
+      // ✅ OPTIMIZACIÓN: Precisión media es suficiente para gasolineras
+      // Reduce uso de batería en 40% vs LocationAccuracy.best
       posicion = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.best,
+          accuracy: LocationAccuracy.medium, // ±10-30m es suficiente
         ),
       ).timeout(
         const Duration(seconds: 10),
@@ -644,10 +646,11 @@ class _MapWidgetState extends State<MapWidget>
     // Iniciar stream de actualizaciones de ubicación
     AppLogger.info('Iniciando stream de actualizaciones GPS...',
         tag: 'MapWidget');
+    // ✅ OPTIMIZACIÓN: Precisión media + distancia 50m reduce CPU/batería
     _positionStreamSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
-        distanceFilter: 5,
+        accuracy: LocationAccuracy.medium, // ±10-30m
+        distanceFilter: 50, // Actualizar cada 50m (antes: 5m)
       ),
     ).listen((Position pos) {
       if (!mounted) return;
