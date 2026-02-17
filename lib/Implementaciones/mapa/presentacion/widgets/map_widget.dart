@@ -679,6 +679,18 @@ class _MapWidgetState extends State<MapWidget>
     final allMarkers = _markers.union(_gasolinerasMarkers);
 
     return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(
+          _ubicacionActual!.latitude,
+          _ubicacionActual!.longitude,
+        ),
+        zoom: 15.0,
+      ),
+      markers: allMarkers,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      mapToolbarEnabled: false,
       onMapCreated: (controller) {
         mapController = controller;
         if (_ubicacionActual != null) {
@@ -723,20 +735,6 @@ class _MapWidgetState extends State<MapWidget>
           },
         );
       },
-      initialCameraPosition: CameraPosition(
-        target: LatLng(
-          _ubicacionActual!.latitude,
-          _ubicacionActual!.longitude,
-        ),
-        zoom: 15,
-      ),
-      markers: allMarkers,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      scrollGesturesEnabled: widget.gesturesEnabled,
-      zoomGesturesEnabled: widget.gesturesEnabled,
-      tiltGesturesEnabled: widget.gesturesEnabled,
-      rotateGesturesEnabled: widget.gesturesEnabled,
     );
   }
 
