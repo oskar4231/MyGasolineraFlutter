@@ -34,6 +34,18 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           _tamanoFuente = config['tamanoFuente'] ?? 'Mediano';
           _altoContraste = config['altoContraste'] ?? false;
           _modoOscuro = config['modoOscuro'] ?? false;
+
+          if (config['tamanoFuentePersonalizado'] != null) {
+            final val = config['tamanoFuentePersonalizado'];
+            if (val is num) {
+              _tamanoFuentePersonalizado = val.toDouble();
+            } else if (val is String) {
+              _tamanoFuentePersonalizado = double.tryParse(val) ?? 16.0;
+            }
+            // Si hay un valor personalizado, forzamos la selección a "Personalizada"
+            _tamanoFuente = 'Personalizada';
+          }
+
           _cargando = false;
         });
       } else {
@@ -490,11 +502,27 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
   void _mostrarSliderTamanoFuente() {
     double tempTamano = _tamanoFuentePersonalizado;
     final theme = Theme.of(context);
-    final cardColor = theme.cardTheme.color ?? theme.cardColor;
-    final textColor = theme.colorScheme.onSurface;
-    final primaryColor = theme.primaryColor;
-    final borderColor = theme.dividerColor;
     final isDark = theme.brightness == Brightness.dark;
+
+    final cardColor = isDark
+        ? const Color(0xFF212124) // ModoOscuroAccesibilidad.fondoTarjeta
+        : (theme.cardTheme.color ?? theme.cardColor);
+
+    final textColor = isDark
+        ? const Color(0xFFEBEBEB) // ModoOscuroAccesibilidad.textoPrimario
+        : theme.colorScheme.onSurface;
+
+    final primaryColor = isDark
+        ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
+        : theme.primaryColor;
+
+    final borderColor = isDark
+        ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde
+        : theme.dividerColor;
+
+    final backgroundColor = isDark
+        ? const Color(0xFF151517) // ModoOscuroAccesibilidad.fondoPrincipal
+        : theme.scaffoldBackgroundColor;
 
     final activeTextColor = isDark ? Colors.black : theme.colorScheme.onPrimary;
 
@@ -505,14 +533,18 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: cardColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: borderColor, width: 1),
+              ),
               title: Row(
                 children: [
-                  Icon(Icons.format_size, color: textColor),
+                  Icon(Icons.format_size, color: primaryColor),
                   const SizedBox(width: 8),
                   Text(
                     'Tamaño Personalizado',
                     style: TextStyle(
-                      color: textColor,
+                      color: primaryColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -524,7 +556,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.scaffoldBackgroundColor,
+                      color: backgroundColor,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: borderColor),
                     ),
@@ -540,30 +572,48 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Slider(
-                    value: tempTamano,
-                    min: 12.0,
-                    max: 24.0,
-                    divisions: 12,
-                    activeColor: primaryColor,
-                    inactiveColor: borderColor,
-                    label: tempTamano.round().toString(),
-                    onChanged: (double value) {
-                      setDialogState(() {
-                        tempTamano = value;
-                      });
-                    },
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: primaryColor,
+                      inactiveTrackColor: isDark
+                          ? const Color(0xFF38383A)
+                          : borderColor, // Mejor contraste en pista inactiva
+                      thumbColor: primaryColor,
+                      overlayColor: primaryColor.withOpacity(0.2),
+                      valueIndicatorColor: primaryColor,
+                      valueIndicatorTextStyle: TextStyle(
+                        color: activeTextColor,
+                      ),
+                    ),
+                    child: Slider(
+                      value: tempTamano,
+                      min: 12.0,
+                      max: 24.0,
+                      divisions: 12,
+                      label: tempTamano.round().toString(),
+                      onChanged: (double value) {
+                        setDialogState(() {
+                          tempTamano = value;
+                        });
+                      },
+                    ),
                   ),
                   Text(
                     '${tempTamano.round()}px',
-                    style: TextStyle(color: textColor),
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancelar', style: TextStyle(color: textColor)),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: textColor),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -577,6 +627,10 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     foregroundColor: activeTextColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                   child: const Text('Aplicar'),
                 ),

@@ -152,7 +152,11 @@ class AccesibilidadService {
             modoOscuro: config['modoOscuro'] ?? false,
             idioma: config['idioma'] ?? 'Español',
             tamanoFuentePersonalizado:
-                config['tamanoFuentePersonalizado']?.toDouble(),
+                config['tamanoFuentePersonalizado'] is num
+                    ? (config['tamanoFuentePersonalizado'] as num).toDouble()
+                    : (config['tamanoFuentePersonalizado'] is String
+                        ? double.tryParse(config['tamanoFuentePersonalizado'])
+                        : null),
           );
         }
 
