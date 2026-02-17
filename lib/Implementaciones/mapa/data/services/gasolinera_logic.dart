@@ -15,12 +15,15 @@ class GasolineraLogic {
   String? _currentProvinciaId;
   bool _isLoadingFromCache = false;
   bool _isLoadingProgressively = false;
+  List<Gasolinera> _gasolinerasEnRadio =
+      []; // Almacena las gasolineras cargadas
 
   GasolineraLogic(this._cacheService);
 
   List<String> get favoritosIds => _favoritosIds;
   bool get isLoadingFromCache => _isLoadingFromCache;
   bool get isLoadingProgressively => _isLoadingProgressively;
+  List<Gasolinera> get gasolinerasEnRadio => _gasolinerasEnRadio;
 
   /// Carga la lista de IDs de gasolineras favoritas desde SharedPreferences
   Future<void> cargarFavoritos() async {
@@ -123,7 +126,6 @@ class GasolineraLogic {
     double? precioDesde,
     double? precioHasta,
     String? tipoAperturaSeleccionado,
-    double radiusKm = 25.0,
     bool isInitialLoad = false,
     Function(bool)? onLoadingStateChange,
   }) async {
@@ -211,7 +213,7 @@ class GasolineraLogic {
     );
 
     AppLogger.debug(
-      'Filtrando ${listaGasolineras.length} gasolineras por radio de $radiusKm km',
+      'Procesando ${listaGasolineras.length} gasolineras de la provincia',
       tag: 'GasolineraLogic',
     );
 
@@ -231,43 +233,118 @@ class GasolineraLogic {
     AppLogger.debug('Calculando distancias desde origen: $lat, $lng',
         tag: 'GasolineraLogic');
 
-    // Calcular distancias y filtrar por radio
-    final gasolinerasCercanas = listaGasolineras.map((g) {
+    // Calcular distancias (sin filtrar por radio)
+    final gasolinerasConDistancia = listaGasolineras.map((g) {
       final distance = Geolocator.distanceBetween(lat, lng, g.lat, g.lng);
       return {'gasolinera': g, 'distance': distance};
-    }).where((item) {
-      final distance = item['distance'] as double;
-      // DEBUG: Imprimir distancia de los primeros 3 elementos antes de filtrar
-      if (listaGasolineras.indexOf(item['gasolinera'] as Gasolinera) < 3) {
-        AppLogger.debug(
-          '   -> Distancia a ${(item['gasolinera'] as Gasolinera).rotulo}: ${distance.toStringAsFixed(2)} metros (${(distance / 1000).toStringAsFixed(2)} km)',
-          tag: 'GasolineraLogic',
-        );
-      }
-
-      // Filtrar por radio (convertir metros a km)
-      final distanceKm = distance / 1000;
-      return distanceKm <= radiusKm;
     }).toList();
 
-    // Ordenar por distancia
-    gasolinerasCercanas.sort(
+    // Ordenar por distancia (más cercanas primero)
+    gasolinerasConDistancia.sort(
       (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
     );
 
-    final gasolinerasEnRadio =
-        gasolinerasCercanas.map((e) => e['gasolinera'] as Gasolinera).toList();
+    final gasolinerasOrdenadas = gasolinerasConDistancia
+        .map((e) => e['gasolinera'] as Gasolinera)
+        .toList();
 
     AppLogger.info(
-      'Mostrando ${gasolinerasEnRadio.length} gasolineras en radio de ${radiusKm}km',
+      'Mostrando ${gasolinerasOrdenadas.length} gasolineras de la provincia ordenadas por distancia',
       tag: 'GasolineraLogic',
     );
 
-    return gasolinerasEnRadio;
+    // Almacenar las gasolineras cargadas
+    _gasolinerasEnRadio = gasolinerasOrdenadas;
+
+    return gasolinerasOrdenadas;
   }
 
   /// Indica si se está cargando progresivamente
   void setLoadingProgressively(bool value) {
     _isLoadingProgressively = value;
+  }
+
+  /// Carga gasolineras dentro de un bounding box (región visible del mapa)
+  Future<List<Gasolinera>> cargarGasolinerasPorBounds({
+    required double swLat,
+    required double swLng,
+    required double neLat,
+    required double neLng,
+    String? combustibleSeleccionado,
+    double? precioDesde,
+    double? precioHasta,
+    String? tipoAperturaSeleccionado,
+    Function(bool)? onLoadingStateChange,
+  }) async {
+    onLoadingStateChange?.call(true);
+
+    try {
+      AppLogger.info(
+        'Cargando gasolineras por bounding box: SW($swLat, $swLng) - NE($neLat, $neLng)',
+        tag: 'GasolineraLogic',
+      );
+
+      // Llamar a la API con el bounding box
+      List<Gasolinera> listaGasolineras = await api.fetchGasolinerasByBounds(
+        swLat: swLat,
+        swLng: swLng,
+        neLat: neLat,
+        neLng: neLng,
+      );
+
+      AppLogger.debug(
+        'Recibidas ${listaGasolineras.length} gasolineras desde API',
+        tag: 'GasolineraLogic',
+      );
+
+      // Aplicar filtros
+      listaGasolineras = aplicarFiltros(
+        listaGasolineras,
+        combustibleSeleccionado: combustibleSeleccionado,
+        precioDesde: precioDesde,
+        precioHasta: precioHasta,
+        tipoAperturaSeleccionado: tipoAperturaSeleccionado,
+      );
+
+      AppLogger.debug(
+        'Después de filtros: ${listaGasolineras.length} gasolineras',
+        tag: 'GasolineraLogic',
+      );
+
+      // Calcular centro del bounding box para ordenar por distancia
+      final centerLat = (swLat + neLat) / 2;
+      final centerLng = (swLng + neLng) / 2;
+
+      // Ordenar por distancia desde el centro
+      final gasolinerasConDistancia = listaGasolineras.map((g) {
+        final distance =
+            Geolocator.distanceBetween(centerLat, centerLng, g.lat, g.lng);
+        return {'gasolinera': g, 'distance': distance};
+      }).toList();
+
+      gasolinerasConDistancia.sort(
+        (a, b) => (a['distance'] as double).compareTo(b['distance'] as double),
+      );
+
+      final gasolinerasOrdenadas = gasolinerasConDistancia
+          .map((e) => e['gasolinera'] as Gasolinera)
+          .toList();
+
+      AppLogger.info(
+        'Retornando ${gasolinerasOrdenadas.length} gasolineras ordenadas por distancia',
+        tag: 'GasolineraLogic',
+      );
+
+      return gasolinerasOrdenadas;
+    } catch (e) {
+      AppLogger.error(
+        'Error cargando gasolineras por bounding box',
+        tag: 'GasolineraLogic',
+        error: e,
+      );
+      return [];
+    } finally {
+      onLoadingStateChange?.call(false);
+    }
   }
 }

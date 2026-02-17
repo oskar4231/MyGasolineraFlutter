@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/map_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
 import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
@@ -14,7 +13,6 @@ class MapaTiempoReal extends StatefulWidget {
 }
 
 class _MapaTiempoRealState extends State<MapaTiempoReal> {
-  double _radiusKm = 25.0;
   final Key _mapKey = UniqueKey(); // Para forzar reconstrucción si es necesario
   String _provinciaActual = 'Detectando...'; // 🆕 Provincia actual del usuario
   late GasolinerasCacheService _cacheService;
@@ -23,16 +21,6 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
   void initState() {
     super.initState();
     _cacheService = GasolinerasCacheService(app.database);
-    _cargarPreferencias();
-  }
-
-  Future<void> _cargarPreferencias() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        _radiusKm = prefs.getDouble('radius_km') ?? 25.0;
-      });
-    }
   }
 
   /// 🆕 Actualiza la provincia actual en el AppBar
@@ -64,7 +52,6 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
       body: MapWidget(
         key: _mapKey,
         cacheService: _cacheService,
-        radiusKm: _radiusKm,
         onProvinciaUpdate: (String provincia) {
           // 🆕 Callback para actualizar provincia en el AppBar
           _actualizarProvincia(provincia);
@@ -75,10 +62,7 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AjustesScreen()),
-          ).then((_) {
-            // Recargar preferencias al volver de ajustes
-            _cargarPreferencias();
-          });
+          );
         },
         backgroundColor: theme.colorScheme.primary,
         child: Image.asset(

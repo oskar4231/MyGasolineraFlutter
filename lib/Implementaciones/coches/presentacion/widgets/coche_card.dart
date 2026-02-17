@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/domain/models/coche.dart';
+import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/brand_logo.dart';
 
 class CocheCard extends StatelessWidget {
   final Coche coche;
@@ -41,10 +42,10 @@ class CocheCard extends StatelessWidget {
                       color: theme.primaryColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      Icons.directions_car,
-                      color: theme.colorScheme.onPrimary,
+                    child: BrandLogo(
+                      brandName: coche.marca,
                       size: 32,
+                      fallbackColor: theme.colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(width: 16),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 
 class AjustesHeader extends StatelessWidget {
   const AjustesHeader({super.key});
@@ -25,7 +26,9 @@ class AjustesHeader extends StatelessWidget {
               Icons.arrow_back,
               color: theme.colorScheme.onPrimary,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const Layouthome()),
+            ),
           ),
           const SizedBox(width: 8),
           Text(

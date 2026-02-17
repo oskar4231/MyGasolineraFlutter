@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
-import 'package:my_gasolinera/core/config/config_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // Widgets & Controllers
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_header.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_footer.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/profile_section.dart';
-import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/connection_section.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/options_menu.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/logout_button.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_dialogs.dart';
@@ -29,9 +26,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
   String? _profileImageUrl;
   String _nombreUsuario = "Usuario";
   bool _subiendoFoto = false;
-  bool _actualizandoUrl = false;
-  DateTime? _lastUrlUpdate;
-  double _radiusKm = 25.0;
 
   @override
   void initState() {
@@ -42,7 +36,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
   Future<void> _initData() async {
     _cargarNombre();
     _cargarFoto();
-    _cargarConfig();
   }
 
   Future<void> _cargarNombre() async {
@@ -64,17 +57,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
       } else if (remote is String) {
         setState(() => _profileImageUrl = remote);
       }
-    }
-  }
-
-  Future<void> _cargarConfig() async {
-    final lastTime = await ConfigService.getLastFetchTime();
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        _lastUrlUpdate = lastTime;
-        _radiusKm = prefs.getDouble('radius_km') ?? 25.0;
-      });
     }
   }
 
@@ -102,21 +84,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
         );
       }
     }
-  }
-
-  Future<void> _handleRefreshUrl() async {
-    setState(() => _actualizandoUrl = true);
-    try {
-      await _controller.actualzarUrlBackend(context);
-      if (mounted) await _cargarConfig();
-    } catch (_) {}
-    if (mounted) setState(() => _actualizandoUrl = false);
-  }
-
-  Future<void> _handleRadiusSave(double value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('radius_km', value);
-    setState(() => _radiusKm = value);
   }
 
   @override
@@ -148,16 +115,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           onCamera: () => _handleImagePick(ImageSource.camera),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      ConnectionSection(
-                        lastUrlUpdate: _lastUrlUpdate,
-                        radiusKm: _radiusKm,
-                        actualizandoUrl: _actualizandoUrl,
-                        onRefreshUrl: _handleRefreshUrl,
-                        onRadiusChanged: (v) => setState(() => _radiusKm = v),
-                        onRadiusSave: _handleRadiusSave,
-                      ),
-                      const SizedBox(height: 24),
                       OptionsMenu(
                         onDeleteAccount: () =>
                             AjustesDialogs.showDeleteAccountDialog(

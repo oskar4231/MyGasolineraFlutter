@@ -59,6 +59,17 @@ Future<void> main() async {
   // Inicializar Auth
   await AuthService.initialize();
 
+  // ✅ Optimizaciones de rendimiento para APK (reducir RAM/CPU)
+  if (esAPK) {
+    // Reducir caché de imágenes para ahorrar RAM
+    PaintingBinding.instance.imageCache.maximumSize = 50; // Default: 1000
+    PaintingBinding.instance.imageCache.maximumSizeBytes =
+        50 << 20; // 50 MB (Default: 100 MB)
+
+    AppLogger.info('Optimizaciones de rendimiento APK aplicadas', tag: 'Main');
+    AppLogger.info('- Caché de imágenes: 50 items / 50 MB', tag: 'Main');
+  }
+
   runApp(const MyApp());
 }
 

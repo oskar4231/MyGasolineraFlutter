@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async'; // Para TimeoutException
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart';
@@ -50,6 +51,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               locationSettings: const LocationSettings(
                 accuracy: LocationAccuracy.best,
               ),
+            ).timeout(
+              const Duration(seconds: 10),
+              onTimeout: () {
+                debugPrint('⏱️ Timeout obteniendo ubicación');
+                throw TimeoutException('Location timeout');
+              },
             );
           }
         }
@@ -65,6 +72,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               await ProvinciaService.getProvinciaFromCoordinates(
             position.latitude,
             position.longitude,
+          ).timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              debugPrint('⏱️ Timeout detectando provincia, usando Madrid');
+              throw TimeoutException('Province detection timeout');
+            },
           );
           provinciaId = provinciaInfo.id;
           debugPrint(
@@ -75,8 +88,15 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         }
       }
 
-      // 3. Cargar gasolineras de la provincia detectada
-      _todasLasGasolineras = await fetchGasolinerasByProvincia(provinciaId);
+      // 3. Cargar gasolineras de la provincia detectada con timeout
+      _todasLasGasolineras =
+          await fetchGasolinerasByProvincia(provinciaId).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          debugPrint('⏱️ Timeout cargando gasolineras');
+          return <Gasolinera>[]; // Devolver lista vacía en caso de timeout
+        },
+      );
 
       // 4. Cargar IDs de favoritos desde SharedPreferences
       final prefs = await SharedPreferences.getInstance();
@@ -91,7 +111,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       _aplicarOrden();
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');
+      // Asegurar que las listas estén inicializadas aunque haya error
+      if (_gasolinerasFavoritas.isEmpty) {
+        _gasolinerasFavoritas = [];
+      }
     } finally {
+      // ✅ CRÍTICO: Asegurar que _loading siempre se pone a false
       if (mounted) {
         setState(() {
           _loading = false;

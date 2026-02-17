@@ -47,6 +47,54 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     }
   }
 
+  // Mapeo de idioma a bandera
+  String _getFlagForLanguage(String languageName) {
+    switch (languageName) {
+      case 'Español':
+        return '🇪🇸';
+      case 'English':
+        return '🇬🇧';
+      case 'Deutsch':
+        return '🇩🇪';
+      case 'Português':
+        return '🇵🇹';
+      case 'Italiano':
+        return '🇮🇹';
+      case 'Français':
+        return '🇫🇷';
+      case 'Valencià':
+        return 'CUSTOM_VALENCIA'; // Marcador especial para imagen personalizada
+      case 'Català':
+        return '🇪🇸'; // Cataluña
+      default:
+        return '🌐';
+    }
+  }
+
+  // Widget para mostrar bandera (emoji o imagen)
+  Widget _buildFlagWidget(String languageName, {double size = 28}) {
+    final flag = _getFlagForLanguage(languageName);
+
+    if (flag == 'CUSTOM_VALENCIA') {
+      // Mantener tamaño de 50px
+      return SizedBox(
+        width: size,
+        height: size,
+        child: Image.asset(
+          'assets/images/iconoValencia.png',
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return Text(
+        flag,
+        style: TextStyle(fontSize: size),
+      );
+    }
+  }
+
   /// Carga la configuración desde el backend
   Future<void> _cargarConfiguracion() async {
     try {
@@ -154,10 +202,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
                             children: [
-                              Icon(Icons.language,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  size: 28),
+                              _buildFlagWidget(_idiomaSeleccionado, size: 28),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
@@ -179,8 +224,9 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                       _idiomaSeleccionado,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color:
-                                            Colors.white.withValues(alpha: 0.9),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
                                       ),
                                     ),
                                   ],
@@ -326,8 +372,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                   Theme.of(context).colorScheme.surface,
           title: Row(
             children: [
-              Icon(Icons.language,
-                  color: Theme.of(context).colorScheme.onSurface),
+              const Text('🌐', style: TextStyle(fontSize: 24)),
               const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.seleccionarIdioma,
@@ -376,12 +421,14 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                         : BorderSide.none,
                   ),
                   child: ListTile(
-                    leading: Icon(
-                      Icons.language,
-                      color: esSeleccionado
-                          ? Theme.of(context).colorScheme.primary
-                          : (isDarkMode ? Colors.white70 : Colors.black54),
+                    contentPadding: EdgeInsets.only(
+                      left: idioma == 'Valencià' ? 8 : 16,
+                      right: 16,
+                      top: 0,
+                      bottom: 0,
                     ),
+                    leading: _buildFlagWidget(idioma,
+                        size: idioma == 'Valencià' ? 50 : 32),
                     title: Text(
                       idioma,
                       style: TextStyle(
