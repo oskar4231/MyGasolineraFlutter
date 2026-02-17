@@ -1,6 +1,8 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart'
+    as cluster_manager;
 
-class Gasolinera {
+class Gasolinera implements cluster_manager.ClusterItem {
   final String id;
   final String rotulo;
   final String direccion;
@@ -115,6 +117,13 @@ class Gasolinera {
 
   // 📍 Getter para usar en Google Maps
   LatLng get position => LatLng(lat, lng);
+
+  // 🔷 Implementación de ClusterItem para clustering
+  @override
+  LatLng get location => LatLng(lat, lng);
+
+  @override
+  String get geohash => id; // Usar el ID único como geohash
 
   // 🕐 Verificar si es 24 horas
   bool get es24Horas {
