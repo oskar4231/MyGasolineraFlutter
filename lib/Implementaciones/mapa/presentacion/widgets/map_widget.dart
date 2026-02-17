@@ -149,7 +149,7 @@ class _MapWidgetState extends State<MapWidget>
       icon: icon,
       anchor: const Offset(
           0.5, 1.0), // Anclaje igual que los marcadores individuales
-      zIndex: containsFavorite ? 10.0 : 1.0, // Favoritas siempre encima
+      zIndexInt: containsFavorite ? 10 : 1, // Favoritas siempre encima
       onTap: () {
         // 3. Zoom Suave al tocar grupo
         // Al tocar un grupo, hacemos zoom in suavemente para "abrir" el grupo
@@ -767,6 +767,7 @@ class _MapWidgetState extends State<MapWidget>
         ),
         zoom: 15.0,
       ),
+      style: _mapStyle,
       markers: allMarkers,
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
@@ -775,9 +776,6 @@ class _MapWidgetState extends State<MapWidget>
       onMapCreated: (controller) {
         mapController = controller;
         _clusterManager?.setMapId(controller.mapId);
-
-        // 🔷 Aplicar estilo del mapa (Ocultar POIs)
-        _loadMapStyle(controller);
 
         if (_ubicacionActual != null) {
           controller.animateCamera(
@@ -841,19 +839,6 @@ class _MapWidgetState extends State<MapWidget>
         );
       },
     );
-  }
-
-  /// Carga y aplica el estilo del mapa usando la constante
-  Future<void> _loadMapStyle(GoogleMapController controller) async {
-    try {
-      // Usar estilo hardcoded para evitar problemas de carga de assets en web
-      await controller.setMapStyle(_mapStyle);
-      AppLogger.info('Estilo del mapa aplicado correctamente (Hardcoded)',
-          tag: 'MapWidget');
-    } catch (e) {
-      AppLogger.error('Error aplicando estilo del mapa',
-          tag: 'MapWidget', error: e);
-    }
   }
 
   @override
