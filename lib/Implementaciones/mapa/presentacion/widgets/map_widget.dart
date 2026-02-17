@@ -125,7 +125,7 @@ class _MapWidgetState extends State<MapWidget>
         },
       );
     } else {
-      // Marcador individual
+      // Marcador individual - USAR ICONO PERSONALIZADO
       final gasolinera = typedCluster.items.first;
       return _markerHelper.createMarker(
         gasolinera,
@@ -701,10 +701,11 @@ class _MapWidgetState extends State<MapWidget>
           _clusterManager?.onCameraMove(_currentCameraPosition!);
         }
 
-        // 🔷 Cargar gasolineras por bounding box con debounce
+        // 🔷 Cargar gasolineras por bounding box con debounce (500ms)
+        // ✅ CORRECCIÓN: Debounce de 500ms para evitar saturar el backend
         _cameraDebounceTimer?.cancel();
         _cameraDebounceTimer = Timer(
-          const Duration(milliseconds: 800),
+          const Duration(milliseconds: 500),
           () async {
             if (mapController != null && mounted) {
               try {
@@ -718,7 +719,7 @@ class _MapWidgetState extends State<MapWidget>
                 final neLng = visibleRegion.northeast.longitude;
 
                 AppLogger.debug(
-                  'Bounding box: SW($swLat, $swLng) - NE($neLat, $neLng)',
+                  'Bounding box (Debounced): SW($swLat, $swLng) - NE($neLat, $neLng)',
                   tag: 'MapWidget',
                 );
 

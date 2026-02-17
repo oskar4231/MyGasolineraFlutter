@@ -1,4 +1,5 @@
-import 'dart:ui' as ui;
+import 'package:image/image.dart' as img;
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
@@ -13,43 +14,73 @@ class MarkerHelper {
   BitmapDescriptor? get gasStationIcon => _gasStationIcon;
   BitmapDescriptor? get favoriteGasStationIcon => _favoriteGasStationIcon;
 
-  /// Convierte un asset en bytes para crear iconos personalizados
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
+  /// Procesa el icono: redimensiona y recorta bordes transparentes para mejorar el hitbox
+  Future<Uint8List> processIcon(String path, int width) async {
+    // 1. Cargar bytes del asset
+    final ByteData data = await rootBundle.load(path);
+    final Uint8List bytes = data.buffer.asUint8List();
+
+    // 2. Decodificar imagen usando package:image (Dart puro, funciona en web/desktop)
+    img.Image? image = img.decodePng(bytes);
+
+    if (image == null) return bytes; // Fallback si falla decodificación
+
+    // 3. Redimensionar (Mantiene aspect ratio por defecto)
+    img.Image resized = img.copyResize(image, width: width);
+
+    // 4. Recortar bordes transparentes (Trim)
+    // Esto es CLAVE para que el hitbox sea solo el icono
+    img.Image trimmed = img.trim(resized, mode: img.TrimMode.transparent);
+
+    // 5. Codificar de nuevo a PNG
+    return Uint8List.fromList(img.encodePng(trimmed));
   }
 
   /// Carga los iconos personalizados para gasolineras
   Future<void> loadGasStationIcons() async {
-    // Load standard icon
+    const ImageConfiguration config = ImageConfiguration();
+
+    // 1. Load standard icon (Normal)
     try {
-      final Uint8List iconBytes = await getBytesFromAsset(
+      // Intentar procesar (redimensionar + trim)
+      // Usamos 140px como base, el trim lo reducirá al tamaño real del dibujo
+      final Uint8List iconBytes = await processIcon(
         'assets/images/iconoFinal.png',
         140,
       );
       _gasStationIcon = BitmapDescriptor.fromBytes(iconBytes);
-      AppLogger.info('Icono normal cargado correctamente', tag: 'MapHelpers');
+      AppLogger.info('Icono normal procesado (Resize+Trim)', tag: 'MapHelpers');
     } catch (e) {
-      AppLogger.error('Error cargando icono normal',
+      AppLogger.warning('Error procesando icono normal, usando fallback',
           tag: 'MapHelpers', error: e);
+
+      try {
+        _gasStationIcon = await BitmapDescriptor.fromAssetImage(
+          config,
+          'assets/images/iconoFinal.png',
+        );
+      } catch (e2) {}
     }
 
-    // Load favorite icon
+    // 2. Load favorite icon (Favorito)
     try {
-      final Uint8List favIconBytes = await getBytesFromAsset(
+      final Uint8List favIconBytes = await processIcon(
         'assets/images/iconoFavFinal.png',
         160,
       );
       _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
-      AppLogger.info('Icono favorito cargado correctamente', tag: 'MapHelpers');
+      AppLogger.info('Icono favorito procesado (Resize+Trim)',
+          tag: 'MapHelpers');
     } catch (e) {
-      AppLogger.error('Error cargando icono favorito',
+      AppLogger.warning('Error procesando icono favorito, usando fallback',
           tag: 'MapHelpers', error: e);
+
+      try {
+        _favoriteGasStationIcon = await BitmapDescriptor.fromAssetImage(
+          config,
+          'assets/images/iconoFavFinal.png',
+        );
+      } catch (e2) {}
     }
   }
 
@@ -81,6 +112,9 @@ class MarkerHelper {
       markerId: MarkerId('eess_${gasolinera.id}'),
       position: gasolinera.position,
       icon: icon,
+      anchor:
+          const Offset(0.5, 1.0), // 🔷 Anchor en la base central para precisión
+      zIndex: esFavorita ? 10.0 : 1.0, // 🔷 Favoritas siempre encima
       onTap: markersEnabled
           ? () {
               onTap(gasolinera, esFavorita);

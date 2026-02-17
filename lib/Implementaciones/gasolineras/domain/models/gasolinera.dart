@@ -1,6 +1,7 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart'
     as cluster_manager;
+import 'package:my_gasolinera/core/utils/geohash_utils.dart';
 
 class Gasolinera implements cluster_manager.ClusterItem {
   final String id;
@@ -123,7 +124,8 @@ class Gasolinera implements cluster_manager.ClusterItem {
   LatLng get location => LatLng(lat, lng);
 
   @override
-  String get geohash => id; // Usar el ID único como geohash
+  String get geohash => _geohash ??= GeohashUtils.encode(lat, lng);
+  String? _geohash; // Cache simple
 
   // 🕐 Verificar si es 24 horas
   bool get es24Horas {
