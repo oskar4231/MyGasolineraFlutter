@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -102,30 +103,12 @@ class _MapWidgetState extends State<MapWidget>
     }
   }
 
-  /// 🔷 Builder de marcadores para clustering
+  /// 🔷 Builder de marcadores para clustering (Decluttering Mode)
   Future<Marker> _markerBuilder(dynamic cluster) async {
-    // Cast to the correct type
     final typedCluster = cluster as cluster_manager.Cluster<Gasolinera>;
-    if (typedCluster.isMultiple) {
-      // Marcador de cluster (múltiples gasolineras)
-      return Marker(
-        markerId: MarkerId(typedCluster.getId()),
-        position: typedCluster.location,
-        icon: await _getClusterBitmap(typedCluster.count),
-        onTap: () {
-          // Hacer zoom al cluster
-          if (mapController != null) {
-            mapController!.animateCamera(
-              CameraUpdate.newLatLngZoom(
-                typedCluster.location,
-                _currentZoom + 2,
-              ),
-            );
-          }
-        },
-      );
-    } else {
-      // Marcador individual - USAR ICONO PERSONALIZADO
+
+    // CASO 1: Gasolinera Individual -> Comportamiento normal (abrir info)
+    if (!typedCluster.isMultiple) {
       final gasolinera = typedCluster.items.first;
       return _markerHelper.createMarker(
         gasolinera,
@@ -134,20 +117,83 @@ class _MapWidgetState extends State<MapWidget>
         markersEnabled: widget.markersEnabled,
       );
     }
-  }
 
-  /// 🔷 Genera el icono para un cluster
-  Future<BitmapDescriptor> _getClusterBitmap(int count) async {
-    // Por ahora, usar un marcador por defecto con color según cantidad
-    // En el futuro, puedes crear un icono personalizado con el número
-    return BitmapDescriptor.defaultMarkerWithHue(
-      count < 10
-          ? BitmapDescriptor.hueBlue
-          : (count < 100
-              ? BitmapDescriptor.hueOrange
-              : BitmapDescriptor.hueRed),
+    // CASO 2: Clúster Múltiple -> "Decluttering" (Mismo icono, sin zoom)
+
+    // 1. Lógica de Prioridad Visual:
+    // Si en el grupo hay AL MENOS UNA favorita -> Icono Favorito
+    bool containsFavorite = false;
+    for (final gasolinera in typedCluster.items) {
+      if (_gasolineraLogic.favoritosIds.contains(gasolinera.id)) {
+        containsFavorite = true;
+        break;
+      }
+    }
+
+    // 2. Mismo Icono Siempre (Custom Assets):
+    BitmapDescriptor icon;
+    if (containsFavorite && _markerHelper.favoriteGasStationIcon != null) {
+      icon = _markerHelper.favoriteGasStationIcon!;
+    } else if (_markerHelper.gasStationIcon != null) {
+      icon = _markerHelper.gasStationIcon!;
+    } else {
+      // Fallback por si acaso falló la carga de assets
+      icon = BitmapDescriptor.defaultMarkerWithHue(containsFavorite
+          ? BitmapDescriptor.hueViolet
+          : BitmapDescriptor.hueOrange);
+    }
+
+    return Marker(
+      markerId: MarkerId(typedCluster.getId()),
+      position: typedCluster.location,
+      icon: icon,
+      anchor: const Offset(
+          0.5, 1.0), // Anclaje igual que los marcadores individuales
+      zIndex: containsFavorite ? 10.0 : 1.0, // Favoritas siempre encima
+      onTap: () {
+        // 3. Zoom Suave al tocar grupo
+        // Al tocar un grupo, hacemos zoom in suavemente para "abrir" el grupo
+        if (mapController != null) {
+          AppLogger.debug(
+            'Zoom in suave al cluster: ${_currentZoom + 2.0}',
+            tag: 'MapWidget',
+          );
+          mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(
+              typedCluster.location,
+              _currentZoom + 2.0,
+            ),
+          );
+        }
+      },
+      // Opcional: info window si es único o custom para grupo
+      // infoWindow: InfoWindow(title: '${typedCluster.count} Gasolineras'),
     );
   }
+
+  // Método _getClusterBitmap eliminado ya que usamos siempre iconos estáticos
+
+  // Estilo del mapa para ocultar POIs y Tránsito
+  static const String _mapStyle = '''
+[
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]
+''';
 
   /// Inicializa el mapa cargando iconos y favoritos antes de iniciar GPS
   Future<void> _inicializarMapa() async {
@@ -569,73 +615,108 @@ class _MapWidgetState extends State<MapWidget>
       return;
     }
 
-    Position? posicion;
-
+    // 1. Intentar obtener última ubicación conocida (RÁPIDO) para mostrar mapa inmediatamente
     try {
-      AppLogger.debug('Obteniendo ubicación actual...', tag: 'MapWidget');
-      posicion = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.best,
-        ),
-      ).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          AppLogger.warning(
-            'Timeout obteniendo ubicación actual, intentando última conocida...',
-            tag: 'MapWidget',
+      Position? lastKnown = await Geolocator.getLastKnownPosition();
+      if (lastKnown != null && mounted) {
+        AppLogger.info(
+            'Última ubicación conocida encontrada: ${lastKnown.latitude}, ${lastKnown.longitude}',
+            tag: 'MapWidget');
+        setState(() {
+          _ubicacionActual = lastKnown;
+          _markers.clear();
+          _markers.add(
+            Marker(
+              markerId: const MarkerId('yo'),
+              position: LatLng(lastKnown.latitude, lastKnown.longitude),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueOrange),
+            ),
           );
-          throw TimeoutException('GPS timeout');
-        },
-      );
-      AppLogger.info(
-        'Ubicación actual obtenida: ${posicion.latitude}, ${posicion.longitude}',
-        tag: 'MapWidget',
-      );
-    } catch (e) {
-      AppLogger.warning('Error obteniendo ubicación actual',
-          tag: 'MapWidget', error: e);
-      AppLogger.debug('Intentando obtener última ubicación conocida...',
-          tag: 'MapWidget');
+        });
 
-      try {
-        posicion = await Geolocator.getLastKnownPosition();
-        if (posicion != null) {
-          AppLogger.info(
-            'Última ubicación conocida obtenida: ${posicion.latitude}, ${posicion.longitude}',
-            tag: 'MapWidget',
-          );
-        } else {
-          AppLogger.warning('No hay última ubicación conocida',
-              tag: 'MapWidget');
-        }
-      } catch (e2) {
-        AppLogger.error('Error obteniendo última ubicación',
-            tag: 'MapWidget', error: e2);
+        // Cargar gasolineras iniciales (background)
+        _cargarGasolineras(lastKnown.latitude, lastKnown.longitude,
+            isInitialLoad: true);
+        _actualizarProvincia(lastKnown.latitude, lastKnown.longitude);
       }
+    } catch (e) {
+      AppLogger.warning('Error obteniendo última ubicación conocida',
+          tag: 'MapWidget', error: e);
     }
 
-    if (posicion != null && mounted) {
-      setState(() {
-        _ubicacionActual = posicion;
-        _markers.clear();
-        _markers.add(
-          Marker(
-            markerId: const MarkerId('yo'),
-            position: LatLng(posicion!.latitude, posicion.longitude),
-            icon: BitmapDescriptor.defaultMarker,
+    // 2. Obtener ubicación actual precisa (LENTO)
+    try {
+      AppLogger.debug('Solicitando ubicación precisa...', tag: 'MapWidget');
+      // Reducido timeout a 5s para no bloquear si no es necesario (ya tenemos lastKnown o default)
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      ).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          throw TimeoutException('GPS timeout esperando ubicación precisa');
+        },
+      );
+
+      AppLogger.info(
+        'Ubicación precisa obtenida: ${position.latitude}, ${position.longitude}',
+        tag: 'MapWidget',
+      );
+
+      if (mounted) {
+        setState(() {
+          _ubicacionActual = position;
+          _markers.clear();
+          _markers.add(
+            Marker(
+              markerId: const MarkerId('yo'),
+              position: LatLng(position.latitude, position.longitude),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueOrange),
+            ),
+          );
+        });
+
+        // Si no teníamos ubicación (lastKnown falló) o queremos refrescar
+        _cargarGasolineras(position.latitude, position.longitude,
+            isInitialLoad: true);
+        _actualizarProvincia(position.latitude, position.longitude);
+
+        // Mover cámara a la ubicación precisa
+        mapController?.animateCamera(
+          CameraUpdate.newLatLng(
+            LatLng(position.latitude, position.longitude),
           ),
         );
-      });
+      }
+    } catch (e) {
+      AppLogger.warning('Error obteniendo ubicación precisa o timeout',
+          tag: 'MapWidget', error: e);
 
-      AppLogger.info('Cargando gasolineras para ubicación inicial...',
-          tag: 'MapWidget');
-      _cargarGasolineras(posicion.latitude, posicion.longitude,
-          isInitialLoad: true);
+      // Si falló y no tenemos _ubicacionActual (ni siquiera lastKnown), usar una por defecto (Valencia)
+      if (_ubicacionActual == null && mounted) {
+        // Fallback: Valencia Centro
+        final defaultPos = Position(
+            latitude: 39.4699,
+            longitude: -0.3763,
+            timestamp: DateTime.now(),
+            accuracy: 0,
+            altitude: 0,
+            heading: 0,
+            speed: 0,
+            speedAccuracy: 0,
+            altitudeAccuracy: 0,
+            headingAccuracy: 0);
 
-      // Actualizar provincia inicial
-      _actualizarProvincia(posicion.latitude, posicion.longitude);
-    } else {
-      AppLogger.error('No se pudo obtener ninguna ubicación', tag: 'MapWidget');
+        setState(() {
+          _ubicacionActual = defaultPos;
+        });
+
+        _cargarGasolineras(defaultPos.latitude, defaultPos.longitude,
+            isInitialLoad: true);
+      }
     }
 
     // Iniciar stream de actualizaciones de ubicación
@@ -655,7 +736,8 @@ class _MapWidgetState extends State<MapWidget>
           Marker(
             markerId: const MarkerId('yo'),
             position: LatLng(pos.latitude, pos.longitude),
-            icon: BitmapDescriptor.defaultMarker,
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueOrange),
           ),
         );
       });
@@ -692,6 +774,10 @@ class _MapWidgetState extends State<MapWidget>
       onMapCreated: (controller) {
         mapController = controller;
         _clusterManager?.setMapId(controller.mapId);
+
+        // 🔷 Aplicar estilo del mapa (Ocultar POIs)
+        _loadMapStyle(controller);
+
         if (_ubicacionActual != null) {
           controller.animateCamera(
             CameraUpdate.newLatLng(
@@ -754,6 +840,19 @@ class _MapWidgetState extends State<MapWidget>
         );
       },
     );
+  }
+
+  /// Carga y aplica el estilo del mapa usando la constante
+  Future<void> _loadMapStyle(GoogleMapController controller) async {
+    try {
+      // Usar estilo hardcoded para evitar problemas de carga de assets en web
+      await controller.setMapStyle(_mapStyle);
+      AppLogger.info('Estilo del mapa aplicado correctamente (Hardcoded)',
+          tag: 'MapWidget');
+    } catch (e) {
+      AppLogger.error('Error aplicando estilo del mapa',
+          tag: 'MapWidget', error: e);
+    }
   }
 
   @override
