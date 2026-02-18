@@ -21,9 +21,31 @@ class ProfileSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      elevation: 2,
-      color: theme.colorScheme.surfaceContainerHighest,
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = isDark
+        ? const Color(0xFF212124)
+        : (theme.cardTheme.color ?? theme.cardColor);
+    final lighterCardColor = isDark
+        ? const Color(0xFF3E3E42)
+        : Color.lerp(cardColor, Colors.white, 0.25);
+    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: lighterCardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
@@ -44,7 +66,7 @@ class ProfileSection extends StatelessWidget {
                     child: profileImageBytes == null && profileImageUrl == null
                         ? Icon(
                             Icons.person,
-                            color: theme.colorScheme.onSurface,
+                            color: textColor,
                             size: 40,
                           )
                         : null,
@@ -79,13 +101,15 @@ class ProfileSection extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
+                          color: primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.camera_alt,
                           size: 16,
-                          color: theme.colorScheme.onPrimary,
+                          color: isDark
+                              ? Colors.black
+                              : theme.colorScheme.onPrimary,
                         ),
                       ),
                     ),
@@ -103,7 +127,7 @@ class ProfileSection extends StatelessWidget {
                     text: TextSpan(
                       style: TextStyle(
                         fontSize: 24,
-                        color: theme.colorScheme.onSurface,
+                        color: textColor,
                         fontFamily: 'Roboto',
                       ),
                       children: [

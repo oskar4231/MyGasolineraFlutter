@@ -11,12 +11,16 @@ class LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final onPrimary = isDark ? Colors.black : theme.colorScheme.onPrimary;
+
     return Center(
       child: ElevatedButton.icon(
         onPressed: onLogout,
         style: ElevatedButton.styleFrom(
-          backgroundColor: theme.colorScheme.onSurface,
-          foregroundColor: theme.colorScheme.surface,
+          backgroundColor: primaryColor,
+          foregroundColor: onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),

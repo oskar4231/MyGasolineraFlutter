@@ -115,6 +115,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
                           onCamera: () => _handleImagePick(ImageSource.camera),
                         ),
                       ),
+                      const SizedBox(
+                          height: 32), // Más espacio entre perfil y opciones
                       OptionsMenu(
                         onDeleteAccount: () =>
                             AjustesDialogs.showDeleteAccountDialog(
