@@ -37,36 +37,40 @@ class ImagenFactura extends StatelessWidget {
           width: double.infinity,
           height: 120,
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            ),
+          ),
+          child: Material(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(10),
-          ),
-          child: imagen == null
-              ? TextButton(
-                  onPressed: onAgregarImagen,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add_photo_alternate,
-                        size: 40,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        AppLocalizations.of(context)!.agregarImagen,
-                        style: TextStyle(
+            clipBehavior: Clip.hardEdge,
+            child: imagen == null
+                ? InkWell(
+                    onTap: onAgregarImagen,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_photo_alternate,
+                          size: 40,
                           color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 14,
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              : Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: FutureBuilder(
+                        const SizedBox(height: 8),
+                        Text(
+                          AppLocalizations.of(context)!.agregarImagen,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Stack(
+                    children: [
+                      FutureBuilder(
                         future: imagen!.readAsBytes(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -84,27 +88,27 @@ class ImagenFactura extends StatelessWidget {
                           );
                         },
                       ),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black54,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 20,
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black54,
                           ),
-                          onPressed: onEliminarImagen,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            onPressed: onEliminarImagen,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+          ),
         ),
       ],
     );

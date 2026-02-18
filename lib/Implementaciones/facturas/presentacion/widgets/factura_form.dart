@@ -47,7 +47,8 @@ class FacturaForm extends StatelessWidget {
           _buildWrappedField(
             child: TextFormField(
               controller: costoController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]')),
                 TextInputFormatter.withFunction((oldValue, newValue) {
@@ -56,7 +57,8 @@ class FacturaForm extends StatelessWidget {
                   );
                 }),
               ],
-              decoration: _getInputDecoration(context, '${l10n.costeTotal} (€)'),
+              decoration:
+                  _getInputDecoration(context, '${l10n.costeTotal} (€)'),
               validator: (value) {
                 if (value == null || value.isEmpty) return l10n.ingreseCoste;
                 if (!RegExp(r'^\d+([.,]\d{1,3})?$').hasMatch(value)) {
@@ -115,7 +117,8 @@ class FacturaForm extends StatelessWidget {
             child: TextFormField(
               controller: descripcionController,
               maxLines: 4,
-              decoration: _getInputDecoration(context, l10n.descripcionOpcional),
+              decoration:
+                  _getInputDecoration(context, l10n.descripcionOpcional),
             ),
           ),
         ],
@@ -137,15 +140,22 @@ class FacturaForm extends StatelessWidget {
       fillColor: Theme.of(context).cardColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.primary,
+          width: 2.0,
+        ),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
@@ -189,9 +199,10 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: _hasFocus 
-                ? Theme.of(context).primaryColor.withOpacity(0.15) 
-                : Colors.black.withOpacity(0.05), // Sombra muy tenue si no hay foco
+            color: _hasFocus
+                ? Theme.of(context).primaryColor.withOpacity(0.15)
+                : Colors.black
+                    .withOpacity(0.05), // Sombra muy tenue si no hay foco
             blurRadius: _hasFocus ? 12 : 4,
             offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
           ),

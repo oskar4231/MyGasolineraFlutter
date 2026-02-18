@@ -305,36 +305,81 @@ class _FacturasScreenState extends State<FacturasScreen>
             // Custom Header
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back,
-                            color: theme.colorScheme.onPrimary),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: theme.brightness == Brightness.dark
+                            ? const Color(0xFF3E3E42)
+                            : Color.lerp(
+                                theme.cardTheme.color ?? theme.cardColor,
+                                Colors.white,
+                                0.25),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          size: 20,
+                          color: theme.brightness == Brightness.dark
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
+                        ),
+                        padding: EdgeInsets.zero,
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      Text(
-                        l10n.facturas,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onPrimary,
-                        ),
+                    ),
+                  ),
+                  Text(
+                    l10n.facturas,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: theme.brightness == Brightness.dark
+                          ? Colors.white
+                          : theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: theme.brightness == Brightness.dark
+                            ? const Color(0xFF3E3E42)
+                            : Color.lerp(
+                                theme.cardTheme.color ?? theme.cardColor,
+                                Colors.white,
+                                0.25),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      // Actions Menu (Refresh, Export, Import)
-                      PopupMenuButton<String>(
+                      child: PopupMenuButton<String>(
+                        color: theme.brightness == Brightness.dark
+                            ? const Color(0xFF212124)
+                            : null,
                         icon: Icon(Icons.more_vert,
-                            color: theme.colorScheme.onPrimary),
+                            color: theme.brightness == Brightness.dark
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurface),
                         onSelected: (value) {
                           switch (value) {
                             case 'refresh':
@@ -353,20 +398,46 @@ class _FacturasScreenState extends State<FacturasScreen>
                           PopupMenuItem<String>(
                             value: 'refresh',
                             child: ListTile(
-                              leading: const Icon(Icons.refresh),
-                              title: Text(l10n.actualizar),
+                              leading: Icon(Icons.refresh,
+                                  color: theme.brightness == Brightness.dark
+                                      ? theme.colorScheme.primary
+                                      : null),
+                              title: Text(l10n.actualizar,
+                                  style: TextStyle(
+                                      color: theme.brightness == Brightness.dark
+                                          ? theme.colorScheme.onSurface
+                                          : null)),
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'export',
+                            child: ListTile(
+                              leading: Icon(Icons.download,
+                                  color: theme.brightness == Brightness.dark
+                                      ? theme.colorScheme.primary
+                                      : null),
+                              title: const Text('Exportar'),
+                              textColor: theme.brightness == Brightness.dark
+                                  ? theme.colorScheme.onSurface
+                                  : null,
                             ),
                           ),
                           PopupMenuItem<String>(
                             value: 'import',
                             child: ListTile(
-                              leading: const Icon(Icons.upload_file),
+                              leading: Icon(Icons.upload_file,
+                                  color: theme.brightness == Brightness.dark
+                                      ? theme.colorScheme.primary
+                                      : null),
                               title: const Text('Importar'),
+                              textColor: theme.brightness == Brightness.dark
+                                  ? theme.colorScheme.onSurface
+                                  : null,
                             ),
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -543,10 +614,17 @@ class _FacturasScreenState extends State<FacturasScreen>
                 setState(() => _menuOpen = false);
                 _importarExcel();
               },
-              backgroundColor: theme.colorScheme.surface,
-              foregroundColor: theme.colorScheme.primary,
+              backgroundColor: theme.brightness == Brightness.dark
+                  ? const Color(0xFF3E3E42)
+                  : theme.colorScheme.surface,
+              foregroundColor: theme.brightness == Brightness.dark
+                  ? Colors.white
+                  : theme.colorScheme.primary,
               label: const Text('Importar'),
-              icon: const Icon(Icons.upload_file),
+              icon: Icon(Icons.upload_file,
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.primary
+                      : null),
             ),
             const SizedBox(height: 12),
             FloatingActionButton.extended(
@@ -555,10 +633,17 @@ class _FacturasScreenState extends State<FacturasScreen>
                 setState(() => _menuOpen = false);
                 _navegarAExportar();
               },
-              backgroundColor: theme.colorScheme.surface,
-              foregroundColor: theme.colorScheme.primary,
+              backgroundColor: theme.brightness == Brightness.dark
+                  ? const Color(0xFF3E3E42)
+                  : theme.colorScheme.surface,
+              foregroundColor: theme.brightness == Brightness.dark
+                  ? Colors.white
+                  : theme.colorScheme.primary,
               label: const Text('Exportar'),
-              icon: const Icon(Icons.download),
+              icon: Icon(Icons.download,
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.primary
+                      : null),
             ),
             const SizedBox(height: 12),
             FloatingActionButton.extended(
@@ -567,10 +652,17 @@ class _FacturasScreenState extends State<FacturasScreen>
                 setState(() => _menuOpen = false);
                 _navegarACrearFactura();
               },
-              backgroundColor: theme.colorScheme.surface,
-              foregroundColor: theme.colorScheme.primary,
+              backgroundColor: theme.brightness == Brightness.dark
+                  ? const Color(0xFF3E3E42)
+                  : theme.colorScheme.surface,
+              foregroundColor: theme.brightness == Brightness.dark
+                  ? Colors.white
+                  : theme.colorScheme.primary,
               label: Text(l10n.crearFactura),
-              icon: const Icon(Icons.add_circle_outline),
+              icon: Icon(Icons.add_circle_outline,
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.primary
+                      : null),
             ),
             const SizedBox(height: 12),
           ],
@@ -581,10 +673,14 @@ class _FacturasScreenState extends State<FacturasScreen>
                 _menuOpen = !_menuOpen;
               });
             },
-            backgroundColor: theme.primaryColor,
+            backgroundColor: theme.brightness == Brightness.dark
+                ? const Color(0xFF3E3E42)
+                : theme.primaryColor,
             child: Icon(
               _menuOpen ? Icons.close : Icons.add,
-              color: theme.colorScheme.onPrimary,
+              color: theme.brightness == Brightness.dark
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onPrimary,
             ),
           ),
         ],
