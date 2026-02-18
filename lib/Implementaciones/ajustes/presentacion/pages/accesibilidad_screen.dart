@@ -93,35 +93,46 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
         ? const Color(0xFFEBEBEB) // ModoOscuroAccesibilidad.textoPrimario
         : theme.colorScheme.onSurface;
 
-    final appBarColor = isDark
-        ? const Color(0xFF151517) // ModoOscuroAccesibilidad.fondoPrincipal
-        : theme.appBarTheme.backgroundColor;
-
     final appBarContentColor = isDark
         ? primaryColor
         : (theme.appBarTheme.foregroundColor ?? Colors.black);
 
+    // Color más claro para los contenedores (sutilmente más claro que el fondo de tarjeta)
+    final lighterCardColor = isDark
+        ? const Color(0xFF2C2C2F) // Un tono más claro que el 0xFF212124
+        : Color.lerp(cardColor, Colors.white,
+            0.25); // Solo 25% más claro para evitar que parezca blanco
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: appBarColor,
+        backgroundColor: Colors.transparent, // Fondo transparente
         elevation: 0,
-        shape: isDark
-            ? null
-            : const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(30),
-                ),
+        centerTitle: true, // Título centrado
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: lighterCardColor, // Usamos el mismo color claro/gris
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: appBarContentColor,
-          onPressed: () => Navigator.of(context).pop(),
+            ],
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 20),
+            color: appBarContentColor,
+            padding: EdgeInsets.zero,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         title: Text(
           'Accesibilidad',
           style: TextStyle(
-            color: appBarContentColor,
+            color: textColor, // Usar textColor para que coincida con el resto
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -146,9 +157,17 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: cardColor,
+                color: lighterCardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: borderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,8 +216,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       ),
                       child: InkWell(
                         onTap: () => _mostrarSliderTamanoFuente(),
-                        hoverColor: Colors.white.withOpacity(0.08),
-                        splashColor: Colors.white.withOpacity(0.1),
+                        hoverColor: primaryColor.withOpacity(0.1),
+                        splashColor: primaryColor.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                         mouseCursor: SystemMouseCursors.click,
                         child: Container(
@@ -244,9 +263,17 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: cardColor,
+                color: lighterCardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: borderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,8 +307,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                             ),
                             child: InkWell(
                               borderRadius: BorderRadius.circular(8),
-                              hoverColor: Colors.white.withOpacity(0.08),
-                              splashColor: Colors.white.withOpacity(0.1),
+                              hoverColor: primaryColor.withOpacity(0.1),
+                              splashColor: primaryColor.withOpacity(0.2),
                               mouseCursor: SystemMouseCursors.click,
                               onTap:
                                   () {}, // Necesario para que el InkWell detecte el hover
@@ -440,12 +467,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final activeTextColor = isDark ? Colors.black : theme.colorScheme.onPrimary;
 
-    final hoverColor = isDark
-        ? Colors.white.withOpacity(0.08)
-        : Colors.black.withOpacity(0.05);
+    final hoverColor = primaryColor.withOpacity(0.1);
 
-    final splashColor =
-        isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1);
+    final splashColor = primaryColor.withOpacity(0.2);
 
     return Expanded(
       child: Material(
@@ -539,12 +563,13 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
               ),
               title: Row(
                 children: [
-                  Icon(Icons.format_size, color: primaryColor),
+                  Icon(Icons.format_size,
+                      color: isDark ? Colors.white : primaryColor),
                   const SizedBox(width: 8),
                   Text(
                     'Tamaño Personalizado',
                     style: TextStyle(
-                      color: primaryColor,
+                      color: isDark ? Colors.white : primaryColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
