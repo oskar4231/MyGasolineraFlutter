@@ -86,56 +86,77 @@ class AjustesDialogs {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            final isDark = theme.brightness == Brightness.dark;
+            final dialogBackgroundColor =
+                isDark ? const Color(0xFF323236) : theme.colorScheme.surface;
+            final titleColor =
+                isDark ? const Color(0xFFFF8235) : theme.colorScheme.onSurface;
+            final textColor =
+                isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+
             return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.borrarCuenta),
+              backgroundColor: dialogBackgroundColor,
+              title: Text(
+                AppLocalizations.of(context)!.borrarCuenta,
+                style: TextStyle(color: titleColor),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     AppLocalizations.of(context)!.confirmarBorrarCuenta,
                     style: TextStyle(
-                      color:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.87),
+                      color: textColor,
                       fontSize: 16,
                     ),
                   ),
                   if (eliminando) ...[
                     const SizedBox(height: 16),
-                    const CircularProgressIndicator(),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(isDark
+                          ? const Color(0xFFFF8235)
+                          : theme.primaryColor),
+                    ),
                     const SizedBox(height: 8),
-                    Text(AppLocalizations.of(context)!.eliminandoCuenta),
+                    Text(
+                      AppLocalizations.of(context)!.eliminandoCuenta,
+                      style: TextStyle(color: textColor),
+                    ),
                   ],
                 ],
               ),
               actions: [
-                if (!eliminando)
+                if (!eliminando) ...[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      AppLocalizations.of(context)!.cancelar,
+                      style: TextStyle(
+                        color: isDark
+                            ? const Color(0xFF9E9E9E)
+                            : theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
                   ElevatedButton(
                     onPressed: () async {
                       setDialogState(() => eliminando = true);
                       await onDelete(context);
-                      // If onDelete fails or finishes without navigation, we might need to reset.
-                      // But typically onDelete will handle navigation or show error.
-                      // If we are here, maybe we should close dialog if it failed?
-                      // Let's assume onDelete handles the flow.
-                      // Ideally, if it fails, it throws or we pass a callback for error.
-                      // For now simpler is better.
                       if (context.mounted) {
                         setDialogState(() => eliminando = false);
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
+                      backgroundColor: isDark
+                          ? const Color(0xFFFF8235)
+                          : theme.colorScheme.error,
+                      foregroundColor: isDark
+                          ? const Color(0xFF151517)
+                          : theme.colorScheme.onError,
                     ),
-                    child: Text(
-                      AppLocalizations.of(context)!.eliminar,
-                      style: TextStyle(color: theme.colorScheme.onPrimary),
-                    ),
+                    child: Text(AppLocalizations.of(context)!.eliminar),
                   ),
-                if (!eliminando)
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(AppLocalizations.of(context)!.cancelar),
-                  ),
+                ]
               ],
             );
           },

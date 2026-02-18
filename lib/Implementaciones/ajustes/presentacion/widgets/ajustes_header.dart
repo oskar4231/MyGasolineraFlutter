@@ -47,7 +47,8 @@ class AjustesHeader extends StatelessWidget {
                 icon: Icon(
                   Icons.arrow_back,
                   size: 20,
-                  color: appBarContentColor,
+                  color:
+                      isDark ? theme.colorScheme.primary : appBarContentColor,
                 ),
                 padding: EdgeInsets.zero,
                 onPressed: () => Navigator.of(context).pushReplacement(
