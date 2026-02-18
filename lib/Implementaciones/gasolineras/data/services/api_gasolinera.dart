@@ -50,6 +50,58 @@ Future<List<Gasolinera>> fetchGasolinerasPorCercania(
   }
 }
 
+/// Obtiene gasolineras dentro de un bounding box (región visible del mapa)
+Future<List<Gasolinera>> fetchGasolinerasByBounds({
+  required double swLat,
+  required double swLng,
+  required double neLat,
+  required double neLng,
+}) async {
+  try {
+    final baseUrl = ApiConfig.baseUrl;
+    final uri = Uri.parse('$baseUrl/api/gasolineras').replace(
+      queryParameters: {
+        'swLat': swLat.toString(),
+        'swLng': swLng.toString(),
+        'neLat': neLat.toString(),
+        'neLng': neLng.toString(),
+      },
+    );
+
+    AppLogger.network('Solicitando gasolineras por bounding box',
+        tag: 'ApiGasolinera');
+
+    final response = await http
+        .get(uri, headers: ApiConfig.headers)
+        .timeout(const Duration(seconds: 10));
+
+    if (response.statusCode == 200) {
+      final bodyUtf8 = utf8.decode(response.bodyBytes);
+      final jsonResponse = json.decode(bodyUtf8);
+
+      if (jsonResponse['success'] == true) {
+        final List<dynamic> listaGasolineras =
+            jsonResponse['gasolineras'] ?? [];
+
+        AppLogger.network(
+            'Recibidas ${listaGasolineras.length} gasolineras por bounding box',
+            tag: 'ApiGasolinera');
+
+        return listaGasolineras
+            .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+            .where((g) => g.lat != 0.0 && g.lng != 0.0)
+            .toList();
+      }
+    }
+    AppLogger.error('API Backend Error HTTP: ${response.statusCode}',
+        tag: 'ApiGasolinera');
+    return [];
+  } catch (e) {
+    AppLogger.error('API Backend Excepción', tag: 'ApiGasolinera', error: e);
+    return [];
+  }
+}
+
 /// Obtiene gasolineras filtradas por provincia
 /// El ID de provincia es un código de 2 dígitos (ej: '28' para Madrid)
 /// Obtiene gasolineras filtradas por provincia usando nuestro Backend Optimizado
