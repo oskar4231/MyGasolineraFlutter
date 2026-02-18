@@ -33,8 +33,9 @@ class FacturaForm extends StatelessWidget {
       child: Column(
         children: [
           // Campo Título
-          _buildWrappedField(
-            child: TextFormField(
+          _buildShadowField(
+            context,
+            TextFormField(
               controller: tituloController,
               decoration: _getInputDecoration(context, l10n.titulo),
               validator: (value) =>
@@ -44,8 +45,9 @@ class FacturaForm extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Campo Costo
-          _buildWrappedField(
-            child: TextFormField(
+          _buildShadowField(
+            context,
+            TextFormField(
               controller: costoController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
@@ -74,8 +76,9 @@ class FacturaForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildWrappedField(
-                  child: TextFormField(
+                child: _buildShadowField(
+                  context,
+                  TextFormField(
                     controller: fechaController,
                     readOnly: true,
                     decoration: _getInputDecoration(context, l10n.fecha),
@@ -93,8 +96,9 @@ class FacturaForm extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildWrappedField(
-                  child: TextFormField(
+                child: _buildShadowField(
+                  context,
+                  TextFormField(
                     controller: horaController,
                     readOnly: true,
                     decoration: _getInputDecoration(context, l10n.hora),
@@ -113,8 +117,9 @@ class FacturaForm extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Campo Descripción
-          _buildWrappedField(
-            child: TextFormField(
+          _buildShadowField(
+            context,
+            TextFormField(
               controller: descripcionController,
               maxLines: 4,
               decoration:
@@ -126,37 +131,34 @@ class FacturaForm extends StatelessWidget {
     );
   }
 
-  // Helper para envolver cualquier campo con la sombra
-  Widget _buildWrappedField({required Widget child}) {
-    return ShadowFieldWrapper(child: child);
+  // Helper para crear el contenedor con sombra
+  Widget _buildShadowField(BuildContext context, Widget child) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
+    );
   }
 
-  // Helper para mantener el estilo de los inputs consistente
+  // Helper para mantener el estilo de los inputs consistente (sin bordes)
   InputDecoration _getInputDecoration(BuildContext context, String label) {
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       filled: true,
-      fillColor: Theme.of(context).cardColor,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-        ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
-          color: Theme.of(context).colorScheme.primary,
-          width: 2.0,
-        ),
-      ),
+      fillColor: Colors.transparent, // El color lo da el contenedor
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
@@ -178,10 +180,13 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
   @override
   void initState() {
     super.initState();
+    // Escuchar cambios en el foco
     _focusNode.addListener(() {
-      setState(() {
-        _hasFocus = _focusNode.hasFocus;
-      });
+      if (mounted) {
+        setState(() {
+          _hasFocus = _focusNode.hasFocus;
+        });
+      }
     });
   }
 
@@ -197,19 +202,23 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
       duration: const Duration(milliseconds: 250),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
             color: _hasFocus
                 ? Theme.of(context).primaryColor.withOpacity(0.15)
-                : Colors.black
-                    .withOpacity(0.05), // Sombra muy tenue si no hay foco
+                : Colors.black.withOpacity(0.05),
             blurRadius: _hasFocus ? 12 : 4,
             offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
           ),
         ],
       ),
       child: Focus(
-        focusNode: _focusNode,
+        onFocusChange: (value) {
+          setState(() {
+            _hasFocus = value;
+          });
+        },
         child: widget.child,
       ),
     );
