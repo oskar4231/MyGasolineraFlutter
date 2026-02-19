@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/data/services/export_service.dart';
-// import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_image_widget.dart'; // Optional if we want images in list
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class SeleccionFacturasScreen extends StatefulWidget {
   final List<Map<String, dynamic>> facturas;
@@ -18,11 +19,37 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
   final Set<int> _selectedIds = {};
   bool _isExporting = false;
 
+  String _formatFecha(String? fecha) {
+    if (fecha == null || fecha.isEmpty) return '';
+
+    try {
+      DateTime? dateTime;
+      if (fecha.contains('T')) {
+        dateTime = DateTime.parse(fecha);
+      } else if (fecha.contains('-')) {
+        final partes = fecha.split('-');
+        if (partes.length == 3) {
+          dateTime = DateTime(
+            int.parse(partes[0]),
+            int.parse(partes[1]),
+            int.parse(partes[2].split(' ')[0]),
+          );
+        }
+      }
+
+      if (dateTime != null) {
+        return DateFormat('dd/MM/yyyy').format(dateTime);
+      }
+    } catch (e) {
+      // Return original if parsing fails
+    }
+
+    return fecha;
+  }
+
   @override
   void initState() {
     super.initState();
-    // Start with all unselected? Or maybe select none.
-    // Usually explicit selection is better.
   }
 
   void _toggleSelection(int id) {
@@ -122,6 +149,7 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isDark = theme.brightness == Brightness.dark;
     final allSelected = widget.facturas.isNotEmpty &&
         _selectedIds.length == widget.facturas.length;
 
@@ -130,47 +158,28 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Custom Header
+            // Custom Header matching DetalleFactura/Ajustes
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back,
-                            color: theme.colorScheme.onPrimary),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.seleccionarFacturas,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextButton(
-                    onPressed: _toggleSelectAll,
-                    child: Text(
-                      allSelected ? l10n.deseleccionar : l10n.seleccionarTodo,
-                      style: TextStyle(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: HoverBackButton(
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                  )
+                  ),
+                  Text(
+                    l10n.seleccionarFacturas,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          isDark ? Colors.white : theme.colorScheme.onSurface,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -191,30 +200,58 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
                             factura['facturaId'];
                         final isSelected = _selectedIds.contains(id);
                         final titulo = factura['titulo'] ?? l10n.sinDatos;
-                        final fecha = factura['fecha'] ?? '';
-                        final coste = factura['coste']?.toString() ?? '0';
+                        final fecha = _formatFecha(factura['fecha']);
+                        final coste = (factura['coste'] != null
+                                ? double.parse(factura['coste'].toString())
+                                : 0.0)
+                            .toStringAsFixed(2);
 
                         return Card(
                           color: theme.colorScheme.surfaceContainerHighest,
-                          margin: const EdgeInsets.only(bottom: 8),
+                          margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: CheckboxListTile(
-                            value: isSelected,
-                            onChanged: (val) => _toggleSelection(id),
-                            activeColor: theme.colorScheme.primary,
-                            checkColor: theme.colorScheme.onPrimary,
-                            title: Text(titulo,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.onSurface)),
-                            subtitle: Text('$fecha - $coste €',
-                                style: TextStyle(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.7))),
-                            secondary: Icon(Icons.receipt,
-                                color: theme.colorScheme.primary),
+                          elevation: 0,
+                          child: Theme(
+                            data: theme.copyWith(
+                              checkboxTheme: theme.checkboxTheme.copyWith(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                            child: CheckboxListTile(
+                              value: isSelected,
+                              onChanged: (val) => _toggleSelection(id),
+                              activeColor: theme.colorScheme.primary,
+                              checkColor: isDark ? Colors.black : Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              title: Text(titulo,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.onSurface)),
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text('$fecha - €$coste',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.7))),
+                              ),
+                              secondary: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primaryContainer
+                                      .withValues(alpha: 0.3),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(Icons.receipt,
+                                    color: theme.colorScheme.primary),
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -225,21 +262,51 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton.icon(
-          onPressed: _selectedIds.isEmpty ? null : _exportar,
-          icon: Icon(Icons.download, color: theme.colorScheme.onPrimary),
-          label: Text(
-            l10n.exportarConConteo(_selectedIds.length),
-            style: TextStyle(color: theme.colorScheme.onPrimary),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OutlinedButton(
+              onPressed: _toggleSelectAll,
+              child: Text(
+                allSelected ? l10n.deseleccionar : l10n.seleccionarTodo,
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                side: BorderSide(color: theme.primaryColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: _selectedIds.isEmpty ? null : _exportar,
+              icon: Icon(Icons.download,
+                  color: isDark ? Colors.black : Colors.white),
+              label: Text(
+                l10n.exportarConConteo(_selectedIds.length),
+                style: TextStyle(
+                  color: isDark ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: isDark ? Colors.black : Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+            ),
+          ],
         ),
       ),
     );

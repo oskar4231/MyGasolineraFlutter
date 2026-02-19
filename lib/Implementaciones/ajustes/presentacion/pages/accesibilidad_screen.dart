@@ -73,11 +73,6 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     // Colores base adaptables
-    // Colores base adaptables
-
-    final cardColor = isDark
-        ? const Color(0xFF212124) // ModoOscuroAccesibilidad.fondoTarjeta
-        : (theme.cardTheme.color ?? theme.cardColor);
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento

@@ -559,7 +559,7 @@ class _FacturasScreenState extends State<FacturasScreen>
                                     ),
                                     trailing: IconButton(
                                       icon: Icon(Icons.delete_outline,
-                                          color: theme.colorScheme.error),
+                                          color: theme.colorScheme.primary),
                                       onPressed: () => _eliminarFactura(
                                         int.tryParse((factura['id_factura'] ??
                                                 factura['id'] ??
