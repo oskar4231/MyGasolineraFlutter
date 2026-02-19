@@ -59,6 +59,9 @@ Future<void> main() async {
   // Inicializar Auth
   await AuthService.initialize();
 
+  // Inicializar Logger
+  await AppLogger.init();
+
   // ✅ Optimizaciones de rendimiento para APK (reducir RAM/CPU)
   if (esAPK) {
     // Reducir caché de imágenes para ahorrar RAM
