@@ -2,6 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class EstadisticasWidgets {
+  // Colores adaptativos para modo oscuro (patrón Accesibilidad/Facturas)
+  static Color _lighterCardColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? const Color(0xFF3E3E42)
+        : Color.lerp(
+            Theme.of(context).cardTheme.color ?? Theme.of(context).cardColor,
+            Colors.white,
+            0.25)!;
+  }
+
+  static Color _primaryColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? const Color(0xFFFF8235) : Theme.of(context).primaryColor;
+  }
+
+  static Color _textColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? const Color(0xFFEBEBEB)
+        : Theme.of(context).colorScheme.onSurface;
+  }
+
   static Widget buildStatCard({
     required BuildContext context,
     required String title,
@@ -10,14 +33,20 @@ class EstadisticasWidgets {
     required IconData icon,
     required Color color,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = _lighterCardColor(context);
+    final textClr = _textColor(context);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -42,10 +71,7 @@ class EstadisticasWidgets {
                   title,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
+                    color: textClr.withOpacity(0.6),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -55,7 +81,7 @@ class EstadisticasWidgets {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: textClr,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -63,10 +89,7 @@ class EstadisticasWidgets {
                   subtitle,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
+                    color: textClr.withOpacity(0.6),
                   ),
                 ),
               ],
@@ -84,14 +107,21 @@ class EstadisticasWidgets {
     required double porcentaje,
     required bool isPositive,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = _lighterCardColor(context);
+    final textClr = _textColor(context);
+    final primary = _primaryColor(context);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -105,12 +135,12 @@ class EstadisticasWidgets {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                  color: primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   Icons.compare_arrows,
-                  color: Theme.of(context).primaryColor,
+                  color: primary,
                   size: 32,
                 ),
               ),
@@ -121,7 +151,7 @@ class EstadisticasWidgets {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: textClr,
                   ),
                 ),
               ),
@@ -137,18 +167,14 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.mesActual,
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6)),
+                        fontSize: 12, color: textClr.withOpacity(0.6)),
                   ),
                   Text(
                     '€${_formatNumber(mesActual)}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: textClr,
                     ),
                   ),
                 ],
@@ -164,18 +190,14 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.mesAnterior,
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6)),
+                        fontSize: 12, color: textClr.withOpacity(0.6)),
                   ),
                   Text(
                     '€${_formatNumber(mesAnterior)}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: textClr,
                     ),
                   ),
                 ],
@@ -224,15 +246,24 @@ class EstadisticasWidgets {
     required dynamic proyeccionFin,
   }) {
     final progreso = diasTranscurridos / diasTotales;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = _lighterCardColor(context);
+    final textClr = _textColor(context);
+    final primary = _primaryColor(context);
+
+    final borderColor =
+        isDark ? const Color(0xFF38383A) : Theme.of(context).dividerColor;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -246,12 +277,12 @@ class EstadisticasWidgets {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                  color: primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   Icons.insights,
-                  color: Theme.of(context).primaryColor,
+                  color: primary,
                   size: 32,
                 ),
               ),
@@ -262,7 +293,7 @@ class EstadisticasWidgets {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: textClr,
                   ),
                 ),
               ),
@@ -278,18 +309,14 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.gastoActual,
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6)),
+                        fontSize: 12, color: textClr.withOpacity(0.6)),
                   ),
                   Text(
                     '€${_formatNumber(gastoActual)}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: textClr,
                     ),
                   ),
                 ],
@@ -300,18 +327,14 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.proyeccion,
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6)),
+                        fontSize: 12, color: textClr.withOpacity(0.6)),
                   ),
                   Text(
                     '€${_formatNumber(proyeccionFin)}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
+                      color: primary,
                     ),
                   ),
                 ],
@@ -329,18 +352,14 @@ class EstadisticasWidgets {
                     AppLocalizations.of(context)!
                         .diaXdeY(diasTranscurridos, diasTotales),
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6)),
+                        fontSize: 12, color: textClr.withOpacity(0.6)),
                   ),
                   Text(
                     '${(progreso * 100).toStringAsFixed(0)}%',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: textClr,
                     ),
                   ),
                 ],
@@ -350,11 +369,13 @@ class EstadisticasWidgets {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: progreso,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor,
-                  ),
+                  backgroundColor: isDark
+                      ? borderColor
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(primary),
                   minHeight: 8,
                 ),
               ),

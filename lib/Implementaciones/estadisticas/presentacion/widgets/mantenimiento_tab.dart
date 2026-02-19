@@ -119,7 +119,10 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
             AppLocalizations.of(context)!.anadeCochesMantenimiento,
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -159,9 +162,12 @@ class _MantenimientoTabState extends State<MantenimientoTab> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
+      elevation: Theme.of(context).brightness == Brightness.dark ? 0 : 1,
       color: necesitaCambio
           ? Theme.of(context).colorScheme.errorContainer
-          : Theme.of(context).cardColor,
+          : (Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF3E3E42)
+              : Theme.of(context).cardColor),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

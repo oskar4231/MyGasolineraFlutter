@@ -102,10 +102,16 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF8235)
+                            : Theme.of(context).primaryColor)
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                      color: (Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFFFF8235)
+                              : Theme.of(context).primaryColor)
+                          .withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -184,11 +190,15 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF3E3E42)
+                        : Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.grey.withOpacity(0.1),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -265,11 +275,15 @@ class _ConsumoTabState extends State<ConsumoTab> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF3E3E42)
+            : Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -343,7 +357,9 @@ class _ConsumoTabState extends State<ConsumoTab> {
               color: costoColor.withValues(alpha: 0.1),
               border: Border.symmetric(
                 horizontal: BorderSide(
-                  color: Colors.grey.shade200,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF38383A)
+                      : Colors.grey.shade200,
                   width: 1,
                 ),
               ),
@@ -525,10 +541,12 @@ class _ConsumoTabState extends State<ConsumoTab> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _getEficienciaColor(costoProm).withValues(alpha: 0.1),
+                      color:
+                          _getEficienciaColor(costoProm).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: _getEficienciaColor(costoProm).withValues(alpha: 0.3),
+                        color: _getEficienciaColor(costoProm)
+                            .withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -583,7 +601,8 @@ class _ConsumoTabState extends State<ConsumoTab> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -645,7 +664,10 @@ class _ConsumoTabState extends State<ConsumoTab> {
             AppLocalizations.of(context)!.agregaFacturasConsumo,
             style: TextStyle(
               fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
