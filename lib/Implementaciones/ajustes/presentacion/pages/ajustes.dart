@@ -88,8 +88,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos el tema actual
     final theme = Theme.of(context);
 
+    // AjustesHeader maneja internamente la navegación y estilos específicos
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(

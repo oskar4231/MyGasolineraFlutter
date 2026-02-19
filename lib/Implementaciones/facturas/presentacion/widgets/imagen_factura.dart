@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'shadow_field_wrapper.dart';
 
 class ImagenFactura extends StatelessWidget {
   final XFile? imagen;
@@ -33,23 +34,14 @@ class ImagenFactura extends StatelessWidget {
           thickness: 1,
         ),
         const SizedBox(height: 16),
-        Container(
-          width: double.infinity,
-          height: 120,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-            ),
-          ),
-          child: Material(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(10),
-            clipBehavior: Clip.hardEdge,
-            child: imagen == null
-                ? InkWell(
-                    onTap: onAgregarImagen,
-                    child: Column(
+        GestureDetector(
+          onTap: onAgregarImagen,
+          child: ShadowFieldWrapper(
+            child: SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: imagen == null
+                  ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -66,48 +58,48 @@ class ImagenFactura extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ),
-                  )
-                : Stack(
-                    children: [
-                      FutureBuilder(
-                        future: imagen!.readAsBytes(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Image.memory(
-                              snapshot.data as Uint8List,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
+                    )
+                  : Stack(
+                      children: [
+                        FutureBuilder(
+                          future: imagen!.readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Image.memory(
+                                snapshot.data as Uint8List,
+                                width: double.infinity,
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                              );
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xFFFF9350),
+                              ),
                             );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFFFF9350),
+                          },
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black54,
                             ),
-                          );
-                        },
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black54,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 20,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              onPressed: onEliminarImagen,
                             ),
-                            onPressed: onEliminarImagen,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ],

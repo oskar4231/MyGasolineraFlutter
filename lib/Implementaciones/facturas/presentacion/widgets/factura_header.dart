@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class FacturaHeader extends StatelessWidget {
   const FacturaHeader({super.key});
@@ -13,36 +14,8 @@ class FacturaHeader extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFF3E3E42)
-                    : Color.lerp(
-                        Theme.of(context).cardTheme.color ??
-                            Theme.of(context).cardColor,
-                        Colors.white,
-                        0.25),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  size: 20,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface,
-                ),
-                padding: EdgeInsets.zero,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+            child: HoverBackButton(
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
           Text(

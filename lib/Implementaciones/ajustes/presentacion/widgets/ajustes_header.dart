@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class AjustesHeader extends StatelessWidget {
   const AjustesHeader({super.key});
@@ -9,14 +10,7 @@ class AjustesHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-
     final isDark = theme.brightness == Brightness.dark;
-    final cardColor = isDark
-        ? const Color(0xFF212124)
-        : (theme.cardTheme.color ?? theme.cardColor);
-    final lighterCardColor = isDark
-        ? const Color(0xFF3E3E42)
-        : Color.lerp(cardColor, Colors.white, 0.25);
 
     final appBarContentColor =
         isDark ? Colors.white : theme.colorScheme.onSurface;
@@ -30,30 +24,9 @@ class AjustesHeader extends StatelessWidget {
           // Botón Atrás (Alineado a la izquierda)
           Align(
             alignment: Alignment.centerLeft,
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: lighterCardColor,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  size: 20,
-                  color:
-                      isDark ? theme.colorScheme.primary : appBarContentColor,
-                ),
-                padding: EdgeInsets.zero,
-                onPressed: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const Layouthome()),
-                ),
+            child: HoverBackButton(
+              onPressed: () => Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const Layouthome()),
               ),
             ),
           ),

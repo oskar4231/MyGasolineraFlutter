@@ -133,20 +133,7 @@ class FacturaForm extends StatelessWidget {
 
   // Helper para crear el contenedor con sombra
   Widget _buildShadowField(BuildContext context, Widget child) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: child,
-    );
+    return ShadowFieldWrapper(child: child);
   }
 
   // Helper para mantener el estilo de los inputs consistente (sin bordes)
@@ -176,17 +163,13 @@ class ShadowFieldWrapper extends StatefulWidget {
 class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
   final FocusNode _focusNode = FocusNode();
   bool _hasFocus = false;
+  bool _isHovered = false;
 
   @override
   void initState() {
     super.initState();
-    // Escuchar cambios en el foco
     _focusNode.addListener(() {
-      if (mounted) {
-        setState(() {
-          _hasFocus = _focusNode.hasFocus;
-        });
-      }
+      if (mounted) setState(() => _hasFocus = _focusNode.hasFocus);
     });
   }
 
@@ -198,28 +181,51 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: _hasFocus
-                ? Theme.of(context).primaryColor.withOpacity(0.15)
-                : Colors.black.withOpacity(0.05),
-            blurRadius: _hasFocus ? 12 : 4,
-            offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
-          ),
-        ],
-      ),
+    // Determine background color based on state
+    Color backgroundColor = Theme.of(context).cardColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (_hasFocus) {
+      backgroundColor = isDark ? const Color(0xFF2C2C2C) : Colors.white;
+    } else if (_isHovered) {
+      // Rounded hover effect color
+      backgroundColor = isDark
+          ? const Color(0xFF383838)
+          : Theme.of(context).cardColor.withOpacity(0.9);
+
+      backgroundColor = Color.alphaBlend(
+        Theme.of(context).hoverColor,
+        Theme.of(context).cardColor,
+      );
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
       child: Focus(
-        onFocusChange: (value) {
-          setState(() {
-            _hasFocus = value;
-          });
-        },
-        child: widget.child,
+        onFocusChange: (value) => setState(() => _hasFocus = value),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: backgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: _hasFocus
+                    ? Theme.of(context).primaryColor.withOpacity(0.15)
+                    : Colors.black.withOpacity(_isHovered ? 0.15 : 0.05),
+                blurRadius: _hasFocus ? 12 : (_isHovered ? 8 : 4),
+                offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
+              ),
+            ],
+            border: _hasFocus
+                ? Border.all(color: Theme.of(context).primaryColor, width: 1.5)
+                : Border.all(color: Colors.transparent, width: 1.0),
+          ),
+          clipBehavior:
+              Clip.antiAlias, // Ensures hover color respects rounded corners
+          child: widget.child,
+        ),
       ),
     );
   }

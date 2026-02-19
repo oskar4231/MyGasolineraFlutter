@@ -8,6 +8,7 @@ import 'seleccion_facturas_screen.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/factura_image_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class FacturasScreen extends StatefulWidget {
   const FacturasScreen({super.key});
@@ -310,35 +311,8 @@ class _FacturasScreenState extends State<FacturasScreen>
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: theme.brightness == Brightness.dark
-                            ? const Color(0xFF3E3E42)
-                            : Color.lerp(
-                                theme.cardTheme.color ?? theme.cardColor,
-                                Colors.white,
-                                0.25),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                          color: theme.brightness == Brightness.dark
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface,
-                        ),
-                        padding: EdgeInsets.zero,
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+                    child: HoverBackButton(
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
                   Text(
@@ -442,7 +416,6 @@ class _FacturasScreenState extends State<FacturasScreen>
                 ],
               ),
             ),
-
             // Body Content
             Expanded(
               child: _isLoading
