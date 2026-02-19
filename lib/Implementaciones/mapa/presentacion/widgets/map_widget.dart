@@ -138,12 +138,11 @@ class _MapWidgetState extends State<MapWidget>
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final filtersChanged =
-        oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
-            oldWidget.precioDesde != widget.precioDesde ||
-            oldWidget.precioHasta != widget.precioHasta ||
-            oldWidget.tipoAperturaSeleccionado !=
-                widget.tipoAperturaSeleccionado;
+    final filtersChanged = oldWidget.combustibleSeleccionado !=
+            widget.combustibleSeleccionado ||
+        oldWidget.precioDesde != widget.precioDesde ||
+        oldWidget.precioHasta != widget.precioHasta ||
+        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado;
 
     if (filtersChanged) {
       AppLogger.debug('Detectado cambio en filtros', tag: 'MapWidget');
@@ -230,6 +229,7 @@ class _MapWidgetState extends State<MapWidget>
         target: LatLng(pos.latitude, pos.longitude),
         zoom: 15.0,
       ),
+      style: _mapStyle,
       markers: allMarkers,
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
