@@ -240,6 +240,17 @@ class _MapWidgetState extends State<MapWidget>
         _mapController = controller;
         clusterManager?.setMapId(controller.mapId);
         _loadMapStyle(controller);
+
+        // FIX: Forzar actualización inicial del ClusterManager
+        // Esto corrige el bug donde los marcadores no aparecen si los datos cargan antes que el mapa
+        final initialPos = CameraPosition(
+          target: LatLng(pos.latitude, pos.longitude),
+          zoom: 15.0,
+        );
+        _currentCameraPosition = initialPos;
+        clusterManager?.onCameraMove(initialPos);
+        clusterManager?.updateMap();
+
         controller.animateCamera(
           CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
         );
