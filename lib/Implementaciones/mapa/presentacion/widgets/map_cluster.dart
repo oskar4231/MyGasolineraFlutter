@@ -25,7 +25,7 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
       [],
       _updateClusterMarkers,
       markerBuilder: _markerBuilder,
-      levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5, 20.0],
+      levels: [1, 4.5, 8.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.5, 20.0],
       extraPercent: 0.2,
     );
     AppLogger.info('ClusterManager inicializado', tag: 'MapCluster');
@@ -68,7 +68,9 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
       icon = markerHelper.gasStationIcon!;
     } else {
       icon = BitmapDescriptor.defaultMarkerWithHue(
-        containsFavorite ? BitmapDescriptor.hueViolet : BitmapDescriptor.hueOrange,
+        containsFavorite
+            ? BitmapDescriptor.hueViolet
+            : BitmapDescriptor.hueOrange,
       );
     }
 
