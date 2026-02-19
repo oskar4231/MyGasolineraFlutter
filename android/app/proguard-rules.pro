@@ -40,6 +40,18 @@
 -keep class io.flutter.plugins.packageinfo.** { *; }
 -dontwarn io.flutter.plugins.packageinfo.**
 
+# Google Play Core (para deferred components de Flutter)
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
+# Google ML Kit Text Recognition
+-keep class com.google.mlkit.vision.text.** { *; }
+-keep class com.google.android.gms.internal.** { *; }
+-dontwarn com.google.mlkit.vision.text.chinese.**
+-dontwarn com.google.mlkit.vision.text.devanagari.**
+-dontwarn com.google.mlkit.vision.text.japanese.**
+-dontwarn com.google.mlkit.vision.text.korean.**
+
 # Mantener clases de modelos (Gasolinera, etc.)
 -keep class com.example.my_gasolinera.** { *; }
 
