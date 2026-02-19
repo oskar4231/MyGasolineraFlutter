@@ -146,8 +146,6 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
-
     final lighterCardColor = isDark
         ? const Color(0xFF3E3E42)
         : Color.lerp(

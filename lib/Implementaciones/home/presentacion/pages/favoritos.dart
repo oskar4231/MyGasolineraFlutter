@@ -4,9 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart';
 import 'package:intl/intl.dart';
-import 'package:geolocator/geolocator.dart'; // 🆕 Para obtener ubicación
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart'; // 🆕 Para detectar provincia
+import 'package:geolocator/geolocator.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -94,7 +95,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         const Duration(seconds: 15),
         onTimeout: () {
           debugPrint('⏱️ Timeout cargando gasolineras');
-          return <Gasolinera>[]; // Devolver lista vacía en caso de timeout
+          return <Gasolinera>[];
         },
       );
 
@@ -111,12 +112,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       _aplicarOrden();
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');
-      // Asegurar que las listas estén inicializadas aunque haya error
       if (_gasolinerasFavoritas.isEmpty) {
         _gasolinerasFavoritas = [];
       }
     } finally {
-      // ✅ CRÍTICO: Asegurar que _loading siempre se pone a false
       if (mounted) {
         setState(() {
           _loading = false;
@@ -159,7 +158,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       }
     }
 
-    // Si no hay tipo seleccionado, usar promedio de todos los combustibles
     final precios = [
       g.gasolina95,
       g.gasolina98,
@@ -174,8 +172,17 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
   void _mostrarFiltros() {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    // Valores temporales para el diálogo
+    final dialogBg = isDark ? const Color(0xFF212124) : const Color(0xFFFF9350);
+    final cardColor = isDark ? const Color(0xFF3E3E42) : Colors.white;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : const Color(0xFF3E2723);
+    final accentColor =
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+    final borderColor = isDark ? const Color(0xFF38383A) : Colors.transparent;
+
     String combustibleTemp = _tipoCombustibleSeleccionado ?? l10n.todos;
     String ordenTemp = _ordenSeleccionado == 'nombre'
         ? l10n.nombre
@@ -191,9 +198,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return Dialog(
-              backgroundColor: const Color(0xFFFF9350),
+              backgroundColor: dialogBg,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: borderColor, width: isDark ? 1 : 0),
               ),
               insetPadding: const EdgeInsets.symmetric(
                 horizontal: 24,
@@ -206,13 +214,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Título "Filtros" en negro
                       Text(
                         l10n.filtros,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF3E2723),
+                          color: isDark ? Colors.white : textColor,
                         ),
                       ),
 
@@ -221,9 +228,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       // Tipo de Combustible
                       Text(
                         l10n.tipoCombustible.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF3E2723),
+                          color: textColor,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -231,12 +238,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ), // 🔧 Más redondeado
+                          color: cardColor,
+                          borderRadius: BorderRadius.circular(12),
                           boxShadow: [
-                            // 🔧 Añadida sombra sutil
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
@@ -247,26 +251,23 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 4,
-                        ), // 🔧 Padding añadido
+                        ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: combustibleTemp,
                             isExpanded: true,
-                            icon: const Icon(
-                              Icons
-                                  .keyboard_arrow_down_rounded, // 🔧 Icono más moderno
-                              color: Color(0xFFFF9350),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: accentColor,
                               size: 28,
                             ),
-                            style: const TextStyle(
-                              color: Color(0xFF3E2723),
+                            style: TextStyle(
+                              color: textColor,
                               fontSize: 16,
-                              fontWeight: FontWeight.w500, // 🔧 Más peso
+                              fontWeight: FontWeight.w500,
                             ),
-                            dropdownColor: Colors.white, // 🔧 Fondo del menú
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // 🔧 Menú redondeado
+                            dropdownColor: cardColor,
+                            borderRadius: BorderRadius.circular(12),
                             onChanged: (String? nuevoValor) {
                               setStateDialog(() {
                                 combustibleTemp = nuevoValor!;
@@ -284,8 +285,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 value: value,
                                 child: Text(
                                   value,
-                                  style: const TextStyle(
-                                    color: Color(0xFF3E2723),
+                                  style: TextStyle(
+                                    color: textColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -301,9 +302,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       // Filtrar Por
                       Text(
                         l10n.filtrarPor.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF3E2723),
+                          color: textColor,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -311,12 +312,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ), // 🔧 Más redondeado
+                          color: cardColor,
+                          borderRadius: BorderRadius.circular(12),
                           boxShadow: [
-                            // 🔧 Añadida sombra sutil
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
@@ -327,26 +325,23 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 4,
-                        ), // 🔧 Padding añadido
+                        ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: ordenTemp,
                             isExpanded: true,
-                            icon: const Icon(
-                              Icons
-                                  .keyboard_arrow_down_rounded, // 🔧 Icono más moderno
-                              color: Color(0xFFFF9350),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: accentColor,
                               size: 28,
                             ),
-                            style: const TextStyle(
-                              color: Color(0xFF3E2723),
+                            style: TextStyle(
+                              color: textColor,
                               fontSize: 16,
-                              fontWeight: FontWeight.w500, // 🔧 Más peso
+                              fontWeight: FontWeight.w500,
                             ),
-                            dropdownColor: Colors.white, // 🔧 Fondo del menú
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // 🔧 Menú redondeado
+                            dropdownColor: cardColor,
+                            borderRadius: BorderRadius.circular(12),
                             onChanged: (String? nuevoValor) {
                               setStateDialog(() {
                                 ordenTemp = nuevoValor!;
@@ -357,8 +352,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 value: l10n.nombre,
                                 child: Text(
                                   l10n.nombre,
-                                  style: const TextStyle(
-                                    color: Color(0xFF3E2723),
+                                  style: TextStyle(
+                                    color: textColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -368,8 +363,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 value: l10n.precioAscendente,
                                 child: Text(
                                   l10n.precioAscendente,
-                                  style: const TextStyle(
-                                    color: Color(0xFF3E2723),
+                                  style: TextStyle(
+                                    color: textColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -379,8 +374,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                                 value: l10n.precioDescendente,
                                 child: Text(
                                   l10n.precioDescendente,
-                                  style: const TextStyle(
-                                    color: Color(0xFF3E2723),
+                                  style: TextStyle(
+                                    color: textColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -397,7 +392,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          // Botón Cancelar en negro 🔧
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
@@ -410,18 +404,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                             ),
                             child: Text(
                               l10n.cancelar,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: isDark ? textColor : Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Botón Aplicar
                           ElevatedButton(
                             onPressed: () {
-                              // Aplicar filtros
                               setState(() {
                                 _tipoCombustibleSeleccionado =
                                     (combustibleTemp == l10n.todos)
@@ -442,13 +434,13 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFFFF9350),
-                              elevation: 2, // 🔧 Añadida elevación
+                              backgroundColor:
+                                  isDark ? accentColor : Colors.white,
+                              foregroundColor:
+                                  isDark ? Colors.black : accentColor,
+                              elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  12,
-                                ), // 🔧 Más redondeado
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -477,24 +469,35 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   Widget _buildGasolineraItem(Gasolinera gasolinera, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final formatter = NumberFormat.currency(
       locale: 'es_ES',
       symbol: '€',
       decimalDigits: 3,
     );
 
+    final lighterCardColor = isDark ? const Color(0xFF3E3E42) : Colors.white;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : const Color(0xFF492714);
+    final subtextColor = isDark
+        ? const Color(0xFFEBEBEB).withValues(alpha: 0.7)
+        : Colors.grey[600]!;
+    final accentColor =
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+    final priceBgColor =
+        isDark ? const Color(0xFF2D2D32) : const Color(0xFFFFF0E6);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [Colors.white, const Color(0xFFFFF5EE)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: lighterCardColor,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF492714).withValues(alpha: 0.1),
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.15),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -509,12 +512,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF9350),
+                    color: accentColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.local_gas_station_rounded,
-                    color: Colors.white,
+                    color: isDark ? Colors.black : Colors.white,
                     size: 28,
                   ),
                 ),
@@ -525,10 +528,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     children: [
                       Text(
                         gasolinera.rotulo,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF492714),
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -536,7 +539,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         gasolinera.direccion,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: subtextColor,
                           height: 1.2,
                         ),
                         maxLines: 2,
@@ -547,14 +550,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    // Eliminar de favoritos con confirmación visual
                     final prefs = await SharedPreferences.getInstance();
                     final idsFavoritos =
                         prefs.getStringList('favoritas_ids') ?? [];
                     idsFavoritos.remove(gasolinera.id);
                     await prefs.setStringList('favoritas_ids', idsFavoritos);
 
-                    // Actualizar lista
                     if (mounted) {
                       setState(() {
                         _gasolinerasFavoritas.removeWhere(
@@ -573,9 +574,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       );
                     }
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.star_rounded,
-                    color: Color(0xFFFF9350),
+                    color: accentColor,
                     size: 32,
                   ),
                 ),
@@ -584,9 +585,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           ),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFF0E6),
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              color: priceBgColor,
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
               ),
@@ -602,10 +603,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   List<Widget> _buildPreciosPremium(Gasolinera g, NumberFormat formatter) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final preciosWidgets = <Widget>[];
 
-    // Helper para crear widgets de precio
-    Widget buildPrice(String label, double price, Color color) {
+    Widget buildPrice(String label, double price, Color lightColor) {
+      final labelColor = isDark
+          ? const Color(0xFFEBEBEB).withValues(alpha: 0.7)
+          : Colors.grey[700]!;
+      final priceColor = isDark ? const Color(0xFFEBEBEB) : lightColor;
+
       return Column(
         children: [
           Text(
@@ -613,7 +620,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: labelColor,
             ),
           ),
           const SizedBox(height: 4),
@@ -622,7 +629,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: color,
+              color: priceColor,
             ),
           ),
         ],
@@ -647,7 +654,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       );
     }
 
-    // Si solo hay uno o dos, añadir GLP o Premium si existen para llenar visualmente
     if (preciosWidgets.length < 3 && g.glp > 0) {
       preciosWidgets.add(buildPrice('GLP', g.glp, const Color(0xFFFF5722)));
     }
@@ -658,145 +664,206 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final accentColor =
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+    final lighterCardColor = isDark ? const Color(0xFF3E3E42) : Colors.white;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE2CE),
-      appBar: AppBar(
-        title: Text(
-          l10n.gasolinerasFavoritas,
-          style: const TextStyle(
-            color: Color(0xFF3E2723),
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: const Color(0xFFFF9350),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: _mostrarFiltros,
-            icon: const Icon(Icons.filter_list,
-                color: Color(0xFF3E2723), size: 28),
-          ),
-        ],
-      ),
-      body: _loading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFF9350)),
-            )
-          : _gasolinerasFavoritas.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.star_border,
-                            size: 80, color: Colors.grey[400]),
-                        const SizedBox(height: 20),
-                        Text(
-                          l10n.noHayFavoritos,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l10n.seleccionaGasolinerasEnMapa,
-                          textAlign: TextAlign.center,
-                          style:
-                              const TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                        const SizedBox(height: 30),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.map),
-                          label: Text(l10n.verMapa),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF9350),
-                            foregroundColor: Colors.brown,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                      ],
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header plano estilo Accesibilidad/Facturas
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: HoverBackButton(
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-                )
-              : Column(
-                  children: [
-                    // FILA DE FILTROS ACTIVOS
-                    if (_tipoCombustibleSeleccionado != null ||
-                        _ordenSeleccionado != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        color: Colors.white,
-                        child: Row(
-                          children: [
-                            if (_tipoCombustibleSeleccionado != null)
-                              Chip(
-                                label: Text(_tipoCombustibleSeleccionado!),
-                                backgroundColor: const Color(
-                                  0xFFFF9350,
-                                ).withValues(alpha: 0.2),
-                                onDeleted: () {
-                                  setState(() {
-                                    _tipoCombustibleSeleccionado = null;
-                                    _aplicarOrden();
-                                  });
-                                },
-                              ),
-                            if (_ordenSeleccionado != null)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8),
-                                child: Chip(
-                                  label: Text(
-                                    _ordenSeleccionado == 'nombre'
-                                        ? l10n.ordenNombre
-                                        : _ordenSeleccionado == 'precio_asc'
-                                            ? l10n.ordenPrecioAsc
-                                            : l10n.ordenPrecioDesc,
-                                  ),
-                                  backgroundColor: const Color(
-                                    0xFFFF9350,
-                                  ).withValues(alpha: 0.2),
-                                  onDeleted: () {
-                                    setState(() {
-                                      _ordenSeleccionado = null;
-                                      _aplicarOrden();
-                                    });
-                                  },
-                                ),
-                              ),
-                            const Spacer(),
-                          ],
-                        ),
-                      ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        itemCount: _gasolinerasFavoritas.length,
-                        itemBuilder: (context, index) {
-                          return _buildGasolineraItem(
-                              _gasolinerasFavoritas[index], l10n);
-                        },
+                  Text(
+                    l10n.gasolinerasFavoritas,
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          isDark ? Colors.white : theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: _mostrarFiltros,
+                      icon: Icon(
+                        Icons.filter_list,
+                        color:
+                            isDark ? Colors.white : theme.colorScheme.onSurface,
+                        size: 28,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Content
+            Expanded(
+              child: _loading
+                  ? Center(
+                      child: CircularProgressIndicator(color: accentColor),
+                    )
+                  : _gasolinerasFavoritas.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.star_border,
+                                    size: 80,
+                                    color: textColor.withValues(alpha: 0.4)),
+                                const SizedBox(height: 20),
+                                Text(
+                                  l10n.noHayFavoritos,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: textColor.withValues(alpha: 0.7),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  l10n.seleccionaGasolinerasEnMapa,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: textColor.withValues(alpha: 0.5),
+                                  ),
+                                ),
+                                const SizedBox(height: 30),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(Icons.map,
+                                      color:
+                                          isDark ? Colors.black : Colors.white),
+                                  label: Text(l10n.verMapa),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: accentColor,
+                                    foregroundColor:
+                                        isDark ? Colors.black : Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            // FILA DE FILTROS ACTIVOS
+                            if (_tipoCombustibleSeleccionado != null ||
+                                _ordenSeleccionado != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                color: lighterCardColor,
+                                child: Row(
+                                  children: [
+                                    if (_tipoCombustibleSeleccionado != null)
+                                      Chip(
+                                        label: Text(
+                                          _tipoCombustibleSeleccionado!,
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? Colors.black
+                                                : accentColor,
+                                          ),
+                                        ),
+                                        backgroundColor: accentColor.withValues(
+                                            alpha: isDark ? 0.8 : 0.2),
+                                        onDeleted: () {
+                                          setState(() {
+                                            _tipoCombustibleSeleccionado = null;
+                                            _aplicarOrden();
+                                          });
+                                        },
+                                        deleteIconColor:
+                                            isDark ? Colors.black : accentColor,
+                                      ),
+                                    if (_ordenSeleccionado != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: Chip(
+                                          label: Text(
+                                            _ordenSeleccionado == 'nombre'
+                                                ? l10n.ordenNombre
+                                                : _ordenSeleccionado ==
+                                                        'precio_asc'
+                                                    ? l10n.ordenPrecioAsc
+                                                    : l10n.ordenPrecioDesc,
+                                            style: TextStyle(
+                                              color: isDark
+                                                  ? Colors.black
+                                                  : accentColor,
+                                            ),
+                                          ),
+                                          backgroundColor:
+                                              accentColor.withValues(
+                                                  alpha: isDark ? 0.8 : 0.2),
+                                          onDeleted: () {
+                                            setState(() {
+                                              _ordenSeleccionado = null;
+                                              _aplicarOrden();
+                                            });
+                                          },
+                                          deleteIconColor: isDark
+                                              ? Colors.black
+                                              : accentColor,
+                                        ),
+                                      ),
+                                    const Spacer(),
+                                  ],
+                                ),
+                              ),
+                            Expanded(
+                              child: ListView.builder(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                itemCount: _gasolinerasFavoritas.length,
+                                itemBuilder: (context, index) {
+                                  return _buildGasolineraItem(
+                                      _gasolinerasFavoritas[index], l10n);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

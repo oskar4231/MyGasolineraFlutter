@@ -7,6 +7,7 @@ import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/coche
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/services/car_data_service.dart';
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class CochesScreen extends StatefulWidget {
   const CochesScreen({super.key});
@@ -56,37 +57,38 @@ class _CochesScreenState extends State<CochesScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final accentColor =
+        isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
-            // ── Header ────────────────────────────────────────────────────
+            // ── Header plano ─────────────────────────────────────────────
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const Layouthome()),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: HoverBackButton(
+                      onPressed: () => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const Layouthome()),
+                      ),
                     ),
                   ),
                   Text(
                     l10n.cochesTitulo,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontFamily: 'Roboto',
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onPrimary,
+                      color:
+                          isDark ? Colors.white : theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 48),
@@ -94,10 +96,10 @@ class _CochesScreenState extends State<CochesScreen> {
               ),
             ),
 
-            // ── Contenido ─────────────────────────────────────────────────
+            // ── Contenido ────────────────────────────────────────────────
             Expanded(
               child: _controller.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? Center(child: CircularProgressIndicator(color: accentColor))
                   : _controller.coches.isEmpty
                       ? const CocheEstadoVacio()
                       : ListView.builder(
@@ -113,11 +115,11 @@ class _CochesScreenState extends State<CochesScreen> {
                         ),
             ),
 
-            // ── Footer ────────────────────────────────────────────────────
+            // ── Footer ──────────────────────────────────────────────────
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
+                color: accentColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -128,22 +130,33 @@ class _CochesScreenState extends State<CochesScreen> {
                 children: [
                   IconButton(
                     onPressed: null, // Ya estamos en Coches
-                    icon: Icon(Icons.directions_car, size: 40,
-                        color: theme.colorScheme.onPrimary),
+                    icon: Icon(Icons.directions_car,
+                        size: 40,
+                        color: isDark
+                            ? Colors.black
+                            : theme.colorScheme.onPrimary),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (_) => const Layouthome()),
                     ),
-                    icon: Icon(Icons.pin_drop, size: 40,
-                        color: theme.colorScheme.onPrimary.withValues(alpha: 0.5)),
+                    icon: Icon(Icons.pin_drop,
+                        size: 40,
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.5)
+                            : theme.colorScheme.onPrimary
+                                .withValues(alpha: 0.5)),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pushReplacement(
                       MaterialPageRoute(builder: (_) => const AjustesScreen()),
                     ),
-                    icon: Icon(Icons.settings, size: 40,
-                        color: theme.colorScheme.onPrimary.withValues(alpha: 0.5)),
+                    icon: Icon(Icons.settings,
+                        size: 40,
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.5)
+                            : theme.colorScheme.onPrimary
+                                .withValues(alpha: 0.5)),
                   ),
                 ],
               ),
@@ -155,8 +168,12 @@ class _CochesScreenState extends State<CochesScreen> {
         padding: const EdgeInsets.only(bottom: 80),
         child: FloatingActionButton(
           onPressed: _abrirFormulario,
-          backgroundColor: theme.primaryColor,
-          child: Icon(Icons.add, color: theme.colorScheme.onPrimary),
+          backgroundColor:
+              isDark ? const Color(0xFF3E3E42) : theme.primaryColor,
+          child: Icon(Icons.add,
+              color: isDark
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onPrimary),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

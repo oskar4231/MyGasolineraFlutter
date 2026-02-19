@@ -76,10 +76,33 @@ class _MapWidgetState extends State<MapWidget>
   }
 
   // ── Estilo del mapa ────────────────────────────────────────────────────────
-  static const String _mapStyle = '''
+  static const String _mapStyleLight = '''
 [
   {"featureType": "poi",     "stylers": [{"visibility": "off"}]},
   {"featureType": "transit", "stylers": [{"visibility": "off"}]}
+]
+''';
+
+  static const String _mapStyleDark = '''
+[
+  {"elementType": "geometry", "stylers": [{"color": "#2d2d32"}]},
+  {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]},
+  {"elementType": "labels.text.fill", "stylers": [{"color": "#9e9e9e"}]},
+  {"elementType": "labels.text.stroke", "stylers": [{"color": "#2d2d32"}]},
+  {"featureType": "administrative", "elementType": "geometry", "stylers": [{"color": "#757575"}]},
+  {"featureType": "administrative.country", "elementType": "labels.text.fill", "stylers": [{"color": "#b0b0b0"}]},
+  {"featureType": "administrative.land_parcel", "stylers": [{"visibility": "off"}]},
+  {"featureType": "administrative.locality", "elementType": "labels.text.fill", "stylers": [{"color": "#d4d4d4"}]},
+  {"featureType": "poi", "stylers": [{"visibility": "off"}]},
+  {"featureType": "road", "elementType": "geometry.fill", "stylers": [{"color": "#4a4a50"}]},
+  {"featureType": "road", "elementType": "labels.text.fill", "stylers": [{"color": "#a0a0a0"}]},
+  {"featureType": "road.arterial", "elementType": "geometry", "stylers": [{"color": "#555560"}]},
+  {"featureType": "road.highway", "elementType": "geometry", "stylers": [{"color": "#5e5e68"}]},
+  {"featureType": "road.highway.controlled_access", "elementType": "geometry", "stylers": [{"color": "#6a6a72"}]},
+  {"featureType": "road.local", "elementType": "labels.text.fill", "stylers": [{"color": "#8a8a8a"}]},
+  {"featureType": "transit", "stylers": [{"visibility": "off"}]},
+  {"featureType": "water", "elementType": "geometry", "stylers": [{"color": "#1a1a2e"}]},
+  {"featureType": "water", "elementType": "labels.text.fill", "stylers": [{"color": "#515170"}]}
 ]
 ''';
 
@@ -138,12 +161,11 @@ class _MapWidgetState extends State<MapWidget>
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final filtersChanged =
-        oldWidget.combustibleSeleccionado != widget.combustibleSeleccionado ||
-            oldWidget.precioDesde != widget.precioDesde ||
-            oldWidget.precioHasta != widget.precioHasta ||
-            oldWidget.tipoAperturaSeleccionado !=
-                widget.tipoAperturaSeleccionado;
+    final filtersChanged = oldWidget.combustibleSeleccionado !=
+            widget.combustibleSeleccionado ||
+        oldWidget.precioDesde != widget.precioDesde ||
+        oldWidget.precioHasta != widget.precioHasta ||
+        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado;
 
     if (filtersChanged) {
       AppLogger.debug('Detectado cambio en filtros', tag: 'MapWidget');
@@ -179,8 +201,13 @@ class _MapWidgetState extends State<MapWidget>
 
   Future<void> _loadMapStyle(GoogleMapController controller) async {
     try {
-      await controller.setMapStyle(_mapStyle);
-      AppLogger.info('Estilo del mapa aplicado', tag: 'MapWidget');
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final style = isDark ? _mapStyleDark : _mapStyleLight;
+      await controller.setMapStyle(style);
+      AppLogger.info(
+        'Estilo del mapa aplicado (${isDark ? "oscuro" : "claro"})',
+        tag: 'MapWidget',
+      );
     } catch (e) {
       AppLogger.error('Error aplicando estilo del mapa',
           tag: 'MapWidget', error: e);

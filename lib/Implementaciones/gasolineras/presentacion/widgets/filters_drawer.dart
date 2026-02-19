@@ -16,44 +16,84 @@ class FiltersDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
+    final drawerBg =
+        isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
+    final headerBg = isDark ? drawerBg : theme.colorScheme.primary;
+    final headerText = isDark ? Colors.white : theme.colorScheme.onPrimary;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+    final accentColor =
+        isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
+    final dividerColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
+
     return Drawer(
+      backgroundColor: drawerBg,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          SizedBox(
-            height: 60,
-            child: DrawerHeader(
-              decoration: BoxDecoration(color: theme.colorScheme.primary),
-              margin: EdgeInsets.zero,
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                l10n.filtros,
-                style:
-                    TextStyle(fontSize: 20, color: theme.colorScheme.onPrimary),
+          // Header
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 48, 20, 16),
+            decoration: BoxDecoration(
+              color: headerBg,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Text(
+              l10n.filtros,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: headerText,
               ),
             ),
           ),
-          ListTile(
-            title: Text(l10n.precio,
-                style: TextStyle(color: theme.colorScheme.onSurface)),
+
+          const SizedBox(height: 8),
+
+          // Precio
+          _buildFilterTile(
+            icon: Icons.attach_money_rounded,
+            title: l10n.precio,
+            textColor: textColor,
+            accentColor: accentColor,
+            dividerColor: dividerColor,
             onTap: () {
               Navigator.of(context).pop();
               onPriceFilterPressed();
             },
           ),
-          ListTile(
-            title: Text(l10n.combustible,
-                style: TextStyle(color: theme.colorScheme.onSurface)),
+
+          Divider(height: 1, color: dividerColor, indent: 56),
+
+          // Combustible
+          _buildFilterTile(
+            icon: Icons.local_gas_station_rounded,
+            title: l10n.combustible,
+            textColor: textColor,
+            accentColor: accentColor,
+            dividerColor: dividerColor,
             onTap: () {
               Navigator.of(context).pop();
               onFuelFilterPressed();
             },
           ),
-          ListTile(
-            title: Text(l10n.apertura,
-                style: TextStyle(color: theme.colorScheme.onSurface)),
+
+          Divider(height: 1, color: dividerColor, indent: 56),
+
+          // Apertura
+          _buildFilterTile(
+            icon: Icons.access_time_rounded,
+            title: l10n.apertura,
+            textColor: textColor,
+            accentColor: accentColor,
+            dividerColor: dividerColor,
             onTap: () {
               Navigator.of(context).pop();
               onOpeningFilterPressed();
@@ -61,6 +101,35 @@ class FiltersDrawer extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilterTile({
+    required IconData icon,
+    required String title,
+    required Color textColor,
+    required Color accentColor,
+    required Color dividerColor,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      leading: Icon(icon, color: accentColor, size: 24),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        color: textColor.withValues(alpha: 0.5),
+      ),
+      onTap: onTap,
+      hoverColor: accentColor.withValues(alpha: 0.1),
+      splashColor: accentColor.withValues(alpha: 0.15),
     );
   }
 }
