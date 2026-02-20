@@ -221,21 +221,28 @@ class _MapWidgetState extends State<MapWidget>
     if (_isBottomSheetOpen) return;
     setState(() => _isBottomSheetOpen = true);
 
+    final theme = Theme.of(context);
     await showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => GasolineraBottomSheet(
-        gasolinera: gasolinera,
-        esFavorita: esFavorita,
-        onToggleFavorito: () async {
-          await _controller.toggleFavorito(gasolinera.id);
-          if (mounted) setState(() {});
-        },
+      builder: (_) => Theme(
+        data: theme,
+        child: GasolineraBottomSheet(
+          gasolinera: gasolinera,
+          esFavorita: esFavorita,
+          onToggleFavorito: () async {
+            await _controller.toggleFavorito(gasolinera.id);
+            if (mounted) setState(() {});
+          },
+        ),
       ),
     );
 
+    // Breve pausa para absorber el evento de clic que traspasa al mapa al cerrar el sheet
+    // En web, este delay debe ser algo mayor (600ms) para cubrir toda la animación y los eventos fantasma
+    await Future.delayed(const Duration(milliseconds: 600));
     if (mounted) setState(() => _isBottomSheetOpen = false);
   }
 
@@ -252,72 +259,89 @@ class _MapWidgetState extends State<MapWidget>
     final pos = _controller.ubicacionActual!;
     final allMarkers = _userMarker.union(clusterMarkers);
 
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: LatLng(pos.latitude, pos.longitude),
-        zoom: 15.0,
-      ),
-      markers: allMarkers,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      mapToolbarEnabled: false,
-      gestureRecognizers: const {},
-      onMapCreated: (controller) {
-        _mapController = controller;
-        clusterManager?.setMapId(controller.mapId);
-        _loadMapStyle(controller);
-        controller.animateCamera(
-          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
-        );
-      },
-      onCameraMove: (position) {
-        _currentCameraPosition = position;
-        _currentZoom = position.zoom;
-      },
-      onCameraIdle: () async {
-        if (_currentCameraPosition != null) {
-          clusterManager?.onCameraMove(_currentCameraPosition!);
-        }
-
-        // Cargar gasolineras por bounding box con debounce 500ms
-        _cameraDebounceTimer?.cancel();
-        _cameraDebounceTimer = Timer(
-          const Duration(milliseconds: 500),
-          () async {
-            if (_mapController == null || !mounted) return;
-            try {
-              final region = await _mapController!.getVisibleRegion();
-              final swLat = region.southwest.latitude;
-              final swLng = region.southwest.longitude;
-              final neLat = region.northeast.latitude;
-              final neLng = region.northeast.longitude;
-
-              AppLogger.debug(
-                'Bounding box: SW($swLat, $swLng) - NE($neLat, $neLng)',
-                tag: 'MapWidget',
-              );
-
-              await _controller.cargarGasolinerasPorBounds(
-                swLat: swLat,
-                swLng: swLng,
-                neLat: neLat,
-                neLng: neLng,
-                combustibleSeleccionado: widget.combustibleSeleccionado,
-                precioDesde: widget.precioDesde,
-                precioHasta: widget.precioHasta,
-                tipoAperturaSeleccionado: widget.tipoAperturaSeleccionado,
-              );
-            } catch (e) {
-              AppLogger.warning(
-                'Error actualizando gasolineras por bounding box',
-                tag: 'MapWidget',
-                error: e,
-              );
-            }
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(pos.latitude, pos.longitude),
+            zoom: 15.0,
+          ),
+          markers: allMarkers,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          gestureRecognizers: const {},
+          onMapCreated: (controller) {
+            _mapController = controller;
+            clusterManager?.setMapId(controller.mapId);
+            _loadMapStyle(controller);
+            controller.animateCamera(
+              CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
+            );
           },
-        );
-      },
+          onCameraMove: (position) {
+            _currentCameraPosition = position;
+            _currentZoom = position.zoom;
+          },
+          onCameraIdle: () async {
+            if (_currentCameraPosition != null) {
+              clusterManager?.onCameraMove(_currentCameraPosition!);
+            }
+
+            // Cargar gasolineras por bounding box con debounce 500ms
+            _cameraDebounceTimer?.cancel();
+            _cameraDebounceTimer = Timer(
+              const Duration(milliseconds: 500),
+              () async {
+                if (_mapController == null || !mounted) return;
+                try {
+                  final region = await _mapController!.getVisibleRegion();
+                  final swLat = region.southwest.latitude;
+                  final swLng = region.southwest.longitude;
+                  final neLat = region.northeast.latitude;
+                  final neLng = region.northeast.longitude;
+
+                  AppLogger.debug(
+                    'Bounding box: SW($swLat, $swLng) - NE($neLat, $neLng)',
+                    tag: 'MapWidget',
+                  );
+
+                  await _controller.cargarGasolinerasPorBounds(
+                    swLat: swLat,
+                    swLng: swLng,
+                    neLat: neLat,
+                    neLng: neLng,
+                    combustibleSeleccionado: widget.combustibleSeleccionado,
+                    precioDesde: widget.precioDesde,
+                    precioHasta: widget.precioHasta,
+                    tipoAperturaSeleccionado: widget.tipoAperturaSeleccionado,
+                  );
+                } catch (e) {
+                  AppLogger.warning(
+                    'Error actualizando gasolineras por bounding box',
+                    tag: 'MapWidget',
+                    error: e,
+                  );
+                }
+              },
+            );
+          },
+        ),
+
+        // 🛡️ "Escudo" invisible para Flutter Web:
+        // Evita que los clics en el bottom sheet traspasen al mapa al cerrar.
+        if (_isBottomSheetOpen)
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                // Absorbe el clic silenciosamente
+              },
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+      ],
     );
   }
 }

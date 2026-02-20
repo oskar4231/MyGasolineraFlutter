@@ -31,180 +31,254 @@ class GasolineraBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final primaryColor =
+        isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
+    final cardColor = isDark
+        ? const Color(0xFF212124)
+        : (theme.cardTheme.color ?? theme.cardColor);
+    final lighterCardColor = isDark
+        ? const Color(0xFF2A2A2E)
+        : Color.lerp(cardColor, Colors.white, 0.3);
+    final borderColor = isDark ? Colors.white10 : Colors.grey.withOpacity(0.18);
+    final textPrimary =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+    final textSecondary = isDark
+        ? const Color(0xFF9E9E9E)
+        : theme.colorScheme.onSurface.withOpacity(0.6);
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Cabecera: nombre + botón favorito ──────────────────────────
+          // ── Handle ──────────────────────────────────────────────────────
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: borderColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+
+          // ── Cabecera: nombre + botón favorito ────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
                   gasolinera.rotulo,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: textPrimary,
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () async {
+              GestureDetector(
+                onTap: () async {
                   await onToggleFavorito();
                   if (context.mounted) Navigator.pop(context);
                 },
-                icon: Icon(
-                  esFavorita ? Icons.star : Icons.star_border,
-                  color: esFavorita ? Colors.amber : Colors.grey,
-                  size: 32,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    esFavorita ? Icons.star_rounded : Icons.star_border_rounded,
+                    color: esFavorita ? primaryColor : textSecondary,
+                    size: 26,
+                  ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 6),
 
-          // ── Dirección ──────────────────────────────────────────────────
-          Text(
-            gasolinera.direccion,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+          // ── Dirección ────────────────────────────────────────────────────
+          Row(
+            children: [
+              Icon(Icons.location_on_outlined, size: 15, color: textSecondary),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  gasolinera.direccion,
+                  style: TextStyle(fontSize: 14, color: textSecondary),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // ── Precios en card ──────────────────────────────────────────────
+          Container(
+            decoration: BoxDecoration(
+              color: lighterCardColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Column(
+                children: [
+                  if (gasolinera.gasolina95 > 0) ...[
+                    _PrecioRow(
+                      icon: Icons.local_gas_station,
+                      nombre: 'Gasolina 95',
+                      precio: gasolinera.gasolina95,
+                      iconColor: Colors.green,
+                      primaryColor: primaryColor,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    Divider(height: 1, color: borderColor),
+                  ],
+                  if (gasolinera.gasoleoA > 0) ...[
+                    _PrecioRow(
+                      icon: Icons.directions_car,
+                      nombre: 'Diesel',
+                      precio: gasolinera.gasoleoA,
+                      iconColor: Colors.blueGrey,
+                      primaryColor: primaryColor,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    Divider(height: 1, color: borderColor),
+                  ],
+                  if (gasolinera.gasolina98 > 0) ...[
+                    _PrecioRow(
+                      icon: Icons.local_gas_station,
+                      nombre: 'Gasolina 98',
+                      precio: gasolinera.gasolina98,
+                      iconColor: Colors.blue,
+                      primaryColor: primaryColor,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    Divider(height: 1, color: borderColor),
+                  ],
+                  if (gasolinera.glp > 0)
+                    _PrecioRow(
+                      icon: Icons.local_fire_department,
+                      nombre: 'GLP',
+                      precio: gasolinera.glp,
+                      iconColor: Colors.orange,
+                      primaryColor: primaryColor,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                ],
+              ),
             ),
           ),
 
           const SizedBox(height: 20),
 
-          // ── Precios ────────────────────────────────────────────────────
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (gasolinera.gasolina95 > 0)
-                _PrecioItem(
-                  nombre: 'Gasolina 95',
-                  precio: gasolinera.gasolina95,
-                  icon: Icons.local_gas_station,
-                  color: Colors.green,
-                ),
-              if (gasolinera.gasoleoA > 0)
-                _PrecioItem(
-                  nombre: 'Diesel',
-                  precio: gasolinera.gasoleoA,
-                  icon: Icons.directions_car,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              if (gasolinera.gasolina98 > 0)
-                _PrecioItem(
-                  nombre: 'Gasolina 98',
-                  precio: gasolinera.gasolina98,
-                  icon: Icons.local_gas_station,
-                  color: Colors.blue,
-                ),
-              if (gasolinera.glp > 0)
-                _PrecioItem(
-                  nombre: 'GLP',
-                  precio: gasolinera.glp,
-                  icon: Icons.local_fire_department,
-                  color: Colors.orange,
-                ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // ── Botón Favorito ─────────────────────────────────────────────
+          // ── Botón Favorito ───────────────────────────────────────────────
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () async {
                 await onToggleFavorito();
-                if (context.mounted) Navigator.pop(context);
+                if (context.mounted) {
+                  // Pequeño delay para asegurar que el evento de clic se consuma en Flutter antes de cerrar
+                  await Future.delayed(const Duration(milliseconds: 150));
+                  if (context.mounted) Navigator.pop(context);
+                }
               },
               icon: Icon(
-                esFavorita ? Icons.star : Icons.star_border,
-                color: Colors.white,
+                esFavorita ? Icons.star_rounded : Icons.star_border_rounded,
+                size: 20,
               ),
               label: Text(
                 esFavorita ? 'Eliminar de favoritos' : 'Añadir a favoritos',
-                style: const TextStyle(fontSize: 16),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: esFavorita
-                    ? Theme.of(context).colorScheme.error
-                    : Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor:
+                    esFavorita ? theme.colorScheme.error : primaryColor,
+                foregroundColor:
+                    esFavorita ? Colors.white : theme.colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
-          // ── Botón Repostaje Rápido ─────────────────────────────────────
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CrearFacturaScreen(
-                      prefilledGasolineraName: gasolinera.rotulo,
+          // ── Fila: Repostaje + Cómo llegar ────────────────────────────────
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    // Pequeño delay antes de cerrar para evitar pass-through
+                    await Future.delayed(const Duration(milliseconds: 150));
+                    if (context.mounted) Navigator.pop(context);
+
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CrearFacturaScreen(
+                            prefilledGasolineraName: gasolinera.rotulo,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.flash_on, size: 18),
+                  label: const Text(
+                    'Repostaje',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: theme.colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () =>
+                      _abrirGoogleMaps(gasolinera.lat, gasolinera.lng),
+                  icon: Icon(Icons.directions, size: 18, color: primaryColor),
+                  label: Text(
+                    'Cómo llegar',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: primaryColor,
                     ),
                   ),
-                );
-              },
-              icon: const Icon(Icons.flash_on, color: Colors.white),
-              label: const Text(
-                'Repostaje Rápido',
-                style: TextStyle(fontSize: 16),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF9350),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // ── Botón Cómo Llegar ──────────────────────────────────────────
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => _abrirGoogleMaps(gasolinera.lat, gasolinera.lng),
-              icon: Icon(
-                Icons.directions,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              label: Text(
-                'Cómo llegar',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.primary,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: primaryColor, width: 1.5),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
                 ),
               ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 2,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
+            ],
           ),
         ],
       ),
@@ -212,42 +286,57 @@ class GasolineraBottomSheet extends StatelessWidget {
   }
 }
 
-// ── Widget privado para cada fila de precio ────────────────────────────────────
-class _PrecioItem extends StatelessWidget {
+// ── Widget privado para cada fila de precio ─────────────────────────────────
+class _PrecioRow extends StatelessWidget {
+  final IconData icon;
   final String nombre;
   final double precio;
-  final IconData icon;
-  final Color color;
+  final Color iconColor;
+  final Color primaryColor;
+  final Color textPrimary;
+  final Color textSecondary;
 
-  const _PrecioItem({
+  const _PrecioRow({
+    required this.icon,
     required this.nombre,
     required this.precio,
-    required this.icon,
-    required this.color,
+    required this.iconColor,
+    required this.primaryColor,
+    required this.textPrimary,
+    required this.textSecondary,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: color),
-          const SizedBox(width: 8),
-          Text(
-            '$nombre: ',
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 18, color: iconColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              nombre,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: textPrimary,
+              ),
             ),
           ),
-          const Spacer(),
           Text(
-            '${precio.toStringAsFixed(3)}€',
+            '${precio.toStringAsFixed(3)} €',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: primaryColor,
             ),
           ),
         ],

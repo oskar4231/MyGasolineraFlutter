@@ -66,7 +66,7 @@ class MarkerHelper {
     try {
       final Uint8List favIconBytes = await processIcon(
         'assets/images/iconoFavFinal.png',
-        160,
+        120,
       );
       _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
       AppLogger.info('Icono favorito procesado (Resize+Trim)',
