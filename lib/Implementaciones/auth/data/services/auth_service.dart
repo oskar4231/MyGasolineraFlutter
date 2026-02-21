@@ -57,6 +57,36 @@ class AuthService {
 
   // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
 
+  static Future<Map<String, dynamic>> register(
+      String nombre, String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.registerUrl),
+        headers: HttpHelper.mergeHeaders(ApiConfig.headers),
+        body: jsonEncode({
+          'nombre': nombre,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      AppLogger.debug('Respuesta register: $data', tag: 'AuthService');
+
+      if (response.statusCode == 201) {
+        return {'status': 'success', 'message': data['message']};
+      } else {
+        return {
+          'status': 'error',
+          'message': data['message'] ?? 'Error desconocido'
+        };
+      }
+    } catch (e) {
+      AppLogger.error('Error en register', tag: 'AuthService', error: e);
+      return {'status': 'error', 'message': 'Error de conexión: $e'};
+    }
+  }
+
   // Solicitar recuperación de contraseña
   static Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {

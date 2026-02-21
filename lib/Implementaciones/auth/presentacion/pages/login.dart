@@ -9,6 +9,7 @@ import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -143,236 +144,361 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final accentColor =
+        isDark ? const Color(0xFFE87A3E) : const Color(0xFFD36226);
+    final cardColor = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    final bgColor = isDark
+        ? const Color(0xFF000000)
+        : const Color(0xFFF7F7F5); // Premium neutral Apple tint
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.volver),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).colorScheme.onSurface),
-          onPressed: () {
-            // MODIFICACIÓN AQUÍ: Navegar a Inicio en lugar de pop
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const Inicio()),
-            );
-          },
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 20),
-
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 30.0),
-                      child: Text(
-                        'MyGasolinera',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 30.0),
-                      child: Image.asset(
-                        'lib/assets/logo.png',
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-
-                    // Campo de email
-                    TextFormField(
-                      controller: _emailController,
-                      focusNode: _emailFocus,
-                      textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (_) => _handleFieldSubmit('email'),
-                      decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.email,
-                        hintStyle: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.6)),
-                        filled: true,
-                        fillColor: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.15),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 15,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context)!.ingresaEmail;
-                        }
-                        if (value.contains('@')) {
-                          final emailRegex = RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                          );
-                          if (!emailRegex.hasMatch(value)) {
-                            return AppLocalizations.of(context)!.emailValido;
-                          }
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 15),
-
-                    // Campo de contraseña
-                    TextFormField(
-                      controller: _passwordController,
-                      focusNode: _passwordFocus,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _handleFieldSubmit('password'),
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.password,
-                        hintStyle: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.6)),
-                        filled: true,
-                        fillColor: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.15),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 15,
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context)!.ingresaPassword;
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 15),
-
-                    // Checkbox "Recuérdame"
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _rememberMe = value ?? false;
-                            });
-                          },
-                          activeColor: Theme.of(context).colorScheme.primary,
-                          checkColor: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.recordarme,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-
-                    // Botón Iniciar sesión
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Theme.of(context).colorScheme.onPrimary,
-                                  ),
-                                ),
-                              )
-                            : Text(
-                                AppLocalizations.of(context)!.iniciarSesion,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    // Enlace "¿Has olvidado la contraseña?"
-                    TextButton(
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header con botón de retroceso premium
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: HoverBackButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.pushReplacement(
+                          context,
                           MaterialPageRoute(
-                            builder: (context) => const RecuperarPassword(),
-                          ),
+                              builder: (context) => const Inicio()),
                         );
                       },
-                      child: Text(
-                        AppLocalizations.of(context)!.olvidoPassword,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.volver,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Contenido principal
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 450),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: cardColor,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black.withValues(alpha: 0.3)
+                                  : Colors.black
+                                      .withValues(alpha: 0.04), // Apple shadow
+                              blurRadius: 24,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(32),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'MyGasolinera',
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w900,
+                                  color: theme.colorScheme.onSurface,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: isDark
+                                          ? Colors.transparent
+                                          : Colors.black.withOpacity(0.05),
+                                      blurRadius: 16,
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: Image.asset(
+                                  'lib/assets/logo.png',
+                                  height: 80,
+                                  width: 80,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+
+                              // Campo de email
+                              TextFormField(
+                                controller: _emailController,
+                                focusNode: _emailFocus,
+                                textInputAction: TextInputAction.next,
+                                onFieldSubmitted: (_) =>
+                                    _handleFieldSubmit('email'),
+                                decoration: InputDecoration(
+                                  hintText: AppLocalizations.of(context)!.email,
+                                  hintStyle: TextStyle(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.5)),
+                                  filled: true,
+                                  fillColor: isDark
+                                      ? theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.05)
+                                      : theme.colorScheme.primary
+                                          .withValues(alpha: 0.05),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(
+                                      color: accentColor.withValues(alpha: 0.5),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 20,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return AppLocalizations.of(context)!
+                                        .ingresaEmail;
+                                  }
+                                  if (value.contains('@')) {
+                                    final emailRegex = RegExp(
+                                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                    );
+                                    if (!emailRegex.hasMatch(value)) {
+                                      return AppLocalizations.of(context)!
+                                          .emailValido;
+                                    }
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Campo de contraseña
+                              TextFormField(
+                                controller: _passwordController,
+                                focusNode: _passwordFocus,
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: (_) =>
+                                    _handleFieldSubmit('password'),
+                                obscureText: _obscurePassword,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      AppLocalizations.of(context)!.password,
+                                  hintStyle: TextStyle(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.5)),
+                                  filled: true,
+                                  fillColor: isDark
+                                      ? theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.05)
+                                      : theme.colorScheme.primary
+                                          .withValues(alpha: 0.05),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(
+                                      color: accentColor.withValues(alpha: 0.5),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 20,
+                                  ),
+                                  suffixIcon: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return AppLocalizations.of(context)!
+                                        .ingresaPassword;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Checkbox "Recuérdame" y olvido de contraseña
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: Checkbox(
+                                          value: _rememberMe,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              _rememberMe = value ?? false;
+                                            });
+                                          },
+                                          activeColor: accentColor,
+                                          checkColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .recordarme,
+                                        style: TextStyle(
+                                            color: theme.colorScheme.onSurface,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 32),
+
+                              // Botón Iniciar sesión (Premium)
+                              SizedBox(
+                                width: double.infinity,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        accentColor.withValues(alpha: 0.9),
+                                        accentColor,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      if (!isDark)
+                                        BoxShadow(
+                                          color: accentColor.withValues(
+                                              alpha: 0.25),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 6),
+                                        ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: _isLoading ? null : _login,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: _isLoading
+                                        ? const SizedBox(
+                                            height: 24,
+                                            width: 24,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 3,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                        : Text(
+                                            AppLocalizations.of(context)!
+                                                .iniciarSesion,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+
+                              // Enlace "¿Has olvidado la contraseña?"
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RecuperarPassword(),
+                                    ),
+                                  );
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.olvidoPassword,
+                                  style: TextStyle(
+                                    color: accentColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
