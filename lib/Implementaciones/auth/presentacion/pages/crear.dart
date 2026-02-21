@@ -1,5 +1,5 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/password_requirements.dart';
@@ -236,26 +236,17 @@ class _CrearScreenState extends State<CrearScreen> {
             // Header con botón de retroceso premium
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Stack(
-                alignment: Alignment.center,
+              child: Row(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: HoverBackButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Inicio()),
-                        );
-                      },
-                    ),
+                  HoverBackButton(
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
+                  const SizedBox(width: 16),
                   Text(
                     AppLocalizations.of(context)!.volver,
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
                       color: theme.colorScheme.onSurface,
                     ),
                   ),
@@ -292,6 +283,14 @@ class _CrearScreenState extends State<CrearScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              Image.asset(
+                                'assets/images/logo-mygasolinera.png',
+                                width: 96,
+                                height: 96,
+                                fit: BoxFit.contain,
+                              ),
+                              const SizedBox(height: 32),
+
                               Text(
                                 AppLocalizations.of(context)!.crearCuenta,
                                 style: TextStyle(

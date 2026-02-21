@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -161,26 +162,22 @@ class _LoginScreenState extends State<LoginScreen> {
             // Header con botón de retroceso premium
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Stack(
-                alignment: Alignment.center,
+              child: Row(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: HoverBackButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Inicio()),
-                        );
-                      },
-                    ),
+                  HoverBackButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Inicio()),
+                      );
+                    },
                   ),
+                  const SizedBox(width: 16),
                   Text(
                     AppLocalizations.of(context)!.volver,
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
                       color: theme.colorScheme.onSurface,
                     ),
                   ),
@@ -217,6 +214,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              Image.asset(
+                                'assets/images/logo-mygasolinera.png',
+                                width: 96,
+                                height: 96,
+                                fit: BoxFit.contain,
+                              ),
+                              const SizedBox(height: 24),
                               Text(
                                 'MyGasolinera',
                                 style: TextStyle(
@@ -224,27 +228,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontWeight: FontWeight.w900,
                                   color: theme.colorScheme.onSurface,
                                   letterSpacing: -0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: isDark
-                                          ? Colors.transparent
-                                          : Colors.black.withOpacity(0.05),
-                                      blurRadius: 16,
-                                      spreadRadius: 0,
-                                    ),
-                                  ],
-                                ),
-                                child: Image.asset(
-                                  'lib/assets/logo.png',
-                                  height: 80,
-                                  width: 80,
-                                  fit: BoxFit.contain,
                                 ),
                               ),
                               const SizedBox(height: 40),
