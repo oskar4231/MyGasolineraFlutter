@@ -71,6 +71,35 @@ class GasolinerasCacheService {
     return allGasolineras;
   }
 
+  /// Obtiene gasolineras específicas por su ID desde la base de datos local
+  Future<List<Gasolinera>> getGasolinerasByIds(List<String> ids) async {
+    if (ids.isEmpty) return [];
+
+    final cachedData = await _db.getGasolinerasByIds(ids);
+    return cachedData.map((data) {
+      return Gasolinera(
+        id: data.id,
+        rotulo: data.rotulo,
+        direccion: data.direccion,
+        lat: data.lat,
+        lng: data.lng,
+        horario: data.horario,
+        gasolina95: data.gasolina95,
+        gasolina95E10: data.gasolina95E10,
+        gasolina98: data.gasolina98,
+        gasoleoA: data.gasoleoA,
+        gasoleoPremium: data.gasoleoPremium,
+        glp: data.glp,
+        biodiesel: data.biodiesel,
+        bioetanol: data.bioetanol,
+        esterMetilico: data.esterMetilico,
+        hidrogeno: data.hidrogeno,
+        provincia: data.provincia,
+        idProvincia: data.idProvincia,
+      );
+    }).toList();
+  }
+
   /// Carga gasolineras desde cache local
   Future<List<Gasolinera>> _loadFromCache(String provinciaId) async {
     final cachedData = await _db.getGasolinerasByProvincia(provinciaId);

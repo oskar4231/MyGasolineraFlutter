@@ -66,6 +66,12 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  /// Obtiene gasolineras específicas por ID (Global)
+  Future<List<GasolinerasTableData>> getGasolinerasByIds(
+      List<String> ids) async {
+    return (select(gasolinerasTable)..where((tbl) => tbl.id.isIn(ids))).get();
+  }
+
   /// Obtiene gasolineras de múltiples provincias
   Future<List<GasolinerasTableData>> getGasolinerasByProvincias(
       List<String> provinciaIds) async {
