@@ -56,6 +56,7 @@ class _MapWidgetState extends State<MapWidget>
   double _currentZoom = 15.0;
   CameraPosition? _currentCameraPosition;
   Timer? _cameraDebounceTimer;
+  bool _isSearching = false;
 
   // ── MapClusterMixin: getters requeridos ────────────────────────────────────
   @override
@@ -239,10 +240,6 @@ class _MapWidgetState extends State<MapWidget>
       onMapCreated: (controller) {
         _mapController = controller;
         clusterManager?.setMapId(controller.mapId);
-        _loadMapStyle(controller);
-        controller.animateCamera(
-          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
-        );
       },
       onCameraMove: (position) {
         _currentCameraPosition = position;
@@ -251,14 +248,21 @@ class _MapWidgetState extends State<MapWidget>
       onCameraIdle: () async {
         if (_currentCameraPosition != null) {
           clusterManager?.onCameraMove(_currentCameraPosition!);
+          clusterManager?.updateMap();
         }
 
         // Cargar gasolineras por bounding box con debounce 500ms
+        // Evitar búsquedas concurrentes
+        if (_isSearching) return;
+
         _cameraDebounceTimer?.cancel();
         _cameraDebounceTimer = Timer(
           const Duration(milliseconds: 500),
           () async {
             if (_mapController == null || !mounted) return;
+            if (_isSearching) return;
+
+            _isSearching = true;
             try {
               final region = await _mapController!.getVisibleRegion();
               final swLat = region.southwest.latitude;
@@ -287,6 +291,8 @@ class _MapWidgetState extends State<MapWidget>
                 tag: 'MapWidget',
                 error: e,
               );
+            } finally {
+              _isSearching = false;
             }
           },
         );

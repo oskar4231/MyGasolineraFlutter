@@ -209,9 +209,17 @@ class MapController extends ChangeNotifier {
         notifyListeners();
       },
     );
-    gasolinerasCargadas = gasolineras;
-    onGasolinerasLoaded?.call(gasolineras);
-    notifyListeners();
+    // 🔴 No actualizar si está vacío (error de API) pero ya hay gasolineras previas
+    if (gasolineras.isNotEmpty || gasolinerasCargadas.isEmpty) {
+      gasolinerasCargadas = gasolineras;
+      onGasolinerasLoaded?.call(gasolineras);
+      notifyListeners();
+    } else {
+      AppLogger.warning(
+        'Búsqueda por bounds retornó 0 resultados, manteniendo gasolineras previas',
+        tag: 'MapController',
+      );
+    }
   }
 
   // ── Favoritos ──────────────────────────────────────────────────────────────
