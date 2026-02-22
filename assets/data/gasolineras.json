@@ -1,0 +1,29 @@
+{
+    "success": true,
+    "gasolineras": [
+        {
+            "ideess": "12345",
+            "rotulo": "MOCK GASOLINERA 1",
+            "direccion": "CALLE FALSA 123",
+            "localidad": "FALSAVILLE",
+            "provincia": "FALSALANDIA",
+            "lat": 40.0,
+            "lng": -3.0,
+            "precioGasolina95": 1.50,
+            "precioGasoil": 1.40,
+            "horario": "L-D: 00:00-24:00"
+        },
+        {
+            "ideess": "67890",
+            "rotulo": "MOCK GASOLINERA 2",
+            "direccion": "AVENIDA PRUEBA 456",
+            "localidad": "FALSAVILLE 2",
+            "provincia": "FALSALANDIA",
+            "lat": 40.1,
+            "lng": -3.1,
+            "precioGasolina95": 1.55,
+            "precioGasoil": 1.45,
+            "horario": "L-D: 00:00-24:00"
+        }
+    ]
+}
