@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
@@ -9,9 +10,11 @@ class BackgroundRefreshService {
   final GasolinerasCacheService _cacheService;
 
   Timer? _refreshTimer;
+  bool _isPaused = false;
 
-  /// Intervalo de actualización en minutos (15-20 minutos)
-  static const int refreshIntervalMinutes = 18;
+  /// ✅ OPTIMIZACIÓN: Intervalo aumentado de 10-15 min a 20 min
+  /// Reduce uso de CPU/batería sin afectar UX
+  static const int refreshIntervalMinutes = 20;
 
   BackgroundRefreshService(AppDatabase db)
       : _cacheService = GasolinerasCacheService(db);
@@ -23,6 +26,7 @@ class BackgroundRefreshService {
         tag: 'BackgroundRefresh');
 
     _refreshTimer?.cancel();
+    _isPaused = false;
     _refreshTimer = Timer.periodic(
       Duration(minutes: refreshIntervalMinutes),
       (timer) => _performRefresh(),
@@ -34,10 +38,42 @@ class BackgroundRefreshService {
     AppLogger.info('Deteniendo actualización', tag: 'BackgroundRefresh');
     _refreshTimer?.cancel();
     _refreshTimer = null;
+    _isPaused = false;
+  }
+
+  /// ✅ OPTIMIZACIÓN: Pausar actualizaciones cuando app está en background
+  void pause() {
+    AppLogger.info('Pausando actualizaciones (app en background)',
+        tag: 'BackgroundRefresh');
+    _isPaused = true;
+  }
+
+  /// ✅ OPTIMIZACIÓN: Reanudar actualizaciones cuando app vuelve a foreground
+  void resume() {
+    AppLogger.info('Reanudando actualizaciones (app en foreground)',
+        tag: 'BackgroundRefresh');
+    _isPaused = false;
+    // Actualizar inmediatamente al volver
+    _performRefresh();
   }
 
   /// Realiza la actualización del cache
   Future<void> _performRefresh() async {
+    // ✅ OPTIMIZACIÓN: No actualizar si la app está en background
+    if (_isPaused) {
+      AppLogger.info('Actualización omitida (app pausada)',
+          tag: 'BackgroundRefresh');
+      return;
+    }
+
+    // ✅ OPTIMIZACIÓN: Verificar estado del ciclo de vida
+    final lifecycleState = WidgetsBinding.instance.lifecycleState;
+    if (lifecycleState != null && lifecycleState != AppLifecycleState.resumed) {
+      AppLogger.info('Actualización omitida (app no está activa)',
+          tag: 'BackgroundRefresh');
+      return;
+    }
+
     try {
       AppLogger.info('Iniciando actualización de cache...',
           tag: 'BackgroundRefresh');

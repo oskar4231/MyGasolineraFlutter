@@ -3,20 +3,14 @@ import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class ConnectionSection extends StatelessWidget {
   final DateTime? lastUrlUpdate;
-  final double radiusKm;
   final bool actualizandoUrl;
   final VoidCallback onRefreshUrl;
-  final ValueChanged<double> onRadiusChanged;
-  final ValueChanged<double> onRadiusSave;
 
   const ConnectionSection({
     super.key,
     required this.lastUrlUpdate,
-    required this.radiusKm,
     required this.actualizandoUrl,
     required this.onRefreshUrl,
-    required this.onRadiusChanged,
-    required this.onRadiusSave,
   });
 
   @override
@@ -92,53 +86,6 @@ class ConnectionSection extends StatelessWidget {
                               ),
                             )
                           : Text(AppLocalizations.of(context)!.actualizar),
-                    ),
-                  ],
-                ),
-
-                const Divider(height: 24),
-
-                // 2. Slider Radio
-                Row(
-                  children: [
-                    Icon(Icons.radar, color: theme.colorScheme.primary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.radioBusqueda,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${radiusKm.toInt()} km',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Slider(
-                            value: radiusKm,
-                            min: 5,
-                            max: 100,
-                            divisions: 19,
-                            activeColor: theme.colorScheme.primary,
-                            label: '${radiusKm.toInt()} km',
-                            onChanged: onRadiusChanged,
-                            onChangeEnd: onRadiusSave,
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),

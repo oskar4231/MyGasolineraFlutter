@@ -56,6 +56,7 @@ class _MapWidgetState extends State<MapWidget>
   double _currentZoom = 15.0;
   CameraPosition? _currentCameraPosition;
   Timer? _cameraDebounceTimer;
+  bool _isSearching = false;
 
   // ── MapClusterMixin: getters requeridos ────────────────────────────────────
   @override
@@ -161,6 +162,11 @@ class _MapWidgetState extends State<MapWidget>
   void didUpdateWidget(MapWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    final filtersChanged = oldWidget.combustibleSeleccionado !=
+            widget.combustibleSeleccionado ||
+        oldWidget.precioDesde != widget.precioDesde ||
+        oldWidget.precioHasta != widget.precioHasta ||
+        oldWidget.tipoAperturaSeleccionado != widget.tipoAperturaSeleccionado;
     final filtersChanged = oldWidget.combustibleSeleccionado !=
             widget.combustibleSeleccionado ||
         oldWidget.precioDesde != widget.precioDesde ||

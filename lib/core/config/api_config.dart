@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:my_gasolinera/core/config/importante/switch_backend.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 ///
@@ -27,19 +26,23 @@ class ApiConfig {
 
   /// URL base del backend
   ///
-  /// Esta URL se determina por el switch en lib/important/switch_backend.dart
+  /// Esta URL se determina por el switch en lib/important/switch_backend.dart (ahora movido a .env)
   static String get baseUrl {
     // Si se ha establecido una URL dinámica (ej. al inicio), usarla
     if (_dynamicUrl != null) return _dynamicUrl!;
 
+    final switchBackend = int.tryParse(dotenv.env['SWITCH_BACKEND'] ?? '0') ?? 0;
+
     if (switchBackend == 1) {
-      return _ngrokUrl;
+      return dotenv.env['API_URL_NGROK'] ?? _ngrokUrl;
     }
-    // Si es localhost (0)
-    if (!kIsWeb && Platform.isAndroid) {
-      return _androidEmulatorUrl;
+    
+    // Si es localhost (0) comprobamos si se ejecuta en Android o Desktop/Web
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      return dotenv.env['API_URL_EMULADOR'] ?? _androidEmulatorUrl;
     }
-    return _localUrl;
+    
+    return dotenv.env['API_URL_LOCAL'] ?? _localUrl;
   }
 
   /// Actualiza la URL base dinámicamente

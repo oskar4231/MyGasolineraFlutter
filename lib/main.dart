@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
 import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
-import 'package:my_gasolinera/core/config/importante/switch_web_apk.dart';
+import 'package:flutter/foundation.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
@@ -13,6 +13,7 @@ import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/providers/language_provider.dart';
 import 'package:my_gasolinera/core/providers/font_size_provider.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Instancias globales
 late AppDatabase database;
@@ -27,10 +28,15 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Cargar variables de entorno
+  await dotenv.load(fileName: ".env");
+
+  final isAPK = !kIsWeb;
+
   // Mostrar modo de plataforma
   AppLogger.info('═══════════════════════════════════════════════════════════',
       tag: 'Main');
-  AppLogger.info('MODO PLATAFORMA: ${esAPK ? "APK" : "WEB"}', tag: 'Main');
+  AppLogger.info('MODO PLATAFORMA: ${isAPK ? "APK/Nativo" : "WEB"}', tag: 'Main');
   AppLogger.info('═══════════════════════════════════════════════════════════',
       tag: 'Main');
 
@@ -40,7 +46,7 @@ Future<void> main() async {
   // Inicializar base de datos (APK o Web según configuración)
   database = AppDatabase();
   AppLogger.info(
-      'Base de datos inicializada: ${esAPK ? "SQLite nativo" : "IndexedDB"}',
+      'Base de datos inicializada: ${isAPK ? "SQLite nativo" : "IndexedDB"}',
       tag: 'Main');
 
   // Inicializar servicio de actualización en segundo plano
@@ -63,7 +69,7 @@ Future<void> main() async {
   await AppLogger.init();
 
   // ✅ Optimizaciones de rendimiento para APK (reducir RAM/CPU)
-  if (esAPK) {
+  if (isAPK) {
     // Reducir caché de imágenes para ahorrar RAM
     PaintingBinding.instance.imageCache.maximumSize = 50; // Default: 1000
     PaintingBinding.instance.imageCache.maximumSizeBytes =

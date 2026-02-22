@@ -3,11 +3,18 @@ import 'package:my_gasolinera/core/config/api_config.dart';
 import 'dart:convert';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 /// Obtiene gasolineras cercanas a una ubicación (lat, lng)
 Future<List<Gasolinera>> fetchGasolinerasPorCercania(
     double lat, double lng) async {
   try {
+    if (dotenv.env['FLUTTER_ENV'] == 'testing') {
+      AppLogger.info('Usando MOCK de gasolineras por cercanía', tag: 'ApiGasolinera');
+      return await _loadMockGasolineras();
+    }
+
     final baseUrl = ApiConfig.baseUrl;
     final uri = Uri.parse('$baseUrl/api/gasolineras').replace(
       queryParameters: {
@@ -58,6 +65,10 @@ Future<List<Gasolinera>> fetchGasolinerasByBounds({
   required double neLng,
 }) async {
   try {
+    if (dotenv.env['FLUTTER_ENV'] == 'testing') {
+      AppLogger.info('Usando MOCK de gasolineras por bounds', tag: 'ApiGasolinera');
+      return await _loadMockGasolineras();
+    }
     final baseUrl = ApiConfig.baseUrl;
     final uri = Uri.parse('$baseUrl/api/gasolineras').replace(
       queryParameters: {
@@ -108,6 +119,10 @@ Future<List<Gasolinera>> fetchGasolinerasByBounds({
 /// El ID de provincia es un código de 2 dígitos (ej: '28' para Madrid)
 Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
   try {
+    if (dotenv.env['FLUTTER_ENV'] == 'testing') {
+      AppLogger.info('Usando MOCK de gasolineras por provincia', tag: 'ApiGasolinera');
+      return await _loadMockGasolineras();
+    }
     // 1. Obtener URL base del backend desde ConfigService
     final baseUrl = ApiConfig.baseUrl; // E.g., http://localhost:3000
 
@@ -154,6 +169,26 @@ Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
     // Fallback silencioso: devolver lista vacía para que la UI use caché si tiene
     return [];
   }
+}
+
+/// Helper privado para cargar de JSON en modo testing
+Future<List<Gasolinera>> _loadMockGasolineras() async {
+  try {
+    // Retraso simulado para que parezca una petición de red real
+    await Future.delayed(const Duration(seconds: 1));
+    final String jsonString = await rootBundle.loadString('assets/data/gasolineras.json');
+    final Map<String, dynamic> jsonResponse = json.decode(jsonString);
+
+    if (jsonResponse['success'] == true) {
+      final List<dynamic> listaGasolineras = jsonResponse['gasolineras'] ?? [];
+      return listaGasolineras
+          .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+          .toList();
+    }
+  } catch (e) {
+    AppLogger.error('Error cargando MOCK JSON: $e', tag: 'ApiGasolinera');
+  }
+  return [];
 }
 
 /// 🆕 Clase central para mapeo de provincias (sin redundancia)

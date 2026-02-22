@@ -6,6 +6,7 @@ import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.da
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/recuperar.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/usuario_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
@@ -76,8 +77,14 @@ class _LoginScreenState extends State<LoginScreen> {
             // Guardar el token del usuario
             final token = responseData['token'];
             if (token != null) {
-              await AuthService.saveToken(token, _emailController.text.trim());
+              final email = _emailController.text.trim();
+              await AuthService.saveToken(token, email);
               AppLogger.info('Token guardado exitosamente', tag: 'LoginScreen');
+              
+              // Sincronizar nombre y foto de perfil en segundo plano sin bloquear la UI
+              final usuarioService = UsuarioService();
+              usuarioService.obtenerNombreUsuario().catchError((e) => null);
+              usuarioService.sincronizarFotoPerfilLocal(email).catchError((e) => null);
             }
 
             if (mounted) {
