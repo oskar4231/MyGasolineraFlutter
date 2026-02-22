@@ -48,6 +48,7 @@ dependencies:
   url_launcher: ^6.3.1
   google_maps_cluster_manager_2: ^3.0.0+1
   image: ^4.3.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +75,7 @@ flutter:
   generate: true
 
   assets:
+    - .env
     - assets/images/
     - lib/assets/logo.png
     - assets/images/iconoFinal.png

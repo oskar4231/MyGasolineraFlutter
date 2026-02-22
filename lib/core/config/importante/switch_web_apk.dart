@@ -11,11 +11,14 @@
 //
 // ═══════════════════════════════════════════════════════════════════════════
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// Configuración de plataforma
 ///
 /// 🌐 0 = WEB (usa IndexedDB, sin SQLite nativo)
 /// 📱 1 = APK (usa SQLite nativo con Drift)
-const int modoPlataforma = 1;
+final int modoPlataforma =
+    int.tryParse(dotenv.env['MODO_PLATAFORMA'] ?? '1') ?? 1;
 
 /// Verifica si estamos en modo APK
 bool get esAPK => modoPlataforma == 1;
