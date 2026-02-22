@@ -68,6 +68,43 @@ class LocalImageService {
     }
   }
 
+  /// Guarda una imagen localmente desde bytes crudos (útil para sincronizar desde backend).
+  static Future<String?> saveImageBytes(
+      Uint8List bytes, String type, String relatedId) async {
+    final normalizedId = relatedId.trim();
+    try {
+      final encryptedBytes = _encryptBytes(bytes);
+      String fileName = '';
+
+      if (!kIsWeb) {
+        fileName = '${relatedId}_${DateTime.now().millisecondsSinceEpoch}.you';
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath = p.join(directory.path, fileName);
+        final file = File(filePath);
+        await file.writeAsBytes(encryptedBytes);
+        AppLogger.database('(Nativo) Imagen sincro guardada en Archivo: $filePath');
+      } else {
+        AppLogger.database('(Web) Guardando imagen sincro en IndexedDB');
+        fileName = 'web_blob_${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      await database.insertLocalImage(LocalImagesTableCompanion(
+        imageType: drift.Value(type),
+        relatedId: drift.Value(normalizedId),
+        localPath: drift.Value(fileName),
+        content: drift.Value(kIsWeb ? encryptedBytes : Uint8List(0)),
+        createdAt: drift.Value(DateTime.now()),
+      ));
+
+      AppLogger.database('Referencia sincro guardada en BD ($type / $relatedId)');
+      return fileName;
+    } catch (e) {
+      AppLogger.error('Error guardando imagen por bytes',
+          tag: 'LocalImageService', error: e);
+      return null;
+    }
+  }
+
   /// Lee una imagen y devuelve el ARCHIVO desencriptado temporalmente o bytes.
   /// Para optimización, intentamos devolver bytes y dejar que ResizeImage haga el trabajo,
   /// o si usamos FileImage, necesitamos un archivo desencriptado.
