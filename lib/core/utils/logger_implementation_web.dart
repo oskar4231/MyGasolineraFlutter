@@ -1,12 +1,15 @@
 import 'dart:js' as js;
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<Logger> createLogger() async {
+  final isProduction = dotenv.env['FLUTTER_ENV'] == 'production';
+
   return Logger(
-    filter: DevelopmentFilter(),
+    filter: ProductionFilter(),
     printer: _WebPrinter(),
-    output: _WebConsoleOutput(),
+    output: isProduction ? MultiOutput([]) : _WebConsoleOutput(),
   );
 }
 

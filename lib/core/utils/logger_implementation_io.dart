@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<Logger> createLogger() async {
   LogOutput? fileOutput;
@@ -18,8 +19,18 @@ Future<Logger> createLogger() async {
     debugPrint('Error inicializando logs en disco: $e');
   }
 
+  final isProduction = dotenv.env['FLUTTER_ENV'] == 'production';
+  final outputs = <LogOutput>[];
+
+  if (!isProduction) {
+    outputs.add(ConsoleOutput()); // Console solo si NO es producción
+  }
+  if (fileOutput != null) {
+    outputs.add(fileOutput); // Archivos log SIEMPRE (incluso en producción)
+  }
+
   return Logger(
-    filter: DevelopmentFilter(),
+    filter: ProductionFilter(), // Dejar pasar siempre los logs (no ignorarlos en AppRelease)
     printer: PrettyPrinter(
       methodCount: 2,
       errorMethodCount: 8,
@@ -28,10 +39,7 @@ Future<Logger> createLogger() async {
       printEmojis: true,
       printTime: true,
     ),
-    output: MultiOutput([
-      ConsoleOutput(),
-      if (fileOutput != null) fileOutput,
-    ]),
+    output: MultiOutput(outputs),
   );
 }
 

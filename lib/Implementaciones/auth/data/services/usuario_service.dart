@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +6,7 @@ import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.d
 import 'package:my_gasolinera/core/config/api_config.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:my_gasolinera/core/utils/local_image_service.dart';
 
 class UsuarioService {
   /// Obtiene el nombre del usuario desde el backend
@@ -262,6 +264,45 @@ class UsuarioService {
       AppLogger.error('Error cargando imagen de perfil',
           tag: 'UsuarioService', error: e);
       rethrow;
+    }
+  }
+
+  /// Descarga y sincroniza la foto del servidor al almacenamiento local seguro
+  Future<void> sincronizarFotoPerfilLocal(String email) async {
+    try {
+      final fotoData = await cargarImagenPerfil(email);
+      if (fotoData == null) {
+        AppLogger.info('No hay foto remota para sincronizar', tag: 'UsuarioService');
+        return;
+      }
+
+      Uint8List? bytes;
+
+      if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
+        final base64String = fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
+        bytes = base64Decode(base64String);
+      } else if (fotoData.startsWith('http')) {
+        // Es URL: descargar la imagen manejando el SSL warning de ngrok
+        AppLogger.debug('Descargando imagen para sincronizar: $fotoData', tag: 'UsuarioService');
+        final response = await http.get(Uri.parse(fotoData), headers: ApiConfig.headers);
+        if (response.statusCode == 200) {
+          bytes = response.bodyBytes;
+        } else {
+          AppLogger.error('Fallo al descargar la imagen remota: ${response.statusCode}', tag: 'UsuarioService');
+          return;
+        }
+      } else {
+        // Fallback genérico
+        bytes = base64Decode(fotoData);
+      }
+
+      if (bytes.isNotEmpty) {
+        await LocalImageService.saveImageBytes(bytes, 'perfil', email);
+        AppLogger.info('Foto perfil correctamente sincronizada localmente para $email', tag: 'UsuarioService');
+      }
+
+    } catch (e) {
+      AppLogger.error('Error sincronizando foto de perfil localmente', tag: 'UsuarioService', error: e);
     }
   }
 }

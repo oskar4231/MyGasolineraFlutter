@@ -13,6 +13,7 @@ import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/providers/language_provider.dart';
 import 'package:my_gasolinera/core/providers/font_size_provider.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Instancias globales
 late AppDatabase database;
@@ -26,6 +27,9 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Cargar variables de entorno
+  await dotenv.load(fileName: ".env");
 
   // Mostrar modo de plataforma
   AppLogger.info('═══════════════════════════════════════════════════════════',
