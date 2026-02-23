@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/services/car_data_service.dart';
 
@@ -82,13 +83,20 @@ class _CocheFormState extends State<CocheForm> {
 
   String _fuelLabel(String key, AppLocalizations l10n) {
     switch (key) {
-      case 'gasolina95':   return l10n.gasolina95;
-      case 'gasolina98':   return l10n.gasolina98;
-      case 'diesel':       return l10n.diesel;
-      case 'dieselPremium':return l10n.dieselPremium;
-      case 'glp':          return l10n.glp;
-      case 'hibrido':      return l10n.hibrido;
-      default:             return key;
+      case 'gasolina95':
+        return l10n.gasolina95;
+      case 'gasolina98':
+        return l10n.gasolina98;
+      case 'diesel':
+        return l10n.diesel;
+      case 'dieselPremium':
+        return l10n.dieselPremium;
+      case 'glp':
+        return l10n.glp;
+      case 'hibrido':
+        return l10n.hibrido;
+      default:
+        return key;
     }
   }
 
@@ -98,7 +106,8 @@ class _CocheFormState extends State<CocheForm> {
 
       // Autorellenar consumo
       if (value['consumo'] != null) {
-        final match = RegExp(r'(\d+[.,]?\d*)').firstMatch(value['consumo'] as String);
+        final match =
+            RegExp(r'(\d+[.,]?\d*)').firstMatch(value['consumo'] as String);
         if (match != null) {
           _consumoController.text = match.group(0)!.replaceAll(',', '.');
         }
@@ -111,7 +120,9 @@ class _CocheFormState extends State<CocheForm> {
         _tiposCombustible['gasolina95'] = true;
       } else if (combustible == 'Diésel' || combustible == 'Diesel') {
         _tiposCombustible['diesel'] = true;
-      } else if (combustible == 'Híbrido' || combustible == 'Híbrido Enchufable' || combustible == 'Eléctrico') {
+      } else if (combustible == 'Híbrido' ||
+          combustible == 'Híbrido Enchufable' ||
+          combustible == 'Eléctrico') {
         _tiposCombustible['hibrido'] = true;
       } else if (combustible == 'GLP') {
         _tiposCombustible['glp'] = true;
@@ -159,11 +170,16 @@ class _CocheFormState extends State<CocheForm> {
     final l10n = AppLocalizations.of(context)!;
     final carService = CarDataService();
     final marcas = carService.getMarcas();
-    final modelos = _selectedMarcaId != null ? carService.getModelos(_selectedMarcaId!) : [];
-    final motorizaciones = _selectedModeloId != null ? carService.getMotorizaciones(_selectedModeloId!) : [];
+    final modelos = _selectedMarcaId != null
+        ? carService.getModelos(_selectedMarcaId!)
+        : [];
+    final motorizaciones = _selectedModeloId != null
+        ? carService.getMotorizaciones(_selectedModeloId!)
+        : [];
 
     return AlertDialog(
-      title: Text(l10n.anadirCoche, style: const TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(l10n.anadirCoche,
+          style: const TextStyle(fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -171,7 +187,6 @@ class _CocheFormState extends State<CocheForm> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // ── Marca ────────────────────────────────────────────────────
               DropdownButtonFormField<int>(
                 decoration: InputDecoration(
@@ -181,13 +196,16 @@ class _CocheFormState extends State<CocheForm> {
                   prefixIcon: const Icon(Icons.directions_car),
                 ),
                 value: _selectedMarcaId,
-                items: marcas.map<DropdownMenuItem<int>>((m) =>
-                  DropdownMenuItem(value: m['id'], child: Text(m['nombre']))).toList(),
+                items: marcas
+                    .map<DropdownMenuItem<int>>((m) => DropdownMenuItem(
+                        value: m['id'], child: Text(m['nombre'])))
+                    .toList(),
                 onChanged: (value) => setState(() {
                   _selectedMarcaId = value;
                   _selectedModeloId = null;
                   _selectedMotorizacion = null;
-                  _marcaController.text = marcas.firstWhere((m) => m['id'] == value)['nombre'];
+                  _marcaController.text =
+                      marcas.firstWhere((m) => m['id'] == value)['nombre'];
                   _modeloController.clear();
                   _consumoController.clear();
                   _tiposCombustible.updateAll((k, v) => false);
@@ -205,19 +223,24 @@ class _CocheFormState extends State<CocheForm> {
                   prefixIcon: const Icon(Icons.car_crash),
                 ),
                 value: _selectedModeloId,
-                items: modelos.map<DropdownMenuItem<int>>((m) =>
-                  DropdownMenuItem(value: m['id'], child: Text(m['nombre']))).toList(),
+                items: modelos
+                    .map<DropdownMenuItem<int>>((m) => DropdownMenuItem(
+                        value: m['id'], child: Text(m['nombre'])))
+                    .toList(),
                 onChanged: (value) => setState(() {
                   _selectedModeloId = value;
                   _selectedMotorizacion = null;
-                  _modeloController.text = modelos.firstWhere((m) => m['id'] == value)['nombre'];
+                  _modeloController.text =
+                      modelos.firstWhere((m) => m['id'] == value)['nombre'];
                   _consumoController.clear();
                   _tiposCombustible.updateAll((k, v) => false);
                 }),
                 validator: (v) => v == null ? l10n.ingresaModelo : null,
                 onTap: _selectedMarcaId == null
                     ? () => ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Por favor, seleccione una marca primero.')))
+                        const SnackBar(
+                            content: Text(
+                                'Por favor, seleccione una marca primero.')))
                     : null,
               ),
               const SizedBox(height: 16),
@@ -232,59 +255,103 @@ class _CocheFormState extends State<CocheForm> {
                     prefixIcon: Icon(Icons.settings_input_component),
                   ),
                   value: _selectedMotorizacion,
-                  items: motorizaciones.map<DropdownMenuItem<dynamic>>((moto) =>
-                    DropdownMenuItem(
-                      value: moto,
-                      child: Text('${moto['nombre']} (${moto['potencia']})'),
-                    )).toList(),
+                  items: motorizaciones
+                      .map<DropdownMenuItem<dynamic>>((moto) =>
+                          DropdownMenuItem(
+                            value: moto,
+                            child:
+                                Text('${moto['nombre']} (${moto['potencia']})'),
+                          ))
+                      .toList(),
                   onChanged: _onMotorizacionChanged,
-                  validator: (v) => v == null ? 'Seleccione una motorización' : null,
+                  validator: (v) =>
+                      v == null ? 'Seleccione una motorización' : null,
                 ),
                 const SizedBox(height: 16),
               ],
 
               // ── Tipos de combustible ──────────────────────────────────────
               Text(l10n.tiposCombustibleLabel,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ..._tiposCombustible.keys.map((key) => CheckboxListTile(
-                title: Text(_fuelLabel(key, l10n)),
-                value: _tiposCombustible[key],
-                onChanged: (v) => setState(() => _tiposCombustible[key] = v ?? false),
-                controlAffinity: ListTileControlAffinity.leading,
-                dense: true,
-              )),
+                    title: Text(_fuelLabel(key, l10n)),
+                    value: _tiposCombustible[key],
+                    onChanged: (v) =>
+                        setState(() => _tiposCombustible[key] = v ?? false),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    dense: true,
+                  )),
               const SizedBox(height: 16),
 
               // ── Campos numéricos ──────────────────────────────────────────
               TextFormField(
                 controller: _kilometrajeController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
                   labelText: l10n.kilometrajeInicial,
                   hintText: l10n.ejemploKilometraje,
                   border: const OutlineInputBorder(),
                 ),
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+                  final valor = int.tryParse(v);
+                  if (valor == null) return "Solo números enteros";
+                  if (valor < 0) return "No puede ser negativo";
+                  if (valor > 1000000) return "Máximo 1.000.000 km";
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _capacidadController,
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*')),
+                ],
                 decoration: InputDecoration(
                   labelText: l10n.capacidadTanque,
                   hintText: l10n.ejemploTanque,
                   border: const OutlineInputBorder(),
                 ),
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+                  final cleanValue = v.replaceAll(',', '.');
+                  final valor = double.tryParse(cleanValue);
+                  if (valor == null) return "Formato inválido";
+                  if (valor < 0) return "No puede ser negativo";
+                  if (valor > 300) return "El tanque no puede superar los 300L";
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _consumoController,
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*')),
+                ],
                 decoration: InputDecoration(
                   labelText: l10n.consumoTeorico,
                   hintText: l10n.ejemploConsumo,
                   border: const OutlineInputBorder(),
                 ),
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+
+                  final cleanValue = v.replaceAll(',', '.');
+                  final valor = double.tryParse(cleanValue);
+
+                  if (valor == null) return "Formato inválido";
+                  if (valor < 0) return "No puede ser negativo";
+                  if (valor > 50) return "El consumo no puede superar los 50.0";
+
+                  return null;
+                },
               ),
             ],
           ),
@@ -303,7 +370,8 @@ class _CocheFormState extends State<CocheForm> {
           ),
           child: widget.isLoading
               ? const SizedBox(
-                  width: 20, height: 20,
+                  width: 20,
+                  height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

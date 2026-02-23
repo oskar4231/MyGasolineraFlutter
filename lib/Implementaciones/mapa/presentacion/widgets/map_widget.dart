@@ -14,6 +14,7 @@ class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
   final Function(String provincia)? onProvinciaUpdate;
   final Function(List<Gasolinera> gasolineras)? onGasolinerasLoaded;
+  final Function(Position position)? onLocationChanged;
 
   // Filtros
   final String? combustibleSeleccionado;
@@ -28,6 +29,7 @@ class MapWidget extends StatefulWidget {
     required this.cacheService,
     this.onProvinciaUpdate,
     this.onGasolinerasLoaded,
+    this.onLocationChanged,
     this.combustibleSeleccionado,
     this.precioDesde,
     this.precioHasta,
@@ -104,6 +106,9 @@ class _MapWidgetState extends State<MapWidget>
           );
         }
       },
+      onLocationChanged: (pos) {
+        widget.onLocationChanged?.call(pos);
+      },
       onPositionChanged: (pos) {
         if (mounted) {
           setState(() {
@@ -117,7 +122,13 @@ class _MapWidgetState extends State<MapWidget>
 
     // Inicializar cluster y luego el controlador (GPS + datos)
     initClusterManager();
-    _controller.initialize(_markerHelper);
+    _controller.initialize(
+      _markerHelper,
+      combustibleSeleccionado: widget.combustibleSeleccionado,
+      precioDesde: widget.precioDesde,
+      precioHasta: widget.precioHasta,
+      tipoAperturaSeleccionado: widget.tipoAperturaSeleccionado,
+    );
 
     // Escuchar cambios del controlador para redibujar
     _controller.addListener(_onControllerUpdate);

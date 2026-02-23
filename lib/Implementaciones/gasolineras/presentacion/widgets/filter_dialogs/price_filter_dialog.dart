@@ -38,16 +38,19 @@ class PriceFilterDialog extends StatefulWidget {
 class _PriceFilterDialogState extends State<PriceFilterDialog> {
   late TextEditingController _desdeController;
   late TextEditingController _hastaController;
+  String? _errorMessage;
+  bool _isValid = true;
 
   @override
   void initState() {
     super.initState();
     _desdeController = TextEditingController(
-      text: widget.precioDesde?.toString().replaceAll('.', ',') ?? '',
+      text: widget.precioDesde?.toStringAsFixed(2).replaceAll('.', ',') ?? '',
     );
     _hastaController = TextEditingController(
-      text: widget.precioHasta?.toString().replaceAll('.', ',') ?? '',
+      text: widget.precioHasta?.toStringAsFixed(2).replaceAll('.', ',') ?? '',
     );
+    _validarPrecios();
   }
 
   @override
@@ -57,7 +60,24 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
     super.dispose();
   }
 
+  void _validarPrecios() {
+    final desde = double.tryParse(_desdeController.text.replaceAll(',', '.'));
+    final hasta = double.tryParse(_hastaController.text.replaceAll(',', '.'));
+
+    setState(() {
+      if (desde != null && hasta != null && hasta < desde) {
+        _errorMessage = 'El valor debe ser superior al desde';
+        _isValid = false;
+      } else {
+        _errorMessage = null;
+        _isValid = true;
+      }
+    });
+  }
+
   void _aplicarFiltro() {
+    if (!_isValid) return;
+
     final desdeText = _desdeController.text.replaceAll(',', '.');
     final hastaText = _hastaController.text.replaceAll(',', '.');
 
@@ -136,12 +156,12 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
             TextField(
               controller: _desdeController,
               keyboardType: const TextInputType.numberWithOptions(
+                signed: false,
                 decimal: true,
               ),
+              onChanged: (_) => _validarPrecios(),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'^\d*[,.]?\d{0,3}'),
-                ),
+                _PriceInputFormatter(),
               ],
               decoration: InputDecoration(
                 hintText: l10n.ejemploPrecio,
@@ -171,11 +191,15 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
             TextField(
               controller: _hastaController,
               keyboardType: const TextInputType.numberWithOptions(
+                signed: false,
                 decimal: true,
               ),
+              onChanged: (_) => _validarPrecios(),
               inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'^\d*[,.]?\d{0,3}'),
+                _PriceInputFormatter(
+                  getDesdeValue: () => double.tryParse(
+                    _desdeController.text.replaceAll(',', '.'),
+                  ),
                 ),
               ],
               decoration: InputDecoration(
@@ -193,6 +217,18 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
                 ),
               ),
             ),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -206,9 +242,9 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: _aplicarFiltro,
+                  onPressed: _isValid ? _aplicarFiltro : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: _isValid ? Colors.white : Colors.grey[300],
                     foregroundColor: const Color(0xFFFF9350),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -224,6 +260,70 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _PriceInputFormatter extends TextInputFormatter {
+  final double? Function()? getDesdeValue;
+
+  _PriceInputFormatter({this.getDesdeValue});
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) return newValue;
+
+    // Solo dígitos
+    String text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (text.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    // Máximo 3 dígitos (X,XX)
+    if (text.length > 3) {
+      text = text.substring(0, 3);
+    }
+
+    String formattedText;
+    if (text.length == 1) {
+      formattedText = '$text,';
+    } else {
+      formattedText = '${text.substring(0, 1)},${text.substring(1)}';
+    }
+
+    // Si tenemos un valor "desde" para comparar
+    if (getDesdeValue != null) {
+      final desde = getDesdeValue!();
+      if (desde != null) {
+        // Lógica de bloqueo inteligente:
+        // Solo bloqueamos si es IMPOSIBLE que el número que se está formando llegue a ser >= desde.
+
+        // El valor máximo que se puede formar con los dígitos actuales:
+        // Si tenemos "1,", el máximo es "1,99".
+        // Si tenemos "1,4", el máximo es "1,49".
+        String maxPossibleText = formattedText;
+        if (text.length == 1) {
+          maxPossibleText = '${text.substring(0, 1)},99';
+        } else if (text.length == 2) {
+          maxPossibleText = '${text.substring(0, 1)},${text.substring(1, 2)}9';
+        }
+
+        final maxVal = double.tryParse(maxPossibleText.replaceAll(',', '.'));
+        if (maxVal != null && maxVal < desde) {
+          // Si ni con el máximo posible llegamos al "desde", bloqueamos.
+          return oldValue;
+        }
+      }
+    }
+
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: formattedText.length),
     );
   }
 }

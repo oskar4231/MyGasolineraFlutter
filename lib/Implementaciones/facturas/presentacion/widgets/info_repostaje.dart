@@ -51,7 +51,7 @@ class InfoRepostaje extends StatelessWidget {
         const SizedBox(height: 16),
         // Dropdown Coche
         DropdownButtonFormField<int>(
-          initialValue: cocheSeleccionado,
+          value: cocheSeleccionado,
           decoration: InputDecoration(
             labelText: AppLocalizations.of(context)!.coche,
             labelStyle:
@@ -114,8 +114,7 @@ class InfoRepostaje extends StatelessWidget {
           controller: precioLitroController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText:
-                '${AppLocalizations.of(context)!.precioLitro} (€)',
+            labelText: '${AppLocalizations.of(context)!.precioLitro} (€)',
             hintText: 'Ej: 1.459',
             labelStyle:
                 TextStyle(color: Theme.of(context).colorScheme.onSurface),
@@ -164,11 +163,10 @@ class InfoRepostaje extends StatelessWidget {
         ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 300, maxWidth: 400),
           child: DropdownButtonFormField<String>(
-            initialValue: tipoCombustibleSeleccionado,
+            value: tipoCombustibleSeleccionado,
             isExpanded: true,
             decoration: InputDecoration(
-              labelText:
-                  AppLocalizations.of(context)!.tipoCombustible,
+              labelText: AppLocalizations.of(context)!.tipoCombustible,
               labelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.onSurface),
               filled: true,

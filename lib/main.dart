@@ -8,10 +8,10 @@ import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
 
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/providers/language_provider.dart';
 import 'package:my_gasolinera/core/providers/font_size_provider.dart';
+import 'package:my_gasolinera/core/providers/filter_provider.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -20,6 +20,7 @@ late AppDatabase database;
 late BackgroundRefreshService backgroundRefreshService;
 final LanguageProvider languageProvider = LanguageProvider();
 final FontSizeProvider fontSizeProvider = FontSizeProvider();
+final FilterProvider filterProvider = FilterProvider();
 
 // Global key para mostrar SnackBars desde cualquier lugar
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -36,7 +37,8 @@ Future<void> main() async {
   // Mostrar modo de plataforma
   AppLogger.info('═══════════════════════════════════════════════════════════',
       tag: 'Main');
-  AppLogger.info('MODO PLATAFORMA: ${isAPK ? "APK/Nativo" : "WEB"}', tag: 'Main');
+  AppLogger.info('MODO PLATAFORMA: ${isAPK ? "APK/Nativo" : "WEB"}',
+      tag: 'Main');
   AppLogger.info('═══════════════════════════════════════════════════════════',
       tag: 'Main');
 
@@ -61,6 +63,9 @@ Future<void> main() async {
 
   // Cargar TAMAÑO DE FUENTE
   await fontSizeProvider.loadInitialFontSize();
+
+  // Cargar FILTROS
+  await filterProvider.loadInitialFilters();
 
   // Inicializar Auth
   await AuthService.initialize();
@@ -107,21 +112,9 @@ class MyApp extends StatelessWidget {
                     title: 'MyGasolinera',
                     theme: ThemeManager().currentTheme,
                     locale: languageProvider.currentLocale,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: const [
-                      Locale('es'), // Español
-                      Locale('fr'), // Frances
-                      Locale('en'), // Inglés
-                      Locale('de'), // Alleman
-                      Locale('pt'), // Portugues
-                      Locale('it'), // Italiano
-                      Locale('ca'), // Valenciano
-                    ],
+                    localizationsDelegates:
+                        AppLocalizations.localizationsDelegates,
+                    supportedLocales: AppLocalizations.supportedLocales,
                     home: const Inicio(),
                   ),
                 );

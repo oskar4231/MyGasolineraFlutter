@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart'; // 🆕 Para obtener ubicación
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart'; // 🆕 Para detectar provincia
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/main.dart' as app;
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -21,7 +22,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   bool _loading = true;
 
   // Filtros
-  String? _tipoCombustibleSeleccionado;
+  // Filtros ahora se usan desde app.filterProvider
   String? _ordenSeleccionado; // 'nombre', 'precio_asc', 'precio_desc'
 
   @override
@@ -143,8 +144,11 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   double _precioPromedio(Gasolinera g) {
-    if (_tipoCombustibleSeleccionado != null) {
-      switch (_tipoCombustibleSeleccionado) {
+    // Usar el tipo de combustible del proveedor global
+    final tipoSeleccionado = app.filterProvider.tipoCombustibleSeleccionado;
+
+    if (tipoSeleccionado != null) {
+      switch (tipoSeleccionado) {
         case 'Gasolina 95':
           return g.gasolina95;
         case 'Gasolina 98':
@@ -176,8 +180,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   void _mostrarFiltros() {
     final l10n = AppLocalizations.of(context)!;
 
-    // Valores temporales para el diálogo
-    String combustibleTemp = _tipoCombustibleSeleccionado ?? l10n.todos;
+    // Valores temporales para el diálogo basados en el proveedor global
+    String combustibleTemp =
+        app.filterProvider.tipoCombustibleSeleccionado ?? l10n.todos;
     String ordenTemp = _ordenSeleccionado == 'nombre'
         ? l10n.nombre
         : _ordenSeleccionado == 'precio_asc'
@@ -419,16 +424,19 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Botón Aplicar
                           ElevatedButton(
-                            onPressed: () {
-                              // Aplicar filtros
-                              setState(() {
-                                _tipoCombustibleSeleccionado =
-                                    (combustibleTemp == l10n.todos)
-                                        ? null
-                                        : combustibleTemp;
+                            onPressed: () async {
+                              // Aplicar filtros al proveedor global
+                              final nuevoCombustible =
+                                  (combustibleTemp == l10n.todos)
+                                      ? null
+                                      : combustibleTemp;
 
+                              await app.filterProvider
+                                  .setTipoCombustible(nuevoCombustible);
+
+                              // Aplicar orden local
+                              setState(() {
                                 if (ordenTemp == l10n.nombre) {
                                   _ordenSeleccionado = 'nombre';
                                 } else if (ordenTemp == l10n.precioAscendente) {
@@ -737,7 +745,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               : Column(
                   children: [
                     // FILA DE FILTROS ACTIVOS
-                    if (_tipoCombustibleSeleccionado != null ||
+                    if (app.filterProvider.tipoCombustibleSeleccionado !=
+                            null ||
                         _ordenSeleccionado != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -747,15 +756,19 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         color: Colors.white,
                         child: Row(
                           children: [
-                            if (_tipoCombustibleSeleccionado != null)
+                            if (app.filterProvider
+                                    .tipoCombustibleSeleccionado !=
+                                null)
                               Chip(
-                                label: Text(_tipoCombustibleSeleccionado!),
+                                label: Text(app.filterProvider
+                                    .tipoCombustibleSeleccionado!),
                                 backgroundColor: const Color(
                                   0xFFFF9350,
                                 ).withValues(alpha: 0.2),
-                                onDeleted: () {
+                                onDeleted: () async {
+                                  await app.filterProvider
+                                      .setTipoCombustible(null);
                                   setState(() {
-                                    _tipoCombustibleSeleccionado = null;
                                     _aplicarOrden();
                                   });
                                 },
