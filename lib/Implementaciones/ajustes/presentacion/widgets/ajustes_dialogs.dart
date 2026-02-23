@@ -45,18 +45,64 @@ class AjustesDialogs {
   }
 
   static void showLogoutDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final dialogBackgroundColor = isDark
+        ? const Color(0xFF212124) // Fondo premium modo oscuro
+        : theme.colorScheme.surface;
+    final titleColor = isDark ? Colors.white : theme.colorScheme.onSurface;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+    final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.cerrarSesion),
-          content: Text(AppLocalizations.of(context)!.confirmarCerrarSesion),
+          backgroundColor: dialogBackgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: isDark
+                ? const BorderSide(color: Color(0xFF38383A), width: 1)
+                : BorderSide.none,
+          ),
+          title: Text(
+            AppLocalizations.of(context)!.cerrarSesion,
+            style: TextStyle(
+              color: titleColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)!.confirmarCerrarSesion,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 16,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.cancelar),
+              child: Text(
+                AppLocalizations.of(context)!.cancelar,
+                style: TextStyle(
+                  color: isDark
+                      ? const Color(0xFF9E9E9E)
+                      : theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: accentColor,
+                foregroundColor: isDark ? Colors.black : Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.pushAndRemoveUntil(
@@ -65,7 +111,10 @@ class AjustesDialogs {
                   (Route<dynamic> route) => false,
                 );
               },
-              child: Text(AppLocalizations.of(context)!.cerrarSesion),
+              child: Text(
+                AppLocalizations.of(context)!.cerrarSesion,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         );

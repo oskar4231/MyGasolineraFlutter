@@ -1,0 +1,19 @@
+﻿Analyzing layouthome.dart...                                    
+
+  error - The name 'Gasolinera' isn't a type, so it can't be used as a type argument - lib\implementaciones\home\presentacion\pages\layouthome.dart:35:8 - non_type_as_type_argument
+   info - The private field _showMap could be 'final' - lib\implementaciones\home\presentacion\pages\layouthome.dart:37:8 - prefer_final_fields
+  error - The name 'Gasolinera' isn't a type, so it can't be used as a type argument - lib\implementaciones\home\presentacion\pages\layouthome.dart:234:14 - non_type_as_type_argument
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\implementaciones\home\presentacion\pages\layouthome.dart:272:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\implementaciones\home\presentacion\pages\layouthome.dart:281:52 - deprecated_member_use
+  error - The name 'Gasolinera' isn't a type, so it can't be used as a type argument - lib\implementaciones\home\presentacion\pages\layouthome.dart:290:10 - non_type_as_type_argument
+  error - The property 'lat' can't be unconditionally accessed because the receiver can be 'null' - lib\implementaciones\home\presentacion\pages\layouthome.dart:298:17 - unchecked_use_of_nullable_value
+  error - The property 'lng' can't be unconditionally accessed because the receiver can be 'null' - lib\implementaciones\home\presentacion\pages\layouthome.dart:299:17 - unchecked_use_of_nullable_value
+  error - The property 'lat' can't be unconditionally accessed because the receiver can be 'null' - lib\implementaciones\home\presentacion\pages\layouthome.dart:303:17 - unchecked_use_of_nullable_value
+  error - The property 'lng' can't be unconditionally accessed because the receiver can be 'null' - lib\implementaciones\home\presentacion\pages\layouthome.dart:304:17 - unchecked_use_of_nullable_value
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\implementaciones\home\presentacion\pages\layouthome.dart:338:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\implementaciones\home\presentacion\pages\layouthome.dart:417:63 - deprecated_member_use
+  error - Undefined class 'Gasolinera' - lib\implementaciones\home\presentacion\pages\layouthome.dart:495:32 - undefined_class
+  error - The operator '>' can't be unconditionally invoked because the receiver can be 'null' - lib\implementaciones\home\presentacion\pages\layouthome.dart:516:22 - unchecked_use_of_nullable_value
+  error - The operator '<' can't be unconditionally invoked because the receiver can be 'null' - lib\implementaciones\home\presentacion\pages\layouthome.dart:517:65 - unchecked_use_of_nullable_value
+  error - Undefined class 'Gasolinera' - lib\implementaciones\home\presentacion\pages\layouthome.dart:536:7 - undefined_class
+

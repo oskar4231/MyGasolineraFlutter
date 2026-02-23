@@ -25,12 +25,14 @@ class MapController extends ChangeNotifier {
   final void Function(List<Gasolinera>)? onGasolinerasLoaded;
   final void Function(String provincia)? onProvinciaUpdate;
   final void Function(Position pos)? onPositionChanged;
+  final void Function(Position pos)? onLocationChanged;
 
   MapController({
     required this.cacheService,
     this.onGasolinerasLoaded,
     this.onProvinciaUpdate,
     this.onPositionChanged,
+    this.onLocationChanged,
   }) {
     _gasolineraLogic = GasolineraLogic(cacheService);
   }
@@ -39,7 +41,13 @@ class MapController extends ChangeNotifier {
 
   // ── Inicialización ─────────────────────────────────────────────────────────
 
-  Future<void> initialize(MarkerHelper markerHelper) async {
+  Future<void> initialize(
+    MarkerHelper markerHelper, {
+    String? combustibleSeleccionado,
+    double? precioDesde,
+    double? precioHasta,
+    String? tipoAperturaSeleccionado,
+  }) async {
     await markerHelper.loadGasStationIcons();
     AppLogger.info('Iconos de marcadores cargados', tag: 'MapController');
 
@@ -50,17 +58,28 @@ class MapController extends ChangeNotifier {
     );
 
     notifyListeners();
-    await iniciarSeguimiento();
+    await iniciarSeguimiento(
+      combustibleSeleccionado: combustibleSeleccionado,
+      precioDesde: precioDesde,
+      precioHasta: precioHasta,
+      tipoAperturaSeleccionado: tipoAperturaSeleccionado,
+    );
   }
 
   // ── GPS ────────────────────────────────────────────────────────────────────
 
-  Future<void> iniciarSeguimiento() async {
+  Future<void> iniciarSeguimiento({
+    String? combustibleSeleccionado,
+    double? precioDesde,
+    double? precioHasta,
+    String? tipoAperturaSeleccionado,
+  }) async {
     AppLogger.info('Iniciando seguimiento GPS...', tag: 'MapController');
 
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      AppLogger.warning('Servicio de ubicación deshabilitado', tag: 'MapController');
+      AppLogger.warning('Servicio de ubicación deshabilitado',
+          tag: 'MapController');
       return;
     }
 
@@ -68,12 +87,14 @@ class MapController extends ChangeNotifier {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        AppLogger.warning('Permisos de ubicación denegados', tag: 'MapController');
+        AppLogger.warning('Permisos de ubicación denegados',
+            tag: 'MapController');
         return;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      AppLogger.warning('Permisos denegados permanentemente', tag: 'MapController');
+      AppLogger.warning('Permisos denegados permanentemente',
+          tag: 'MapController');
       return;
     }
 
@@ -86,8 +107,15 @@ class MapController extends ChangeNotifier {
           tag: 'MapController',
         );
         _setPosition(lastKnown);
-        await cargarGasolineras(lastKnown.latitude, lastKnown.longitude,
-            isInitialLoad: true);
+        await cargarGasolineras(
+          lastKnown.latitude,
+          lastKnown.longitude,
+          isInitialLoad: true,
+          combustibleSeleccionado: combustibleSeleccionado,
+          precioDesde: precioDesde,
+          precioHasta: precioHasta,
+          tipoAperturaSeleccionado: tipoAperturaSeleccionado,
+        );
         await _actualizarProvincia(lastKnown.latitude, lastKnown.longitude);
       }
     } catch (e) {
@@ -99,7 +127,8 @@ class MapController extends ChangeNotifier {
     try {
       AppLogger.debug('Solicitando ubicación precisa...', tag: 'MapController');
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings:
+            const LocationSettings(accuracy: LocationAccuracy.high),
       ).timeout(
         const Duration(seconds: 5),
         onTimeout: () => throw TimeoutException('GPS timeout'),
@@ -110,8 +139,15 @@ class MapController extends ChangeNotifier {
         tag: 'MapController',
       );
       _setPosition(position);
-      await cargarGasolineras(position.latitude, position.longitude,
-          isInitialLoad: true);
+      await cargarGasolineras(
+        position.latitude,
+        position.longitude,
+        isInitialLoad: true,
+        combustibleSeleccionado: combustibleSeleccionado,
+        precioDesde: precioDesde,
+        precioHasta: precioHasta,
+        tipoAperturaSeleccionado: tipoAperturaSeleccionado,
+      );
       await _actualizarProvincia(position.latitude, position.longitude);
     } catch (e) {
       AppLogger.warning('Error obteniendo ubicación precisa o timeout',
@@ -132,8 +168,15 @@ class MapController extends ChangeNotifier {
           headingAccuracy: 0,
         );
         _setPosition(defaultPos);
-        await cargarGasolineras(defaultPos.latitude, defaultPos.longitude,
-            isInitialLoad: true);
+        await cargarGasolineras(
+          defaultPos.latitude,
+          defaultPos.longitude,
+          isInitialLoad: true,
+          combustibleSeleccionado: combustibleSeleccionado,
+          precioDesde: precioDesde,
+          precioHasta: precioHasta,
+          tipoAperturaSeleccionado: tipoAperturaSeleccionado,
+        );
       }
     }
 
@@ -153,6 +196,7 @@ class MapController extends ChangeNotifier {
 
   void _setPosition(Position pos) {
     ubicacionActual = pos;
+    onLocationChanged?.call(pos);
     notifyListeners();
   }
 

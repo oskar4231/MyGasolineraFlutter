@@ -52,7 +52,7 @@ class InfoRepostaje extends StatelessWidget {
         // Dropdown Coche
         ShadowFieldWrapper(
           child: DropdownButtonFormField<int>(
-            initialValue: cocheSeleccionado,
+            value: cocheSeleccionado,
             decoration: _getInputDecoration(
                 context, AppLocalizations.of(context)!.coche),
             items: coches.map((coche) {

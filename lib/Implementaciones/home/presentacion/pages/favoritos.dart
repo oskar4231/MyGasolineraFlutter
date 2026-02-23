@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:my_gasolinera/main.dart' as app;
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -22,8 +23,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   late final GasolinerasCacheService _cacheService;
 
   // Filtros
-  String? _tipoCombustibleSeleccionado;
-  String? _ordenSeleccionado;
+  // Filtros ahora se usan desde app.filterProvider
+  String? _ordenSeleccionado; // 'nombre', 'precio_asc', 'precio_desc'
 
   @override
   void initState() {
@@ -144,8 +145,11 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   double _precioPromedio(Gasolinera g) {
-    if (_tipoCombustibleSeleccionado != null) {
-      switch (_tipoCombustibleSeleccionado) {
+    // Usar el tipo de combustible del proveedor global
+    final tipoSeleccionado = app.filterProvider.tipoCombustibleSeleccionado;
+
+    if (tipoSeleccionado != null) {
+      switch (tipoSeleccionado) {
         case 'Gasolina 95':
           return g.gasolina95;
         case 'Gasolina 98':
@@ -186,7 +190,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
     final borderColor = isDark ? const Color(0xFF38383A) : Colors.transparent;
 
-    String combustibleTemp = _tipoCombustibleSeleccionado ?? l10n.todos;
+    // Valores temporales para el diálogo basados en el proveedor global
+    String combustibleTemp =
+        app.filterProvider.tipoCombustibleSeleccionado ?? l10n.todos;
     String ordenTemp = _ordenSeleccionado == 'nombre'
         ? l10n.nombre
         : _ordenSeleccionado == 'precio_asc'
@@ -266,13 +272,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         ),
                         const SizedBox(width: 12),
                         ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _tipoCombustibleSeleccionado =
-                                  (combustibleTemp == l10n.todos)
-                                      ? null
-                                      : combustibleTemp;
+                          onPressed: () async {
+                            final nuevoCombustible =
+                                (combustibleTemp == l10n.todos)
+                                    ? null
+                                    : combustibleTemp;
 
+                            await app.filterProvider
+                                .setTipoCombustible(nuevoCombustible);
+
+                            setState(() {
                               if (ordenTemp == l10n.nombre) {
                                 _ordenSeleccionado = 'nombre';
                               } else if (ordenTemp == l10n.precioAscendente) {

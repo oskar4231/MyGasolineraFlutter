@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
-class FiltersDrawer extends StatelessWidget {
+import 'package:my_gasolinera/main.dart' as app;
+
+class FiltersDrawer extends StatefulWidget {
   final VoidCallback onPriceFilterPressed;
   final VoidCallback onFuelFilterPressed;
   final VoidCallback onOpeningFilterPressed;
@@ -14,10 +16,51 @@ class FiltersDrawer extends StatelessWidget {
   });
 
   @override
+  State<FiltersDrawer> createState() => _FiltersDrawerState();
+}
+
+class _FiltersDrawerState extends State<FiltersDrawer>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _blinkController;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _blinkController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.3).animate(
+      CurvedAnimation(parent: _blinkController, curve: Curves.easeInOut),
+    );
+
+    // Solo parpadear si no hay combustible seleccionado
+    if (app.filterProvider.tipoCombustibleSeleccionado == null) {
+      _blinkController.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _blinkController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
+    final fuelSelected = app.filterProvider.tipoCombustibleSeleccionado != null;
+
+    // Detener animación si ya hay algo seleccionado
+    if (fuelSelected && _blinkController.isAnimating) {
+      _blinkController.stop();
+      _blinkController.value = 0; // Opacidad completa (begin: 1.0)
+    } else if (!fuelSelected && !_blinkController.isAnimating) {
+      _blinkController.repeat(reverse: true);
+    }
 
     final drawerBg =
         isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
@@ -61,28 +104,40 @@ class FiltersDrawer extends StatelessWidget {
           _buildFilterTile(
             icon: Icons.attach_money_rounded,
             title: l10n.precio,
-            textColor: textColor,
-            accentColor: accentColor,
+            textColor: fuelSelected ? textColor : Colors.grey,
+            accentColor: fuelSelected ? accentColor : Colors.grey,
             dividerColor: dividerColor,
-            onTap: () {
-              Navigator.of(context).pop();
-              onPriceFilterPressed();
-            },
+            onTap: fuelSelected
+                ? () {
+                    Navigator.of(context).pop();
+                    widget.onPriceFilterPressed();
+                  }
+                : () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Seleccione combustible primero")),
+                    );
+                  },
           ),
 
           Divider(height: 1, color: dividerColor, indent: 56),
 
-          // Combustible
-          _buildFilterTile(
-            icon: Icons.local_gas_station_rounded,
-            title: l10n.combustible,
-            textColor: textColor,
-            accentColor: accentColor,
-            dividerColor: dividerColor,
-            onTap: () {
-              Navigator.of(context).pop();
-              onFuelFilterPressed();
-            },
+          // Combustible (con efecto de Fade si no hay seleccionado)
+          FadeTransition(
+            opacity: !fuelSelected
+                ? _opacityAnimation
+                : const AlwaysStoppedAnimation(1.0),
+            child: _buildFilterTile(
+              icon: Icons.local_gas_station_rounded,
+              title: l10n.combustible,
+              textColor: textColor,
+              accentColor:
+                  !fuelSelected ? theme.colorScheme.primary : accentColor,
+              dividerColor: dividerColor,
+              onTap: () {
+                Navigator.of(context).pop();
+                widget.onFuelFilterPressed();
+              },
+            ),
           ),
 
           Divider(height: 1, color: dividerColor, indent: 56),
@@ -96,8 +151,47 @@ class FiltersDrawer extends StatelessWidget {
             dividerColor: dividerColor,
             onTap: () {
               Navigator.of(context).pop();
-              onOpeningFilterPressed();
+              widget.onOpeningFilterPressed();
             },
+          ),
+          const Divider(),
+          ListTile(
+            leading: Icon(
+              Icons.delete_outline,
+              color: (fuelSelected ||
+                      app.filterProvider.precioDesde != null ||
+                      app.filterProvider.precioHasta != null ||
+                      app.filterProvider.tipoAperturaSeleccionado != null)
+                  ? Colors.redAccent
+                  : theme.dividerColor,
+            ),
+            title: Text(
+              'Limpiar filtros',
+              style: TextStyle(
+                color: (fuelSelected ||
+                        app.filterProvider.precioDesde != null ||
+                        app.filterProvider.precioHasta != null ||
+                        app.filterProvider.tipoAperturaSeleccionado != null)
+                    ? Colors.redAccent
+                    : theme.disabledColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            onTap: (fuelSelected ||
+                    app.filterProvider.precioDesde != null ||
+                    app.filterProvider.precioHasta != null ||
+                    app.filterProvider.tipoAperturaSeleccionado != null)
+                ? () {
+                    app.filterProvider.clearFilters();
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Filtros eliminados'),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  }
+                : null,
           ),
         ],
       ),

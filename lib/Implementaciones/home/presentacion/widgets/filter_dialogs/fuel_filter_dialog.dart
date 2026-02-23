@@ -32,23 +32,33 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
     _valorTemporal = widget.valorActual;
   }
 
-  Widget _buildCheckboxOption(String title, String value) {
+  Widget _buildCheckboxOption(String title, String value, bool isDark,
+      Color accentColor, Color textColor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
+        color: isDark
+            ? const Color(0xFF323236)
+            : Colors.grey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? const Color(0xFF38383A) : Colors.transparent,
+          width: 1,
+        ),
       ),
       child: CheckboxListTile(
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        title: Text(title, style: TextStyle(color: textColor)),
         value: _valorTemporal == value,
         onChanged: (bool? checked) {
           setState(() {
             _valorTemporal = checked == true ? value : null;
           });
         },
-        activeColor: Colors.white,
-        checkColor: const Color(0xFFFF9350),
+        activeColor: accentColor,
+        checkColor: isDark ? Colors.black : Colors.white,
+        side: BorderSide(
+          color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+        ),
         controlAffinity: ListTileControlAffinity.leading,
       ),
     );
@@ -66,28 +76,42 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
       'Gas': 'Gas (GLP)',
     };
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final dialogBackgroundColor =
+        isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
+    final titleColor = isDark ? Colors.white : theme.colorScheme.onSurface;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+    final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+
     return Dialog(
-      backgroundColor: const Color(0xFFFF9350),
+      backgroundColor: dialogBackgroundColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        side: isDark
+            ? const BorderSide(color: Color(0xFF38383A), width: 1)
+            : BorderSide.none,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               l10n.tiposCombustible,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: titleColor,
               ),
             ),
             const SizedBox(height: 20),
             ...opciones.entries.map(
-              (entry) => _buildCheckboxOption(entry.value, entry.key),
+              (entry) => _buildCheckboxOption(
+                  entry.value, entry.key, isDark, accentColor, textColor),
             ),
             const SizedBox(height: 24),
             Row(
@@ -97,18 +121,26 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     l10n.cancelar,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: isDark
+                          ? const Color(0xFF9E9E9E)
+                          : theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, _valorTemporal),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFFFF9350),
+                    backgroundColor: accentColor,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                   ),
                   child: Text(
                     l10n.aplicar,

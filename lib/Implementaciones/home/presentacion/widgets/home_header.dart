@@ -38,17 +38,25 @@ class HomeHeader extends StatelessWidget {
               onPressed: onFavoritosPressed,
             ),
 
-            // Botón de filtro de precio (flecha arriba)
+            // Botón de filtro de precio (Euro + Flecha)
             IconButton(
-              icon: Icon(Icons.arrow_upward,
-                  size: 40, color: theme.colorScheme.onPrimary),
+              icon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.arrow_upward_rounded,
+                      size: 26, color: theme.colorScheme.onPrimary),
+                  const SizedBox(width: 2),
+                  Icon(Icons.euro_symbol_rounded,
+                      size: 32, color: theme.colorScheme.onPrimary),
+                ],
+              ),
               onPressed: onPriceFilterPressed,
             ),
 
             // Botón para abrir el drawer de filtros (+)
             IconButton(
-              icon:
-                  Icon(Icons.add, size: 40, color: theme.colorScheme.onPrimary),
+              icon: Icon(Icons.tune_rounded,
+                  size: 36, color: theme.colorScheme.onPrimary),
               onPressed: onOpenDrawer,
             ),
           ],

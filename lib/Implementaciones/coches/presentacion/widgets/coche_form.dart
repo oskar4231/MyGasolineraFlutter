@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/services/car_data_service.dart';
 
@@ -177,7 +178,6 @@ class _CocheFormState extends State<CocheForm> {
     final motorizaciones = _selectedModeloId != null
         ? carService.getMotorizaciones(_selectedModeloId!)
         : [];
-
     final dialogBg = isDark
         ? const Color(0xFF212124)
         : theme.dialogTheme.backgroundColor ?? theme.colorScheme.surface;
@@ -386,6 +386,16 @@ class _CocheFormState extends State<CocheForm> {
                 borderColor: borderColor,
                 fillColor: inputFillColor,
                 isDark: isDark,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+                  final valor = int.tryParse(v);
+                  if (valor == null) return "Solo números enteros";
+                  if (valor < 0) return "No puede ser negativo";
+                  if (valor > 1000000) return "Máximo 1.000.000 km";
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               _buildTextField(
@@ -397,6 +407,20 @@ class _CocheFormState extends State<CocheForm> {
                 borderColor: borderColor,
                 fillColor: inputFillColor,
                 isDark: isDark,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*')),
+                ],
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+                  final cleanValue = v.replaceAll(',', '.');
+                  final valor = double.tryParse(cleanValue);
+                  if (valor == null) return "Formato inválido";
+                  if (valor < 0) return "No puede ser negativo";
+                  if (valor > 300) return "El tanque no puede superar los 300L";
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               _buildTextField(
@@ -408,6 +432,23 @@ class _CocheFormState extends State<CocheForm> {
                 borderColor: borderColor,
                 fillColor: inputFillColor,
                 isDark: isDark,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*')),
+                ],
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+
+                  final cleanValue = v.replaceAll(',', '.');
+                  final valor = double.tryParse(cleanValue);
+
+                  if (valor == null) return "Formato inválido";
+                  if (valor < 0) return "No puede ser negativo";
+                  if (valor > 50) return "El consumo no puede superar los 50.0";
+
+                  return null;
+                },
               ),
             ],
           ),
@@ -458,10 +499,15 @@ class _CocheFormState extends State<CocheForm> {
     Color? borderColor,
     Color? fillColor,
     required bool isDark,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
-      keyboardType: TextInputType.number,
+      keyboardType: keyboardType ?? TextInputType.number,
+      inputFormatters: inputFormatters,
+      validator: validator,
       style: TextStyle(color: textColor),
       decoration: InputDecoration(
         labelText: label,
