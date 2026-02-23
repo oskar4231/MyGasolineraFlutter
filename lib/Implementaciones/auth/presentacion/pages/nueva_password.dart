@@ -4,6 +4,7 @@ import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dar
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/password_requirements.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/widgets/premium_gradient_button.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class NuevaPasswordScreen extends StatefulWidget {
@@ -190,9 +191,9 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withValues(alpha: 0.3)
+                                  ? Colors.black.withOpacity(0.3)
                                   : Colors.black
-                                      .withValues(alpha: 0.04), // Apple shadow
+                                      .withOpacity(0.04), // Apple shadow
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -230,7 +231,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
+                                      .withOpacity(0.6),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -253,15 +254,15 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   hintStyle: TextStyle(
                                       letterSpacing: 8,
                                       color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.3)),
+                                          .withOpacity(0.3)),
                                   labelText: AppLocalizations.of(context)!
                                       .ingresarCodigo,
                                   filled: true,
                                   fillColor: isDark
                                       ? theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.05)
+                                          .withOpacity(0.05)
                                       : theme.colorScheme.primary
-                                          .withValues(alpha: 0.05),
+                                          .withOpacity(0.05),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -269,7 +270,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withValues(alpha: 0.5),
+                                      color: accentColor.withOpacity(0.5),
                                       width: 2,
                                     ),
                                   ),
@@ -306,13 +307,13 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                       .nuevaPassword,
                                   hintStyle: TextStyle(
                                       color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.5)),
+                                          .withOpacity(0.5)),
                                   filled: true,
                                   fillColor: isDark
                                       ? theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.05)
+                                          .withOpacity(0.05)
                                       : theme.colorScheme.primary
-                                          .withValues(alpha: 0.05),
+                                          .withOpacity(0.05),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -320,7 +321,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withValues(alpha: 0.5),
+                                      color: accentColor.withOpacity(0.5),
                                       width: 2,
                                     ),
                                   ),
@@ -336,7 +337,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                             ? Icons.visibility_off
                                             : Icons.visibility,
                                         color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.6),
+                                            .withOpacity(0.6),
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -378,13 +379,13 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                       .confirmPassword,
                                   hintStyle: TextStyle(
                                       color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.5)),
+                                          .withOpacity(0.5)),
                                   filled: true,
                                   fillColor: isDark
                                       ? theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.05)
+                                          .withOpacity(0.05)
                                       : theme.colorScheme.primary
-                                          .withValues(alpha: 0.05),
+                                          .withOpacity(0.05),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -392,7 +393,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withValues(alpha: 0.5),
+                                      color: accentColor.withOpacity(0.5),
                                       width: 2,
                                     ),
                                   ),
@@ -408,7 +409,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                             ? Icons.visibility_off
                                             : Icons.visibility,
                                         color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.6),
+                                            .withOpacity(0.6),
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -435,68 +436,13 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                               ),
                               const SizedBox(height: 32),
 
-                              // Botón Guardar (Premium)
-                              SizedBox(
-                                width: double.infinity,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        accentColor.withValues(alpha: 0.9),
-                                        accentColor,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      if (!isDark)
-                                        BoxShadow(
-                                          color: accentColor.withValues(
-                                              alpha: 0.25),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 6),
-                                        ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: _isLoading
-                                        ? null
-                                        : _handleChangePassword,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: _isLoading
-                                        ? const SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 3,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                            ),
-                                          )
-                                        : Text(
-                                            AppLocalizations.of(context)!
-                                                .guardar,
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                  ),
-                                ),
+                              // Botón Guardar Cambios (Premium)
+                              PremiumGradientButton(
+                                onPressed: _handleChangePassword,
+                                isLoading: _isLoading,
+                                text: AppLocalizations.of(context)!.guardar,
+                                accentColor: accentColor,
+                                isDark: isDark,
                               ),
                             ],
                           ),

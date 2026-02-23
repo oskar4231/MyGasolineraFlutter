@@ -4,6 +4,7 @@ import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/nueva_pas
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/widgets/premium_gradient_button.dart'; // Added import
 
 // Pantalla para solicitar la recuperacion de la contraseña
 // Muestra un formulario con un campo de correo y un boton de envío
@@ -25,7 +26,8 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
     super.dispose();
   }
 
-  Future<void> _handleForgotPassword() async {
+  Future<void> _forgotPassword() async {
+    // Renamed from _handleForgotPassword
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _isLoading = true);
@@ -130,9 +132,10 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withValues(alpha: 0.3)
-                                  : Colors.black
-                                      .withValues(alpha: 0.04), // Apple shadow
+                                  ? Colors.black.withOpacity(
+                                      0.3) // Corrected from withValues
+                                  : Colors.black.withOpacity(
+                                      0.04), // Apple shadow // Corrected from withValues
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -171,7 +174,8 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
+                                      .withOpacity(
+                                          0.6), // Corrected from withValues
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -183,18 +187,19 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                 keyboardType: TextInputType.emailAddress,
                                 enabled: !_isLoading,
                                 onFieldSubmitted: (value) =>
-                                    _handleForgotPassword(),
+                                    _forgotPassword(), // Renamed method
                                 decoration: InputDecoration(
                                   hintText: AppLocalizations.of(context)!.email,
                                   hintStyle: TextStyle(
                                       color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.5)),
+                                          .withOpacity(
+                                              0.5)), // Corrected from withValues
                                   filled: true,
                                   fillColor: isDark
-                                      ? theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.05)
-                                      : theme.colorScheme.primary
-                                          .withValues(alpha: 0.05),
+                                      ? theme.colorScheme.onSurface.withOpacity(
+                                          0.05) // Corrected from withValues
+                                      : theme.colorScheme.primary.withOpacity(
+                                          0.05), // Corrected from withValues
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -202,7 +207,8 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withValues(alpha: 0.5),
+                                      color: accentColor.withOpacity(
+                                          0.5), // Corrected from withValues
                                       width: 2,
                                     ),
                                   ),
@@ -225,68 +231,14 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                               ),
                               const SizedBox(height: 32),
 
-                              // Botón Enviar (Premium)
-                              SizedBox(
-                                width: double.infinity,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        accentColor.withValues(alpha: 0.9),
-                                        accentColor,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      if (!isDark)
-                                        BoxShadow(
-                                          color: accentColor.withValues(
-                                              alpha: 0.25),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 6),
-                                        ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: _isLoading
-                                        ? null
-                                        : _handleForgotPassword,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: _isLoading
-                                        ? const SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 3,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                            ),
-                                          )
-                                        : Text(
-                                            AppLocalizations.of(context)!
-                                                .enviarCodigo,
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                  ),
-                                ),
+                              // Botón Enviar Código (Premium)
+                              PremiumGradientButton(
+                                onPressed: _forgotPassword, // Renamed method
+                                isLoading: _isLoading,
+                                text: AppLocalizations.of(context)!
+                                    .enviarCodigo, // Use localization
+                                accentColor: accentColor,
+                                isDark: isDark,
                               ),
                             ],
                           ),

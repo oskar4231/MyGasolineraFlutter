@@ -55,6 +55,37 @@ class AuthService {
     AppLogger.info('Sesión cerrada', tag: 'AuthService');
   }
 
+  // ==================== AUTENTICACIÓN ====================
+
+  static Future<Map<String, dynamic>> login(
+      String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.loginUrl),
+        headers: HttpHelper.mergeHeaders(ApiConfig.headers),
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      AppLogger.debug('Respuesta login: $data', tag: 'AuthService');
+
+      if (response.statusCode == 200) {
+        return {'status': 'success', 'data': data};
+      } else {
+        return {
+          'status': 'error',
+          'message': data['message'] ?? 'Error desconocido'
+        };
+      }
+    } catch (e) {
+      AppLogger.error('Error en login', tag: 'AuthService', error: e);
+      return {'status': 'error', 'message': 'Error de conexión: $e'};
+    }
+  }
+
   // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
 
   static Future<Map<String, dynamic>> register(

@@ -1,0 +1,28 @@
+﻿On branch newModoOscuro
+Your branch is up to date with 'origin/newModoOscuro'.
+
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+	modified:   .env
+	modified:   lib/Implementaciones/gasolineras/presentacion/widgets/filter_dialogs/price_filter_dialog.dart
+	modified:   lib/Implementaciones/home/presentacion/widgets/filter_dialogs/price_filter_dialog.dart
+	modified:   lib/Implementaciones/mapa/data/controllers/map_controller.dart
+	modified:   lib/Implementaciones/mapa/presentacion/widgets/map_widget.dart
+	new file:   lib/core/providers/filter_provider.dart
+	modified:   lib/main.dart
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	both modified:   lib/Implementaciones/coches/presentacion/widgets/coche_form.dart
+	both modified:   lib/Implementaciones/facturas/presentacion/widgets/info_repostaje.dart
+	both modified:   lib/Implementaciones/gasolineras/presentacion/widgets/filters_drawer.dart
+	both modified:   lib/Implementaciones/home/presentacion/pages/favoritos.dart
+	both modified:   lib/Implementaciones/home/presentacion/pages/layouthome.dart
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	git_status.txt
+

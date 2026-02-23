@@ -1,14 +1,10 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
+import 'package:my_gasolinera/core/widgets/premium_gradient_button.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/recuperar.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/usuario_service.dart';
-import 'package:my_gasolinera/core/config/api_config.dart';
-import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
@@ -48,30 +44,17 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        // Use http://10.0.2.2:3000/login for Android Emulator
-        // Use https://unsubscribe-doom-onion-submitting.trycloudflare.com/login for iOS Simulator or Web
-        final url = Uri.parse(ApiConfig.loginUrl);
-
-        AppLogger.debug('Intentando login en: $url', tag: 'LoginScreen');
+        AppLogger.debug('Intentando login', tag: 'LoginScreen');
         AppLogger.debug('Email: ${_emailController.text.trim()}',
             tag: 'LoginScreen');
 
-        final response = await http.post(
-          url,
-          headers: HttpHelper.mergeHeaders(ApiConfig.headers),
-          body: json.encode({
-            'email': _emailController.text.trim(),
-            'password': _passwordController.text,
-          }),
+        final response = await AuthService.login(
+          _emailController.text.trim(),
+          _passwordController.text,
         );
 
-        AppLogger.debug('Respuesta status: ${response.statusCode}',
-            tag: 'LoginScreen');
-        AppLogger.debug('Respuesta body: ${response.body}', tag: 'LoginScreen');
-
-        final responseData = json.decode(response.body);
-
-        if (response.statusCode == 200) {
+        if (response['status'] == 'success') {
+          final responseData = response['data'];
           // Login exitoso
           if (mounted) {
             // Guardar el token del usuario
@@ -80,11 +63,13 @@ class _LoginScreenState extends State<LoginScreen> {
               final email = _emailController.text.trim();
               await AuthService.saveToken(token, email);
               AppLogger.info('Token guardado exitosamente', tag: 'LoginScreen');
-              
+
               // Sincronizar nombre y foto de perfil en segundo plano sin bloquear la UI
               final usuarioService = UsuarioService();
               usuarioService.obtenerNombreUsuario().catchError((e) => null);
-              usuarioService.sincronizarFotoPerfilLocal(email).catchError((e) => null);
+              usuarioService
+                  .sincronizarFotoPerfilLocal(email)
+                  .catchError((e) => null);
             }
 
             if (mounted) {
@@ -106,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Login fallido (400, 401, 500)
           if (mounted) {
             String errorMessage =
-                responseData['message'] ?? 'Error al iniciar sesión';
+                response['message'] ?? 'Error al iniciar sesión';
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
@@ -395,65 +380,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 32),
 
                               // Botón Iniciar sesión (Premium)
-                              SizedBox(
-                                width: double.infinity,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        accentColor.withValues(alpha: 0.9),
-                                        accentColor,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      if (!isDark)
-                                        BoxShadow(
-                                          color: accentColor.withValues(
-                                              alpha: 0.25),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 6),
-                                        ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: _isLoading ? null : _login,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: _isLoading
-                                        ? const SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 3,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                            ),
-                                          )
-                                        : Text(
-                                            AppLocalizations.of(context)!
-                                                .iniciarSesion,
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                  ),
-                                ),
+                              PremiumGradientButton(
+                                onPressed: _login,
+                                isLoading: _isLoading,
+                                text:
+                                    AppLocalizations.of(context)!.iniciarSesion,
+                                accentColor: accentColor,
+                                isDark: isDark,
                               ),
                               const SizedBox(height: 24),
 

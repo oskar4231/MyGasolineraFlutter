@@ -33,13 +33,16 @@ class _HoverBackButtonState extends State<HoverBackButton> {
     const orangeColor = Color(0xFFFF8235);
 
     // 3. Calculamos el color final para el Hover
-    // En lugar de usar solo el naranja transparente, usamos una mezcla (alphaBlend).
-    // Esto pone una capa de naranja al 5% (0.05) SOBRE el color gris base.
-    // Así el botón nunca se vuelve transparente.
-    final hoverColor = Color.alphaBlend(
-      orangeColor.withOpacity(0.1), // Opacidad muy baja para que sea sutil
-      lighterCardColor,
-    );
+    final hoverColor = isDark
+        ? Color.alphaBlend(
+            orangeColor.withOpacity(0.1), // Opacidad baja en modo oscuro
+            lighterCardColor,
+          )
+        : Color.alphaBlend(
+            orangeColor.withOpacity(
+                0.25), // Mayor opacidad en modo claro para que resalte del fondo
+            lighterCardColor,
+          );
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),

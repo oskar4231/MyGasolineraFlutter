@@ -539,6 +539,8 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
             children: [
               IconButton(
                 icon: Icon(Icons.arrow_back, color: textColor),
+                hoverColor:
+                    isDark ? null : primaryColor.withValues(alpha: 0.25),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _mostrarPopupIdioma();
