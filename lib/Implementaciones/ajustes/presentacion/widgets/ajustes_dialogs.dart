@@ -9,14 +9,46 @@ class AjustesDialogs {
     required VoidCallback onCamera,
   }) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final dialogBackgroundColor = isDark
+        ? const Color(0xFF212124) // Fondo premium modo oscuro
+        : theme.colorScheme.surface;
+    final titleColor = isDark ? Colors.white : theme.colorScheme.onSurface;
+    final textColor =
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+    final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(l10n.cambiarFotoPerfil),
+          backgroundColor: dialogBackgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: isDark
+                ? const BorderSide(color: Color(0xFF38383A), width: 1)
+                : BorderSide.none,
+          ),
+          title: Text(
+            l10n.cambiarFotoPerfil,
+            style: TextStyle(
+              color: titleColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[Text(l10n.seleccionarFuenteFoto)],
+              children: <Widget>[
+                Text(
+                  l10n.seleccionarFuenteFoto,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
             ),
           ),
           actions: [
@@ -25,18 +57,38 @@ class AjustesDialogs {
                 Navigator.of(context).pop();
                 onGallery();
               },
-              child: Text(l10n.galeria),
+              child: Text(
+                l10n.galeria,
+                style: TextStyle(
+                  color: isDark ? accentColor : theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 onCamera();
               },
-              child: Text(l10n.camara),
+              child: Text(
+                l10n.camara,
+                style: TextStyle(
+                  color: isDark ? accentColor : theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancelar),
+              child: Text(
+                l10n.cancelar,
+                style: TextStyle(
+                  color: isDark
+                      ? const Color(0xFF9E9E9E)
+                      : theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         );
