@@ -923,4 +923,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String exportarConConteo(Object count) {
     return 'Exporter ($count)';
   }
+
+  @override
+  String get cerrar => 'Fermer';
 }

@@ -298,5 +298,6 @@
   "exportarExitoExcel": "Exported to Excel successfully",
   "exportarExitoPdf": "Exported to PDF successfully",
   "seleccionarAlMenosUna": "Select at least one invoice",
-  "exportarConConteo": "Export ({count})"
+  "exportarConConteo": "Export ({count})",
+  "cerrar": "Close"
 }

@@ -363,5 +363,6 @@
   "exportarExitoExcel": "Erfolgreich nach Excel exportiert",
   "exportarExitoPdf": "Erfolgreich nach PDF exportiert",
   "seleccionarAlMenosUna": "Wählen Sie mindestens eine Rechnung aus",
-  "exportarConConteo": "Exportieren ({count})"
+  "exportarConConteo": "Exportieren ({count})",
+  "cerrar": "Schließen"
 }

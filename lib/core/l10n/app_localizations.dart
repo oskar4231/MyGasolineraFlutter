@@ -1853,6 +1853,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Exportar ({count})'**
   String exportarConConteo(Object count);
+
+  /// No description provided for @cerrar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar'**
+  String get cerrar;
 }
 
 class _AppLocalizationsDelegate

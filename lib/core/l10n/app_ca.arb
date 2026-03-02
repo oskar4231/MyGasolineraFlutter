@@ -360,5 +360,6 @@
   "exportarExitoExcel": "Exportat a Excel correctament",
   "exportarExitoPdf": "Exportat a PDF correctament",
   "seleccionarAlMenosUna": "Selecciona almenys una factura",
-  "exportarConConteo": "Exportar ({count})"
+  "exportarConConteo": "Exportar ({count})",
+  "cerrar": "Tancar"
 }
