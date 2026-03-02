@@ -49,10 +49,54 @@ class AuthService {
   }
 
   // Cerrar sesión
-  static void logout() {
+  static Future<void> logout() async {
     _token = null;
     _userEmail = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('authToken');
+    await prefs.remove('userEmail');
     AppLogger.info('Sesión cerrada', tag: 'AuthService');
+  }
+
+  // Validar si el token guardado sigue siendo válido contra el backend
+  // Devuelve true si la sesión es válida, false si ha expirado o hay error
+  static Future<bool> validateSession() async {
+    if (_token == null || _token!.isEmpty) return false;
+
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConfig.perfilUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Authorization': 'Bearer $_token',
+        },
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Timeout al validar sesión'),
+      );
+
+      if (response.statusCode == 200) {
+        AppLogger.info('Sesión válida para: $_userEmail', tag: 'AuthService');
+        return true;
+      } else {
+        // Token expirado o inválido (401, 403, etc.)
+        AppLogger.warning(
+          'Sesión inválida (${response.statusCode}), limpiando token',
+          tag: 'AuthService',
+        );
+        await logout();
+        return false;
+      }
+    } catch (e) {
+      // Error de red: asumir sesión válida para no bloquear al usuario offline
+      AppLogger.warning(
+        'No se pudo validar la sesión (sin conexión), asumiendo válida',
+        tag: 'AuthService',
+      );
+      return _token != null && _token!.isNotEmpty;
+    }
   }
 
   // ==================== AUTENTICACIÓN ====================

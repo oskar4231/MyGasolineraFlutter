@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
-import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
+import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
+import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 
 class AjustesDialogs {
   static void showImagePickerDialog(
@@ -155,13 +156,16 @@ class AjustesDialogs {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
-                );
+                await AuthService.logout();
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Inicio()),
+                    (Route<dynamic> route) => false,
+                  );
+                }
               },
               child: Text(
                 AppLocalizations.of(context)!.cerrarSesion,
