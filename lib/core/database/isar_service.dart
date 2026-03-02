@@ -13,7 +13,7 @@ class IsarService {
   }
 
   Future<Isar> _initDb() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await getTemporaryDirectory();
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open(
         [

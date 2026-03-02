@@ -6,6 +6,7 @@ import 'package:my_gasolinera/core/database/isar_models/user_local.dart';
 import 'package:my_gasolinera/core/database/isar_models/gasolinera_local.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SyncManager {
   final IsarService _isarService;
@@ -124,12 +125,15 @@ class SyncManager {
 
   // For demonstration, these will just be simple placeholders.
   // Recommend adding a Config table to Isar for key/value pairs like this.
+  static const String _syncKey = 'last_gasolinera_sync_time';
+
   Future<int?> _getLastGasolineraSyncTime(Isar isar) async {
-    // Replace with real config lookup
-    return null;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_syncKey);
   }
 
   Future<void> _saveGasolineraSyncTime(Isar isar, int timeMs) async {
-    // Replace with real config save
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_syncKey, timeMs);
   }
 }
