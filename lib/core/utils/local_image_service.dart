@@ -20,7 +20,7 @@ class LocalImageService {
       String fileName = '';
 
       if (!kIsWeb) {
-        fileName = '${relatedId}_${DateTime.now().millisecondsSinceEpoch}.you';
+        fileName = '${type}_$relatedId.you';
         final directory = await getApplicationDocumentsDirectory();
         final filePath = p.join(directory.path, fileName);
         final file = File(filePath);
@@ -49,7 +49,7 @@ class LocalImageService {
       String fileName = '';
 
       if (!kIsWeb) {
-        fileName = '${relatedId}_${DateTime.now().millisecondsSinceEpoch}.you';
+        fileName = '${type}_$relatedId.you';
         final directory = await getApplicationDocumentsDirectory();
         final filePath = p.join(directory.path, fileName);
         final file = File(filePath);
@@ -69,7 +69,9 @@ class LocalImageService {
   /// Lee una imagen y devuelve los bytes desencriptados.
   static Future<Uint8List?> getImageBytes(String type, String relatedId,
       {String? fileName}) async {
-    if (fileName == null || fileName.isEmpty) return null;
+    if (fileName == null || fileName.isEmpty) {
+      fileName = '${type}_$relatedId.you';
+    }
 
     try {
       if (kIsWeb) {
