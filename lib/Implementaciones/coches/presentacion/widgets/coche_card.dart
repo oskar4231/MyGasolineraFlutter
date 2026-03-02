@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/domain/models/coche.dart';
 import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/brand_logo.dart';
+import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/coche_detail_modal.dart';
 
 class CocheCard extends StatelessWidget {
   final Coche coche;
@@ -33,7 +34,9 @@ class CocheCard extends StatelessWidget {
         : accentColor.withValues(alpha: 0.2);
     final dividerColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 
-    return Container(
+    return GestureDetector(
+      onTap: () => CocheDetailModal.mostrar(context, coche: coche),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: cardColor,
@@ -157,6 +160,7 @@ class CocheCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

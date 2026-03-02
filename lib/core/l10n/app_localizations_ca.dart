@@ -915,4 +915,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String exportarConConteo(Object count) {
     return 'Exportar ($count)';
   }
+
+  @override
+  String get cerrar => 'Tancar';
 }
