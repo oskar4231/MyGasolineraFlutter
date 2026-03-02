@@ -1,59 +1,65 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/security/auth_storage.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-// Servicio para gestionar el token de autenticación y recuperación de contraseña
+/// Servicio principal de autenticación.
+/// Credenciales sensibles (token, email, userId) se almacenan cifradas
+/// usando [AuthStorage] (flutter_secure_storage / Keychain / Keystore).
 class AuthService {
+  // Caché en memoria para acceso síncrono tras initialize()
   static String? _token;
   static String? _userEmail;
 
-  // Inicializar el servicio recuperando datos de SharedPreferences
+  // ==================== INICIALIZACIÓN ====================
+
+  /// Restaurar la sesión desde el almacenamiento seguro al arrancar la app.
   static Future<void> initialize() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('authToken');
-    _userEmail = prefs.getString('userEmail');
+    _token = await AuthStorage.getToken();
+    _userEmail = await AuthStorage.getEmail();
     if (_token != null) {
       AppLogger.info('Sesión restaurada para: $_userEmail', tag: 'AuthService');
     }
   }
 
-  // Guardar el token y email del usuario
-  static Future<void> saveToken(String token, String email) async {
+  // ==================== GUARDAR / LIMPIAR ====================
+
+  /// Guarda el token y el email de forma cifrada.
+  static Future<void> saveToken(String token, String email,
+      {String? userId}) async {
     _token = token;
     _userEmail = email;
 
-    // Guardar también en SharedPreferences para persistencia
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('authToken', token);
-    await prefs.setString('userEmail', email);
+    await AuthStorage.saveCredentials(
+      token: token,
+      email: email,
+      userId: userId ?? '',
+    );
 
-    AppLogger.debug('Token guardado para: $email', tag: 'AuthService');
+    AppLogger.debug('Token guardado de forma cifrada para: $email',
+        tag: 'AuthService');
   }
 
-  // Obtener el token
-  static String? getToken() {
-    return _token;
-  }
-
-  // Obtener el email del usuario
-  static String? getUserEmail() {
-    return _userEmail;
-  }
-
-  // Verificar si hay una sesión activa
-  static bool isLoggedIn() {
-    return _token != null && _token!.isNotEmpty;
-  }
-
-  // Cerrar sesión
-  static void logout() {
+  /// Cierra sesión: borra la caché en memoria y el almacenamiento seguro.
+  static Future<void> logout() async {
     _token = null;
     _userEmail = null;
+    await AuthStorage.clearCredentials();
     AppLogger.info('Sesión cerrada', tag: 'AuthService');
   }
+
+  // ==================== GETTERS ====================
+
+  /// Token en memoria (disponible tras [initialize] o [saveToken]).
+  static String? getToken() => _token;
+
+  /// Email en memoria (disponible tras [initialize] o [saveToken]).
+  static String? getUserEmail() => _userEmail;
+
+  /// Devuelve true si hay sesión activa en memoria.
+  static bool isLoggedIn() => _token != null && _token!.isNotEmpty;
 
   // ==================== AUTENTICACIÓN ====================
 
@@ -86,7 +92,7 @@ class AuthService {
     }
   }
 
-  // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
+  // ==================== REGISTRO ====================
 
   static Future<Map<String, dynamic>> register(
       String nombre, String email, String password) async {
@@ -118,7 +124,8 @@ class AuthService {
     }
   }
 
-  // Solicitar recuperación de contraseña
+  // ==================== RECUPERACIÓN DE CONTRASEÑA ====================
+
   static Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {
       final response = await http.post(
@@ -136,7 +143,6 @@ class AuthService {
     }
   }
 
-  // Verificar token
   static Future<Map<String, dynamic>> verifyToken(String token) async {
     try {
       final response = await http.post(
@@ -154,7 +160,6 @@ class AuthService {
     }
   }
 
-  // Resetear contraseña
   static Future<Map<String, dynamic>> resetPassword(
     String token,
     String newPassword,
