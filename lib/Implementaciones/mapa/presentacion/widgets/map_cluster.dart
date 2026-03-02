@@ -49,7 +49,6 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
     // ── Caso 1: Gasolinera individual → abrir info ─────────────────────────
     if (!typedCluster.isMultiple) {
       final gasolinera = typedCluster.items.first;
-      final esFavorita = favoritosIds.contains(gasolinera.id);
       return markerHelper.createMarker(
         gasolinera,
         favoritosIds,
@@ -79,7 +78,7 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
       position: typedCluster.location,
       icon: icon,
       anchor: const Offset(0.5, 1.0),
-      zIndex: containsFavorite ? 10.0 : 1.0,
+      zIndexInt: containsFavorite ? 10 : 1,
       onTap: () {
         // Zoom suave al tocar un grupo
         AppLogger.debug(

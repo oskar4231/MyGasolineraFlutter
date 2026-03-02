@@ -43,12 +43,12 @@ class GasolineraBottomSheet extends StatelessWidget {
     final lighterCardColor = isDark
         ? const Color(0xFF2A2A2E)
         : Color.lerp(cardColor, Colors.white, 0.3);
-    final borderColor = isDark ? Colors.white10 : Colors.grey.withOpacity(0.18);
+    final borderColor = isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.18);
     final textPrimary =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final textSecondary = isDark
         ? const Color(0xFF9E9E9E)
-        : theme.colorScheme.onSurface.withOpacity(0.6);
+        : theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
     return PointerInterceptor(
       child: Container(
@@ -96,7 +96,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.12),
+                      color: primaryColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -332,7 +332,7 @@ class _PrecioRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.12),
+              color: iconColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 18, color: iconColor),
@@ -365,7 +365,7 @@ class _PrecioRow extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: iconColor.withOpacity(0.7),
+                    color: iconColor.withValues(alpha: 0.7),
                   ),
                 ),
               ],

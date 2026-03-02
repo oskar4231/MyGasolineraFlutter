@@ -26,7 +26,7 @@ Future<Logger> initPlatformLogger() async {
       lineLength: 80,
       colors: true,
       printEmojis: true,
-      printTime: true,
+      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
     ),
     output: MultiOutput([
       ConsoleOutput(),

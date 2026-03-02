@@ -6,7 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
+// New Architecture Imports
+import 'package:my_gasolinera/core/database/isar_service.dart';
+import 'package:my_gasolinera/core/sync/sync_manager.dart';
+
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/providers/language_provider.dart';
@@ -15,9 +19,12 @@ import 'package:my_gasolinera/core/providers/filter_provider.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// Instancias globales
-late AppDatabase database;
+// Instancias globales Isar / Sync
+late IsarService isarService;
+late SyncManager syncManager;
+late GasolinerasCacheService gasolineraCacheService;
 late BackgroundRefreshService backgroundRefreshService;
+
 final LanguageProvider languageProvider = LanguageProvider();
 final FontSizeProvider fontSizeProvider = FontSizeProvider();
 final FilterProvider filterProvider = FilterProvider();
@@ -45,15 +52,22 @@ Future<void> main() async {
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
 
-  // Inicializar base de datos (APK o Web según configuración)
-  database = AppDatabase();
-  AppLogger.info(
-      'Base de datos inicializada: ${isAPK ? "SQLite nativo" : "IndexedDB"}',
-      tag: 'Main');
+  // 1. Inicializar base de datos local (Isar)
+  isarService = IsarService();
+  await isarService.db; // Esperar a que abra la DB
 
-  // Inicializar servicio de actualización en segundo plano
-  backgroundRefreshService = BackgroundRefreshService(database);
+  AppLogger.info('Base de datos local Isar inicializada', tag: 'Main');
+
+  // 2. Inicializar servicios dependientes
+  gasolineraCacheService = GasolinerasCacheService(isarService);
+  syncManager = SyncManager(isarService: isarService);
+
+  // 3. Inicializar servicio de background refresh
+  backgroundRefreshService = BackgroundRefreshService(syncManager);
   backgroundRefreshService.start();
+
+  // 4. Lanzar sincronización en background en el arranque (si está logueado)
+  syncManager.startBackgroundSync();
 
   // Cargar TEMA
   await ThemeManager().loadInitialTheme();
@@ -75,13 +89,10 @@ Future<void> main() async {
 
   // ✅ Optimizaciones de rendimiento para APK (reducir RAM/CPU)
   if (isAPK) {
-    // Reducir caché de imágenes para ahorrar RAM
-    PaintingBinding.instance.imageCache.maximumSize = 50; // Default: 1000
-    PaintingBinding.instance.imageCache.maximumSizeBytes =
-        50 << 20; // 50 MB (Default: 100 MB)
+    PaintingBinding.instance.imageCache.maximumSize = 50;
+    PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20;
 
     AppLogger.info('Optimizaciones de rendimiento APK aplicadas', tag: 'Main');
-    AppLogger.info('- Caché de imágenes: 50 items / 50 MB', tag: 'Main');
   }
 
   runApp(const MyApp());

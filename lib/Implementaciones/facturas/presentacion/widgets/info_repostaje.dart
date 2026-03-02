@@ -52,7 +52,7 @@ class InfoRepostaje extends StatelessWidget {
         // Dropdown Coche
         ShadowFieldWrapper(
           child: DropdownButtonFormField<int>(
-            value: cocheSeleccionado,
+            initialValue: cocheSeleccionado,
             decoration: _getInputDecoration(
                 context, AppLocalizations.of(context)!.coche),
             items: coches.map((coche) {
@@ -153,9 +153,10 @@ class InfoRepostaje extends StatelessWidget {
       labelText: label,
       hintText: hint,
       labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
       hintStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
       ),
       filled: true,
       fillColor: Colors.transparent, // El fondo lo da el Wrapper
@@ -208,7 +209,7 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
       // Rounded hover effect color
       backgroundColor = isDark
           ? const Color(0xFF383838)
-          : Theme.of(context).cardColor.withOpacity(0.9);
+          : Theme.of(context).cardColor.withValues(alpha: 0.9);
 
       backgroundColor = Color.alphaBlend(
         Theme.of(context).hoverColor,
@@ -229,8 +230,8 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
             boxShadow: [
               BoxShadow(
                 color: _hasFocus
-                    ? Theme.of(context).primaryColor.withOpacity(0.15)
-                    : Colors.black.withOpacity(_isHovered ? 0.15 : 0.05),
+                    ? Theme.of(context).primaryColor.withValues(alpha: 0.15)
+                    : Colors.black.withValues(alpha: _isHovered ? 0.15 : 0.05),
                 blurRadius: _hasFocus ? 12 : (_isHovered ? 8 : 4),
                 offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
               ),

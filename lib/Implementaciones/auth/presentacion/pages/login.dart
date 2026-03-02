@@ -66,10 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Sincronizar nombre y foto de perfil en segundo plano sin bloquear la UI
               final usuarioService = UsuarioService();
-              usuarioService.obtenerNombreUsuario().catchError((e) => null);
+              usuarioService.obtenerNombreUsuario().catchError((e) => '');
               usuarioService
                   .sincronizarFotoPerfilLocal(email)
-                  .catchError((e) => null);
+                  .catchError((e) => '');
             }
 
             if (mounted) {

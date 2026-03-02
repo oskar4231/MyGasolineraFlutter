@@ -160,7 +160,6 @@ class GasolineraLogic {
 
         listaGasolineras = await _cacheService.getGasolinerasMultiProvincia(
           provinciasToLoad,
-          forceRefresh: false, // Usar caché para mejor rendimiento
         );
 
         AppLogger.info(

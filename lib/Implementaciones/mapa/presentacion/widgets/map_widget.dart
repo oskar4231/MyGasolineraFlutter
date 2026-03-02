@@ -58,7 +58,6 @@ class _MapWidgetState extends State<MapWidget>
   double _currentZoom = 15.0;
   CameraPosition? _currentCameraPosition;
   Timer? _cameraDebounceTimer;
-  bool _isSearching = false;
 
   // ── MapClusterMixin: getters requeridos ────────────────────────────────────
   @override
@@ -211,21 +210,6 @@ class _MapWidgetState extends State<MapWidget>
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       );
 
-  Future<void> _loadMapStyle(GoogleMapController controller) async {
-    try {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      final style = isDark ? _mapStyleDark : _mapStyleLight;
-      await controller.setMapStyle(style);
-      AppLogger.info(
-        'Estilo del mapa aplicado (${isDark ? "oscuro" : "claro"})',
-        tag: 'MapWidget',
-      );
-    } catch (e) {
-      AppLogger.error('Error aplicando estilo del mapa',
-          tag: 'MapWidget', error: e);
-    }
-  }
-
   // ── Bottom sheet ───────────────────────────────────────────────────────────
 
   Future<void> _mostrarInfoGasolinera(
@@ -284,10 +268,12 @@ class _MapWidgetState extends State<MapWidget>
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
           gestureRecognizers: const {},
+          style: Theme.of(context).brightness == Brightness.dark
+              ? _mapStyleDark
+              : _mapStyleLight,
           onMapCreated: (controller) {
             _mapController = controller;
             clusterManager?.setMapId(controller.mapId);
-            _loadMapStyle(controller);
             controller.animateCamera(
               CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
             );

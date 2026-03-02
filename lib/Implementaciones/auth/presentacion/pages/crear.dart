@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
@@ -180,12 +179,12 @@ class _CrearScreenState extends State<CrearScreen> {
           : null,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle:
-            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5)),
+        hintStyle: TextStyle(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
         filled: true,
         fillColor: isDark
-            ? theme.colorScheme.onSurface.withOpacity(0.05)
-            : theme.colorScheme.primary.withOpacity(0.05),
+            ? theme.colorScheme.onSurface.withValues(alpha: 0.05)
+            : theme.colorScheme.primary.withValues(alpha: 0.05),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -193,7 +192,7 @@ class _CrearScreenState extends State<CrearScreen> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: accentColor.withOpacity(0.5),
+            color: accentColor.withValues(alpha: 0.5),
             width: 2,
           ),
         ),
@@ -209,7 +208,7 @@ class _CrearScreenState extends State<CrearScreen> {
                     obscureText ?? true
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   onPressed: onToggleVisibility,
                 ),
@@ -270,9 +269,9 @@ class _CrearScreenState extends State<CrearScreen> {
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withOpacity(0.3)
+                                  ? Colors.black.withValues(alpha: 0.3)
                                   : Colors.black
-                                      .withOpacity(0.04), // Apple shadow
+                                      .withValues(alpha: 0.04), // Apple shadow
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -308,7 +307,7 @@ class _CrearScreenState extends State<CrearScreen> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: theme.colorScheme.onSurface
-                                      .withOpacity(0.6),
+                                      .withValues(alpha: 0.6),
                                 ),
                               ),
                               const SizedBox(height: 32),

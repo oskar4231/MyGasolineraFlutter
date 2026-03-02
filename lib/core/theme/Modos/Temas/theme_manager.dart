@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/modo_oscuro.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/daltonismo.dart';
-import 'package:my_gasolinera/main.dart' as main;
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 class ThemeManager extends ChangeNotifier {
@@ -33,10 +33,11 @@ class ThemeManager extends ChangeNotifier {
     }
   }
 
-  /// Carga el tema inicial desde la base de datos
+  /// Carga el tema inicial desde la base de datos (SharedPreferences)
   Future<void> loadInitialTheme() async {
     try {
-      _currentThemeId = await main.database.getThemeId();
+      final prefs = await SharedPreferences.getInstance();
+      _currentThemeId = prefs.getInt('theme_id') ?? 0;
       notifyListeners();
       AppLogger.info('Tema inicial cargado: $_currentThemeId',
           tag: 'ThemeManager');
@@ -46,13 +47,14 @@ class ThemeManager extends ChangeNotifier {
     }
   }
 
-  void setObjectTheme(int themeId) {
+  void setObjectTheme(int themeId) async {
     if (_currentThemeId != themeId) {
       _currentThemeId = themeId;
       notifyListeners();
 
-      // Persistir en la base de datos
-      main.database.saveThemeId(themeId);
+      // Persistir en la base de datos (SharedPreferences)
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('theme_id', themeId);
     }
   }
 }

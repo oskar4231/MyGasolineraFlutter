@@ -197,8 +197,8 @@ class _ConsumoTabState extends State<ConsumoTab> {
                     boxShadow: [
                       BoxShadow(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.black.withOpacity(0.3)
-                            : Colors.grey.withOpacity(0.1),
+                            ? Colors.black.withValues(alpha: 0.3)
+                            : Colors.grey.withValues(alpha: 0.1),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -282,8 +282,8 @@ class _ConsumoTabState extends State<ConsumoTab> {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.2),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

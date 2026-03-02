@@ -147,8 +147,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: isDark
-                                ? Colors.black.withOpacity(0.3)
-                                : Colors.grey.withOpacity(0.2),
+                                ? Colors.black.withValues(alpha: 0.3)
+                                : Colors.grey.withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -203,8 +203,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                               ),
                               child: InkWell(
                                 onTap: () => _mostrarSliderTamanoFuente(),
-                                hoverColor: primaryColor.withOpacity(0.1),
-                                splashColor: primaryColor.withOpacity(0.2),
+                                hoverColor: primaryColor.withValues(alpha: 0.1),
+                                splashColor: primaryColor.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8),
                                 mouseCursor: SystemMouseCursors.click,
                                 child: Container(
@@ -259,8 +259,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: isDark
-                                ? Colors.black.withOpacity(0.3)
-                                : Colors.grey.withOpacity(0.2),
+                                ? Colors.black.withValues(alpha: 0.3)
+                                : Colors.grey.withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -315,7 +315,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                             decoration: BoxDecoration(
                                               color: _isDropdownHovered
                                                   ? primaryColor
-                                                      .withOpacity(0.1)
+                                                      .withValues(alpha: 0.1)
                                                   : Colors.transparent,
                                               borderRadius:
                                                   BorderRadius.circular(8),
@@ -494,9 +494,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final activeTextColor = isDark ? Colors.black : theme.colorScheme.onPrimary;
 
-    final hoverColor = primaryColor.withOpacity(0.1);
+    final hoverColor = primaryColor.withValues(alpha: 0.1);
 
-    final splashColor = primaryColor.withOpacity(0.2);
+    final splashColor = primaryColor.withValues(alpha: 0.2);
 
     // Color gris medio para destacar sobre el fondo 0xFF3E3E42
     final unselectedBgColor =
@@ -636,7 +636,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           ? const Color(0xFF38383A)
                           : borderColor, // Mejor contraste en pista inactiva
                       thumbColor: primaryColor,
-                      overlayColor: primaryColor.withOpacity(0.2),
+                      overlayColor: primaryColor.withValues(alpha: 0.2),
                       valueIndicatorColor: primaryColor,
                       valueIndicatorTextStyle: TextStyle(
                         color: activeTextColor,

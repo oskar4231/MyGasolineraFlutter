@@ -35,11 +35,11 @@ class _HoverBackButtonState extends State<HoverBackButton> {
     // 3. Calculamos el color final para el Hover
     final hoverColor = isDark
         ? Color.alphaBlend(
-            orangeColor.withOpacity(0.1), // Opacidad baja en modo oscuro
+            orangeColor.withValues(alpha: 0.1), // Opacidad baja en modo oscuro
             lighterCardColor,
           )
         : Color.alphaBlend(
-            orangeColor.withOpacity(
+            orangeColor.withValues(alpha: 
                 0.25), // Mayor opacidad en modo claro para que resalte del fondo
             lighterCardColor,
           );
@@ -59,7 +59,7 @@ class _HoverBackButtonState extends State<HoverBackButton> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),

@@ -1,208 +1,86 @@
-import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
+import 'package:isar/isar.dart';
+import 'package:my_gasolinera/core/database/isar_service.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart'
-    as api;
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
-import 'package:drift/drift.dart' as drift;
+import 'package:my_gasolinera/core/database/isar_models/gasolinera_local.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-/// Servicio de cache para gasolineras con estrategia offline-first
+/// Servicio de lectura para gasolineras usando Isar local cache
 class GasolinerasCacheService {
-  final AppDatabase _db;
+  final IsarService _isarService;
 
-  /// Tiempo máximo de frescura del cache en minutos
-  /// Reducido a 10 minutos para actualizaciones más frecuentes
-  static const int cacheFreshnessMinutes = 10;
+  GasolinerasCacheService(this._isarService);
 
-  GasolinerasCacheService(this._db);
-
-  /// Obtiene gasolineras con estrategia offline-first
-  /// 1. Intenta cargar desde cache si está fresco
-  /// 2. Si no hay cache o está obsoleto, carga desde API
-  /// 3. Si falla la API, usa cache antiguo como fallback
-  Future<List<Gasolinera>> getGasolineras(String provinciaId,
-      {bool forceRefresh = false}) async {
+  /// Obtiene gasolineras mapeadas al dominio desde la DB Isar
+  Future<List<Gasolinera>> getGasolineras(String provinciaId) async {
     try {
-      // 1. Verificar frescura del cache
-      final isFresh = await _db.isCacheFresh(provinciaId,
-          maxMinutes: cacheFreshnessMinutes);
+      final isar = await _isarService.db;
 
-      if (!forceRefresh && isFresh) {
-        AppLogger.database('Usando cache fresco para provincia $provinciaId',
-            tag: 'GasolinerasCacheService');
-        return await _loadFromCache(provinciaId);
-      }
+      final cachedData = await isar.gasolineraLocals
+          .filter()
+          .idProvinciaEqualTo(provinciaId)
+          .findAll();
 
-      // 2. Cache obsoleto o no existe, cargar desde API
-      AppLogger.database('Cache obsoleto o no existe, cargando desde API...',
+      AppLogger.database(
+          'Cargadas ${cachedData.length} gasolineras desde Isar cache para $provinciaId',
           tag: 'GasolinerasCacheService');
-      final gasolineras = await api.fetchGasolinerasByProvincia(provinciaId);
 
-      if (gasolineras.isNotEmpty) {
-        // Guardar en cache
-        await _saveToCache(provinciaId, gasolineras);
-        return gasolineras;
-      }
-
-      // 3. API no devolvió datos, intentar usar cache antiguo
-      AppLogger.database('API sin datos, intentando cache antiguo...',
-          tag: 'GasolinerasCacheService');
-      return await _loadFromCache(provinciaId);
+      return cachedData.map((data) => _mapToDomain(data)).toList();
     } catch (e) {
-      AppLogger.error('Error al obtener gasolineras',
+      AppLogger.error('Error al obtener gasolineras de Isar',
           tag: 'GasolinerasCacheService', error: e);
-      // Fallback a cache en caso de error
-      return await _loadFromCache(provinciaId);
+      return [];
     }
   }
 
-  /// Obtiene gasolineras de múltiples provincias (para zonas fronterizas)
+  /// Obtiene gasolineras de múltiples provincias
   Future<List<Gasolinera>> getGasolinerasMultiProvincia(
-      List<String> provinciaIds,
-      {bool forceRefresh = false}) async {
+      List<String> provinciaIds) async {
     final List<Gasolinera> allGasolineras = [];
-
-    for (final provinciaId in provinciaIds) {
-      final gasolineras =
-          await getGasolineras(provinciaId, forceRefresh: forceRefresh);
+    for (final id in provinciaIds) {
+      final gasolineras = await getGasolineras(id);
       allGasolineras.addAll(gasolineras);
     }
-
     return allGasolineras;
   }
 
-  /// Obtiene gasolineras específicas por su ID desde la base de datos local
+  /// Obtiene gasolineras por una lista de IDs específicos
   Future<List<Gasolinera>> getGasolinerasByIds(List<String> ids) async {
     if (ids.isEmpty) return [];
-
-    final cachedData = await _db.getGasolinerasByIds(ids);
-    return cachedData.map((data) {
-      return Gasolinera(
-        id: data.id,
-        rotulo: data.rotulo,
-        direccion: data.direccion,
-        lat: data.lat,
-        lng: data.lng,
-        horario: data.horario,
-        gasolina95: data.gasolina95,
-        gasolina95E10: data.gasolina95E10,
-        gasolina98: data.gasolina98,
-        gasoleoA: data.gasoleoA,
-        gasoleoPremium: data.gasoleoPremium,
-        glp: data.glp,
-        biodiesel: data.biodiesel,
-        bioetanol: data.bioetanol,
-        esterMetilico: data.esterMetilico,
-        hidrogeno: data.hidrogeno,
-        provincia: data.provincia,
-        idProvincia: data.idProvincia,
-      );
-    }).toList();
-  }
-
-  /// Carga gasolineras desde cache local
-  Future<List<Gasolinera>> _loadFromCache(String provinciaId) async {
-    final cachedData = await _db.getGasolinerasByProvincia(provinciaId);
-
-    if (cachedData.isEmpty) {
-      AppLogger.database('No hay datos en cache para $provinciaId',
-          tag: 'GasolinerasCacheService');
+    try {
+      final isar = await _isarService.db;
+      final cachedData = await isar.gasolineraLocals
+          .filter()
+          .anyOf(ids, (q, String id) => q.remoteIdEqualTo(id))
+          .findAll();
+      return cachedData.map((data) => _mapToDomain(data)).toList();
+    } catch (e) {
+      AppLogger.error('Error al obtener gasolineras por IDs',
+          tag: 'GasolinerasCacheService', error: e);
       return [];
     }
-
-    AppLogger.database('Cargadas ${cachedData.length} gasolineras desde cache',
-        tag: 'GasolinerasCacheService');
-
-    return cachedData.map((data) {
-      return Gasolinera(
-        id: data.id,
-        rotulo: data.rotulo,
-        direccion: data.direccion,
-        lat: data.lat,
-        lng: data.lng,
-        horario: data.horario,
-        gasolina95: data.gasolina95,
-        gasolina95E10: data.gasolina95E10,
-        gasolina98: data.gasolina98,
-        gasoleoA: data.gasoleoA,
-        gasoleoPremium: data.gasoleoPremium,
-        glp: data.glp,
-        biodiesel: data.biodiesel,
-        bioetanol: data.bioetanol,
-        esterMetilico: data.esterMetilico,
-        hidrogeno: data.hidrogeno,
-        provincia: data.provincia,
-        idProvincia: data.idProvincia,
-      );
-    }).toList();
   }
 
-  /// Guarda gasolineras en cache local
-  Future<void> _saveToCache(
-      String provinciaId, List<Gasolinera> gasolineras) async {
-    AppLogger.database(
-        'Guardando ${gasolineras.length} gasolineras en cache...',
-        tag: 'GasolinerasCacheService');
-
-    // Eliminar datos antiguos de esta provincia
-    await _db.deleteGasolinerasByProvincia(provinciaId);
-
-    // Insertar nuevos datos
-    final companions = gasolineras.map((g) {
-      return GasolinerasTableCompanion(
-        id: drift.Value(g.id),
-        rotulo: drift.Value(g.rotulo),
-        direccion: drift.Value(g.direccion),
-        lat: drift.Value(g.lat),
-        lng: drift.Value(g.lng),
-        provincia: drift.Value(g.provincia),
-        idProvincia: drift.Value(g.idProvincia),
-        horario: drift.Value(g.horario),
-        gasolina95: drift.Value(g.gasolina95),
-        gasolina95E10: drift.Value(g.gasolina95E10),
-        gasolina98: drift.Value(g.gasolina98),
-        gasoleoA: drift.Value(g.gasoleoA),
-        gasoleoPremium: drift.Value(g.gasoleoPremium),
-        glp: drift.Value(g.glp),
-        biodiesel: drift.Value(g.biodiesel),
-        bioetanol: drift.Value(g.bioetanol),
-        esterMetilico: drift.Value(g.esterMetilico),
-        hidrogeno: drift.Value(g.hidrogeno),
-        lastUpdated: drift.Value(DateTime.now()),
-      );
-    }).toList();
-
-    await _db.upsertGasolineras(companions);
-
-    // Actualizar metadata de provincia
-    final provinciaNombre =
-        ProvinciaService.provincias[provinciaId] ?? 'Desconocida';
-    await _db.updateProvinciaCache(
-        provinciaId, provinciaNombre, gasolineras.length);
-
-    AppLogger.database('Cache actualizado exitosamente',
-        tag: 'GasolinerasCacheService');
-  }
-
-  /// Refresca el cache en segundo plano
-  Future<void> refreshCache(String provinciaId) async {
-    try {
-      AppLogger.database('Refrescando cache para provincia $provinciaId...',
-          tag: 'GasolinerasCacheService');
-      await getGasolineras(provinciaId, forceRefresh: true);
-    } catch (e) {
-      AppLogger.error('Error al refrescar cache',
-          tag: 'GasolinerasCacheService', error: e);
-    }
-  }
-
-  /// Limpia cache antiguo (> 7 días)
-  Future<void> cleanOldCache() async {
-    await _db.cleanOldCache();
-  }
-
-  /// Obtiene información de todas las provincias en cache
-  Future<List<ProvinciaCacheTableData>> getCacheInfo() async {
-    return await _db.getAllProvinciasCache();
+  /// Map Isar Model back to Domain Model
+  Gasolinera _mapToDomain(GasolineraLocal data) {
+    return Gasolinera(
+      id: data.remoteId ?? '',
+      rotulo: data.rotulo ?? '',
+      direccion: data.direccion ?? '',
+      lat: data.lat ?? 0.0,
+      lng: data.lng ?? 0.0,
+      horario: data.horario ?? '',
+      gasolina95: data.gasolina95 ?? 0.0,
+      gasolina95E10: data.gasolina95E10 ?? 0.0,
+      gasolina98: data.gasolina98 ?? 0.0,
+      gasoleoA: data.gasoleoA ?? 0.0,
+      gasoleoPremium: data.gasoleoPremium ?? 0.0,
+      glp: data.glp ?? 0.0,
+      biodiesel: data.biodiesel ?? 0.0,
+      bioetanol: data.bioetanol ?? 0.0,
+      esterMetilico: data.esterMetilico ?? 0.0,
+      hidrogeno: data.hidrogeno ?? 0.0,
+      provincia: data.provincia ?? '',
+      idProvincia: data.idProvincia ?? '',
+    );
   }
 }

@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:drift/drift.dart' as drift;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
-import 'package:my_gasolinera/main.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:my_gasolinera/core/utils/app_logger.dart';
@@ -13,53 +10,29 @@ import 'package:my_gasolinera/core/utils/app_logger.dart';
 class LocalImageService {
   static const int _xorKey = 157; // Clave simple para "encriptar"
 
-  /// Guarda una imagen localmente en el SISTEMA DE ARCHIVOS y registra la referencia en la BD.
-  /// Los datos binarios ya NO se guardan en la BD para optimizar RAM y rendimiento (Solo APK).
-  /// EN WEB: Se guardan en la BD (IndexedDB) porque no hay FileSystem persistente directo.
+  /// Guarda una imagen localmente en el SISTEMA DE ARCHIVOS.
   static Future<String?> saveImage(
       XFile imageFile, String type, String relatedId) async {
-    // Normalizar ID
-    final normalizedId = relatedId.trim();
     try {
       final bytes = await imageFile.readAsBytes();
       final encryptedBytes = _encryptBytes(bytes);
 
       String fileName = '';
 
-      // LOGICA NATIVA (APK/iOS): Guardar en FileSystem
       if (!kIsWeb) {
-        // Usar un nombre de archivo único
         fileName = '${relatedId}_${DateTime.now().millisecondsSinceEpoch}.you';
-
-        // Obtener directorio de documentos de la app
         final directory = await getApplicationDocumentsDirectory();
         final filePath = p.join(directory.path, fileName);
-
-        // Escribir bytes encriptados al archivo
         final file = File(filePath);
         await file.writeAsBytes(encryptedBytes);
 
-        AppLogger.database('(Nativo) Imagen guardada en Archivo: $filePath');
+        AppLogger.info('(Nativo) Imagen guardada en Archivo: $filePath');
       } else {
-        AppLogger.database(
-            '(Web) Guardando imagen directamente en IndexedDB (BLOB)');
+        AppLogger.info(
+            '(Web) Guardando imagen directamente en IndexedDB (no implementado)');
         fileName = 'web_blob_${DateTime.now().millisecondsSinceEpoch}';
       }
 
-      // Guardar referencia en DB
-      // En Web guardamos el contenido (BLOB)
-      // En Nativo guardamos contenido VACIO para ahorrar espacio
-      await database.insertLocalImage(LocalImagesTableCompanion(
-        imageType: drift.Value(type),
-        relatedId: drift.Value(normalizedId),
-        localPath: drift.Value(fileName), // Guardamos solo el nombre
-        content: drift.Value(kIsWeb
-            ? encryptedBytes
-            : Uint8List(0)), // Web: Full Blob, Nativo: Empty
-        createdAt: drift.Value(DateTime.now()),
-      ));
-
-      AppLogger.database('Referencia guardada en BD ($type / $relatedId)');
       return fileName;
     } catch (e) {
       AppLogger.error('Error guardando imagen local',
@@ -68,10 +41,9 @@ class LocalImageService {
     }
   }
 
-  /// Guarda una imagen localmente desde bytes crudos (útil para sincronizar desde backend).
+  /// Guarda una imagen localmente desde bytes crudos.
   static Future<String?> saveImageBytes(
       Uint8List bytes, String type, String relatedId) async {
-    final normalizedId = relatedId.trim();
     try {
       final encryptedBytes = _encryptBytes(bytes);
       String fileName = '';
@@ -82,21 +54,10 @@ class LocalImageService {
         final filePath = p.join(directory.path, fileName);
         final file = File(filePath);
         await file.writeAsBytes(encryptedBytes);
-        AppLogger.database('(Nativo) Imagen sincro guardada en Archivo: $filePath');
       } else {
-        AppLogger.database('(Web) Guardando imagen sincro en IndexedDB');
         fileName = 'web_blob_${DateTime.now().millisecondsSinceEpoch}';
       }
 
-      await database.insertLocalImage(LocalImagesTableCompanion(
-        imageType: drift.Value(type),
-        relatedId: drift.Value(normalizedId),
-        localPath: drift.Value(fileName),
-        content: drift.Value(kIsWeb ? encryptedBytes : Uint8List(0)),
-        createdAt: drift.Value(DateTime.now()),
-      ));
-
-      AppLogger.database('Referencia sincro guardada en BD ($type / $relatedId)');
       return fileName;
     } catch (e) {
       AppLogger.error('Error guardando imagen por bytes',
@@ -105,50 +66,23 @@ class LocalImageService {
     }
   }
 
-  /// Lee una imagen y devuelve el ARCHIVO desencriptado temporalmente o bytes.
-  /// Para optimización, intentamos devolver bytes y dejar que ResizeImage haga el trabajo,
-  /// o si usamos FileImage, necesitamos un archivo desencriptado.
-  ///
-  /// Estrategia optimizada de memoria:
-  /// Leemos el archivo encriptado -> Desencriptamos en RAM -> Widget usa ResizeImage
-  static Future<Uint8List?> getImageBytes(String type, String relatedId) async {
-    // Normalizar ID para evitar errores de espacios
-    final normalizedId = relatedId.trim();
+  /// Lee una imagen y devuelve los bytes desencriptados.
+  static Future<Uint8List?> getImageBytes(String type, String relatedId,
+      {String? fileName}) async {
+    if (fileName == null || fileName.isEmpty) return null;
+
     try {
-      final record = await database.getLocalImage(type, normalizedId);
-
-      if (record == null) {
-        return null;
-      }
-
-      // 1. WEB: Cargar directamente del BLOB
       if (kIsWeb) {
-        if (record.content.isNotEmpty) {
-          return _encryptBytes(record.content); // Desencriptar
-        }
-        return null;
+        return null; // Logic required for web
       }
 
-      // 2. NATIVO: Intentar cargar desde File System
-      if (record.localPath != null && record.localPath!.isNotEmpty) {
-        final directory = await getApplicationDocumentsDirectory();
-        final filePath = p.join(directory.path, record.localPath!);
-        final file = File(filePath);
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = p.join(directory.path, fileName);
+      final file = File(filePath);
 
-        if (await file.exists()) {
-          final encryptedBytes = await file.readAsBytes();
-          return _encryptBytes(encryptedBytes); // Desencriptar
-        }
-      }
-
-      // 3. Fallback Nativo (Migración): Cargar desde BD si existe
-      if (record.content.isNotEmpty) {
-        AppLogger.warning('Migrando imagen legacy a FileSystem: $relatedId',
-            tag: 'LocalImageService');
-        // Migramos 'al vuelo' para limpiar la DB poco a poco
-        final decryptedBytes = _encryptBytes(record.content);
-        await _migrateSingleImage(record, record.content);
-        return decryptedBytes;
+      if (await file.exists()) {
+        final encryptedBytes = await file.readAsBytes();
+        return _encryptBytes(encryptedBytes); // Desencriptar
       }
 
       return null;
@@ -156,33 +90,6 @@ class LocalImageService {
       AppLogger.error('Error leyendo imagen local',
           tag: 'LocalImageService', error: e);
       return null;
-    }
-  }
-
-  /// Migración interna: Mueve BLOB de DB a Archivo y limpia la columna BLOB
-  static Future<void> _migrateSingleImage(
-      dynamic record, Uint8List encryptedContent) async {
-    if (kIsWeb) return; // No migrar en web
-
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      // Si no tiene path, generamos uno
-      String fileName = record.localPath;
-      if (fileName.isEmpty) {
-        fileName =
-            '${record.relatedId}_${DateTime.now().millisecondsSinceEpoch}.you';
-      }
-
-      final filePath = p.join(directory.path, fileName);
-      final file = File(filePath);
-
-      // Guardar en disco
-      await file.writeAsBytes(encryptedContent);
-
-      // Actualizar DB (Pendiente de implementación robusta de update)
-    } catch (e) {
-      AppLogger.error('Error migrando imagen',
-          tag: 'LocalImageService', error: e);
     }
   }
 
