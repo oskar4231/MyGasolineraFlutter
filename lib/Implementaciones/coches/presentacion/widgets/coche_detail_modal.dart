@@ -26,17 +26,22 @@ class CocheDetailModal extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     // ── Colores consistentes con el resto de la app ──────────────────────────
+    // accentColor: en oscuro mantenemos el naranja de la marca; en claro
+    // usamos theme.colorScheme.primary para respetar todos los temas
+    // (protanopia, deuteranopia, tritanopia, achromatopsia…)
+    final accentColor =
+        isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
     final dialogBg = isDark
         ? const Color(0xFF212124)
         : theme.dialogTheme.backgroundColor ?? theme.colorScheme.surface;
-    final cardBg = isDark ? const Color(0xFF3E3E42) : theme.colorScheme.surfaceContainerHighest;
+    final cardBg = isDark
+        ? const Color(0xFF3E3E42)
+        : theme.colorScheme.surfaceContainerHighest;
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final subtextColor = isDark
         ? const Color(0xFFEBEBEB).withValues(alpha: 0.6)
         : theme.colorScheme.onSurface.withValues(alpha: 0.55);
-    final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
     final chipBg = accentColor.withValues(alpha: isDark ? 0.15 : 0.2);
     final dividerColor =
         isDark ? const Color(0xFF38383A) : theme.dividerColor;
@@ -144,13 +149,16 @@ class CocheDetailModal extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF4A4A50) : accentColor,
+              // Oscuro: gris neutro. Claro: tinte suave del color del tema.
+              color: isDark
+                  ? const Color(0xFF4A4A50)
+                  : accentColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
             ),
             child: BrandLogo(
               brandName: coche.marca,
               size: 38,
-              fallbackColor: isDark ? accentColor : Colors.white,
+              fallbackColor: accentColor,
             ),
           ),
           const SizedBox(width: 16),
