@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
 import 'package:my_gasolinera/core/config/config_service.dart';
@@ -5,6 +6,7 @@ import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:my_gasolinera/core/utils/crash_handler.dart';
 
 // New Architecture Imports
 import 'package:my_gasolinera/core/database/isar_service.dart';
@@ -34,6 +36,22 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 Future<void> main() async {
+  // Capturar crashes de zona async y mostrar pantalla de error
+  runZonedGuarded(() async {
+    await _initApp();
+  }, (error, stack) async {
+    final details = FlutterErrorDetails(
+      exception: error,
+      stack: stack,
+      library: 'Zona Dart',
+    );
+    final logPath =
+        await CrashHandler.saveCrashLog(error.toString(), stack.toString());
+    runApp(CrashHandler.buildCrashScreen(details, logPath: logPath));
+  });
+}
+
+Future<void> _initApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Cargar variables de entorno
@@ -52,11 +70,14 @@ Future<void> main() async {
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
 
-  // 1. Inicializar base de datos local (Isar)
+  // 1. Inicializar base de datos local (Isar solo en nativo, no en web)
   isarService = IsarService();
-  await isarService.db; // Esperar a que abra la DB
-
-  AppLogger.info('Base de datos local Isar inicializada', tag: 'Main');
+  if (!kIsWeb) {
+    await isarService.db; // Esperar a que abra la DB (solo en APK/nativo)
+    AppLogger.info('Base de datos local Isar inicializada', tag: 'Main');
+  } else {
+    AppLogger.info('Web: sin base de datos local Isar', tag: 'Main');
+  }
 
   // 2. Inicializar servicios dependientes
   gasolineraCacheService = GasolinerasCacheService(isarService);
@@ -94,6 +115,16 @@ Future<void> main() async {
 
     AppLogger.info('Optimizaciones de rendimiento APK aplicadas', tag: 'Main');
   }
+
+  // Capturar errores de Flutter (widgets, rendering, etc.)
+  FlutterError.onError = (details) async {
+    FlutterError.presentError(details);
+    final logPath = await CrashHandler.saveCrashLog(
+      details.exception.toString(),
+      details.stack?.toString() ?? '',
+    );
+    runApp(CrashHandler.buildCrashScreen(details, logPath: logPath));
+  };
 
   runApp(const MyApp());
 }
