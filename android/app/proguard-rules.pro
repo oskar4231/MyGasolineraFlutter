@@ -153,6 +153,18 @@
 -keep class io.flutter.plugin.editing.** { *; }
 -keep class io.flutter.plugin.platform.** { *; }
 -keep class android.view.inputmethod.** { *; }
+-keep class androidx.core.** { *; }
+-keep class androidx.lifecycle.** { *; }
+-keep class androidx.activity.** { *; }
+-keep class androidx.fragment.** { *; }
+
+# Mantener todos los métodos y campos de compatibilidad de AndoridX (vital para Stylus/Teclado/Insets)
+-keepclassmembers class androidx.** {
+    *;
+}
+-keepclassmembers class android.view.** {
+    *;
+}
 
 # Mantener métodos llamados desde C++ (JNI) por el motor de Flutter
 -keepclasseswithmembernames,includedescriptorclasses class * {
