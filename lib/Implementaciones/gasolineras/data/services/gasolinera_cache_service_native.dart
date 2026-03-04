@@ -60,6 +60,34 @@ class GasolinerasCacheService {
     }
   }
 
+  /// Obtiene gasolineras dentro de una caja delimitadora (Bounding Box)
+  Future<List<Gasolinera>> getGasolinerasByBounds({
+    required double swLat,
+    required double swLng,
+    required double neLat,
+    required double neLng,
+  }) async {
+    try {
+      final isar = await _isarService.db;
+      final cachedData = await isar.gasolineraLocals
+          .filter()
+          .latBetween(swLat, neLat)
+          .and()
+          .lngBetween(swLng, neLng)
+          .findAll();
+
+      AppLogger.database(
+          'Obtenidas ${cachedData.length} gasolineras desde Isar cache por bounds',
+          tag: 'GasolinerasCacheService');
+
+      return cachedData.map((data) => _mapToDomain(data)).toList();
+    } catch (e) {
+      AppLogger.error('Error al obtener gasolineras por Bounds desde Isar',
+          tag: 'GasolinerasCacheService', error: e);
+      return [];
+    }
+  }
+
   /// Map Isar Model back to Domain Model
   Gasolinera _mapToDomain(GasolineraLocal data) {
     return Gasolinera(

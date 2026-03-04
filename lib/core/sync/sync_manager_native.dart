@@ -6,6 +6,7 @@ import 'package:my_gasolinera/core/database/isar_models/user_local.dart';
 import 'package:my_gasolinera/core/database/isar_models/gasolinera_local.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart';
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SyncManager {
@@ -53,7 +54,14 @@ class SyncManager {
 
       if (lastSyncTime == null ||
           (now - lastSyncTime) > _gasolineraSyncCooldownMs) {
-        final nuevasGasolineras = await fetchGasolinerasByProvincia('28');
+        final lastProvincia = await ProvinciaService.getLastKnownProvincia();
+        final provinciaId = lastProvincia?.id ?? '28';
+
+        AppLogger.info(
+            'Sincronizando gasolineras en background para provincia: $provinciaId',
+            tag: 'SyncManager');
+        final nuevasGasolineras =
+            await fetchGasolinerasByProvincia(provinciaId);
 
         final locales = nuevasGasolineras.map((g) {
           return GasolineraLocal()

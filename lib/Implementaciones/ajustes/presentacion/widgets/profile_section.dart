@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
-class ProfileSection extends StatelessWidget {
+class ProfileSection extends StatefulWidget {
   final Uint8List? profileImageBytes;
   final String? profileImageUrl;
   final bool subiendoFoto;
@@ -17,6 +17,23 @@ class ProfileSection extends StatelessWidget {
     required this.nombreUsuario,
     required this.onPickImage,
   });
+
+  @override
+  State<ProfileSection> createState() => _ProfileSectionState();
+}
+
+class _ProfileSectionState extends State<ProfileSection> {
+  bool _imageError = false;
+  String? _lastFailedUrl;
+
+  @override
+  void didUpdateWidget(ProfileSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.profileImageUrl != oldWidget.profileImageUrl ||
+        widget.profileImageBytes != oldWidget.profileImageBytes) {
+      _imageError = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,27 +69,62 @@ class ProfileSection extends StatelessWidget {
           children: [
             // Foto de perfil más grande con indicador de carga
             GestureDetector(
-              onTap: subiendoFoto ? null : onPickImage,
+              onTap: widget.subiendoFoto ? null : widget.onPickImage,
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: profileImageBytes != null
-                        ? MemoryImage(profileImageBytes!) as ImageProvider
-                        : profileImageUrl != null
-                            ? NetworkImage(profileImageUrl!) as ImageProvider
-                            : null,
-                    child: profileImageBytes == null && profileImageUrl == null
-                        ? Icon(
-                            Icons.person,
-                            color: textColor,
-                            size: 40,
-                          )
-                        : null,
+                  ClipOval(
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey,
+                      child: widget.profileImageBytes != null
+                          ? Image.memory(
+                              widget.profileImageBytes!,
+                              fit: BoxFit.cover,
+                            )
+                          : (widget.profileImageUrl != null && !_imageError)
+                              ? Image.network(
+                                  widget.profileImageUrl!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    if (widget.profileImageUrl !=
+                                        _lastFailedUrl) {
+                                      _lastFailedUrl = widget.profileImageUrl;
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        if (mounted) {
+                                          setState(() {
+                                            _imageError = true;
+                                          });
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Error: No se ha podido encontrar la foto de perfil'),
+                                              backgroundColor: Colors.orange,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    }
+                                    return Icon(
+                                      Icons.person,
+                                      color: textColor,
+                                      size: 40,
+                                    );
+                                  },
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  color: textColor,
+                                  size: 40,
+                                ),
+                    ),
                   ),
                   // Loader mientras sube la foto
-                  if (subiendoFoto)
+                  if (widget.subiendoFoto)
                     Positioned.fill(
                       child: Container(
                         decoration: const BoxDecoration(
@@ -94,7 +146,7 @@ class ProfileSection extends StatelessWidget {
                       ),
                     ),
                   // Icono de cámara
-                  if (!subiendoFoto)
+                  if (!widget.subiendoFoto)
                     Positioned(
                       bottom: 0,
                       right: 0,
@@ -136,7 +188,7 @@ class ProfileSection extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                          text: nombreUsuario,
+                          text: widget.nombreUsuario,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],

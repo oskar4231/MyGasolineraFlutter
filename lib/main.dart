@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
 import 'package:flutter/foundation.dart';
@@ -157,7 +158,9 @@ class MyApp extends StatelessWidget {
                     localizationsDelegates:
                         AppLocalizations.localizationsDelegates,
                     supportedLocales: AppLocalizations.supportedLocales,
-                    home: const Inicio(),
+                    home: AuthService.isLoggedIn()
+                        ? const Layouthome()
+                        : const Inicio(),
                   ),
                 );
               },

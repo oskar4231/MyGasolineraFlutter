@@ -142,7 +142,8 @@ class CrashHandler {
         decoration: BoxDecoration(
           color: const Color(0xFF2A2A3E),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: titleColor.withOpacity(0.4), width: 1),
+          border:
+              Border.all(color: titleColor.withValues(alpha: 0.4), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

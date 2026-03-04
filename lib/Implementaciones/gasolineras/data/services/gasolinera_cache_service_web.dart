@@ -21,4 +21,13 @@ class GasolinerasCacheService {
   Future<List<Gasolinera>> getGasolinerasByIds(List<String> ids) async {
     return [];
   }
+
+  Future<List<Gasolinera>> getGasolinerasByBounds({
+    required double swLat,
+    required double swLng,
+    required double neLat,
+    required double neLng,
+  }) async {
+    return [];
+  }
 }

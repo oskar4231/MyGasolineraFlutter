@@ -291,8 +291,21 @@ class GasolineraLogic {
         neLng: neLng,
       );
 
+      if (listaGasolineras.isEmpty) {
+        AppLogger.info(
+          'API devolvió 0 o falló. Intentando cargar desde caché por bounds...',
+          tag: 'GasolineraLogic',
+        );
+        listaGasolineras = await _cacheService.getGasolinerasByBounds(
+          swLat: swLat,
+          swLng: swLng,
+          neLat: neLat,
+          neLng: neLng,
+        );
+      }
+
       AppLogger.debug(
-        'Recibidas ${listaGasolineras.length} gasolineras desde API',
+        'Recibidas ${listaGasolineras.length} gasolineras',
         tag: 'GasolineraLogic',
       );
 

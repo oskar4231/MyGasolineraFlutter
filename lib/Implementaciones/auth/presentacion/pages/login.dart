@@ -64,12 +64,28 @@ class _LoginScreenState extends State<LoginScreen> {
               await AuthService.saveToken(token, email);
               AppLogger.info('Token guardado exitosamente', tag: 'LoginScreen');
 
-              // Sincronizar nombre y foto de perfil en segundo plano sin bloquear la UI
+              // Sincronizar nombre y foto de perfil en segundo plano
               final usuarioService = UsuarioService();
-              usuarioService.obtenerNombreUsuario().catchError((e) => '');
-              usuarioService
-                  .sincronizarFotoPerfilLocal(email)
-                  .catchError((e) => '');
+
+              // Intentar sincronizar nombre
+              usuarioService.obtenerNombreUsuario().then((nombre) {
+                AppLogger.info('Nombre sincronizado tras login: $nombre',
+                    tag: 'LoginScreen');
+              }).catchError((e) {
+                AppLogger.error('Error sincronizando nombre tras login',
+                    tag: 'LoginScreen', error: e);
+                return null;
+              });
+
+              // Sincronizar foto
+              usuarioService.sincronizarFotoPerfilLocal(email).then((_) {
+                AppLogger.info('Foto sincronizada tras login para $email',
+                    tag: 'LoginScreen');
+              }).catchError((e) {
+                AppLogger.error('Error sincronizando foto tras login',
+                    tag: 'LoginScreen', error: e);
+                return null;
+              });
             }
 
             if (mounted) {

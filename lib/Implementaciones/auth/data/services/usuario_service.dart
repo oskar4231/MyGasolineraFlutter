@@ -270,9 +270,17 @@ class UsuarioService {
   /// Descarga y sincroniza la foto del servidor al almacenamiento local seguro
   Future<void> sincronizarFotoPerfilLocal(String email) async {
     try {
-      final fotoData = await cargarImagenPerfil(email);
-      if (fotoData == null) {
-        AppLogger.info('No hay foto remota para sincronizar',
+      final prefs = await SharedPreferences.getInstance();
+      String? fotoData = await cargarImagenPerfil(email);
+
+      // Fallback a SharedPreferences si no viene del backend
+      if (fotoData == null || fotoData.isEmpty) {
+        fotoData = prefs.getString('foto_perfil');
+      }
+
+      if (fotoData == null || fotoData.isEmpty) {
+        AppLogger.info(
+            'No hay imagen para sincronizar (ni en backend ni en caché)',
             tag: 'UsuarioService');
         return;
       }
