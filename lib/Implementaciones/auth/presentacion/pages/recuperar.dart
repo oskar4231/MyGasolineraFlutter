@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/nueva_password.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
@@ -132,10 +131,11 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withOpacity(
-                                      0.3) // Corrected from withValues
-                                  : Colors.black.withOpacity(
-                                      0.04), // Apple shadow // Corrected from withValues
+                                  ? Colors.black.withValues(
+                                      alpha: 0.3) // Corrected from withValues
+                                  : Colors.black.withValues(
+                                      alpha:
+                                          0.04), // Apple shadow // Corrected from withValues
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -173,9 +173,8 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: theme.colorScheme.onSurface
-                                      .withOpacity(
-                                          0.6), // Corrected from withValues
+                                  color: theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.6), // Corrected from withValues
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -191,15 +190,17 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                 decoration: InputDecoration(
                                   hintText: AppLocalizations.of(context)!.email,
                                   hintStyle: TextStyle(
-                                      color: theme.colorScheme.onSurface
-                                          .withOpacity(
+                                      color: theme.colorScheme.onSurface.withValues(
+                                          alpha:
                                               0.5)), // Corrected from withValues
                                   filled: true,
                                   fillColor: isDark
-                                      ? theme.colorScheme.onSurface.withOpacity(
-                                          0.05) // Corrected from withValues
-                                      : theme.colorScheme.primary.withOpacity(
-                                          0.05), // Corrected from withValues
+                                      ? theme.colorScheme.onSurface.withValues(
+                                          alpha:
+                                              0.05) // Corrected from withValues
+                                      : theme.colorScheme.primary.withValues(
+                                          alpha:
+                                              0.05), // Corrected from withValues
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -207,8 +208,9 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withOpacity(
-                                          0.5), // Corrected from withValues
+                                      color: accentColor.withValues(
+                                          alpha:
+                                              0.5), // Corrected from withValues
                                       width: 2,
                                     ),
                                   ),

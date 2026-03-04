@@ -85,8 +85,8 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
                 boxShadow: [
                   BoxShadow(
                     color: isDark
-                        ? Colors.black.withOpacity(0.3)
-                        : Colors.grey.withOpacity(0.2),
+                        ? Colors.black.withValues(alpha: 0.3)
+                        : Colors.grey.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -98,7 +98,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen>
                 indicatorWeight: 3,
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: primaryColor,
-                unselectedLabelColor: textColor.withOpacity(0.6),
+                unselectedLabelColor: textColor.withValues(alpha: 0.6),
                 dividerColor: Colors.transparent,
                 labelStyle: const TextStyle(
                   fontWeight: FontWeight.bold,

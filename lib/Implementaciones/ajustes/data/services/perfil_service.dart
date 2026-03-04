@@ -130,8 +130,11 @@ class PerfilService {
         final fotoPerfil = data['user']['foto_perfil'];
 
         if (fotoPerfil != null && fotoPerfil.isNotEmpty) {
-          // Guardar en SharedPreferences para uso offline
+          // Guardar en SharedPreferences para uso offline y coherencia
           await prefs.setString('foto_perfil', fotoPerfil);
+          AppLogger.debug(
+              'Foto perfil guardada en SharedPreferences: $fotoPerfil',
+              tag: 'PerfilService');
           return fotoPerfil;
         }
       }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
@@ -29,7 +29,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   @override
   void initState() {
     super.initState();
-    _cacheService = GasolinerasCacheService(AppDatabase());
+    _cacheService = app.gasolineraCacheService;
     _cargarDatos();
   }
 
@@ -101,9 +101,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
 
     for (final provinciaId in provinciasIds) {
       try {
-        // Refrescamos caché (esto llama a la API y actualiza la DB local)
-        final nuevas =
-            await _cacheService.getGasolineras(provinciaId, forceRefresh: true);
+        // Refrescamos caché
+        final nuevas = await _cacheService.getGasolineras(provinciaId);
 
         // Si la pantalla sigue abierta, actualizamos los precios en la lista actual
         if (mounted && nuevas.isNotEmpty) {
@@ -273,6 +272,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         const SizedBox(width: 12),
                         ElevatedButton(
                           onPressed: () async {
+                            final nav = Navigator.of(context);
                             final nuevoCombustible =
                                 (combustibleTemp == l10n.todos)
                                     ? null
@@ -291,7 +291,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                               }
                               _aplicarOrden();
                             });
-                            Navigator.pop(context);
+                            nav.pop();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: accentColor,
@@ -401,7 +401,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.star_border,
-              size: 80, color: Colors.grey.withOpacity(0.5)),
+              size: 80, color: Colors.grey.withValues(alpha: 0.5)),
           const SizedBox(height: 16),
           Text(l10n.noHayFavoritos,
               style:
@@ -431,14 +431,14 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.4)
-                : Colors.grey.withOpacity(0.12),
+                ? Colors.black.withValues(alpha: 0.4)
+                : Colors.grey.withValues(alpha: 0.12),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           if (!isDark)
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 1,
               spreadRadius: 1,
             ),
@@ -457,14 +457,14 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                   height: 52,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [accentColor, accentColor.withOpacity(0.8)],
+                      colors: [accentColor, accentColor.withValues(alpha: 0.8)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: accentColor.withOpacity(0.3),
+                        color: accentColor.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       )
@@ -529,9 +529,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    accentColor.withOpacity(0.0),
-                    accentColor.withOpacity(0.2),
-                    accentColor.withOpacity(0.0),
+                    accentColor.withValues(alpha: 0.0),
+                    accentColor.withValues(alpha: 0.2),
+                    accentColor.withValues(alpha: 0.0),
                   ],
                 ),
               ),
@@ -612,12 +612,14 @@ class _PricePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color:
-            isDark ? Colors.white.withOpacity(0.05) : color.withOpacity(0.06),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.05)
+            : color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withOpacity(0.1) : color.withOpacity(0.1),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : color.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -627,7 +629,7 @@ class _PricePill extends StatelessWidget {
           Icon(
             icon,
             size: 14,
-            color: isDark ? color.withOpacity(0.9) : color,
+            color: isDark ? color.withValues(alpha: 0.9) : color,
           ),
           const SizedBox(width: 8),
           Column(
@@ -638,7 +640,7 @@ class _PricePill extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white54 : color.withOpacity(0.8),
+                  color: isDark ? Colors.white54 : color.withValues(alpha: 0.8),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -660,7 +662,9 @@ class _PricePill extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white54 : color.withOpacity(0.6),
+                        color: isDark
+                            ? Colors.white54
+                            : color.withValues(alpha: 0.6),
                       ),
                     ),
                   ],

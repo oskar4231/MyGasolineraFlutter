@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
@@ -191,9 +190,9 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withOpacity(0.3)
+                                  ? Colors.black.withValues(alpha: 0.3)
                                   : Colors.black
-                                      .withOpacity(0.04), // Apple shadow
+                                      .withValues(alpha: 0.04), // Apple shadow
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -231,7 +230,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: theme.colorScheme.onSurface
-                                      .withOpacity(0.6),
+                                      .withValues(alpha: 0.6),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -254,15 +253,15 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   hintStyle: TextStyle(
                                       letterSpacing: 8,
                                       color: theme.colorScheme.onSurface
-                                          .withOpacity(0.3)),
+                                          .withValues(alpha: 0.3)),
                                   labelText: AppLocalizations.of(context)!
                                       .ingresarCodigo,
                                   filled: true,
                                   fillColor: isDark
                                       ? theme.colorScheme.onSurface
-                                          .withOpacity(0.05)
+                                          .withValues(alpha: 0.05)
                                       : theme.colorScheme.primary
-                                          .withOpacity(0.05),
+                                          .withValues(alpha: 0.05),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -270,7 +269,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withOpacity(0.5),
+                                      color: accentColor.withValues(alpha: 0.5),
                                       width: 2,
                                     ),
                                   ),
@@ -307,13 +306,13 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                       .nuevaPassword,
                                   hintStyle: TextStyle(
                                       color: theme.colorScheme.onSurface
-                                          .withOpacity(0.5)),
+                                          .withValues(alpha: 0.5)),
                                   filled: true,
                                   fillColor: isDark
                                       ? theme.colorScheme.onSurface
-                                          .withOpacity(0.05)
+                                          .withValues(alpha: 0.05)
                                       : theme.colorScheme.primary
-                                          .withOpacity(0.05),
+                                          .withValues(alpha: 0.05),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -321,7 +320,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withOpacity(0.5),
+                                      color: accentColor.withValues(alpha: 0.5),
                                       width: 2,
                                     ),
                                   ),
@@ -337,7 +336,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                             ? Icons.visibility_off
                                             : Icons.visibility,
                                         color: theme.colorScheme.onSurface
-                                            .withOpacity(0.6),
+                                            .withValues(alpha: 0.6),
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -379,13 +378,13 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                       .confirmPassword,
                                   hintStyle: TextStyle(
                                       color: theme.colorScheme.onSurface
-                                          .withOpacity(0.5)),
+                                          .withValues(alpha: 0.5)),
                                   filled: true,
                                   fillColor: isDark
                                       ? theme.colorScheme.onSurface
-                                          .withOpacity(0.05)
+                                          .withValues(alpha: 0.05)
                                       : theme.colorScheme.primary
-                                          .withOpacity(0.05),
+                                          .withValues(alpha: 0.05),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -393,7 +392,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide(
-                                      color: accentColor.withOpacity(0.5),
+                                      color: accentColor.withValues(alpha: 0.5),
                                       width: 2,
                                     ),
                                   ),
@@ -409,7 +408,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                             ? Icons.visibility_off
                                             : Icons.visibility,
                                         color: theme.colorScheme.onSurface
-                                            .withOpacity(0.6),
+                                            .withValues(alpha: 0.6),
                                       ),
                                       onPressed: () {
                                         setState(() {

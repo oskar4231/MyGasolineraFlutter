@@ -1,12 +1,19 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/inicio.dart';
+import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:my_gasolinera/core/utils/background_refresh_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:my_gasolinera/core/utils/crash_handler.dart';
 
-import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
+// New Architecture Imports
+import 'package:my_gasolinera/core/database/isar_service.dart';
+import 'package:my_gasolinera/core/sync/sync_manager.dart';
+
+import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/providers/language_provider.dart';
@@ -15,9 +22,12 @@ import 'package:my_gasolinera/core/providers/filter_provider.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// Instancias globales
-late AppDatabase database;
+// Instancias globales Isar / Sync
+late IsarService isarService;
+late SyncManager syncManager;
+late GasolinerasCacheService gasolineraCacheService;
 late BackgroundRefreshService backgroundRefreshService;
+
 final LanguageProvider languageProvider = LanguageProvider();
 final FontSizeProvider fontSizeProvider = FontSizeProvider();
 final FilterProvider filterProvider = FilterProvider();
@@ -27,6 +37,22 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 Future<void> main() async {
+  // Capturar crashes de zona async y mostrar pantalla de error
+  runZonedGuarded(() async {
+    await _initApp();
+  }, (error, stack) async {
+    final details = FlutterErrorDetails(
+      exception: error,
+      stack: stack,
+      library: 'Zona Dart',
+    );
+    final logPath =
+        await CrashHandler.saveCrashLog(error.toString(), stack.toString());
+    runApp(CrashHandler.buildCrashScreen(details, logPath: logPath));
+  });
+}
+
+Future<void> _initApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Cargar variables de entorno
@@ -45,15 +71,25 @@ Future<void> main() async {
   // Inicializar configuración dinámica del backend
   await ConfigService.initialize();
 
-  // Inicializar base de datos (APK o Web según configuración)
-  database = AppDatabase();
-  AppLogger.info(
-      'Base de datos inicializada: ${isAPK ? "SQLite nativo" : "IndexedDB"}',
-      tag: 'Main');
+  // 1. Inicializar base de datos local (Isar solo en nativo, no en web)
+  isarService = IsarService();
+  if (!kIsWeb) {
+    await isarService.db; // Esperar a que abra la DB (solo en APK/nativo)
+    AppLogger.info('Base de datos local Isar inicializada', tag: 'Main');
+  } else {
+    AppLogger.info('Web: sin base de datos local Isar', tag: 'Main');
+  }
 
-  // Inicializar servicio de actualización en segundo plano
-  backgroundRefreshService = BackgroundRefreshService(database);
+  // 2. Inicializar servicios dependientes
+  gasolineraCacheService = GasolinerasCacheService(isarService);
+  syncManager = SyncManager(isarService: isarService);
+
+  // 3. Inicializar servicio de background refresh
+  backgroundRefreshService = BackgroundRefreshService(syncManager);
   backgroundRefreshService.start();
+
+  // 4. Lanzar sincronización en background en el arranque (si está logueado)
+  syncManager.startBackgroundSync();
 
   // Cargar TEMA
   await ThemeManager().loadInitialTheme();
@@ -75,14 +111,21 @@ Future<void> main() async {
 
   // ✅ Optimizaciones de rendimiento para APK (reducir RAM/CPU)
   if (isAPK) {
-    // Reducir caché de imágenes para ahorrar RAM
-    PaintingBinding.instance.imageCache.maximumSize = 50; // Default: 1000
-    PaintingBinding.instance.imageCache.maximumSizeBytes =
-        50 << 20; // 50 MB (Default: 100 MB)
+    PaintingBinding.instance.imageCache.maximumSize = 50;
+    PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20;
 
     AppLogger.info('Optimizaciones de rendimiento APK aplicadas', tag: 'Main');
-    AppLogger.info('- Caché de imágenes: 50 items / 50 MB', tag: 'Main');
   }
+
+  // Capturar errores de Flutter (widgets, rendering, etc.)
+  FlutterError.onError = (details) async {
+    FlutterError.presentError(details);
+    final logPath = await CrashHandler.saveCrashLog(
+      details.exception.toString(),
+      details.stack?.toString() ?? '',
+    );
+    runApp(CrashHandler.buildCrashScreen(details, logPath: logPath));
+  };
 
   runApp(const MyApp());
 }
@@ -115,7 +158,9 @@ class MyApp extends StatelessWidget {
                     localizationsDelegates:
                         AppLocalizations.localizationsDelegates,
                     supportedLocales: AppLocalizations.supportedLocales,
-                    home: const Inicio(),
+                    home: AuthService.isLoggedIn()
+                        ? const Layouthome()
+                        : const Inicio(),
                   ),
                 );
               },
