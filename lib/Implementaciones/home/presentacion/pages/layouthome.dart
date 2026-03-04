@@ -213,6 +213,11 @@ class _LayouthomeState extends State<Layouthome> {
                   ),
                 );
               },
+              onMapListTogglePressed: () {
+                setState(() {
+                  _showMap = !_showMap;
+                });
+              },
               onAjustesPressed: () {
                 Navigator.pushReplacement(
                   context,
@@ -221,6 +226,7 @@ class _LayouthomeState extends State<Layouthome> {
                   ),
                 );
               },
+              isMapMode: _showMap,
             ),
           ],
         ),
@@ -328,7 +334,8 @@ class _GasolinerasListView extends StatelessWidget {
             border: Border(
                 bottom: BorderSide(color: theme.dividerColor, width: 0.5)),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '${listReady.length} gasolineras',
@@ -338,35 +345,36 @@ class _GasolinerasListView extends StatelessWidget {
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
-              const Spacer(),
-              Row(
-                children: [
-                  _OrderButton(
-                    label:
-                        l10n.precioAscendente.split(' ').last, // "Ascendente"
-                    icon: Icons.trending_down,
-                    isSelected: filter.ordenPrecio == 'asc',
-                    onTap: () => filter.setOrdenPrecio(
-                        filter.ordenPrecio == 'asc' ? null : 'asc'),
-                  ),
-                  const SizedBox(width: 8),
-                  _OrderButton(
-                    label:
-                        l10n.precioDescendente.split(' ').last, // "Descendente"
-                    icon: Icons.trending_up,
-                    isSelected: filter.ordenPrecio == 'desc',
-                    onTap: () => filter.setOrdenPrecio(
-                        filter.ordenPrecio == 'desc' ? null : 'desc'),
-                  ),
-                  const SizedBox(width: 8),
-                  _OrderButton(
-                    label: 'Cercanía',
-                    icon: Icons.near_me,
-                    isSelected: filter.ordenPrecio == 'distance',
-                    onTap: () => filter.setOrdenPrecio(
-                        filter.ordenPrecio == 'distance' ? null : 'distance'),
-                  ),
-                ],
+              const SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _OrderButton(
+                      label: l10n.precioAscendente.split(' ').last,
+                      icon: Icons.trending_down,
+                      isSelected: filter.ordenPrecio == 'asc',
+                      onTap: () => filter.setOrdenPrecio(
+                          filter.ordenPrecio == 'asc' ? null : 'asc'),
+                    ),
+                    const SizedBox(width: 8),
+                    _OrderButton(
+                      label: l10n.precioDescendente.split(' ').last,
+                      icon: Icons.trending_up,
+                      isSelected: filter.ordenPrecio == 'desc',
+                      onTap: () => filter.setOrdenPrecio(
+                          filter.ordenPrecio == 'desc' ? null : 'desc'),
+                    ),
+                    const SizedBox(width: 8),
+                    _OrderButton(
+                      label: 'Cercanía',
+                      icon: Icons.near_me,
+                      isSelected: filter.ordenPrecio == 'distance',
+                      onTap: () => filter.setOrdenPrecio(
+                          filter.ordenPrecio == 'distance' ? null : 'distance'),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

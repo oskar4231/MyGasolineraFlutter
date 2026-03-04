@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 
 class HomeBottomBar extends StatelessWidget {
   final VoidCallback onCochesPressed;
+  final VoidCallback onMapListTogglePressed;
   final VoidCallback onAjustesPressed;
+  final bool isMapMode;
 
   const HomeBottomBar({
     super.key,
     required this.onCochesPressed,
+    required this.onMapListTogglePressed,
     required this.onAjustesPressed,
+    this.isMapMode = true,
   });
 
   @override
@@ -32,15 +36,40 @@ class HomeBottomBar extends StatelessWidget {
             icon: Icon(Icons.directions_car,
                 size: 40,
                 color: theme.colorScheme.onPrimary
-                    .withValues(alpha: 0.5)), // No seleccionado - apagado
+                    .withValues(alpha: 0.5)),
           ),
 
-          // Botón de Ubicación (Pin) - Seleccionado
-          IconButton(
-            onPressed: null, // Ya estamos en Mapa
-            icon: Icon(Icons.pin_drop,
-                size: 40,
-                color: theme.colorScheme.onPrimary), // Seleccionado - claro
+          // Botón de Toggle con ambos iconos
+          InkWell(
+            onTap: onMapListTogglePressed,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedOpacity(
+                    opacity: isMapMode ? 1.0 : 0.3,
+                    duration: const Duration(milliseconds: 300),
+                    child: Icon(
+                      Icons.pin_drop,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  AnimatedOpacity(
+                    opacity: !isMapMode ? 1.0 : 0.3,
+                    duration: const Duration(milliseconds: 300),
+                    child: Icon(
+                      Icons.list,
+                      size: 40,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
 
           // Botón de Ajustes
@@ -49,7 +78,7 @@ class HomeBottomBar extends StatelessWidget {
             icon: Icon(Icons.settings,
                 size: 40,
                 color: theme.colorScheme.onPrimary
-                    .withValues(alpha: 0.5)), // No seleccionado - apagado
+                    .withValues(alpha: 0.5)),
           ),
         ],
       ),
