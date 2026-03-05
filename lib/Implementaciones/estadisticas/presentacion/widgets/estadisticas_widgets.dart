@@ -45,8 +45,8 @@ class EstadisticasWidgets {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.2),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -71,7 +71,7 @@ class EstadisticasWidgets {
                   title,
                   style: TextStyle(
                     fontSize: 14,
-                    color: textClr.withOpacity(0.6),
+                    color: textClr.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -89,7 +89,7 @@ class EstadisticasWidgets {
                   subtitle,
                   style: TextStyle(
                     fontSize: 12,
-                    color: textClr.withOpacity(0.6),
+                    color: textClr.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -120,8 +120,8 @@ class EstadisticasWidgets {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.2),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -167,7 +167,7 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.mesActual,
                     style: TextStyle(
-                        fontSize: 12, color: textClr.withOpacity(0.6)),
+                        fontSize: 12, color: textClr.withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(mesActual)}',
@@ -190,7 +190,7 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.mesAnterior,
                     style: TextStyle(
-                        fontSize: 12, color: textClr.withOpacity(0.6)),
+                        fontSize: 12, color: textClr.withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(mesAnterior)}',
@@ -262,8 +262,8 @@ class EstadisticasWidgets {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.2),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -309,7 +309,7 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.gastoActual,
                     style: TextStyle(
-                        fontSize: 12, color: textClr.withOpacity(0.6)),
+                        fontSize: 12, color: textClr.withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(gastoActual)}',
@@ -327,7 +327,7 @@ class EstadisticasWidgets {
                   Text(
                     AppLocalizations.of(context)!.proyeccion,
                     style: TextStyle(
-                        fontSize: 12, color: textClr.withOpacity(0.6)),
+                        fontSize: 12, color: textClr.withValues(alpha: 0.6)),
                   ),
                   Text(
                     '€${_formatNumber(proyeccionFin)}',
@@ -352,7 +352,7 @@ class EstadisticasWidgets {
                     AppLocalizations.of(context)!
                         .diaXdeY(diasTranscurridos, diasTotales),
                     style: TextStyle(
-                        fontSize: 12, color: textClr.withOpacity(0.6)),
+                        fontSize: 12, color: textClr.withValues(alpha: 0.6)),
                   ),
                   Text(
                     '${(progreso * 100).toStringAsFixed(0)}%',

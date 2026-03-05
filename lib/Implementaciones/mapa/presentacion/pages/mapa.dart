@@ -20,7 +20,7 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
   @override
   void initState() {
     super.initState();
-    _cacheService = GasolinerasCacheService(app.database);
+    _cacheService = app.gasolineraCacheService;
   }
 
   /// 🆕 Actualiza la provincia actual en el AppBar

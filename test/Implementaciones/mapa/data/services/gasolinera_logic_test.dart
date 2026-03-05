@@ -1,11 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';  // ⬅️ NUEVO: Importar Mocktail
+import 'package:mocktail/mocktail.dart'; // ⬅️ NUEVO: Importar Mocktail
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/gasolinera_logic.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 
 // 🎭 NUEVO: Crear un Mock (fake) de GasolinerasCacheService
-class MockGasolinerasCacheService extends Mock implements GasolinerasCacheService {}
+class MockGasolinerasCacheService extends Mock
+    implements GasolinerasCacheService {}
 
 void main() {
   // 🎭 Datos de prueba: Creamos gasolineras fake para testear
@@ -17,7 +18,7 @@ void main() {
     lng: -3.7038,
     provincia: 'Madrid',
     horario: 'L-D: 08:00-22:00',
-    gasolina95: 1.30,  // ⚠️ BARATA
+    gasolina95: 1.30, // ⚠️ BARATA
     gasolina95E10: 0,
     gasolina98: 0,
     gasoleoA: 1.20,
@@ -36,8 +37,8 @@ void main() {
     lat: 40.4168,
     lng: -3.7038,
     provincia: 'Madrid',
-    horario: 'L-D: 24H',  // ⚠️ 24 HORAS
-    gasolina95: 1.80,  // ⚠️ CARA
+    horario: 'L-D: 24H', // ⚠️ 24 HORAS
+    gasolina95: 1.80, // ⚠️ CARA
     gasolina95E10: 0,
     gasolina98: 0,
     gasoleoA: 1.70,
@@ -57,7 +58,7 @@ void main() {
     lng: -3.7038,
     provincia: 'Madrid',
     horario: 'L-D: 08:00-22:00',
-    gasolina95: 0,  // ⚠️ NO TIENE GASOLINA
+    gasolina95: 0, // ⚠️ NO TIENE GASOLINA
     gasolina95E10: 0,
     gasolina98: 0,
     gasoleoA: 1.40,
@@ -100,11 +101,12 @@ void main() {
       expect(resultado.first.rotulo, 'Gasolinera Barata');
     });
 
-    test('Filtro de combustible: debe excluir gasolineras sin ese combustible', () {
+    test('Filtro de combustible: debe excluir gasolineras sin ese combustible',
+        () {
       final todasLasGasolineras = [
         gasolineraBarata,
         gasolineraCara,
-        gasolineraSinGasolina,  // Esta NO tiene Gasolina 95
+        gasolineraSinGasolina, // Esta NO tiene Gasolina 95
       ];
 
       final resultado = logic.aplicarFiltros(
@@ -114,14 +116,14 @@ void main() {
 
       // Solo deben quedar 2 (la barata y la cara)
       expect(resultado.length, 2);
-      expect(resultado.any((g) => g.id == '3'), false);  // La '3' NO debe estar
+      expect(resultado.any((g) => g.id == '3'), false); // La '3' NO debe estar
     });
 
     test('Filtro de apertura: debe filtrar solo 24 horas', () {
       final todasLasGasolineras = [
-        gasolineraBarata,  // NO es 24h
-        gasolineraCara,    // SÍ es 24h
-        gasolineraSinGasolina,  // NO es 24h
+        gasolineraBarata, // NO es 24h
+        gasolineraCara, // SÍ es 24h
+        gasolineraSinGasolina, // NO es 24h
       ];
 
       final resultado = logic.aplicarFiltros(
@@ -130,11 +132,15 @@ void main() {
       );
 
       expect(resultado.length, 1);
-      expect(resultado.first.id, '2');  // Solo la cara (24h)
+      expect(resultado.first.id, '2'); // Solo la cara (24h)
     });
 
     test('Filtro combinado: combustible + precio + horario', () {
-      final todasLasGasolineras = [gasolineraBarata, gasolineraCara, gasolineraSinGasolina];
+      final todasLasGasolineras = [
+        gasolineraBarata,
+        gasolineraCara,
+        gasolineraSinGasolina
+      ];
       final resultado = logic.aplicarFiltros(
         todasLasGasolineras,
         combustibleSeleccionado: 'Gasolina 95',
@@ -145,7 +151,7 @@ void main() {
       expect(resultado.length, 0);
     });
 
-     test('Debe parsear correctamente horario L-V y S-D diferentes', () {
+    test('Debe parsear correctamente horario L-V y S-D diferentes', () {
       // Simular un Lunes a las 10:00 (debería estar abierta)
       final json = {
         'IDEESS': '1',
@@ -181,7 +187,7 @@ void main() {
         'Dirección': 'Test',
         'Latitud': '40.4168',
         'Longitud (WGS84)': '-3.7038',
-        'Horario': 'L-D: 22:00-06:00',  // Cruza medianoche
+        'Horario': 'L-D: 22:00-06:00', // Cruza medianoche
         'Precio Gasolina 95 E5': '0',
         'Precio Gasolina 95 E10': '0',
         'Precio Gasolina 98 E5': '0',
@@ -197,7 +203,7 @@ void main() {
       final gasolinera = Gasolinera.fromJson(json);
       // Verificar que no es 24h (tiene horario limitado)
       expect(gasolinera.es24Horas, false);
-      
+
       // Verificar que no crashea al calcular
       expect(() => gasolinera.estaAbiertaAhora, returnsNormally);
     });
@@ -209,7 +215,7 @@ void main() {
         'Dirección': 'Test',
         'Latitud': '40.4168',
         'Longitud (WGS84)': '-3.7038',
-        'Horario': '',  // Vacío
+        'Horario': '', // Vacío
         'Precio Gasolina 95 E5': '0',
         'Precio Gasolina 95 E10': '0',
         'Precio Gasolina 98 E5': '0',
@@ -228,33 +234,33 @@ void main() {
     });
 
     test('Filtro de precio: debe manejar rango inválido (desde > hasta)', () {
-        final todasLasGasolineras = [gasolineraBarata, gasolineraCara];
-        // precioDesde (1.80) > precioHasta (1.30) = rango inválido
-        final resultado = logic.aplicarFiltros(
-            todasLasGasolineras,
-            combustibleSeleccionado: 'Gasolina 95',
-            precioDesde: 1.80,
-        precioHasta: 1.30,
-    );
-    // Debería devolver lista vacía (ninguna cumple)
-    expect(resultado.length, 0);
-    });
-
-    test('Filtro de precio: debe manejar rango inválido (desde > hasta)', () {
-    final todasLasGasolineras = [gasolineraBarata, gasolineraCara];
-    // precioDesde (1.80) > precioHasta (1.30) = rango inválido
-    final resultado = logic.aplicarFiltros(
+      final todasLasGasolineras = [gasolineraBarata, gasolineraCara];
+      // precioDesde (1.80) > precioHasta (1.30) = rango inválido
+      final resultado = logic.aplicarFiltros(
         todasLasGasolineras,
         combustibleSeleccionado: 'Gasolina 95',
         precioDesde: 1.80,
         precioHasta: 1.30,
-    );
-    // Debería devolver lista vacía (ninguna cumple)
-    expect(resultado.length, 0);
+      );
+      // Debería devolver lista vacía (ninguna cumple)
+      expect(resultado.length, 0);
+    });
+
+    test('Filtro de precio: debe manejar rango inválido (desde > hasta)', () {
+      final todasLasGasolineras = [gasolineraBarata, gasolineraCara];
+      // precioDesde (1.80) > precioHasta (1.30) = rango inválido
+      final resultado = logic.aplicarFiltros(
+        todasLasGasolineras,
+        combustibleSeleccionado: 'Gasolina 95',
+        precioDesde: 1.80,
+        precioHasta: 1.30,
+      );
+      // Debería devolver lista vacía (ninguna cumple)
+      expect(resultado.length, 0);
     });
 
     test('Filtro debe excluir gasolineras con todos los precios en 0', () {
-    final gasolineraSinPrecios = Gasolinera(
+      final gasolineraSinPrecios = Gasolinera(
         id: '999',
         rotulo: 'Sin Precios',
         direccion: 'Test',
@@ -262,7 +268,7 @@ void main() {
         lng: -3.7038,
         provincia: 'Madrid',
         horario: 'L-D: 08:00-22:00',
-        gasolina95: 0,  // ⚠️ Todos en 0
+        gasolina95: 0, // ⚠️ Todos en 0
         gasolina95E10: 0,
         gasolina98: 0,
         gasoleoA: 0,
@@ -272,28 +278,30 @@ void main() {
         bioetanol: 0,
         esterMetilico: 0,
         hidrogeno: 0,
-    );
-    final todasLasGasolineras = [gasolineraBarata, gasolineraSinPrecios];
-    final resultado = logic.aplicarFiltros(
+      );
+      final todasLasGasolineras = [gasolineraBarata, gasolineraSinPrecios];
+      final resultado = logic.aplicarFiltros(
         todasLasGasolineras,
         combustibleSeleccionado: 'Gasolina 95',
-    );
-    // Solo debe quedar la barata (la otra tiene precio 0)
-    expect(resultado.length, 1);
-    expect(resultado.first.id, '1');
+      );
+      // Solo debe quedar la barata (la otra tiene precio 0)
+      expect(resultado.length, 1);
+      expect(resultado.first.id, '1');
     });
 
-    test('Filtro triple: debe aplicar combustible + precio + apertura correctamente', () {
-    // Crear gasolinera que cumple TODOS los criterios
-    final gasolineraPerfecta = Gasolinera(
+    test(
+        'Filtro triple: debe aplicar combustible + precio + apertura correctamente',
+        () {
+      // Crear gasolinera que cumple TODOS los criterios
+      final gasolineraPerfecta = Gasolinera(
         id: '100',
         rotulo: 'Perfecta',
         direccion: 'Test',
         lat: 40.4168,
         lng: -3.7038,
         provincia: 'Madrid',
-        horario: 'L-D: 24H',  // ✅ 24 horas
-        gasolina95: 1.40,  // ✅ Precio medio
+        horario: 'L-D: 24H', // ✅ 24 horas
+        gasolina95: 1.40, // ✅ Precio medio
         gasolina95E10: 0,
         gasolina98: 0,
         gasoleoA: 0,
@@ -303,39 +311,39 @@ void main() {
         bioetanol: 0,
         esterMetilico: 0,
         hidrogeno: 0,
-    );
-    final todasLasGasolineras = [
-        gasolineraBarata,  // NO cumple (no es 24h)
-        gasolineraCara,    // NO cumple (precio muy alto)
-        gasolineraPerfecta,  // ✅ CUMPLE TODO
-    ];
-    final resultado = logic.aplicarFiltros(
+      );
+      final todasLasGasolineras = [
+        gasolineraBarata, // NO cumple (no es 24h)
+        gasolineraCara, // NO cumple (precio muy alto)
+        gasolineraPerfecta, // ✅ cumple todos los criterios
+      ];
+      final resultado = logic.aplicarFiltros(
         todasLasGasolineras,
         combustibleSeleccionado: 'Gasolina 95',
         precioDesde: 1.30,
         precioHasta: 1.50,
         tipoAperturaSeleccionado: '24 Horas',
-    );
-    // Solo debe quedar la perfecta
-    expect(resultado.length, 1);
-    expect(resultado.first.id, '100');
-    expect(resultado.first.rotulo, 'Perfecta');
+      );
+      // Solo debe quedar la perfecta
+      expect(resultado.length, 1);
+      expect(resultado.first.id, '100');
+      expect(resultado.first.rotulo, 'Perfecta');
     });
 
     test('Filtro sin parámetros debe devolver todas las gasolineras', () {
-    final todasLasGasolineras = [
+      final todasLasGasolineras = [
         gasolineraBarata,
         gasolineraCara,
         gasolineraSinGasolina,
-    ];
-    // Llamar sin ningún filtro
-    final resultado = logic.aplicarFiltros(
+      ];
+      // Llamar sin ningún filtro
+      final resultado = logic.aplicarFiltros(
         todasLasGasolineras,
         // Todos los parámetros opcionales = null
-    );
-    // Debe devolver TODAS (sin filtrar)
-    expect(resultado.length, 3);
-    expect(resultado, equals(todasLasGasolineras));
+      );
+      // Debe devolver TODAS (sin filtrar)
+      expect(resultado.length, 3);
+      expect(resultado, equals(todasLasGasolineras));
     });
   });
 }

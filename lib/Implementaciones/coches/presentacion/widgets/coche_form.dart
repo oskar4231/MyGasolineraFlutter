@@ -238,7 +238,7 @@ class _CocheFormState extends State<CocheForm> {
                 ),
                 dropdownColor: isDark ? const Color(0xFF3E3E42) : null,
                 style: TextStyle(color: textColor),
-                value: _selectedMarcaId,
+                initialValue: _selectedMarcaId,
                 items: marcas
                     .map<DropdownMenuItem<int>>((m) => DropdownMenuItem(
                         value: m['id'], child: Text(m['nombre'])))
@@ -284,7 +284,7 @@ class _CocheFormState extends State<CocheForm> {
                 ),
                 dropdownColor: isDark ? const Color(0xFF3E3E42) : null,
                 style: TextStyle(color: textColor),
-                value: _selectedModeloId,
+                initialValue: _selectedModeloId,
                 items: modelos
                     .map<DropdownMenuItem<int>>((m) => DropdownMenuItem(
                         value: m['id'], child: Text(m['nombre'])))
@@ -337,7 +337,7 @@ class _CocheFormState extends State<CocheForm> {
                   ),
                   dropdownColor: isDark ? const Color(0xFF3E3E42) : null,
                   style: TextStyle(color: textColor),
-                  value: _selectedMotorizacion,
+                  initialValue: _selectedMotorizacion,
                   items: motorizaciones
                       .map<DropdownMenuItem<dynamic>>((moto) =>
                           DropdownMenuItem(

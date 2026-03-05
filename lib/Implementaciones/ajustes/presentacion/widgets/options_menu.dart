@@ -25,7 +25,7 @@ class OptionsMenu extends StatelessWidget {
     final lighterCardColor = isDark
         ? const Color(0xFF3E3E42)
         : Color.lerp(cardColor, Colors.white, 0.25);
-    final borderColor = isDark ? Colors.white10 : Colors.grey.withOpacity(0.2);
+    final borderColor = isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.2);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,8 +46,8 @@ class OptionsMenu extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: isDark
-                    ? Colors.black.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.2),
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : Colors.grey.withValues(alpha: 0.2),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -145,8 +145,8 @@ class _OptionItem extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        hoverColor: primaryColor.withOpacity(0.1),
-        splashColor: primaryColor.withOpacity(0.2),
+        hoverColor: primaryColor.withValues(alpha: 0.1),
+        splashColor: primaryColor.withValues(alpha: 0.2),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           child: Row(
@@ -154,7 +154,7 @@ class _OptionItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
+                  color: primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icono, color: primaryColor),
@@ -173,7 +173,7 @@ class _OptionItem extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: textColor.withOpacity(0.5),
+                color: textColor.withValues(alpha: 0.5),
               ),
             ],
           ),

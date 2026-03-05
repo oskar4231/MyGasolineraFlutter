@@ -21,6 +21,8 @@ class HttpHelper {
   static Map<String, String> getLanguageHeaders() {
     return {
       'Accept-Language': languageProvider.languageCode,
+      'ngrok-skip-browser-warning':
+          'true', // Evita que Ngrok devuelva HTML rompiendo el JSON
     };
   }
 

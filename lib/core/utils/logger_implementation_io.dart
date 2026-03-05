@@ -30,14 +30,15 @@ Future<Logger> createLogger() async {
   }
 
   return Logger(
-    filter: ProductionFilter(), // Dejar pasar siempre los logs (no ignorarlos en AppRelease)
+    filter:
+        ProductionFilter(), // Dejar pasar siempre los logs (no ignorarlos en AppRelease)
     printer: PrettyPrinter(
       methodCount: 2,
       errorMethodCount: 8,
       lineLength: 80,
       colors: true,
       printEmojis: true,
-      printTime: true,
+      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
     ),
     output: MultiOutput(outputs),
   );

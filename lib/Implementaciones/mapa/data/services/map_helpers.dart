@@ -42,24 +42,23 @@ class MarkerHelper {
 
     // 1. Load standard icon (Normal)
     try {
-      // Intentar procesar (redimensionar + trim)
-      // Usamos 140px como base, el trim lo reducirá al tamaño real del dibujo
       final Uint8List iconBytes = await processIcon(
         'assets/images/iconoFinal.png',
         140,
       );
-      _gasStationIcon = BitmapDescriptor.fromBytes(iconBytes);
+      _gasStationIcon = BitmapDescriptor.bytes(iconBytes);
       AppLogger.info('Icono normal procesado (Resize+Trim)', tag: 'MapHelpers');
     } catch (e) {
       AppLogger.warning('Error procesando icono normal, usando fallback',
           tag: 'MapHelpers', error: e);
-
       try {
-        _gasStationIcon = await BitmapDescriptor.fromAssetImage(
+        _gasStationIcon = await BitmapDescriptor.asset(
           config,
           'assets/images/iconoFinal.png',
         );
-      } catch (e2) {}
+      } catch (e2) {
+        // Fallback no disponible, se usará marcador por defecto
+      }
     }
 
     // 2. Load favorite icon (Favorito)
@@ -68,19 +67,20 @@ class MarkerHelper {
         'assets/images/iconoFavFinal.png',
         120,
       );
-      _favoriteGasStationIcon = BitmapDescriptor.fromBytes(favIconBytes);
+      _favoriteGasStationIcon = BitmapDescriptor.bytes(favIconBytes);
       AppLogger.info('Icono favorito procesado (Resize+Trim)',
           tag: 'MapHelpers');
     } catch (e) {
       AppLogger.warning('Error procesando icono favorito, usando fallback',
           tag: 'MapHelpers', error: e);
-
       try {
-        _favoriteGasStationIcon = await BitmapDescriptor.fromAssetImage(
+        _favoriteGasStationIcon = await BitmapDescriptor.asset(
           config,
           'assets/images/iconoFavFinal.png',
         );
-      } catch (e2) {}
+      } catch (e2) {
+        // Fallback no disponible, se usará marcador por defecto
+      }
     }
   }
 
@@ -114,7 +114,7 @@ class MarkerHelper {
       icon: icon,
       anchor:
           const Offset(0.5, 1.0), // 🔷 Anchor en la base central para precisión
-      zIndex: esFavorita ? 10.0 : 1.0, // 🔷 Favoritas siempre encima
+      zIndexInt: esFavorita ? 10 : 1, // 🔷 Favoritas siempre encima
       onTap: markersEnabled
           ? () {
               onTap(gasolinera, esFavorita);

@@ -268,18 +268,18 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
           children: [
             OutlinedButton(
               onPressed: _toggleSelectAll,
-              child: Text(
-                allSelected ? l10n.deseleccionar : l10n.seleccionarTodo,
-                style: TextStyle(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 side: BorderSide(color: theme.primaryColor),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                allSelected ? l10n.deseleccionar : l10n.seleccionarTodo,
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

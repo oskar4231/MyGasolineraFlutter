@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/core/config/api_config.dart';
+import 'package:my_gasolinera/core/security/auth_storage.dart';
 import 'package:my_gasolinera/core/utils/http_helper.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/utils/local_image_service.dart';
@@ -18,9 +19,8 @@ class UsuarioService {
         throw Exception('Usuario no autenticado');
       }
 
-      // Obtener token si existe
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('authToken') ?? '';
+      // Obtener token desde almacenamiento cifrado
+      final token = await AuthStorage.getToken() ?? '';
 
       final url = ApiConfig.getUrl('/usuarios/perfil/$email');
       AppLogger.debug('Obteniendo nombre de usuario desde: $url',
@@ -59,7 +59,8 @@ class UsuarioService {
 
         AppLogger.debug('Nombre obtenido: $nombre', tag: 'UsuarioService');
 
-        // Guardar el nombre localmente
+        // Guardar el nombre localmente (no sensible, SharedPreferences es OK)
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString('userName', nombre);
 
         return nombre;
@@ -106,9 +107,8 @@ class UsuarioService {
             tag: 'UsuarioService');
       }
 
-      // Obtener el token si lo necesitas para autorización
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('authToken') ?? '';
+      // Obtener el token desde almacenamiento cifrado
+      final token = await AuthStorage.getToken() ?? '';
 
       final url = ApiConfig.getUrl('/usuarios/$emailFormateado');
       AppLogger.debug('URL construida: $url', tag: 'UsuarioService');
@@ -178,20 +178,20 @@ class UsuarioService {
 
   /// Limpia todos los datos locales del usuario
   Future<void> limpiarDatosUsuario() async {
+    // Borrar credenciales sensibles del almacenamiento cifrado
+    await AuthStorage.clearCredentials();
+    await AuthService.logout();
+    // Borrar datos no-sensibles de SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userEmail');
-    await prefs.remove('authToken');
     await prefs.remove('userName');
     await prefs.remove('userPhone');
-    await prefs.remove('userId');
   }
 
   /// Obtiene la foto de perfil del usuario desde el backend
   Future<String?> cargarImagenPerfil(String email) async {
     try {
-      // Obtener el token de autenticación
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('authToken') ?? '';
+      // Obtener el token desde almacenamiento cifrado
+      final token = await AuthStorage.getToken() ?? '';
 
       if (token.isEmpty) {
         throw Exception('No hay sesión activa');
@@ -270,25 +270,39 @@ class UsuarioService {
   /// Descarga y sincroniza la foto del servidor al almacenamiento local seguro
   Future<void> sincronizarFotoPerfilLocal(String email) async {
     try {
-      final fotoData = await cargarImagenPerfil(email);
-      if (fotoData == null) {
-        AppLogger.info('No hay foto remota para sincronizar', tag: 'UsuarioService');
+      final prefs = await SharedPreferences.getInstance();
+      String? fotoData = await cargarImagenPerfil(email);
+
+      // Fallback a SharedPreferences si no viene del backend
+      if (fotoData == null || fotoData.isEmpty) {
+        fotoData = prefs.getString('foto_perfil');
+      }
+
+      if (fotoData == null || fotoData.isEmpty) {
+        AppLogger.info(
+            'No hay imagen para sincronizar (ni en backend ni en caché)',
+            tag: 'UsuarioService');
         return;
       }
 
       Uint8List? bytes;
 
       if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
-        final base64String = fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
+        final base64String =
+            fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
         bytes = base64Decode(base64String);
       } else if (fotoData.startsWith('http')) {
         // Es URL: descargar la imagen manejando el SSL warning de ngrok
-        AppLogger.debug('Descargando imagen para sincronizar: $fotoData', tag: 'UsuarioService');
-        final response = await http.get(Uri.parse(fotoData), headers: ApiConfig.headers);
+        AppLogger.debug('Descargando imagen para sincronizar: $fotoData',
+            tag: 'UsuarioService');
+        final response =
+            await http.get(Uri.parse(fotoData), headers: ApiConfig.headers);
         if (response.statusCode == 200) {
           bytes = response.bodyBytes;
         } else {
-          AppLogger.error('Fallo al descargar la imagen remota: ${response.statusCode}', tag: 'UsuarioService');
+          AppLogger.error(
+              'Fallo al descargar la imagen remota: ${response.statusCode}',
+              tag: 'UsuarioService');
           return;
         }
       } else {
@@ -298,11 +312,13 @@ class UsuarioService {
 
       if (bytes.isNotEmpty) {
         await LocalImageService.saveImageBytes(bytes, 'perfil', email);
-        AppLogger.info('Foto perfil correctamente sincronizada localmente para $email', tag: 'UsuarioService');
+        AppLogger.info(
+            'Foto perfil correctamente sincronizada localmente para $email',
+            tag: 'UsuarioService');
       }
-
     } catch (e) {
-      AppLogger.error('Error sincronizando foto de perfil localmente', tag: 'UsuarioService', error: e);
+      AppLogger.error('Error sincronizando foto de perfil localmente',
+          tag: 'UsuarioService', error: e);
     }
   }
 }

@@ -34,12 +34,12 @@ class _LayouthomeState extends State<Layouthome> {
   // Lista de gasolineras cargadas del mapa (compartida con vista de lista)
   List<Gasolinera> _gasolinerasCargadas = [];
   geo.Position? _currentPosition;
-  bool _showMap = true;
+  final bool _showMap = true;
 
   @override
   void initState() {
     super.initState();
-    _cacheService = GasolinerasCacheService(app.database);
+    _cacheService = app.gasolineraCacheService;
   }
 
   void _mostrarFiltroPrecio() async {

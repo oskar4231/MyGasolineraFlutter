@@ -8,6 +8,7 @@ import 'package:my_gasolinera/core/config/config_service.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/utils/local_image_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart'; // For navigation in delete
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart'; // For BuildContext and SnackBar
 
 class AjustesController {
@@ -47,20 +48,44 @@ class AjustesController {
 
   Future<dynamic> cargarFotoPerfilRemota() async {
     try {
-      final fotoData = await _usuarioService.cargarImagenPerfil(emailUsuario);
-      if (fotoData == null) return null;
+      // 1. Intentar cargar desde SharedPreferences la URL/Path
+      final prefs = await SharedPreferences.getInstance();
+      String? fotoData = prefs.getString('foto_perfil');
 
+      // 2. Si no hay en prefs, consultar al backend
+      if (fotoData == null || fotoData.isEmpty) {
+        fotoData = await _usuarioService.cargarImagenPerfil(emailUsuario);
+      }
+
+      if (fotoData == null || fotoData.isEmpty) return null;
+
+      // 3. Si tenemos la data, intentar sincronizarla a local en segundo plano si no existe
+      final localBytes =
+          await LocalImageService.getImageBytes('perfil', emailUsuario);
+      if (localBytes == null) {
+        AppLogger.info('Iniciando sincronización reactiva de imagen...',
+            tag: 'AjustesController');
+        _usuarioService
+            .sincronizarFotoPerfilLocal(emailUsuario)
+            .catchError((e) {
+          AppLogger.error('Error en sincronización reactiva',
+              tag: 'AjustesController', error: e);
+          return null;
+        });
+      }
+
+      // 4. Retornar para visualización inmediata
       if (fotoData.startsWith('data:image') || fotoData.contains('base64')) {
         final base64String =
             fotoData.contains(',') ? fotoData.split(',')[1] : fotoData;
         return base64Decode(base64String);
       } else if (fotoData.startsWith('http')) {
-        return fotoData; // Return URL string
+        return fotoData; // Retornar URL
       } else {
         return base64Decode(fotoData);
       }
     } catch (e) {
-      AppLogger.error('Error cargando foto remota',
+      AppLogger.error('Error cargando foto remota/sincronizando',
           tag: 'AjustesScreen', error: e);
       return null;
     }

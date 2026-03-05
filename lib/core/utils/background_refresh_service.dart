@@ -1,109 +1,76 @@
 import 'dart:async';
 import 'package:flutter/widgets.dart';
-import 'package:my_gasolinera/core/database/bbdd_intermedia/base_datos.dart';
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/provincia_service.dart';
+import 'package:my_gasolinera/core/sync/sync_manager.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
-/// Servicio para actualizar el cache de gasolineras en segundo plano
+/// Servicio para actualizar datos en segundo plano
 class BackgroundRefreshService {
-  final GasolinerasCacheService _cacheService;
+  final SyncManager _syncManager;
 
   Timer? _refreshTimer;
   bool _isPaused = false;
 
-  /// ✅ OPTIMIZACIÓN: Intervalo aumentado de 10-15 min a 20 min
-  /// Reduce uso de CPU/batería sin afectar UX
+  /// Intervalo general de revisiones en background
   static const int refreshIntervalMinutes = 20;
 
-  BackgroundRefreshService(AppDatabase db)
-      : _cacheService = GasolinerasCacheService(db);
+  BackgroundRefreshService(this._syncManager);
 
   /// Inicia el servicio de actualización en segundo plano
   void start() {
     AppLogger.info(
-        'Iniciando actualización cada $refreshIntervalMinutes minutos',
+        'Iniciando servicio de sync en background cada $refreshIntervalMinutes minutos',
         tag: 'BackgroundRefresh');
 
     _refreshTimer?.cancel();
     _isPaused = false;
     _refreshTimer = Timer.periodic(
-      Duration(minutes: refreshIntervalMinutes),
+      const Duration(minutes: refreshIntervalMinutes),
       (timer) => _performRefresh(),
     );
   }
 
   /// Detiene el servicio de actualización
   void stop() {
-    AppLogger.info('Deteniendo actualización', tag: 'BackgroundRefresh');
+    AppLogger.info('Deteniendo servicio de sync', tag: 'BackgroundRefresh');
     _refreshTimer?.cancel();
     _refreshTimer = null;
     _isPaused = false;
   }
 
-  /// ✅ OPTIMIZACIÓN: Pausar actualizaciones cuando app está en background
+  /// Pausar actualizaciones cuando app está en background
   void pause() {
-    AppLogger.info('Pausando actualizaciones (app en background)',
+    AppLogger.info('Pausando sync (app en background)',
         tag: 'BackgroundRefresh');
     _isPaused = true;
   }
 
-  /// ✅ OPTIMIZACIÓN: Reanudar actualizaciones cuando app vuelve a foreground
+  /// Reanudar actualizaciones cuando app vuelve a foreground
   void resume() {
-    AppLogger.info('Reanudando actualizaciones (app en foreground)',
+    AppLogger.info('Reanudando sync (app en foreground)',
         tag: 'BackgroundRefresh');
     _isPaused = false;
-    // Actualizar inmediatamente al volver
     _performRefresh();
   }
 
-  /// Realiza la actualización del cache
+  /// Realiza la sincronización controlada por el SyncManager
   Future<void> _performRefresh() async {
-    // ✅ OPTIMIZACIÓN: No actualizar si la app está en background
     if (_isPaused) {
-      AppLogger.info('Actualización omitida (app pausada)',
-          tag: 'BackgroundRefresh');
+      AppLogger.info('Sync omitida (app pausada)', tag: 'BackgroundRefresh');
       return;
     }
 
-    // ✅ OPTIMIZACIÓN: Verificar estado del ciclo de vida
     final lifecycleState = WidgetsBinding.instance.lifecycleState;
     if (lifecycleState != null && lifecycleState != AppLifecycleState.resumed) {
-      AppLogger.info('Actualización omitida (app no está activa)',
+      AppLogger.info('Sync omitida (app no está activa)',
           tag: 'BackgroundRefresh');
       return;
     }
 
     try {
-      AppLogger.info('Iniciando actualización de cache...',
-          tag: 'BackgroundRefresh');
-
-      // Obtener última provincia conocida
-      final provinciaInfo = await ProvinciaService.getLastKnownProvincia();
-
-      if (provinciaInfo == null) {
-        AppLogger.info('No hay provincia conocida, saltando actualización',
-            tag: 'BackgroundRefresh');
-        return;
-      }
-
-      // Actualizar provincia actual
-      await _cacheService.refreshCache(provinciaInfo.id);
-
-      // Actualizar provincias vecinas (para viajes)
-      final vecinas = ProvinciaService.getProvinciasVecinas(provinciaInfo.id);
-      for (final vecinaId in vecinas.take(2)) {
-        // Solo las 2 más cercanas
-        await _cacheService.refreshCache(vecinaId);
-      }
-
-      // Limpiar cache antiguo
-      await _cacheService.cleanOldCache();
-
-      AppLogger.info('Actualización completada exitosamente',
-          tag: 'BackgroundRefresh');
+      AppLogger.info('Disparando SyncManager...', tag: 'BackgroundRefresh');
+      await _syncManager.startBackgroundSync();
     } catch (e) {
-      AppLogger.error('Error durante actualización',
+      AppLogger.error('Error durante sync background',
           tag: 'BackgroundRefresh', error: e);
     }
   }
