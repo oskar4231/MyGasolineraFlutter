@@ -33,14 +33,39 @@ class GasolineraLogic {
   }
 
   /// Alterna el estado de favorito de una gasolinera
-  Future<void> toggleFavorito(String gasolineraId) async {
+  Future<void> toggleFavorito(String gasolineraId,
+      {String idProvincia = ''}) async {
     final prefs = await SharedPreferences.getInstance();
     final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
 
     if (idsFavoritos.contains(gasolineraId)) {
       idsFavoritos.remove(gasolineraId);
+
+      // Eliminar también de la persistencia de provincias
+      final provinciaMap = Map<String, String>.fromEntries(
+        (prefs.getStringList('favoritas_provincias') ?? []).map((e) {
+          final parts = e.split('|');
+          return MapEntry(parts[0], parts.length > 1 ? parts[1] : '');
+        }),
+      );
+      provinciaMap.remove(gasolineraId);
+      await prefs.setStringList('favoritas_provincias',
+          provinciaMap.entries.map((e) => '${e.key}|${e.value}').toList());
     } else {
       idsFavoritos.add(gasolineraId);
+
+      // Guardar también la provincia para uso en Web
+      if (idProvincia.isNotEmpty) {
+        final provinciaMap = Map<String, String>.fromEntries(
+          (prefs.getStringList('favoritas_provincias') ?? []).map((e) {
+            final parts = e.split('|');
+            return MapEntry(parts[0], parts.length > 1 ? parts[1] : '');
+          }),
+        );
+        provinciaMap[gasolineraId] = idProvincia;
+        await prefs.setStringList('favoritas_provincias',
+            provinciaMap.entries.map((e) => '${e.key}|${e.value}').toList());
+      }
     }
 
     await prefs.setStringList('favoritas_ids', idsFavoritos);
