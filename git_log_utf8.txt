@@ -1,0 +1,33 @@
+﻿commit 1f1ecd5b579aa48877cf04f79024e767273c6d4e
+Author: Oscar <oscmattri@alu.edu.gva.es>
+Date:   Mon Mar 2 16:45:02 2026 +0100
+
+    A├▒adi la visualizacion del modo lista de las gasolineras
+
+commit 430627d48455049660d9b1ebd237f363e03e357f
+Merge: 1e6a5ba 70ebdba
+Author: oskar4231 <oscmattri@alu.edu.gva.es>
+Date:   Mon Mar 2 11:45:09 2026 +0100
+
+    Merge pull request #41 from oskar4231/CleanCode
+    
+    a├▒adi palabras a las traducciones y detalles de coche
+
+commit 70ebdbafa836a98f1aa99a2a77124d2cfe9dc525
+Author: Oscar Mateu <oscaralejandromateu@gmail.com>
+Date:   Mon Mar 2 11:44:18 2026 +0100
+
+    a├▒adi palabras a las traducciones y detalles de coche
+
+commit 1e6a5bad595efefde327fc748ecd00944987046f
+Author: davcabbur <davcabbur@alu.edu.gva.es>
+Date:   Tue Feb 24 00:41:18 2026 +0100
+
+    mejoras de dise├▒o
+
+commit 4627959c3cfe346880b5bc63c7dfb09b98cb5709
+Merge: 0c7fad1 d2d8cbf
+Author: davcabbur <davcabbur@alu.edu.gva.es>
+Date:   Mon Feb 23 17:29:08 2026 +0100
+
+    Actualizar iconos de la barra superior y aplicar estilo oscuro a filtros
