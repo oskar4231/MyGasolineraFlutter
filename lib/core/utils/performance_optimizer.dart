@@ -4,7 +4,7 @@ import 'package:flutter/painting.dart';
 /// Optimizaciones de rendimiento para reducir uso de CPU y RAM
 class PerformanceOptimizer {
   /// Debouncer para evitar llamadas excesivas
-  static Map<String, DateTime> _lastCallTimes = {};
+  static final Map<String, DateTime> _lastCallTimes = {};
   static const Duration _defaultDebounce = Duration(milliseconds: 300);
 
   /// Ejecuta una función solo si ha pasado suficiente tiempo desde la última llamada
@@ -29,9 +29,10 @@ class PerformanceOptimizer {
   static bool shouldUpdateUI(int itemCount) {
     // Solo actualizar UI si hay cambios significativos
     if (itemCount < 10) return true;
-    if (itemCount < 50)
+    if (itemCount < 50) {
       return shouldExecute('ui_update_medium',
           debounce: const Duration(milliseconds: 500));
+    }
     return shouldExecute('ui_update_large',
         debounce: const Duration(milliseconds: 1000));
   }

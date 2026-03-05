@@ -191,7 +191,7 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
       // Rounded hover effect color
       backgroundColor = isDark
           ? const Color(0xFF383838)
-          : Theme.of(context).cardColor.withOpacity(0.9);
+          : Theme.of(context).cardColor.withValues(alpha: 0.9);
 
       backgroundColor = Color.alphaBlend(
         Theme.of(context).hoverColor,
@@ -212,8 +212,8 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
             boxShadow: [
               BoxShadow(
                 color: _hasFocus
-                    ? Theme.of(context).primaryColor.withOpacity(0.15)
-                    : Colors.black.withOpacity(_isHovered ? 0.15 : 0.05),
+                    ? Theme.of(context).primaryColor.withValues(alpha: 0.15)
+                    : Colors.black.withValues(alpha: _isHovered ? 0.15 : 0.05),
                 blurRadius: _hasFocus ? 12 : (_isHovered ? 8 : 4),
                 offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
               ),

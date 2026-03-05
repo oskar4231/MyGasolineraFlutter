@@ -390,6 +390,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                         InfoRepostaje(
                           litrosController: _litrosController,
                           precioLitroController: _precioLitroController,
+                          costoController: _costoController,
                           kilometrajeController: _kilometrajeController,
                           tipoCombustibleSeleccionado:
                               _tipoCombustibleSeleccionado,

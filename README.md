@@ -20,44 +20,51 @@
 
 **MyGasolinera** es una aplicación multiplataforma (Web y APK Nativo) diseñada para que los conductores puedan llevar el control de sus gastos, localizar gasolineras, analizar los precios del combustible y revisar la eficiencia de su vehículo con completos gráficos mensuales y semanales.
 
-## 📜 Changelog (Último Sprint - Febrero 2026)
+## 📋 Changelog (Sprint Marzo 2026)
 
-En el último flujo de trabajo el equipo se ha centrado en mejorar el rendimiento, la experiencia del usuario local y la configuración del entorno para hacerla más agnóstica a la máquina.
+El sprint de marzo ha supuesto una gran refactorización de la arquitectura de datos local, con una migración completa a Isar y la incorporación de nuevos módulos de seguridad, sincronización y robustez.
 
 ### ➕ Añadido
-- **Soporte de Entornos Variables:** Implementado el uso de variables de entorno mediante un archivo `.env` para gestionar fácilmente las URLs de APIs (`API_URL_LOCAL`, `API_URL_EMULADOR`, `API_URL_NGROK`, `SWITCH_BACKEND`).
-- **Autenticación Mejorada:** El formulario de inicio de sesión ahora permite introducir el nombre de usuario además del correo electrónico.
-- **Sincronización Silenciosa:** Se añadió una sincronización en segundo plano de la foto de perfil al realizar el inicio de sesión exitoso. Ahora, las imágenes se descargan del backend y se guardan en el sistema de base de datos cifrada y caché de disco del teléfono, mitigando el problema de la desaparición de la foto tras la desinstalación.
-- **Construcción Inteligente de APKs:** Configuración de compilaciones separadas (`split-per-abi`) para proveer compilaciones optimizadas en tamaño para procesadores `arm64-v8a`.
+- **Migración a Isar Database:** La base de datos local ha migrado de `drift` (SQLite) a **Isar**, una soledad NoSQL de alto rendimiento. Nuevos modelos: `car_local`, `gasolinera_local`, `invoice_local`, `user_local`.
+- **Sync Manager:** Módulo de sincronización entre servidor y base de datos local, con implementaciones separadas para nativo y web.
+- **Auth Storage Seguro:** `lib/core/security/auth_storage.dart` para almacenamiento seguro y cifrado de tokens y credenciales.
+- **Crash Handler:** `lib/core/utils/crash_handler.dart` para captura y gestión centralizada de errores fatales.
+- **Cache Service por Plataforma:** El servicio de caché de gasolineras se split en `_native` y `_web` para mayor eficiencia en cada plataforma.
 
 ### 🔄 Cambiado
-- **Registros (Logs) Condicionales:** El sistema `AppLogger` se ha rediseñado para ocultar la salida de la consola en los entornos de producción (`FLUTTER_ENV=production`), pero manteniendo la persistencia de `.log` en el dispositivo local.
-- **Lógica Mock (Testing):** Habilitada carga simulada (JSON) de gasolineras cuando `FLUTTER_ENV=testing` en `api_gasolinera.dart` para evitar sobrecargar servidores en pruebas estáticas.
-- **Configuración de Plataforma:** Transición de las variables locales redundantes `esAPK`/`esWeb` a los primitivos oficiales de Flutter `kIsWeb` y `defaultTargetPlatform`.
+- **Optimizaciones CPU y RAM:** Mejoras de rendimiento en múltiples módulos. (`OutOfMemoryError` mitigado, refresco inteligente).
+- **Fix bug detalles de gasolinera:** Corregido un error al visualizar el detalle de una gasolinera específica.
+- **Dependencias actualizadas:** `pubspec.yaml` modernizado con Isar y nuevas librerías de soporte.
 
 ### ❌ Eliminado
-- Eliminados los scripts en `lib/core/config/importante/` como `switch_web_apk.dart` y `switch_backend.dart`. Quedan declarados obsoletos en favor de la configuración central del archivo `.env`.
+- Eliminada la capa `bbdd_intermedia/` basada en `drift`, incluyendo todos sus modelos de tabla y archivos generados. Sustituida por la arquitectura Isar.
 
-> *Puedes consultar todas las adiciones en el archivo [CHANGELOG.md](CHANGELOG.md).*
+> *Registro completo de versiones anteriores en [CHANGELOG.md](CHANGELOG.md).*
+
 
 ## ✨ Características Principales
 
 - 🔐 **Sistema de Autenticación**
   - Registro e Inicio de sesión (Email/Usuario).
 - 🗺️ **Localización y Búsqueda Dinámica**
-  - Visualización y filtrado de gasolineras, surtidores y radios de apertura interactivo en Google Maps.
+  - Visualización y filtrado de gasolineras en **modo mapa** y **modo lista**.
+  - Surtidores y radios de apertura interactivo en Google Maps.
   - Geolocalización en tiempo real.
 - 🚙 **Gestión de Vehículos**
   - Administración de coches, eficiencia y consumos.
-- 🧾 **Sincronización Local Constante**
-  - Soporte trans-instalaciones para datos vitales apoyado mediante SQLite (`drift`) de forma local.
+- 🯧 **Sincronización Local Constante**
+  - Base de datos local de alto rendimiento mediante **Isar** (reemplaza a Drift/SQLite).
+  - Soporte trans-instalaciones con `SyncManager` nativo y web.
+- 🛡️ **Seguridad y Robustez**
+  - Almacenamiento seguro de credenciales con `AuthStorage`.
+  - Captura centralizada de errores con `CrashHandler`.
 
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
 - **Flutter & Dart** - Framework multiplataforma
 - **Google Maps Flutter** - Integración interactiva cartográfica
-- **Drift (SQLite) & IndexedDB** - Bases de Datos del cliente
+- **Isar** - Base de datos local de alto rendimiento (nativa y web)
 - **Geolocator** - Servicios de localización
 - **HTTP & dotenv** - Conexiones API y variables de entorno.
 

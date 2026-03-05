@@ -17,8 +17,8 @@ dependencies:
   # Dependencias Actualizadas a las versiones más recientes (Diciembre 2024)
   image_picker: ^1.2.1
   permission_handler: ^12.0.1
-  google_maps_flutter: ^2.14.0
-  geolocator: ^14.0.2
+  google_maps_flutter: 2.9.0
+  geolocator: 13.0.2
   geocoding: ^4.0.0
   http: ^1.6.0
   intl: ^0.20.2
@@ -30,9 +30,6 @@ dependencies:
 
   
   # Database para cache local
-  drift: ^2.20.3
-  drift_flutter: ^0.2.1
-  sqlite3_flutter_libs: ^0.5.24
   path_provider: ^2.1.5
   path: ^1.9.0
   cupertino_icons: ^1.0.8
@@ -50,6 +47,9 @@ dependencies:
   image: ^4.3.0
   flutter_dotenv: ^6.0.0
   pointer_interceptor: ^0.10.1+1
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:
@@ -57,9 +57,9 @@ dev_dependencies:
   # Se actualiza a la última versión de los lints
   flutter_lints: ^6.0.0
   
-  # Code generation para Drift
+  # Code generation
   build_runner: ^2.4.13
-  drift_dev: ^2.20.3
+  isar_generator: ^3.1.0+1
   flutter_launcher_icons: ^0.14.4
   mocktail: ^1.0.4 #Testeo
 

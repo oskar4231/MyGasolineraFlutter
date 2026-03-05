@@ -39,7 +39,7 @@ class _LayouthomeState extends State<Layouthome> {
   @override
   void initState() {
     super.initState();
-    _cacheService = GasolinerasCacheService(app.database);
+    _cacheService = app.gasolineraCacheService;
   }
 
   void _mostrarFiltroPrecio() async {
