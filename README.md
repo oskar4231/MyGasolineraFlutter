@@ -16,7 +16,7 @@
 
 ---
 
-## 📋 Descripción
+## � Descripción
 
 **MyGasolinera** es una aplicación multiplataforma (Web y APK Nativo) diseñada para que los conductores puedan llevar el control de sus gastos, localizar gasolineras, analizar los precios del combustible y revisar la eficiencia de su vehículo con completos gráficos mensuales y semanales.
 
@@ -52,7 +52,7 @@ El sprint de marzo ha supuesto una gran refactorización de la arquitectura de d
   - Geolocalización en tiempo real.
 - 🚙 **Gestión de Vehículos**
   - Administración de coches, eficiencia y consumos.
-- 🯧 **Sincronización Local Constante**
+- � **Sincronización Local Constante**
   - Base de datos local de alto rendimiento mediante **Isar** (reemplaza a Drift/SQLite).
   - Soporte trans-instalaciones con `SyncManager` nativo y web.
 - 🛡️ **Seguridad y Robustez**
