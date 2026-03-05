@@ -34,7 +34,7 @@ class _LayouthomeState extends State<Layouthome> {
   // Lista de gasolineras cargadas del mapa (compartida con vista de lista)
   List<Gasolinera> _gasolinerasCargadas = [];
   geo.Position? _currentPosition;
-  final bool _showMap = true;
+  bool _showMap = true;
 
   @override
   void initState() {

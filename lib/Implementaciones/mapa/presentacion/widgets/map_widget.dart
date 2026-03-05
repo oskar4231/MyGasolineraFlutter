@@ -220,6 +220,7 @@ class _MapWidgetState extends State<MapWidget>
     final theme = Theme.of(context);
     await showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
