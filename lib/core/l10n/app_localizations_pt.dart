@@ -918,4 +918,39 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get cerrar => 'Fechar';
+
+  @override
+  String get permisoUbicacionTituloGpsOff => 'GPS desativado';
+
+  @override
+  String get permisoUbicacionTituloBloqueado => 'Permissão bloqueada';
+
+  @override
+  String get permisoUbicacionTituloNecesario => 'Localização necessária';
+
+  @override
+  String get permisoUbicacionCuerpoGpsOff =>
+      'O serviço de localização do seu dispositivo está desativado. Ative-o nas configurações do sistema para ver os postos de combustível próximos.';
+
+  @override
+  String get permisoUbicacionCuerpoBloqueado =>
+      'Você bloqueou permanentemente o acesso à localização. Para usá-lo, vá para as Configurações do aplicativo e ative-o manualmente.';
+
+  @override
+  String get permisoUbicacionCuerpoNecesario =>
+      'MyGasolinera precisa de acesso à sua localização para mostrar os postos de combustível mais próximos e seus preços em tempo real.';
+
+  @override
+  String get permisoUbicacionBotonAjustesSistema =>
+      'Abrir configurações do sistema';
+
+  @override
+  String get permisoUbicacionBotonAjustesApp => 'Abrir configurações do app';
+
+  @override
+  String get permisoUbicacionBotonPermitir => 'Permitir acesso';
+
+  @override
+  String get permisoUbicacionNotaVolver =>
+      'Após fazer isso, volte ao app e recarregue o mapa.';
 }

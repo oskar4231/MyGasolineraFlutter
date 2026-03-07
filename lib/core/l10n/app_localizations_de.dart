@@ -923,4 +923,39 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cerrar => 'Schließen';
+
+  @override
+  String get permisoUbicacionTituloGpsOff => 'GPS deaktiviert';
+
+  @override
+  String get permisoUbicacionTituloBloqueado => 'Berechtigung gesperrt';
+
+  @override
+  String get permisoUbicacionTituloNecesario => 'Standort erforderlich';
+
+  @override
+  String get permisoUbicacionCuerpoGpsOff =>
+      'Der Standortdienst Ihres Geräts ist deaktiviert. Aktivieren Sie ihn in den Systemeinstellungen, um nahegelegene Tankstellen zu sehen.';
+
+  @override
+  String get permisoUbicacionCuerpoBloqueado =>
+      'Sie haben den Standortzugriff dauerhaft gesperrt. Um ihn zu nutzen, gehen Sie zu den App-Einstellungen und aktivieren Sie ihn manuell.';
+
+  @override
+  String get permisoUbicacionCuerpoNecesario =>
+      'MyGasolinera benötigt Zugriff auf Ihren Standort, um Ihnen die nächsten Tankstellen und deren Echtzeitpreise anzuzeigen.';
+
+  @override
+  String get permisoUbicacionBotonAjustesSistema =>
+      'Systemeinstellungen öffnen';
+
+  @override
+  String get permisoUbicacionBotonAjustesApp => 'App-Einstellungen öffnen';
+
+  @override
+  String get permisoUbicacionBotonPermitir => 'Zugriff erlauben';
+
+  @override
+  String get permisoUbicacionNotaVolver =>
+      'Kehren Sie danach zur App zurück und laden Sie die Karte neu.';
 }

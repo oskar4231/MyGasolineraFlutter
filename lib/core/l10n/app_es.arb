@@ -364,5 +364,16 @@
   "exportarExitoPdf": "Exportado a PDF correctamente",
   "seleccionarAlMenosUna": "Selecciona al menos una factura",
   "exportarConConteo": "Exportar ({count})",
-  "cerrar": "Cerrar"
+  "cerrar": "Cerrar",
+
+  "permisoUbicacionTituloGpsOff": "GPS desactivado",
+  "permisoUbicacionTituloBloqueado": "Permiso bloqueado",
+  "permisoUbicacionTituloNecesario": "Se necesita tu ubicacion",
+  "permisoUbicacionCuerpoGpsOff": "El servicio de localizacion de tu dispositivo esta apagado. Acuerdalo en los ajustes del sistema para ver las gasolineras cercanas.",
+  "permisoUbicacionCuerpoBloqueado": "Has bloqueado el permiso de ubicacion permanentemente. Para usarlo, ve a Ajustes de la aplicacion y activalo manualmente.",
+  "permisoUbicacionCuerpoNecesario": "MyGasolinera necesita acceso a tu ubicacion para mostrarte las gasolineras mas cercanas y sus precios en tiempo real.",
+  "permisoUbicacionBotonAjustesSistema": "Abrir ajustes del sistema",
+  "permisoUbicacionBotonAjustesApp": "Abrir ajustes de la app",
+  "permisoUbicacionBotonPermitir": "Permitir acceso",
+  "permisoUbicacionNotaVolver": "Despues de hacerlo, vuelve a la app y recarga el mapa."
 }

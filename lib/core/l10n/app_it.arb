@@ -361,5 +361,16 @@
   "exportarExitoPdf": "Esportato in PDF con successo",
   "seleccionarAlMenosUna": "Seleziona almeno una fattura",
   "exportarConConteo": "Esporta ({count})",
-  "cerrar": "Chiudi"
+  "cerrar": "Chiudi",
+
+  "permisoUbicacionTituloGpsOff": "GPS disattivato",
+  "permisoUbicacionTituloBloqueado": "Autorizzazione bloccata",
+  "permisoUbicacionTituloNecesario": "Posizione richiesta",
+  "permisoUbicacionCuerpoGpsOff": "Il servizio di localizzazione del tuo dispositivo \u00e8 disattivato. Attivalo nelle impostazioni di sistema per vedere le stazioni di servizio vicine.",
+  "permisoUbicacionCuerpoBloqueado": "Hai bloccato permanentemente l'accesso alla posizione. Per usarlo, vai nelle Impostazioni dell'app e abilitalo manualmente.",
+  "permisoUbicacionCuerpoNecesario": "MyGasolinera ha bisogno di accedere alla tua posizione per mostrarti le stazioni di servizio pi\u00f9 vicine e i loro prezzi in tempo reale.",
+  "permisoUbicacionBotonAjustesSistema": "Apri impostazioni di sistema",
+  "permisoUbicacionBotonAjustesApp": "Apri impostazioni dell'app",
+  "permisoUbicacionBotonPermitir": "Consenti accesso",
+  "permisoUbicacionNotaVolver": "Dopo averlo fatto, torna all'app e ricarica la mappa."
 }

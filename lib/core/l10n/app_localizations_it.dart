@@ -922,4 +922,39 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get cerrar => 'Chiudi';
+
+  @override
+  String get permisoUbicacionTituloGpsOff => 'GPS disattivato';
+
+  @override
+  String get permisoUbicacionTituloBloqueado => 'Autorizzazione bloccata';
+
+  @override
+  String get permisoUbicacionTituloNecesario => 'Posizione richiesta';
+
+  @override
+  String get permisoUbicacionCuerpoGpsOff =>
+      'Il servizio di localizzazione del tuo dispositivo è disattivato. Attivalo nelle impostazioni di sistema per vedere le stazioni di servizio vicine.';
+
+  @override
+  String get permisoUbicacionCuerpoBloqueado =>
+      'Hai bloccato permanentemente l\'accesso alla posizione. Per usarlo, vai nelle Impostazioni dell\'app e abilitalo manualmente.';
+
+  @override
+  String get permisoUbicacionCuerpoNecesario =>
+      'MyGasolinera ha bisogno di accedere alla tua posizione per mostrarti le stazioni di servizio più vicine e i loro prezzi in tempo reale.';
+
+  @override
+  String get permisoUbicacionBotonAjustesSistema =>
+      'Apri impostazioni di sistema';
+
+  @override
+  String get permisoUbicacionBotonAjustesApp => 'Apri impostazioni dell\'app';
+
+  @override
+  String get permisoUbicacionBotonPermitir => 'Consenti accesso';
+
+  @override
+  String get permisoUbicacionNotaVolver =>
+      'Dopo averlo fatto, torna all\'app e ricarica la mappa.';
 }

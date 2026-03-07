@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/crear_factura_screen.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
@@ -56,7 +57,8 @@ class GasolineraBottomSheet extends StatelessWidget {
           color: cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 24 + MediaQuery.of(context).viewPadding.bottom),
+        padding: EdgeInsets.fromLTRB( 20, 0, 20, max(24 + MediaQuery.of(context).viewInsets.bottom, 100),
+        ),
         child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

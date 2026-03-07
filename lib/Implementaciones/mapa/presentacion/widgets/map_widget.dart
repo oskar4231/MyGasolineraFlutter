@@ -9,6 +9,7 @@ import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.da
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/gasolinera_bottom.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/map_cluster.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
+import 'package:my_gasolinera/widgets/location_permission_denied.dart';
 
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
@@ -159,13 +160,15 @@ class _MapWidgetState extends State<MapWidget>
   void _onControllerUpdate() {
     if (!mounted) return;
     final pos = _controller.ubicacionActual;
-    if (pos != null) {
-      setState(() {
+    // Siempre reconstruimos para que los cambios de permissionState
+    // (denied, deniedForever, serviceDisabled) también actualicen la UI.
+    setState(() {
+      if (pos != null) {
         _userMarker
           ..clear()
           ..add(_buildUserMarker(pos.latitude, pos.longitude));
-      });
-    }
+      }
+    });
   }
 
   @override
@@ -250,6 +253,29 @@ class _MapWidgetState extends State<MapWidget>
   Widget build(BuildContext context) {
     super.build(context);
 
+    // ── Pantalla de permisos denegados ────────────────────────────────────
+    final ps = _controller.permissionState;
+    if (ps == LocationPermissionState.denied ||
+        ps == LocationPermissionState.deniedForever ||
+        ps == LocationPermissionState.serviceDisabled) {
+      return LocationPermissionDenied(
+        state: ps,
+        onRetry: () async {
+          if (ps == LocationPermissionState.deniedForever) {
+            // Lleva al usuario a los ajustes de la app para que active el permiso
+            await Geolocator.openAppSettings();
+          } else if (ps == LocationPermissionState.serviceDisabled) {
+            // Lleva a los ajustes de ubicación del sistema
+            await Geolocator.openLocationSettings();
+          } else {
+            // Vuelve a pedir el permiso y reinicia el seguimiento
+            await _controller.iniciarSeguimiento();
+          }
+        },
+      );
+    }
+
+    // ── Spinner mientras se obtiene la primera posición ─────────────────
     if (_controller.ubicacionActual == null) {
       return const Center(child: CircularProgressIndicator());
     }
