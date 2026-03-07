@@ -7,6 +7,24 @@ import 'package:my_gasolinera/Implementaciones/mapa/data/services/gasolinera_log
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
+/// Estados posibles del permiso de ubicación.
+enum LocationPermissionState {
+  /// Aún no se ha comprobado el permiso (estado inicial / cargando).
+  loading,
+
+  /// El permiso fue concedido y el GPS está activo.
+  granted,
+
+  /// El usuario denegó el permiso una vez (puede volver a pedirse).
+  denied,
+
+  /// El usuario denegó el permiso permanentemente (hay que ir a Ajustes).
+  deniedForever,
+
+  /// El servicio de ubicación del dispositivo está desactivado.
+  serviceDisabled,
+}
+
 /// Controlador que gestiona el GPS, la carga de gasolineras y los favoritos.
 /// Extiende [ChangeNotifier] para que el widget pueda escuchar cambios de estado.
 class MapController extends ChangeNotifier {
@@ -17,6 +35,9 @@ class MapController extends ChangeNotifier {
   Position? ubicacionActual;
   bool isLoading = false;
   List<Gasolinera> gasolinerasCargadas = [];
+
+  /// Estado actual del permiso de ubicación.
+  LocationPermissionState permissionState = LocationPermissionState.loading;
 
   StreamSubscription<Position>? _positionStreamSub;
   Timer? _debounceTimer;
@@ -80,6 +101,8 @@ class MapController extends ChangeNotifier {
     if (!serviceEnabled) {
       AppLogger.warning('Servicio de ubicación deshabilitado',
           tag: 'MapController');
+      permissionState = LocationPermissionState.serviceDisabled;
+      notifyListeners();
       return;
     }
 
@@ -89,14 +112,22 @@ class MapController extends ChangeNotifier {
       if (permission == LocationPermission.denied) {
         AppLogger.warning('Permisos de ubicación denegados',
             tag: 'MapController');
+        permissionState = LocationPermissionState.denied;
+        notifyListeners();
         return;
       }
     }
     if (permission == LocationPermission.deniedForever) {
       AppLogger.warning('Permisos denegados permanentemente',
           tag: 'MapController');
+      permissionState = LocationPermissionState.deniedForever;
+      notifyListeners();
       return;
     }
+
+    // Permiso concedido
+    permissionState = LocationPermissionState.granted;
+    notifyListeners();
 
     // 1. Última ubicación conocida (rápido)
     try {

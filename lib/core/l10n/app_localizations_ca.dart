@@ -918,4 +918,39 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get cerrar => 'Tancar';
+
+  @override
+  String get permisoUbicacionTituloGpsOff => 'GPS desactivat';
+
+  @override
+  String get permisoUbicacionTituloBloqueado => 'Permís bloquejat';
+
+  @override
+  String get permisoUbicacionTituloNecesario => 'Cal la ubicació';
+
+  @override
+  String get permisoUbicacionCuerpoGpsOff =>
+      'El servei de localització del teu dispositiu està apagat. Activa\'l a la configuració del sistema per veure les benzineres properes.';
+
+  @override
+  String get permisoUbicacionCuerpoBloqueado =>
+      'Has bloquejat permanentment el permís d\'ubicació. Per usar-lo, ves a la Configuració de l\'aplicació i activa\'l manualment.';
+
+  @override
+  String get permisoUbicacionCuerpoNecesario =>
+      'MyGasolinera necessita accés a la teva ubicació per mostrar-te les benzineres més properes i els seus preus en temps real.';
+
+  @override
+  String get permisoUbicacionBotonAjustesSistema =>
+      'Obrir configuració del sistema';
+
+  @override
+  String get permisoUbicacionBotonAjustesApp => 'Obrir configuració de l\'app';
+
+  @override
+  String get permisoUbicacionBotonPermitir => 'Permetre accés';
+
+  @override
+  String get permisoUbicacionNotaVolver =>
+      'Després de fer-ho, torna a l\'app i recarrega el mapa.';
 }

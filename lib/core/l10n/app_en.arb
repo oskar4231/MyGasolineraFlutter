@@ -299,5 +299,16 @@
   "exportarExitoPdf": "Exported to PDF successfully",
   "seleccionarAlMenosUna": "Select at least one invoice",
   "exportarConConteo": "Export ({count})",
-  "cerrar": "Close"
+  "cerrar": "Close",
+
+  "permisoUbicacionTituloGpsOff": "GPS disabled",
+  "permisoUbicacionTituloBloqueado": "Permission blocked",
+  "permisoUbicacionTituloNecesario": "Location needed",
+  "permisoUbicacionCuerpoGpsOff": "Your device's location service is turned off. Enable it in system settings to see nearby gas stations.",
+  "permisoUbicacionCuerpoBloqueado": "You have permanently blocked location access. To use it, go to App Settings and enable it manually.",
+  "permisoUbicacionCuerpoNecesario": "MyGasolinera needs access to your location to show you the nearest gas stations and their real-time prices.",
+  "permisoUbicacionBotonAjustesSistema": "Open system settings",
+  "permisoUbicacionBotonAjustesApp": "Open app settings",
+  "permisoUbicacionBotonPermitir": "Allow access",
+  "permisoUbicacionNotaVolver": "After doing so, come back to the app and reload the map."
 }

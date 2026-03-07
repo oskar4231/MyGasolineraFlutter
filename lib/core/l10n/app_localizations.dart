@@ -1859,6 +1859,66 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cerrar'**
   String get cerrar;
+
+  /// No description provided for @permisoUbicacionTituloGpsOff.
+  ///
+  /// In es, this message translates to:
+  /// **'GPS desactivado'**
+  String get permisoUbicacionTituloGpsOff;
+
+  /// No description provided for @permisoUbicacionTituloBloqueado.
+  ///
+  /// In es, this message translates to:
+  /// **'Permiso bloqueado'**
+  String get permisoUbicacionTituloBloqueado;
+
+  /// No description provided for @permisoUbicacionTituloNecesario.
+  ///
+  /// In es, this message translates to:
+  /// **'Se necesita tu ubicacion'**
+  String get permisoUbicacionTituloNecesario;
+
+  /// No description provided for @permisoUbicacionCuerpoGpsOff.
+  ///
+  /// In es, this message translates to:
+  /// **'El servicio de localizacion de tu dispositivo esta apagado. Acuerdalo en los ajustes del sistema para ver las gasolineras cercanas.'**
+  String get permisoUbicacionCuerpoGpsOff;
+
+  /// No description provided for @permisoUbicacionCuerpoBloqueado.
+  ///
+  /// In es, this message translates to:
+  /// **'Has bloqueado el permiso de ubicacion permanentemente. Para usarlo, ve a Ajustes de la aplicacion y activalo manualmente.'**
+  String get permisoUbicacionCuerpoBloqueado;
+
+  /// No description provided for @permisoUbicacionCuerpoNecesario.
+  ///
+  /// In es, this message translates to:
+  /// **'MyGasolinera necesita acceso a tu ubicacion para mostrarte las gasolineras mas cercanas y sus precios en tiempo real.'**
+  String get permisoUbicacionCuerpoNecesario;
+
+  /// No description provided for @permisoUbicacionBotonAjustesSistema.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir ajustes del sistema'**
+  String get permisoUbicacionBotonAjustesSistema;
+
+  /// No description provided for @permisoUbicacionBotonAjustesApp.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir ajustes de la app'**
+  String get permisoUbicacionBotonAjustesApp;
+
+  /// No description provided for @permisoUbicacionBotonPermitir.
+  ///
+  /// In es, this message translates to:
+  /// **'Permitir acceso'**
+  String get permisoUbicacionBotonPermitir;
+
+  /// No description provided for @permisoUbicacionNotaVolver.
+  ///
+  /// In es, this message translates to:
+  /// **'Despues de hacerlo, vuelve a la app y recarga el mapa.'**
+  String get permisoUbicacionNotaVolver;
 }
 
 class _AppLocalizationsDelegate

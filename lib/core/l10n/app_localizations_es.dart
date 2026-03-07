@@ -921,4 +921,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cerrar => 'Cerrar';
+
+  @override
+  String get permisoUbicacionTituloGpsOff => 'GPS desactivado';
+
+  @override
+  String get permisoUbicacionTituloBloqueado => 'Permiso bloqueado';
+
+  @override
+  String get permisoUbicacionTituloNecesario => 'Se necesita tu ubicacion';
+
+  @override
+  String get permisoUbicacionCuerpoGpsOff =>
+      'El servicio de localizacion de tu dispositivo esta apagado. Acuerdalo en los ajustes del sistema para ver las gasolineras cercanas.';
+
+  @override
+  String get permisoUbicacionCuerpoBloqueado =>
+      'Has bloqueado el permiso de ubicacion permanentemente. Para usarlo, ve a Ajustes de la aplicacion y activalo manualmente.';
+
+  @override
+  String get permisoUbicacionCuerpoNecesario =>
+      'MyGasolinera necesita acceso a tu ubicacion para mostrarte las gasolineras mas cercanas y sus precios en tiempo real.';
+
+  @override
+  String get permisoUbicacionBotonAjustesSistema => 'Abrir ajustes del sistema';
+
+  @override
+  String get permisoUbicacionBotonAjustesApp => 'Abrir ajustes de la app';
+
+  @override
+  String get permisoUbicacionBotonPermitir => 'Permitir acceso';
+
+  @override
+  String get permisoUbicacionNotaVolver =>
+      'Despues de hacerlo, vuelve a la app y recarga el mapa.';
 }

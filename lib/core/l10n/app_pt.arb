@@ -361,5 +361,16 @@
   "exportarExitoPdf": "Exportado para PDF com sucesso",
   "seleccionarAlMenosUna": "Selecione pelo menos uma fatura",
   "exportarConConteo": "Exportar ({count})",
-  "cerrar": "Fechar"
+  "cerrar": "Fechar",
+
+  "permisoUbicacionTituloGpsOff": "GPS desativado",
+  "permisoUbicacionTituloBloqueado": "Permiss\u00e3o bloqueada",
+  "permisoUbicacionTituloNecesario": "Localiza\u00e7\u00e3o necess\u00e1ria",
+  "permisoUbicacionCuerpoGpsOff": "O servi\u00e7o de localiza\u00e7\u00e3o do seu dispositivo est\u00e1 desativado. Ative-o nas configura\u00e7\u00f5es do sistema para ver os postos de combust\u00edvel pr\u00f3ximos.",
+  "permisoUbicacionCuerpoBloqueado": "Voc\u00ea bloqueou permanentemente o acesso \u00e0 localiza\u00e7\u00e3o. Para us\u00e1-lo, v\u00e1 para as Configura\u00e7\u00f5es do aplicativo e ative-o manualmente.",
+  "permisoUbicacionCuerpoNecesario": "MyGasolinera precisa de acesso \u00e0 sua localiza\u00e7\u00e3o para mostrar os postos de combust\u00edvel mais pr\u00f3ximos e seus pre\u00e7os em tempo real.",
+  "permisoUbicacionBotonAjustesSistema": "Abrir configura\u00e7\u00f5es do sistema",
+  "permisoUbicacionBotonAjustesApp": "Abrir configura\u00e7\u00f5es do app",
+  "permisoUbicacionBotonPermitir": "Permitir acesso",
+  "permisoUbicacionNotaVolver": "Ap\u00f3s fazer isso, volte ao app e recarregue o mapa."
 }
