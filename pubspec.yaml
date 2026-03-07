@@ -25,6 +25,7 @@ dependencies:
   shared_preferences: ^2.5.4
   package_info_plus: ^9.0.0
   logger: ^2.6.0 #Logging
+  flutter_svg: ^2.1.0 #Para mostrar iconos SVG
 
   
 
@@ -80,6 +81,7 @@ flutter:
     - assets/images/
     - lib/assets/logo.png
     - assets/images/iconoFinal.png
+    - assets/images/iconoFinal.svg
     - assets/images/iconoFavFinal.png
     - assets/images/iconoValencia.png
     - assets/images/logos/
