@@ -1,6 +1,6 @@
-import 'package:image/image.dart' as img;
-import 'package:flutter/painting.dart';
+import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/geocoding_service.dart';
@@ -14,73 +14,61 @@ class MarkerHelper {
   BitmapDescriptor? get gasStationIcon => _gasStationIcon;
   BitmapDescriptor? get favoriteGasStationIcon => _favoriteGasStationIcon;
 
-  /// Procesa el icono: redimensiona y recorta bordes transparentes para mejorar el hitbox
-  Future<Uint8List> processIcon(String path, int width) async {
-    // 1. Cargar bytes del asset
-    final ByteData data = await rootBundle.load(path);
-    final Uint8List bytes = data.buffer.asUint8List();
+  /// Convierte un SVG a un BitmapDescriptor compatible con Google Maps
+  Future<BitmapDescriptor> _svgToBitmapDescriptor(
+      String path, double width, double height) async {
+    // 1. Cargar el string del SVG
+    final String svgString = await rootBundle.loadString(path);
 
-    // 2. Decodificar imagen usando package:image (Dart puro, funciona en web/desktop)
-    img.Image? image = img.decodePng(bytes);
+    // 2. Usar un SvgLoader para obtener una PictureInfo
+    final SvgLoader loader = SvgStringLoader(svgString);
+    final PictureInfo pictureInfo = await vg.loadPicture(loader, null);
 
-    if (image == null) return bytes; // Fallback si falla decodificación
+    // 3. Crear una imagen rasterizada (PNG) a partir de la imagen vectorial
+    final ui.Picture picture = pictureInfo.picture;
+    final ui.Image image = await picture.toImage(width.toInt(), height.toInt());
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
 
-    // 3. Redimensionar (Mantiene aspect ratio por defecto)
-    img.Image resized = img.copyResize(image, width: width);
-
-    // 4. Recortar bordes transparentes (Trim)
-    // Esto es CLAVE para que el hitbox sea solo el icono
-    img.Image trimmed = img.trim(resized, mode: img.TrimMode.transparent);
-
-    // 5. Codificar de nuevo a PNG
-    return Uint8List.fromList(img.encodePng(trimmed));
-  }
-
-  /// Carga los iconos personalizados para gasolineras
-  Future<void> loadGasStationIcons() async {
-    const ImageConfiguration config = ImageConfiguration();
-
-    // 1. Load standard icon (Normal)
-    try {
-      final Uint8List iconBytes = await processIcon(
-        'assets/images/iconoFinal.png',
-        140,
-      );
-      _gasStationIcon = BitmapDescriptor.bytes(iconBytes);
-      AppLogger.info('Icono normal procesado (Resize+Trim)', tag: 'MapHelpers');
-    } catch (e) {
-      AppLogger.warning('Error procesando icono normal, usando fallback',
-          tag: 'MapHelpers', error: e);
-      try {
-        _gasStationIcon = await BitmapDescriptor.asset(
-          config,
-          'assets/images/iconoFinal.png',
-        );
-      } catch (e2) {
-        // Fallback no disponible, se usará marcador por defecto
-      }
+    if (byteData == null) {
+      throw Exception('No se pudo convertir SVG a ByteData');
     }
 
-    // 2. Load favorite icon (Favorito)
+    return BitmapDescriptor.bytes(byteData.buffer.asUint8List());
+  }
+
+  /// Carga los iconos personalizados para gasolineras (versión SVG)
+  Future<void> loadGasStationIcons() async {
+    // 1. Cargar icono estándar (Normal)
     try {
-      final Uint8List favIconBytes = await processIcon(
-        'assets/images/iconoFavFinal.png',
-        120,
+      _gasStationIcon = await _svgToBitmapDescriptor(
+        'assets/images/iconoFinal.svg',
+        140,
+        140,
       );
-      _favoriteGasStationIcon = BitmapDescriptor.bytes(favIconBytes);
-      AppLogger.info('Icono favorito procesado (Resize+Trim)',
+      AppLogger.info('Icono normal SVG cargado perfectamente',
           tag: 'MapHelpers');
     } catch (e) {
-      AppLogger.warning('Error procesando icono favorito, usando fallback',
+      AppLogger.error('Error cargando icono normal SVG, usando fallback',
           tag: 'MapHelpers', error: e);
-      try {
-        _favoriteGasStationIcon = await BitmapDescriptor.asset(
-          config,
-          'assets/images/iconoFavFinal.png',
-        );
-      } catch (e2) {
-        // Fallback no disponible, se usará marcador por defecto
-      }
+      _gasStationIcon =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+    }
+
+    // 2. Cargar icono de favoritos (Favorito)
+    try {
+      _favoriteGasStationIcon = await _svgToBitmapDescriptor(
+        'assets/images/iconoFavFinal.svg',
+        120,
+        120,
+      );
+      AppLogger.info('Icono favorito SVG cargado perfectamente',
+          tag: 'MapHelpers');
+    } catch (e) {
+      AppLogger.error('Error cargando icono favorito SVG, usando fallback',
+          tag: 'MapHelpers', error: e);
+      _favoriteGasStationIcon =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
     }
   }
 
@@ -95,16 +83,11 @@ class MarkerHelper {
 
     BitmapDescriptor icon;
 
-    // 1. Si es favorita y tenemos el icono de favoritos cargado, usamos ese
     if (esFavorita && _favoriteGasStationIcon != null) {
       icon = _favoriteGasStationIcon!;
-    }
-    // 2. Para el resto de gasolineras, usar el icono "assets/images/icono.png"
-    else if (_gasStationIcon != null) {
+    } else if (_gasStationIcon != null) {
       icon = _gasStationIcon!;
-    }
-    // 3. Fallback solo si falla la carga de assets
-    else {
+    } else {
       icon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
     }
 
@@ -112,9 +95,8 @@ class MarkerHelper {
       markerId: MarkerId('eess_${gasolinera.id}'),
       position: gasolinera.position,
       icon: icon,
-      anchor:
-          const Offset(0.5, 1.0), // 🔷 Anchor en la base central para precisión
-      zIndexInt: esFavorita ? 10 : 1, // 🔷 Favoritas siempre encima
+      anchor: const Offset(0.5, 1.0),
+      zIndexInt: esFavorita ? 10 : 1,
       onTap: markersEnabled
           ? () {
               onTap(gasolinera, esFavorita);
@@ -126,21 +108,10 @@ class MarkerHelper {
 
 /// Helper class para gestionar la provincia actual
 class ProvinciaHelper {
-  /// Actualiza la provincia actual usando geocodificación inversa
-  /// Notifica mediante el callback onProvinciaUpdate
   static Future<String> actualizarProvincia(double lat, double lng) async {
     try {
-      AppLogger.debug(
-          'ProvinciaHelper: Actualizando provincia para ($lat, $lng)...',
-          tag: 'MapHelpers');
-
-      // Llamar al servicio de geocodificación
       final nombreProvincia =
           await GeocodingService.obtenerProvinciaDesdeCoords(lat, lng);
-
-      AppLogger.info('ProvinciaHelper: Provincia detectada: $nombreProvincia',
-          tag: 'MapHelpers');
-
       return nombreProvincia;
     } catch (e) {
       AppLogger.error('ProvinciaHelper: Error actualizando provincia',
