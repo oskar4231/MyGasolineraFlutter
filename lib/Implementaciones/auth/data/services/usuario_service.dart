@@ -90,45 +90,37 @@ class UsuarioService {
     }
   }
 
-  /// Elimina la cuenta del usuario marcándola como inactiva
-  Future<bool> eliminarCuenta(String email) async {
+  /// Elimina la cuenta del usuario usando su id_usuario
+  Future<bool> eliminarCuenta() async {
     try {
-      // DEBUG: Imprimir el email recibido
-      AppLogger.debug('UsuarioService.eliminarCuenta() recibió email: "$email"',
-          tag: 'UsuarioService');
-      AppLogger.debug('Longitud del email recibido: ${email.length}',
-          tag: 'UsuarioService');
+      // Obtener el id_usuario desde almacenamiento cifrado
+      final idUsuario = await AuthStorage.getUserId();
 
-      // Validar y formatear el email si no contiene @
-      String emailFormateado = email;
-      if (!email.contains('@')) {
-        emailFormateado = '$email@$email.com';
-        AppLogger.debug('Email sin @, formateado a: "$emailFormateado"',
-            tag: 'UsuarioService');
+      if (idUsuario == null || idUsuario.isEmpty) {
+        throw Exception('No se encontró el id del usuario');
       }
+
+      AppLogger.debug('UsuarioService.eliminarCuenta() con id: "$idUsuario"',
+          tag: 'UsuarioService');
 
       // Obtener el token desde almacenamiento cifrado
       final token = await AuthStorage.getToken() ?? '';
 
-      final url = ApiConfig.getUrl('/usuarios/$emailFormateado');
+      final url = ApiConfig.getUrl('/usuarios/$idUsuario');
       AppLogger.debug('URL construida: $url', tag: 'UsuarioService');
 
-      final response = await http
-          .delete(
-            Uri.parse(url),
-            headers: {
-              ...HttpHelper.getLanguageHeaders(),
-              'Content-Type': 'application/json',
-              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode({'email': emailFormateado}),
-          )
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () =>
-                throw Exception('Timeout al conectar con el servidor'),
-          );
-      // DEBUG: Imprimir la respuesta del servidor
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: {
+          ...HttpHelper.getLanguageHeaders(),
+          'Content-Type': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Timeout al conectar con el servidor'),
+      );
+
       AppLogger.debug('Status code: ${response.statusCode}',
           tag: 'UsuarioService');
       AppLogger.debug('Response body: ${response.body}', tag: 'UsuarioService');
@@ -139,7 +131,7 @@ class UsuarioService {
       } else if (response.statusCode == 404) {
         throw Exception('Usuario no encontrado');
       } else if (response.statusCode == 400) {
-        throw Exception('Email requerido');
+        throw Exception('Id de usuario requerido');
       } else {
         throw Exception('Error al eliminar cuenta: ${response.statusCode}');
       }

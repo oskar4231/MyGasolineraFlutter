@@ -122,9 +122,7 @@ class AjustesController {
     final navigator = Navigator.of(context);
 
     try {
-      if (emailUsuario.isEmpty) throw Exception('No email found');
-
-      final exito = await _usuarioService.eliminarCuenta(emailUsuario);
+      final exito = await _usuarioService.eliminarCuenta();
 
       if (exito) {
         await _usuarioService.limpiarDatosUsuario();
@@ -136,7 +134,6 @@ class AjustesController {
       }
     } catch (e) {
       navigator.pop(); // Close dialog if open?
-      // Actually the dialog calls this, so if we pop here we close the dialog.
       messenger.showSnackBar(
         SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
