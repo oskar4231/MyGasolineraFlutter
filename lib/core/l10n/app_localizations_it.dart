@@ -686,6 +686,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get veinticuatroHoras => '24 ore';
 
   @override
+  String get abiertoAhora => 'Aperto ora';
+
+  @override
   String get atendidasPersonal => 'Stazioni di servizio con personale';
 
   @override

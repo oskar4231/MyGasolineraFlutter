@@ -684,6 +684,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get veinticuatroHoras => '24 hores';
 
   @override
+  String get abiertoAhora => 'Obert ara';
+
+  @override
   String get atendidasPersonal => 'Benzineres ateses per personal';
 
   @override

@@ -19,7 +19,8 @@ class MarkerHelper {
   /// El alto se calcula automáticamente para no deformar el SVG.
   /// Si [clusterCount] se proporciona, dibuja el número centrado en el icono.
   Future<BitmapDescriptor> _svgToBitmapDescriptor(
-      String path, double targetWidth, {int? clusterCount}) async {
+      String path, double targetWidth,
+      {int? clusterCount}) async {
     // 1. Cargar el string del SVG
     final String svgString = await rootBundle.loadString(path);
 
@@ -52,8 +53,9 @@ class MarkerHelper {
     // 6. Si es un cluster, dibujar el número de gasolineras permanentemente como un "Tooltip" nativo
     if (clusterCount != null) {
       final String text = '$clusterCount gasolineras';
-      final double fontSize = (pictureInfo.size.width * 0.22); // Letra un poco más ajustada
-      
+      final double fontSize =
+          (pictureInfo.size.width * 0.22); // Letra un poco más ajustada
+
       final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(
         ui.ParagraphStyle(
           textAlign: TextAlign.center,
@@ -68,7 +70,7 @@ class MarkerHelper {
 
       final ui.Paragraph paragraph = paragraphBuilder.build();
       paragraph.layout(const ui.ParagraphConstraints(width: double.infinity));
-      
+
       final double textWidth = paragraph.maxIntrinsicWidth;
       final double textHeight = paragraph.height;
 
@@ -77,7 +79,8 @@ class MarkerHelper {
       final double paddingY = fontSize * 0.4;
       final double tooltipWidth = textWidth + (paddingX * 2);
       final double tooltipHeight = textHeight + (paddingY * 2);
-      final double arrowHeight = fontSize * 0.4; // Altura del piquito hacia abajo
+      final double arrowHeight =
+          fontSize * 0.4; // Altura del piquito hacia abajo
 
       // Posicionamos el tooltip centrado justo por encima del icono
       final double tooltipX = (pictureInfo.size.width - tooltipWidth) / 2.0;
@@ -86,7 +89,7 @@ class MarkerHelper {
 
       // 1. Crear la forma (Tooltip cuadrado con pico abajo al centro)
       final ui.Path path = ui.Path();
-      
+
       // Dibujar caja redondeada
       final ui.RRect tooltipRect = ui.RRect.fromRectAndRadius(
         ui.Rect.fromLTWH(tooltipX, tooltipY, tooltipWidth, tooltipHeight),
@@ -97,13 +100,14 @@ class MarkerHelper {
       // Dibujar piquito (triángulo central abajo)
       final double centerX = pictureInfo.size.width / 2.0;
       path.moveTo(centerX - arrowHeight, tooltipY + tooltipHeight); // Punto izq
-      path.lineTo(centerX, tooltipY + tooltipHeight + arrowHeight); // Punta abajo
+      path.lineTo(
+          centerX, tooltipY + tooltipHeight + arrowHeight); // Punta abajo
       path.lineTo(centerX + arrowHeight, tooltipY + tooltipHeight); // Punto der
       path.close();
 
       // Sombra
       canvas.drawPath(
-        path.shift(const Offset(0, 3)), 
+        path.shift(const Offset(0, 3)),
         ui.Paint()
           ..color = const Color(0x40000000)
           ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 4.0),

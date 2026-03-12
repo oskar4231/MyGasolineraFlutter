@@ -1,4 +1,5 @@
 {
+  "@@locale": "fr",
   "idioma": "Langue",
   "idiomas": "Langues",
   "ajustes": "Paramètres",
@@ -220,6 +221,7 @@
   "precio": "Prix",
   "apertura": "Ouverture",
   "veinticuatroHoras": "24 heures",
+  "abiertoAhora": "Ouvert maintenant",
   "atendidasPersonal": "Stations-service avec personnel",
   "abiertasAhora": "Stations-service ouvertes maintenant",
   "todas": "Toutes",
@@ -356,15 +358,14 @@
   "seleccionarAlMenosUna": "Sélectionnez au moins une facture",
   "exportarConConteo": "Exporter ({count})",
   "cerrar": "Fermer",
-
-  "permisoUbicacionTituloGpsOff": "GPS d\u00e9sactiv\u00e9",
-  "permisoUbicacionTituloBloqueado": "Autorisation bloqu\u00e9e",
+  "permisoUbicacionTituloGpsOff": "GPS désactivé",
+  "permisoUbicacionTituloBloqueado": "Autorisation bloquée",
   "permisoUbicacionTituloNecesario": "Localisation requise",
-  "permisoUbicacionCuerpoGpsOff": "Le service de localisation de votre appareil est d\u00e9sactiv\u00e9. Activez-le dans les param\u00e8tres syst\u00e8me pour voir les stations-service proches.",
-  "permisoUbicacionCuerpoBloqueado": "Vous avez bloqu\u00e9 d\u00e9finitivement l'acc\u00e8s \u00e0 la localisation. Pour l'utiliser, allez dans les Param\u00e8tres de l'application et activez-le manuellement.",
-  "permisoUbicacionCuerpoNecesario": "MyGasolinera a besoin d'acc\u00e8s \u00e0 votre localisation pour vous montrer les stations-service les plus proches et leurs prix en temps r\u00e9el.",
-  "permisoUbicacionBotonAjustesSistema": "Ouvrir les param\u00e8tres syst\u00e8me",
-  "permisoUbicacionBotonAjustesApp": "Ouvrir les param\u00e8tres de l'app",
-  "permisoUbicacionBotonPermitir": "Autoriser l'acc\u00e8s",
-  "permisoUbicacionNotaVolver": "Apr\u00e8s avoir fait cela, revenez \u00e0 l'application et rechargez la carte."
+  "permisoUbicacionCuerpoGpsOff": "Le service de localisation de votre appareil est désactivé. Activez-le dans les paramètres système pour voir les stations-service proches.",
+  "permisoUbicacionCuerpoBloqueado": "Vous avez bloqué définitivement l'accès à la localisation. Pour l'utiliser, allez dans les Paramètres de l'application et activez-le manuellement.",
+  "permisoUbicacionCuerpoNecesario": "MyGasolinera a besoin d'accès à votre localisation pour vous montrer les stations-service les plus proches et leurs prix en temps réel.",
+  "permisoUbicacionBotonAjustesSistema": "Ouvrir les paramètres système",
+  "permisoUbicacionBotonAjustesApp": "Ouvrir les paramètres de l'app",
+  "permisoUbicacionBotonPermitir": "Autoriser l'accès",
+  "permisoUbicacionNotaVolver": "Après avoir fait cela, revenez à l'application et rechargez la carte."
 }

@@ -690,6 +690,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get veinticuatroHoras => '24 heures';
 
   @override
+  String get abiertoAhora => 'Ouvert maintenant';
+
+  @override
   String get atendidasPersonal => 'Stations-service avec personnel';
 
   @override
