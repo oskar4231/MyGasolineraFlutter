@@ -85,11 +85,6 @@ class _LayouthomeState extends State<Layouthome> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: theme.colorScheme.surface,
-      drawer: FiltersDrawer(
-        onPriceFilterPressed: _mostrarFiltroPrecio,
-        onFuelFilterPressed: _mostrarFiltroCombustible,
-        onOpeningFilterPressed: _mostrarFiltroApertura,
-      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -105,7 +100,12 @@ class _LayouthomeState extends State<Layouthome> {
               },
               onPriceFilterPressed: _mostrarFiltroPrecio,
               onOpenDrawer: () {
-                _scaffoldKey.currentState?.openDrawer();
+                FiltersDialog.show(
+                  context,
+                  onPriceFilterPressed: _mostrarFiltroPrecio,
+                  onFuelFilterPressed: _mostrarFiltroCombustible,
+                  onOpeningFilterPressed: _mostrarFiltroApertura,
+                );
               },
             ),
 
