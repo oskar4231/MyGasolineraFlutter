@@ -14,7 +14,6 @@ class MarkerHelper {
   BitmapDescriptor? get gasStationIcon => _gasStationIcon;
   BitmapDescriptor? get favoriteGasStationIcon => _favoriteGasStationIcon;
 
-  /// Convierte un SVG a un BitmapDescriptor compatible con Google Maps
   Future<BitmapDescriptor> _svgToBitmapDescriptor(
       String path, double width, double height) async {
     // 1. Cargar el string del SVG
@@ -24,9 +23,18 @@ class MarkerHelper {
     final SvgLoader loader = SvgStringLoader(svgString);
     final PictureInfo pictureInfo = await vg.loadPicture(loader, null);
 
-    // 3. Crear una imagen rasterizada (PNG) a partir de la imagen vectorial
-    final ui.Picture picture = pictureInfo.picture;
-    final ui.Image image = await picture.toImage(width.toInt(), height.toInt());
+    // 3. Escalar y crear una imagen rasterizada (PNG) a partir de la imagen vectorial
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final ui.Canvas canvas = ui.Canvas(pictureRecorder);
+
+    final double scaleX = pictureInfo.size.width > 0 ? width / pictureInfo.size.width : 1.0;
+    final double scaleY = pictureInfo.size.height > 0 ? height / pictureInfo.size.height : 1.0;
+
+    canvas.scale(scaleX, scaleY);
+    canvas.drawPicture(pictureInfo.picture);
+
+    final ui.Picture scaledPicture = pictureRecorder.endRecording();
+    final ui.Image image = await scaledPicture.toImage(width.toInt(), height.toInt());
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
 
@@ -34,7 +42,8 @@ class MarkerHelper {
       throw Exception('No se pudo convertir SVG a ByteData');
     }
 
-    return BitmapDescriptor.bytes(byteData.buffer.asUint8List());
+    // Ajustar el devicePixelRatio en lugar del bitmapDescriptor directamente (es más compatible)
+    return BitmapDescriptor.bytes(byteData.buffer.asUint8List(), imagePixelRatio: 1.0);
   }
 
   /// Carga los iconos personalizados para gasolineras (versión SVG)
