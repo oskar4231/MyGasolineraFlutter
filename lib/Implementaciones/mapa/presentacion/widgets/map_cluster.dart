@@ -31,17 +31,21 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Construye un marcador que representa una agrupación (Decluttering Mode).
-  Marker _buildClusterMarker(LayerCluster<Gasolinera> cluster) {
+  Marker _buildClusterMarker(LayerCluster<Gasolinera> cluster, BitmapDescriptor dynamicIcon) {
     return Marker(
       markerId: MarkerId('cluster_${cluster.uuid}'),
       position: LatLng(cluster.latitude, cluster.longitude),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+      icon: dynamicIcon,
       anchor: const Offset(0.5, 1.0),
       zIndexInt: 5,
+      infoWindow: InfoWindow(
+        title: '${cluster.childPointCount} gasolineras',
+      ),
       onTap: () {
-        AppLogger.debug('Zoom in suave al cluster: ${currentZoom + 2.0}',
+        // Al tocar un cluster, ahora simplemente se abrirá su InfoWindow (comportamiento por defecto)
+        // y ya no haremos "Zoom in" automático.
+        AppLogger.debug('Tocado cluster con ${cluster.childPointCount} gasolineras.',
             tag: 'MapCluster');
-        onClusterTap(LatLng(cluster.latitude, cluster.longitude), currentZoom + 2.0);
       },
     );
   }
@@ -53,26 +57,50 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
 
     final visibleRegion = await mapController.getVisibleRegion();
     
-    // Obtener marcadores en la región visible
+    // Obtener marcadores en la región visible (añadimos padding para que no desaparezcan al borde)
+    final dLat = (visibleRegion.northeast.latitude - visibleRegion.southwest.latitude) * 0.2;
+    final dLng = (visibleRegion.northeast.longitude - visibleRegion.southwest.longitude) * 0.2;
+
     final searchResult = clusterManager!.search(
-      visibleRegion.southwest.longitude,
-      visibleRegion.southwest.latitude,
-      visibleRegion.northeast.longitude,
-      visibleRegion.northeast.latitude,
+      visibleRegion.southwest.longitude - dLng,
+      visibleRegion.southwest.latitude - dLat,
+      visibleRegion.northeast.longitude + dLng,
+      visibleRegion.northeast.latitude + dLat,
       position.zoom.toInt(),
     );
 
-    Set<Marker> newMarkers = {};
+    // Verificar si hay algún cluster presente en la búsqueda
+    bool hasClusters = false;
     for (var element in searchResult) {
-       element.handle(
-           cluster: (clusterData) {
-               newMarkers.add(_buildClusterMarker(clusterData));
-           },
-           point: (pointData) {
-               newMarkers.add(_buildIndexMarker(pointData.originalPoint));
-           }
-       );
+      element.handle(
+        cluster: (_) { hasClusters = true; },
+        point: (_) {}
+      );
+      if (hasClusters) break;
     }
+
+    // Preparar lista de tareas para generar iconos asíncronos en paralelo
+    List<Future<Marker?>> markerFutures = searchResult.map((element) async {
+      Marker? marker;
+      await element.handle(
+        cluster: (clusterData) async {
+            // Generar icono dinámico con el número encima 
+            final customIcon = await markerHelper.getClusterMarker(clusterData.childPointCount);
+            marker = _buildClusterMarker(clusterData, customIcon);
+        },
+        point: (pointData) async {
+            // Mostrar gasolineras individuales solo si NO hay clusters presentes
+            if (!hasClusters) {
+              marker = _buildIndexMarker(pointData.originalPoint);
+            }
+        }
+      );
+      return marker;
+    }).toList();
+
+    // Esperar a que se generen todos
+    final resultMarkers = await Future.wait(markerFutures);
+    Set<Marker> newMarkers = resultMarkers.whereType<Marker>().toSet();
 
     if (mounted) {
       setState(() {
@@ -86,6 +114,9 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
       clusterManager = SuperclusterImmutable<Gasolinera>(
         getX: (g) => g.lng,
         getY: (g) => g.lat,
+        radius: 120, // Distancia razonable en píxeles de agrupación
+        minPoints: 5, // Tienen que ser mínimo 5 gasolineras para formar un cluster
+        maxZoom: 15, // A partir del zoom 16 se deshacen todos los clusters
       )..load(items);
       
       if (mapController != null && position != null) {

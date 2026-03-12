@@ -17,8 +17,9 @@ class MarkerHelper {
   /// Convierte un SVG a un BitmapDescriptor compatible con Google Maps
   /// [targetWidth] es el ancho lógico que queremos en el mapa.
   /// El alto se calcula automáticamente para no deformar el SVG.
+  /// Si [clusterCount] se proporciona, dibuja el número centrado en el icono.
   Future<BitmapDescriptor> _svgToBitmapDescriptor(
-      String path, double targetWidth) async {
+      String path, double targetWidth, {int? clusterCount}) async {
     // 1. Cargar el string del SVG
     final String svgString = await rootBundle.loadString(path);
 
@@ -47,6 +48,79 @@ class MarkerHelper {
 
     canvas.scale(scaleX, scaleY);
     canvas.drawPicture(pictureInfo.picture);
+
+    // 6. Si es un cluster, dibujar el número de gasolineras permanentemente como un "Tooltip" nativo
+    if (clusterCount != null) {
+      final String text = '$clusterCount gasolineras';
+      final double fontSize = (pictureInfo.size.width * 0.22); // Letra un poco más ajustada
+      
+      final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(
+        ui.ParagraphStyle(
+          textAlign: TextAlign.center,
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold, // Negrita como tu captura
+        ),
+      )
+        ..pushStyle(ui.TextStyle(
+          color: const Color(0xFF000000), // Texto negro
+        ))
+        ..addText(text);
+
+      final ui.Paragraph paragraph = paragraphBuilder.build();
+      paragraph.layout(const ui.ParagraphConstraints(width: double.infinity));
+      
+      final double textWidth = paragraph.maxIntrinsicWidth;
+      final double textHeight = paragraph.height;
+
+      // Padding bastante ajustado como en una ventana InfoWindow real
+      final double paddingX = fontSize * 0.5;
+      final double paddingY = fontSize * 0.4;
+      final double tooltipWidth = textWidth + (paddingX * 2);
+      final double tooltipHeight = textHeight + (paddingY * 2);
+      final double arrowHeight = fontSize * 0.4; // Altura del piquito hacia abajo
+
+      // Posicionamos el tooltip centrado justo por encima del icono
+      final double tooltipX = (pictureInfo.size.width - tooltipWidth) / 2.0;
+      // El pico tocará la parte superior del icono orgánico
+      final double tooltipY = -tooltipHeight - arrowHeight;
+
+      // 1. Crear la forma (Tooltip cuadrado con pico abajo al centro)
+      final ui.Path path = ui.Path();
+      
+      // Dibujar caja redondeada
+      final ui.RRect tooltipRect = ui.RRect.fromRectAndRadius(
+        ui.Rect.fromLTWH(tooltipX, tooltipY, tooltipWidth, tooltipHeight),
+        const ui.Radius.circular(6.0), // Bordes redondeados más notorios
+      );
+      path.addRRect(tooltipRect);
+
+      // Dibujar piquito (triángulo central abajo)
+      final double centerX = pictureInfo.size.width / 2.0;
+      path.moveTo(centerX - arrowHeight, tooltipY + tooltipHeight); // Punto izq
+      path.lineTo(centerX, tooltipY + tooltipHeight + arrowHeight); // Punta abajo
+      path.lineTo(centerX + arrowHeight, tooltipY + tooltipHeight); // Punto der
+      path.close();
+
+      // Sombra
+      canvas.drawPath(
+        path.shift(const Offset(0, 3)), 
+        ui.Paint()
+          ..color = const Color(0x40000000)
+          ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 4.0),
+      );
+
+      // Fondo blanco fijo
+      canvas.drawPath(
+        path,
+        ui.Paint()..color = const Color(0xFFFFFFFF),
+      );
+
+      // 2. Dibujar el texto encima bien centrado
+      final double textOffsetX = tooltipX + paddingX;
+      final double textOffsetY = tooltipY + paddingY;
+
+      canvas.drawParagraph(paragraph, Offset(textOffsetX, textOffsetY));
+    }
 
     final ui.Picture scaledPicture = pictureRecorder.endRecording();
     final ui.Image image =
@@ -132,6 +206,22 @@ class MarkerHelper {
             }
           : null,
     );
+  }
+
+  /// Genera un icono de cluster dinámico con el número en el centro.
+  /// Es asíncrono porque tiene que recrear el canvas.
+  Future<BitmapDescriptor> getClusterMarker(int count) async {
+    try {
+      return await _svgToBitmapDescriptor(
+        'assets/images/iconoFinal.svg',
+        180, // Ligeramente más grande que un marcador normal
+        clusterCount: count,
+      );
+    } catch (e) {
+      AppLogger.error('Error generando cluster marker dinámico',
+          tag: 'MapHelpers', error: e);
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+    }
   }
 }
 
