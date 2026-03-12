@@ -38,15 +38,6 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
       icon: dynamicIcon,
       anchor: const Offset(0.5, 1.0),
       zIndexInt: 5,
-      infoWindow: InfoWindow(
-        title: '${cluster.childPointCount} gasolineras',
-      ),
-      onTap: () {
-        // Al tocar un cluster, ahora simplemente se abrirá su InfoWindow (comportamiento por defecto)
-        // y ya no haremos "Zoom in" automático.
-        AppLogger.debug('Tocado cluster con ${cluster.childPointCount} gasolineras.',
-            tag: 'MapCluster');
-      },
     );
   }
 
