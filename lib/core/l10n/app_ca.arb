@@ -372,5 +372,11 @@
   "permisoUbicacionBotonAjustesSistema": "Obrir configuraci\u00f3 del sistema",
   "permisoUbicacionBotonAjustesApp": "Obrir configuraci\u00f3 de l'app",
   "permisoUbicacionBotonPermitir": "Permetre acc\u00e9s",
-  "permisoUbicacionNotaVolver": "Despr\u00e9s de fer-ho, torna a l'app i recarrega el mapa."
+  "permisoUbicacionNotaVolver": "Despr\u00e9s de fer-ho, torna a l'app i recarrega el mapa.",
+  "anadirAFavoritos": "Afegir a favorits",
+  "eliminarDeFavoritos": "Eliminar dels favorits",
+  "repostaje": "Repostatge",
+  "comoLlegar": "Com arribar",
+  "cercania" : "Proximitat",
+  "aDistanciaDeTi": "a {distance} de tu"
 }

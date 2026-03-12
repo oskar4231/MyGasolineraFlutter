@@ -372,5 +372,11 @@
   "permisoUbicacionBotonAjustesSistema": "Abrir configura\u00e7\u00f5es do sistema",
   "permisoUbicacionBotonAjustesApp": "Abrir configura\u00e7\u00f5es do app",
   "permisoUbicacionBotonPermitir": "Permitir acesso",
-  "permisoUbicacionNotaVolver": "Ap\u00f3s fazer isso, volte ao app e recarregue o mapa."
+  "permisoUbicacionNotaVolver": "Ap\u00f3s fazer isso, volte ao app e recarregue o mapa.",
+  "anadirAFavoritos": "Adicionar aos favoritos",
+  "eliminarDeFavoritos": "Remover dos favoritos",
+  "repostaje": "Abastecimento",
+  "comoLlegar": "Como chegar lá",
+  "cercania" : "Proximidade",
+  "aDistanciaDeTi": "a {distance} de você"
 }

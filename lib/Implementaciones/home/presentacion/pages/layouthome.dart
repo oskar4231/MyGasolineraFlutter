@@ -367,7 +367,7 @@ class _GasolinerasListView extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     _OrderButton(
-                      label: 'Cercanía',
+                      label: l10n.cercania.split(' ').last,
                       icon: Icons.near_me,
                       isSelected: filter.ordenPrecio == 'distance',
                       onTap: () => filter.setOrdenPrecio(
@@ -437,7 +437,7 @@ class _GasolinerasListView extends StatelessWidget {
                       const SizedBox(height: 4),
                       if (currentPosition != null)
                         _buildDistanceLabel(
-                            gasolinera, currentPosition!, theme),
+                            gasolinera, currentPosition!, theme, l10n),
                       const SizedBox(height: 4),
                       Text(
                         gasolinera.direccion,
@@ -501,29 +501,22 @@ class _GasolinerasListView extends StatelessWidget {
   }
 
   double _getPrecioComparacion(Gasolinera g, String? combustible) {
-    if (combustible != null) {
-      switch (combustible) {
-        case 'Gasolina 95':
-          return g.gasolina95;
-        case 'Gasolina 98':
-          return g.gasolina98;
-        case 'Diesel':
-          return g.gasoleoA;
-        case 'Diesel Premium':
-          return g.gasoleoPremium;
-        case 'Gas':
-          return g.glp;
-      }
-    }
-    // Si no hay combustible seleccionado o no coincide, usar el más barato disponible
-    final precios = [
-      g.gasolina95,
-      g.gasolina98,
-      g.gasoleoA,
-      g.glp,
-    ].where((p) => p > 0).toList();
-    return precios.isEmpty ? 999.0 : precios.reduce((a, b) => a < b ? a : b);
+  // Mapa de combustibles seleccionados a precios
+  final combustibleMap = {
+    'gasolina95': g.gasolina95,
+    'gasolina98': g.gasolina98,
+    'diesel': g.gasoleoA,
+    'diesel_premium': g.gasoleoPremium,
+    'glp': g.glp,
+  };
+  
+  if (combustible != null && combustibleMap.containsKey(combustible)) {
+    return combustibleMap[combustible]!;
   }
+  
+  final precios = combustibleMap.values.where((p) => p > 0).toList();
+  return precios.isEmpty ? 999.0 : precios.reduce((a, b) => a < b ? a : b);
+}
 
   Widget _buildPrecioChip(String label, double precio, Color color) {
     return Chip(
@@ -541,7 +534,7 @@ class _GasolinerasListView extends StatelessWidget {
   }
 
   Widget _buildDistanceLabel(
-      Gasolinera g, geo.Position currentPos, ThemeData theme) {
+      Gasolinera g, geo.Position currentPos, ThemeData theme, AppLocalizations l10n) {
     final distanceMeters = geo.Geolocator.distanceBetween(
       currentPos.latitude,
       currentPos.longitude,
@@ -556,13 +549,14 @@ class _GasolinerasListView extends StatelessWidget {
       distanceText = '${(distanceMeters / 1000).toStringAsFixed(1)} km';
     }
 
+
     return Row(
       children: [
         Icon(Icons.location_on,
             size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
         const SizedBox(width: 4),
         Text(
-          'a $distanceText de ti',
+          l10n.aDistanciaDeTi(distanceText),
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,

@@ -366,5 +366,11 @@
   "permisoUbicacionBotonAjustesSistema": "Ouvrir les param\u00e8tres syst\u00e8me",
   "permisoUbicacionBotonAjustesApp": "Ouvrir les param\u00e8tres de l'app",
   "permisoUbicacionBotonPermitir": "Autoriser l'acc\u00e8s",
-  "permisoUbicacionNotaVolver": "Apr\u00e8s avoir fait cela, revenez \u00e0 l'application et rechargez la carte."
+  "permisoUbicacionNotaVolver": "Apr\u00e8s avoir fait cela, revenez \u00e0 l'application et rechargez la carte.",
+  "anadirAFavoritos": "Ajouter aux favoris",
+  "eliminarDeFavoritos": "Supprimer des favoris",
+  "repostaje": "Ravitaillement",
+  "comoLlegar": "Comment y aller",
+  "cercania" : "Proximité",
+  "aDistanciaDeTi": "a {distance} de vous"
 }

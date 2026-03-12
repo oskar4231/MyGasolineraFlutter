@@ -303,7 +303,7 @@ class CocheDetailModal extends StatelessWidget {
         ),
         _buildStatCard(
           icon: Icons.refresh_rounded,
-          label: 'Cambio aceite',
+          label: l10n.cambioAceite,
           value: '${coche.intervaloCambioAceiteKm ~/ 1000}k km · ${coche.intervaloCambioAceiteMeses} m',
           isDark: isDark,
           cardBg: cardBg,

@@ -958,4 +958,24 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get permisoUbicacionNotaVolver =>
       'Kehren Sie danach zur App zurück und laden Sie die Karte neu.';
+
+  @override
+  String get anadirAFavoritos => 'Zu Favoriten hinzufügen';
+
+  @override
+  String get eliminarDeFavoritos => 'Aus Favoriten entfernen';
+
+  @override
+  String get repostaje => 'Tanken';
+
+  @override
+  String get comoLlegar => 'Wie komme ich hin';
+
+  @override
+  String get cercania => 'Nähe';
+
+  @override
+  String aDistanciaDeTi(Object distance) {
+    return '$distance von dir entfernt';
+  }
 }
