@@ -3,12 +3,12 @@ import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 import 'package:my_gasolinera/main.dart' as app;
 
-class FiltersDrawer extends StatefulWidget {
+class FiltersDialog extends StatefulWidget {
   final VoidCallback onPriceFilterPressed;
   final VoidCallback onFuelFilterPressed;
   final VoidCallback onOpeningFilterPressed;
 
-  const FiltersDrawer({
+  const FiltersDialog({
     super.key,
     required this.onPriceFilterPressed,
     required this.onFuelFilterPressed,
@@ -16,10 +16,26 @@ class FiltersDrawer extends StatefulWidget {
   });
 
   @override
-  State<FiltersDrawer> createState() => _FiltersDrawerState();
+  State<FiltersDialog> createState() => _FiltersDialogState();
+
+  static void show(
+    BuildContext context, {
+    required VoidCallback onPriceFilterPressed,
+    required VoidCallback onFuelFilterPressed,
+    required VoidCallback onOpeningFilterPressed,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => FiltersDialog(
+        onPriceFilterPressed: onPriceFilterPressed,
+        onFuelFilterPressed: onFuelFilterPressed,
+        onOpeningFilterPressed: onOpeningFilterPressed,
+      ),
+    );
+  }
 }
 
-class _FiltersDrawerState extends State<FiltersDrawer>
+class _FiltersDialogState extends State<FiltersDialog>
     with SingleTickerProviderStateMixin {
   late AnimationController _blinkController;
   late Animation<double> _opacityAnimation;
@@ -62,9 +78,9 @@ class _FiltersDrawerState extends State<FiltersDrawer>
       _blinkController.repeat(reverse: true);
     }
 
-    final drawerBg =
+    final dialogBg =
         isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
-    final headerBg = isDark ? drawerBg : theme.colorScheme.primary;
+    final headerBg = isDark ? dialogBg : theme.colorScheme.primary;
     final headerText = isDark ? Colors.white : theme.colorScheme.onPrimary;
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
@@ -72,29 +88,42 @@ class _FiltersDrawerState extends State<FiltersDrawer>
         isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
     final dividerColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 
-    return Drawer(
-      backgroundColor: drawerBg,
-      child: ListView(
-        padding: EdgeInsets.zero,
+    return Dialog(
+      backgroundColor: dialogBg,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 48, 20, 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: BoxDecoration(
               color: headerBg,
               borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
-            child: Text(
-              l10n.filtros,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: headerText,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.filtros,
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: headerText,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close, color: headerText),
+                  onPressed: () => Navigator.of(context).pop(),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
             ),
           ),
 
@@ -114,7 +143,7 @@ class _FiltersDrawerState extends State<FiltersDrawer>
                   }
                 : () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Seleccione combustible primero")),
+                      const SnackBar(content: Text("Seleccione combustible primero")),
                     );
                   },
           ),
@@ -154,7 +183,9 @@ class _FiltersDrawerState extends State<FiltersDrawer>
               widget.onOpeningFilterPressed();
             },
           ),
+          
           const Divider(),
+          
           ListTile(
             leading: Icon(
               Icons.delete_outline,
@@ -193,6 +224,7 @@ class _FiltersDrawerState extends State<FiltersDrawer>
                   }
                 : null,
           ),
+          const SizedBox(height: 8),
         ],
       ),
     );
