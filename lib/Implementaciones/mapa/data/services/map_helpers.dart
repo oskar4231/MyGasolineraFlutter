@@ -69,10 +69,11 @@ class MarkerHelper {
   Future<void> loadGasStationIcons() async {
     // 1. Cargar icono estándar (Normal)
     try {
-      // Ajustamos el ancho base a un valor adecuado para el mapa
+      // Reducido a 80 para hacer la hitbox (y el icono en pantalla) más pequeña y precisa.
+      // El aspect ratio seguirá calculándose automáticamente.
       _gasStationIcon = await _svgToBitmapDescriptor(
         'assets/images/iconoFinal.svg',
-        100,
+        150,
       );
       AppLogger.info('Icono normal SVG cargado perfectamente',
           tag: 'MapHelpers');
@@ -85,9 +86,10 @@ class MarkerHelper {
 
     // 2. Cargar icono de favoritos (Favorito)
     try {
+      // Reducido a 90 (ligeramente más grande que el normal) para hitbox precisa.
       _favoriteGasStationIcon = await _svgToBitmapDescriptor(
         'assets/images/iconoFavFinal.svg',
-        100, // Un poco más grande para destacar
+        150, // Un poco más grande para destacar, pero sin ocupar medio mapa
       );
       AppLogger.info('Icono favorito SVG cargado perfectamente',
           tag: 'MapHelpers');

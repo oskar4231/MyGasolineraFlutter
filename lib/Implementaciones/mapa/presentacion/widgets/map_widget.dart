@@ -118,11 +118,10 @@ class _MapWidgetState extends State<MapWidget>
     _controller = MapController(
       cacheService: widget.cacheService,
       onProvinciaUpdate: widget.onProvinciaUpdate,
-      onGasolinerasLoaded: (gasolineras) {
+      onGasolinerasLoaded: (gasolineras) async {
         widget.onGasolinerasLoaded?.call(gasolineras);
         if (mounted) {
-          clusterManager?.setItems(gasolineras);
-          clusterManager?.updateMap();
+          await setItems(gasolineras, _mapController, _currentCameraPosition);
           AppLogger.info(
             'ClusterManager actualizado con ${gasolineras.length} gasolineras',
             tag: 'MapWidget',
@@ -216,28 +215,45 @@ class _MapWidgetState extends State<MapWidget>
   // ── Bottom sheet ───────────────────────────────────────────────────────────
 
   Future<void> _mostrarInfoGasolinera(
-      Gasolinera gasolinera, bool esFavorita) async {
+      Gasolinera gasolinera, bool esFavoritaInicial) async {
     if (_isBottomSheetOpen) return;
     setState(() => _isBottomSheetOpen = true);
 
+    // Mantenemos el estado local de si es favorita o no para el bottomsheet
+    bool esFavoritaActual = esFavoritaInicial;
     final theme = Theme.of(context);
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => Theme(
-        data: theme,
-        child: GasolineraBottomSheet(
-          gasolinera: gasolinera,
-          esFavorita: esFavorita,
-          onToggleFavorito: () async {
-            await _controller.toggleFavorito(gasolinera.id,
-                idProvincia: gasolinera.idProvincia);
-            if (mounted) setState(() {});
-          },
-        ),
+      builder: (_) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+          return Theme(
+            data: theme,
+            child: GasolineraBottomSheet(
+              gasolinera: gasolinera,
+              esFavorita: esFavoritaActual,
+              onToggleFavorito: () async {
+                // 1. Cambiamos estado en la DB
+                await _controller.toggleFavorito(gasolinera.id,
+                    idProvincia: gasolinera.idProvincia);
+                
+                // 2. Actualizamos la variable local para que el botón del bottom sheet cambie
+                setModalState(() {
+                  esFavoritaActual = !esFavoritaActual;
+                });
+
+                // 3. Forzamos al Cluster Manager a redibujar sus marcadores AL INSTANTE
+                if (mounted && _mapController != null && _currentCameraPosition != null) {
+                  await updateClusterMarkers(_mapController!, _currentCameraPosition!);
+                }
+              },
+            ),
+          );
+        },
       ),
     );
 
@@ -301,7 +317,6 @@ class _MapWidgetState extends State<MapWidget>
               : _mapStyleLight,
           onMapCreated: (controller) {
             _mapController = controller;
-            clusterManager?.setMapId(controller.mapId);
             controller.animateCamera(
               CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
             );
@@ -311,8 +326,8 @@ class _MapWidgetState extends State<MapWidget>
             _currentZoom = position.zoom;
           },
           onCameraIdle: () async {
-            if (_currentCameraPosition != null) {
-              clusterManager?.onCameraMove(_currentCameraPosition!);
+            if (_mapController != null && _currentCameraPosition != null) {
+              await updateClusterMarkers(_mapController!, _currentCameraPosition!);
             }
 
             // Cargar gasolineras por bounding box con debounce 500ms

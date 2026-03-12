@@ -109,13 +109,12 @@ Future<void> _initApp() async {
   // Inicializar Logger
   await AppLogger.init();
 
-  // ✅ Optimizaciones de rendimiento para APK (reducir RAM/CPU)
-  if (isAPK) {
-    PaintingBinding.instance.imageCache.maximumSize = 50;
-    PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20;
+  // ✅ Optimizaciones de rendimiento (Reducir RAM/CPU) en Web y APK
+  // Los mapas web consumen demasiada RAM en texturas de tiles y SVG
+  PaintingBinding.instance.imageCache.maximumSize = 100; // Máximo 100 imágenes en memoria
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20; // Max 50 MB
 
-    AppLogger.info('Optimizaciones de rendimiento APK aplicadas', tag: 'Main');
-  }
+  AppLogger.info('Optimizaciones de rendimiento globales aplicadas', tag: 'Main');
 
   // Capturar errores de Flutter (widgets, rendering, etc.)
   FlutterError.onError = (details) async {

@@ -143,7 +143,7 @@ class _InfoRepostajeState extends State<InfoRepostaje> {
         // ── Selector de coche ──────────────────────────────────────────────
         ShadowFieldWrapper(
           child: DropdownButtonFormField<int>(
-            value: widget.cocheSeleccionado,
+            initialValue: widget.cocheSeleccionado,
             decoration:
                 _getInputDecoration(context, l10n.coche),
             items: widget.coches.map((coche) {
@@ -236,7 +236,7 @@ class _InfoRepostajeState extends State<InfoRepostaje> {
               const BoxConstraints(minWidth: 300, maxWidth: double.infinity),
           child: ShadowFieldWrapper(
             child: DropdownButtonFormField<String>(
-              value: widget.tipoCombustibleSeleccionado,
+              initialValue: widget.tipoCombustibleSeleccionado,
               isExpanded: true,
               decoration:
                   _getInputDecoration(context, l10n.tipoCombustible),

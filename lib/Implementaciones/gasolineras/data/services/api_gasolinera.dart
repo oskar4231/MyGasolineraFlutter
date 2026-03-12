@@ -1,60 +1,47 @@
-import 'package:http/http.dart' as http;
 import 'package:my_gasolinera/core/config/api_config.dart';
-import 'dart:convert';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+import 'package:my_gasolinera/core/network/dio_api_client.dart';
 
 /// Obtiene gasolineras cercanas a una ubicación (lat, lng)
 Future<List<Gasolinera>> fetchGasolinerasPorCercania(
     double lat, double lng) async {
-  try {
-    if (dotenv.env['FLUTTER_ENV'] == 'testing') {
-      AppLogger.info('Usando MOCK de gasolineras por cercanía', tag: 'ApiGasolinera');
-      return await _loadMockGasolineras();
-    }
-
-    final baseUrl = ApiConfig.baseUrl;
-    final uri = Uri.parse('$baseUrl/api/gasolineras').replace(
-      queryParameters: {
-        'lat': lat.toString(),
-        'lng': lng.toString(),
-      },
-    );
-
-    AppLogger.network('Solicitando gasolineras por cercanía',
+  if (dotenv.env['FLUTTER_ENV'] == 'testing') {
+    AppLogger.info('Usando MOCK de gasolineras por cercanía',
         tag: 'ApiGasolinera');
-
-    final response = await http
-        .get(uri, headers: ApiConfig.headers)
-        .timeout(const Duration(seconds: 10));
-
-    if (response.statusCode == 200) {
-      final bodyUtf8 = utf8.decode(response.bodyBytes);
-      final jsonResponse = json.decode(bodyUtf8);
-
-      if (jsonResponse['success'] == true) {
-        final List<dynamic> listaGasolineras =
-            jsonResponse['gasolineras'] ?? [];
-
-        AppLogger.network(
-            'Recibidas ${listaGasolineras.length} gasolineras por cercanía',
-            tag: 'ApiGasolinera');
-
-        return listaGasolineras
-            .map((jsonItem) => Gasolinera.fromJson(jsonItem))
-            .where((g) => g.lat != 0.0 && g.lng != 0.0)
-            .toList();
-      }
-    }
-    AppLogger.error('API Backend Error HTTP: ${response.statusCode}',
-        tag: 'ApiGasolinera');
-    return [];
-  } catch (e) {
-    AppLogger.error('API Backend Excepción', tag: 'ApiGasolinera', error: e);
-    return [];
+    return await _loadMockGasolineras();
   }
+
+  AppLogger.network('Solicitando gasolineras por cercanía',
+      tag: 'ApiGasolinera');
+
+  final response = await DioApiClient().get(
+    '${ApiConfig.baseUrl}/api/gasolineras',
+    queryParameters: {
+      'lat': lat.toString(),
+      'lng': lng.toString(),
+    },
+  );
+
+  if (response != null && response.statusCode == 200) {
+    if (response.data['success'] == true) {
+      final List<dynamic> listaGasolineras = response.data['gasolineras'] ?? [];
+
+      AppLogger.network(
+          'Recibidas ${listaGasolineras.length} gasolineras por cercanía (Dio)',
+          tag: 'ApiGasolinera');
+
+      return listaGasolineras
+          .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+          .where((g) => g.lat != 0.0 && g.lng != 0.0)
+          .toList();
+    }
+  }
+
+  return [];
 }
 
 /// Obtiene gasolineras dentro de un bounding box (región visible del mapa)
@@ -64,119 +51,86 @@ Future<List<Gasolinera>> fetchGasolinerasByBounds({
   required double neLat,
   required double neLng,
 }) async {
-  try {
-    if (dotenv.env['FLUTTER_ENV'] == 'testing') {
-      AppLogger.info('Usando MOCK de gasolineras por bounds', tag: 'ApiGasolinera');
-      return await _loadMockGasolineras();
-    }
-    final baseUrl = ApiConfig.baseUrl;
-    final uri = Uri.parse('$baseUrl/api/gasolineras').replace(
-      queryParameters: {
-        'swLat': swLat.toString(),
-        'swLng': swLng.toString(),
-        'neLat': neLat.toString(),
-        'neLng': neLng.toString(),
-      },
-    );
-
-    AppLogger.network('Solicitando gasolineras por bounding box',
+  if (dotenv.env['FLUTTER_ENV'] == 'testing') {
+    AppLogger.info('Usando MOCK de gasolineras por bounds',
         tag: 'ApiGasolinera');
-
-    final response = await http
-        .get(uri, headers: ApiConfig.headers)
-        .timeout(const Duration(seconds: 10));
-
-    if (response.statusCode == 200) {
-      final bodyUtf8 = utf8.decode(response.bodyBytes);
-      final jsonResponse = json.decode(bodyUtf8);
-
-      if (jsonResponse['success'] == true) {
-        final List<dynamic> listaGasolineras =
-            jsonResponse['gasolineras'] ?? [];
-
-        AppLogger.network(
-            'Recibidas ${listaGasolineras.length} gasolineras por bounding box',
-            tag: 'ApiGasolinera');
-
-        return listaGasolineras
-            .map((jsonItem) => Gasolinera.fromJson(jsonItem))
-            .where((g) => g.lat != 0.0 && g.lng != 0.0)
-            .toList();
-      }
-    }
-    AppLogger.error('API Backend Error HTTP: ${response.statusCode}',
-        tag: 'ApiGasolinera');
-    return [];
-  } catch (e) {
-    AppLogger.error('API Backend Excepción', tag: 'ApiGasolinera', error: e);
-    return [];
+    return await _loadMockGasolineras();
   }
+
+  AppLogger.network('Solicitando gasolineras por bounding box',
+      tag: 'ApiGasolinera');
+
+  final response = await DioApiClient().get(
+    '${ApiConfig.baseUrl}/api/gasolineras',
+    queryParameters: {
+      'swLat': swLat.toString(),
+      'swLng': swLng.toString(),
+      'neLat': neLat.toString(),
+      'neLng': neLng.toString(),
+    },
+  );
+
+  if (response != null && response.statusCode == 200) {
+    if (response.data['success'] == true) {
+      final List<dynamic> listaGasolineras = response.data['gasolineras'] ?? [];
+
+      AppLogger.network(
+          'Recibidas ${listaGasolineras.length} gasolineras por bounding box (Dio Cached)',
+          tag: 'ApiGasolinera');
+
+      return listaGasolineras
+          .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+          .where((g) => g.lat != 0.0 && g.lng != 0.0)
+          .toList();
+    }
+  }
+
+  return [];
 }
 
 /// Obtiene gasolineras filtradas por provincia
 /// El ID de provincia es un código de 2 dígitos (ej: '28' para Madrid)
-/// Obtiene gasolineras filtradas por provincia usando nuestro Backend Optimizado
-/// El ID de provincia es un código de 2 dígitos (ej: '28' para Madrid)
 Future<List<Gasolinera>> fetchGasolinerasByProvincia(String provinciaId) async {
-  try {
-    if (dotenv.env['FLUTTER_ENV'] == 'testing') {
-      AppLogger.info('Usando MOCK de gasolineras por provincia', tag: 'ApiGasolinera');
-      return await _loadMockGasolineras();
-    }
-    // 1. Obtener URL base del backend desde ConfigService
-    final baseUrl = ApiConfig.baseUrl; // E.g., http://localhost:3000
-
-    // 2. Construir URI para el nuevo endpoint
-    // Endpoint: /api/gasolineras?id_provincia=28
-    final uri = Uri.parse('$baseUrl/api/gasolineras')
-        .replace(queryParameters: {'id_provincia': provinciaId});
-
-    AppLogger.network('Solicitando gasolineras para provincia $provinciaId',
+  if (dotenv.env['FLUTTER_ENV'] == 'testing') {
+    AppLogger.info('Usando MOCK de gasolineras por provincia',
         tag: 'ApiGasolinera');
-
-    // 3. Realizar petición con timeout corto (el backend debería ser rápido)
-    final response = await http
-        .get(uri, headers: ApiConfig.headers)
-        .timeout(const Duration(seconds: 10));
-
-    if (response.statusCode == 200) {
-      final bodyUtf8 = utf8.decode(response.bodyBytes);
-      final jsonResponse = json.decode(bodyUtf8);
-
-      if (jsonResponse['success'] == true) {
-        final List<dynamic> listaGasolineras =
-            jsonResponse['gasolineras'] ?? [];
-
-        AppLogger.network('Recibidas ${listaGasolineras.length} gasolineras',
-            tag: 'ApiGasolinera');
-
-        return listaGasolineras
-            .map((jsonItem) => Gasolinera.fromJson(jsonItem))
-            .where((g) => g.lat != 0.0 && g.lng != 0.0)
-            .toList();
-      } else {
-        AppLogger.error('API Backend Error lógico: ${jsonResponse['message']}',
-            tag: 'ApiGasolinera');
-        return [];
-      }
-    } else {
-      AppLogger.error('API Backend Error HTTP: ${response.statusCode}',
-          tag: 'ApiGasolinera');
-      return [];
-    }
-  } catch (e) {
-    AppLogger.error('API Backend Excepción', tag: 'ApiGasolinera', error: e);
-    // Fallback silencioso: devolver lista vacía para que la UI use caché si tiene
-    return [];
+    return await _loadMockGasolineras();
   }
+
+  AppLogger.network('Solicitando gasolineras para provincia $provinciaId',
+      tag: 'ApiGasolinera');
+
+  final response = await DioApiClient().get(
+    '${ApiConfig.baseUrl}/api/gasolineras',
+    queryParameters: {'id_provincia': provinciaId},
+  );
+
+  if (response != null && response.statusCode == 200) {
+    if (response.data['success'] == true) {
+      final List<dynamic> listaGasolineras = response.data['gasolineras'] ?? [];
+
+      AppLogger.network('Recibidas ${listaGasolineras.length} gasolineras',
+          tag: 'ApiGasolinera');
+
+      return listaGasolineras
+          .map((jsonItem) => Gasolinera.fromJson(jsonItem))
+          .where((g) => g.lat != 0.0 && g.lng != 0.0)
+          .toList();
+    } else {
+      AppLogger.error('API Backend Error lógico: ${response.data['message']}',
+          tag: 'ApiGasolinera');
+    }
+  }
+
+  return [];
 }
 
 /// Helper privado para cargar de JSON en modo testing
 Future<List<Gasolinera>> _loadMockGasolineras() async {
   try {
-    // Retraso simulado para que parezca una petición de red real
     await Future.delayed(const Duration(seconds: 1));
-    final String jsonString = await rootBundle.loadString('assets/data/gasolineras.json');
+    final String jsonString =
+        await rootBundle.loadString('assets/data/gasolineras.json');
     final Map<String, dynamic> jsonResponse = json.decode(jsonString);
 
     if (jsonResponse['success'] == true) {
