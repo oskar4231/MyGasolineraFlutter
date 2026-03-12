@@ -72,7 +72,7 @@ class MarkerHelper {
       // Ajustamos el ancho base a un valor adecuado para el mapa
       _gasStationIcon = await _svgToBitmapDescriptor(
         'assets/images/iconoFinal.svg',
-        100,
+        75,
       );
       AppLogger.info('Icono normal SVG cargado perfectamente',
           tag: 'MapHelpers');
@@ -87,7 +87,7 @@ class MarkerHelper {
     try {
       _favoriteGasStationIcon = await _svgToBitmapDescriptor(
         'assets/images/iconoFavFinal.svg',
-        100, // Un poco más grande para destacar
+        75, // Un poco más grande para destacar
       );
       AppLogger.info('Icono favorito SVG cargado perfectamente',
           tag: 'MapHelpers');

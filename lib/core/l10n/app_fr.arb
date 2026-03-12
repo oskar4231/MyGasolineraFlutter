@@ -1,4 +1,5 @@
 {
+  "@@locale": "fr",
   "idioma": "Langue",
   "idiomas": "Langues",
   "ajustes": "Paramètres",
@@ -220,6 +221,7 @@
   "precio": "Prix",
   "apertura": "Ouverture",
   "veinticuatroHoras": "24 heures",
+  "abiertoAhora": "Ouvert maintenant",
   "atendidasPersonal": "Stations-service avec personnel",
   "abiertasAhora": "Stations-service ouvertes maintenant",
   "todas": "Toutes",
@@ -356,9 +358,8 @@
   "seleccionarAlMenosUna": "Sélectionnez au moins une facture",
   "exportarConConteo": "Exporter ({count})",
   "cerrar": "Fermer",
-
-  "permisoUbicacionTituloGpsOff": "GPS d\u00e9sactiv\u00e9",
-  "permisoUbicacionTituloBloqueado": "Autorisation bloqu\u00e9e",
+  "permisoUbicacionTituloGpsOff": "GPS désactivé",
+  "permisoUbicacionTituloBloqueado": "Autorisation bloquée",
   "permisoUbicacionTituloNecesario": "Localisation requise",
   "permisoUbicacionCuerpoGpsOff": "Le service de localisation de votre appareil est d\u00e9sactiv\u00e9. Activez-le dans les param\u00e8tres syst\u00e8me pour voir les stations-service proches.",
   "permisoUbicacionCuerpoBloqueado": "Vous avez bloqu\u00e9 d\u00e9finitivement l'acc\u00e8s \u00e0 la localisation. Pour l'utiliser, allez dans les Param\u00e8tres de l'application et activez-le manuellement.",

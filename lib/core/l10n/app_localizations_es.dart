@@ -687,6 +687,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get veinticuatroHoras => '24 Horas';
 
   @override
+  String get abiertoAhora => 'Abierto ahora';
+
+  @override
   String get atendidasPersonal => 'Gasolineras atendidas por personal';
 
   @override

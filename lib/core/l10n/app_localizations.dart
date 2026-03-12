@@ -1434,6 +1434,12 @@ abstract class AppLocalizations {
   /// **'24 Horas'**
   String get veinticuatroHoras;
 
+  /// No description provided for @abiertoAhora.
+  ///
+  /// In es, this message translates to:
+  /// **'Abierto ahora'**
+  String get abiertoAhora;
+
   /// No description provided for @atendidasPersonal.
   ///
   /// In es, this message translates to:
