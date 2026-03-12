@@ -14,8 +14,11 @@ class MarkerHelper {
   BitmapDescriptor? get gasStationIcon => _gasStationIcon;
   BitmapDescriptor? get favoriteGasStationIcon => _favoriteGasStationIcon;
 
+  /// Convierte un SVG a un BitmapDescriptor compatible con Google Maps
+  /// [targetWidth] es el ancho lógico que queremos en el mapa.
+  /// El alto se calcula automáticamente para no deformar el SVG.
   Future<BitmapDescriptor> _svgToBitmapDescriptor(
-      String path, double width, double height) async {
+      String path, double targetWidth) async {
     // 1. Cargar el string del SVG
     final String svgString = await rootBundle.loadString(path);
 
@@ -23,18 +26,31 @@ class MarkerHelper {
     final SvgLoader loader = SvgStringLoader(svgString);
     final PictureInfo pictureInfo = await vg.loadPicture(loader, null);
 
-    // 3. Escalar y crear una imagen rasterizada (PNG) a partir de la imagen vectorial
+    // 3. Obtener el devicePixelRatio para que no se vea borroso en móviles modernos/web
+    final double devicePixelRatio =
+        ui.PlatformDispatcher.instance.views.first.devicePixelRatio;
+
+    // 4. Calcular el alto manteniendo las proporciones (Aspect Ratio)
+    final double aspectRatio = pictureInfo.size.width / pictureInfo.size.height;
+    final double targetHeight = targetWidth / aspectRatio;
+
+    // 5. Escalar a resolución física (lógico * ratio)
+    final int physicalWidth = (targetWidth * devicePixelRatio).toInt();
+    final int physicalHeight = (targetHeight * devicePixelRatio).toInt();
+
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(pictureRecorder);
 
-    final double scaleX = pictureInfo.size.width > 0 ? width / pictureInfo.size.width : 1.0;
-    final double scaleY = pictureInfo.size.height > 0 ? height / pictureInfo.size.height : 1.0;
+    // Escalar el lienzo basándose en el tamaño original del SVG respecto al tamaño físico a dibujar
+    final double scaleX = physicalWidth / pictureInfo.size.width;
+    final double scaleY = physicalHeight / pictureInfo.size.height;
 
     canvas.scale(scaleX, scaleY);
     canvas.drawPicture(pictureInfo.picture);
 
     final ui.Picture scaledPicture = pictureRecorder.endRecording();
-    final ui.Image image = await scaledPicture.toImage(width.toInt(), height.toInt());
+    final ui.Image image =
+        await scaledPicture.toImage(physicalWidth, physicalHeight);
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
 
@@ -42,18 +58,21 @@ class MarkerHelper {
       throw Exception('No se pudo convertir SVG a ByteData');
     }
 
-    // Ajustar el devicePixelRatio en lugar del bitmapDescriptor directamente (es más compatible)
-    return BitmapDescriptor.bytes(byteData.buffer.asUint8List(), imagePixelRatio: 1.0);
+    // Pasamos el devicePixelRatio, así Google Maps lo renderiza con nitidez perfecta
+    return BitmapDescriptor.bytes(
+      byteData.buffer.asUint8List(),
+      imagePixelRatio: devicePixelRatio,
+    );
   }
 
   /// Carga los iconos personalizados para gasolineras (versión SVG)
   Future<void> loadGasStationIcons() async {
     // 1. Cargar icono estándar (Normal)
     try {
+      // Ajustamos el ancho base a un valor adecuado para el mapa
       _gasStationIcon = await _svgToBitmapDescriptor(
         'assets/images/iconoFinal.svg',
-        140,
-        140,
+        100,
       );
       AppLogger.info('Icono normal SVG cargado perfectamente',
           tag: 'MapHelpers');
@@ -68,8 +87,7 @@ class MarkerHelper {
     try {
       _favoriteGasStationIcon = await _svgToBitmapDescriptor(
         'assets/images/iconoFavFinal.svg',
-        120,
-        120,
+        100, // Un poco más grande para destacar
       );
       AppLogger.info('Icono favorito SVG cargado perfectamente',
           tag: 'MapHelpers');
