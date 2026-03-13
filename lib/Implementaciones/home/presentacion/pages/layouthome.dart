@@ -35,6 +35,7 @@ class _LayouthomeState extends State<Layouthome> {
   List<Gasolinera> _gasolinerasCargadas = [];
   geo.Position? _currentPosition;
   bool _showMap = true;
+  int _dialogsOpenCount = 0;
 
   @override
   void initState() {
@@ -43,12 +44,15 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroPrecio() async {
+    setState(() => _dialogsOpenCount++);
     final result = await PriceFilterDialog.show(
       context,
       precioDesde: app.filterProvider.precioDesde,
       precioHasta: app.filterProvider.precioHasta,
       tipoCombustible: app.filterProvider.tipoCombustibleSeleccionado,
     );
+
+    if (mounted) setState(() => _dialogsOpenCount--);
 
     if (result != null && mounted) {
       await app.filterProvider
@@ -57,10 +61,13 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroCombustible() async {
+    setState(() => _dialogsOpenCount++);
     final result = await FuelFilterDialog.show(
       context,
       valorActual: app.filterProvider.tipoCombustibleSeleccionado,
     );
+
+    if (mounted) setState(() => _dialogsOpenCount--);
 
     if (result != null && mounted) {
       await app.filterProvider.setTipoCombustible(result);
@@ -68,10 +75,13 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroApertura() async {
+    setState(() => _dialogsOpenCount++);
     final result = await OpeningFilterDialog.show(
       context,
       valorActual: app.filterProvider.tipoAperturaSeleccionado,
     );
+
+    if (mounted) setState(() => _dialogsOpenCount--);
 
     if (result != null && mounted) {
       await app.filterProvider.setTipoApertura(result);
@@ -99,13 +109,15 @@ class _LayouthomeState extends State<Layouthome> {
                 );
               },
               onPriceFilterPressed: _mostrarFiltroPrecio,
-              onOpenDrawer: () {
-                FiltersDialog.show(
+              onOpenDrawer: () async {
+                setState(() => _dialogsOpenCount++);
+                await FiltersDialog.show(
                   context,
                   onPriceFilterPressed: _mostrarFiltroPrecio,
                   onFuelFilterPressed: _mostrarFiltroCombustible,
                   onOpeningFilterPressed: _mostrarFiltroApertura,
                 );
+                if (mounted) setState(() => _dialogsOpenCount--);
               },
             ),
 
@@ -120,11 +132,14 @@ class _LayouthomeState extends State<Layouthome> {
                     index: _showMap ? 0 : 1,
                     children: [
                       // El mapa ahora se mantiene en memoria y se pinta con la marca de agua
-                      Stack(
-                        children: [
-                          MapWidget(
+                      AbsorbPointer(
+                        absorbing: _dialogsOpenCount > 0,
+                        child: Stack(
+                          children: [
+                            MapWidget(
                             key: const PageStorageKey<String>('map_widget_key'),
                             cacheService: _cacheService,
+                            gesturesEnabled: _dialogsOpenCount == 0,
                             combustibleSeleccionado:
                                 app.filterProvider.tipoCombustibleSeleccionado,
                             precioDesde: app.filterProvider.precioDesde,
@@ -185,6 +200,7 @@ class _LayouthomeState extends State<Layouthome> {
                             ),
                           ),
                         ],
+                      ),
                       ),
                       // La lista filtrada
                       _GasolinerasListView(

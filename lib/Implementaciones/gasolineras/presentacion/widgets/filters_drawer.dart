@@ -18,13 +18,13 @@ class FiltersDialog extends StatefulWidget {
   @override
   State<FiltersDialog> createState() => _FiltersDialogState();
 
-  static void show(
+  static Future<void> show(
     BuildContext context, {
     required VoidCallback onPriceFilterPressed,
     required VoidCallback onFuelFilterPressed,
     required VoidCallback onOpeningFilterPressed,
   }) {
-    showDialog(
+    return showDialog(
       context: context,
       builder: (context) => FiltersDialog(
         onPriceFilterPressed: onPriceFilterPressed,
@@ -138,7 +138,6 @@ class _FiltersDialogState extends State<FiltersDialog>
             dividerColor: dividerColor,
             onTap: fuelSelected
                 ? () {
-                    Navigator.of(context).pop();
                     widget.onPriceFilterPressed();
                   }
                 : () {
@@ -163,7 +162,6 @@ class _FiltersDialogState extends State<FiltersDialog>
                   !fuelSelected ? theme.colorScheme.primary : accentColor,
               dividerColor: dividerColor,
               onTap: () {
-                Navigator.of(context).pop();
                 widget.onFuelFilterPressed();
               },
             ),
@@ -179,7 +177,6 @@ class _FiltersDialogState extends State<FiltersDialog>
             accentColor: accentColor,
             dividerColor: dividerColor,
             onTap: () {
-              Navigator.of(context).pop();
               widget.onOpeningFilterPressed();
             },
           ),

@@ -68,6 +68,8 @@ class _MapWidgetState extends State<MapWidget>
   @override
   double get currentZoom => _currentZoom;
   @override
+  bool get gesturesEnabled => widget.gesturesEnabled;
+  @override
   Future<void> Function(Gasolinera, bool) get onMarkerTap =>
       (g, fav) => _mostrarInfoGasolinera(g, fav);
 
@@ -295,6 +297,10 @@ class _MapWidgetState extends State<MapWidget>
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
+          scrollGesturesEnabled: widget.gesturesEnabled,
+          zoomGesturesEnabled: widget.gesturesEnabled,
+          tiltGesturesEnabled: widget.gesturesEnabled,
+          rotateGesturesEnabled: widget.gesturesEnabled,
           gestureRecognizers: const {},
           style: Theme.of(context).brightness == Brightness.dark
               ? _mapStyleDark
@@ -357,13 +363,15 @@ class _MapWidgetState extends State<MapWidget>
 
         // 🛡️ "Escudo" invisible para Flutter Web:
         // Evita que los clics en el bottom sheet traspasen al mapa al cerrar.
-        if (_isBottomSheetOpen)
+        if (_isBottomSheetOpen || !widget.gesturesEnabled)
           Positioned.fill(
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 // Absorbe el clic silenciosamente
               },
+              onPanDown: (_) {},
+              onPanUpdate: (_) {},
               child: Container(color: Colors.transparent),
             ),
           ),

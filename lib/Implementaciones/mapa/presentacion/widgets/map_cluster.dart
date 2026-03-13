@@ -13,6 +13,7 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
   MarkerHelper get markerHelper;
   List<String> get favoritosIds;
   double get currentZoom;
+  bool get gesturesEnabled;
   Future<void> Function(Gasolinera, bool) get onMarkerTap;
 
   // ── Estado del cluster ─────────────────────────────────────────────────────
@@ -53,6 +54,7 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
         gasolinera,
         favoritosIds,
         (g, fav) => onMarkerTap(g, fav),
+        markersEnabled: gesturesEnabled,
       );
     }
 
@@ -79,7 +81,7 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
       icon: icon,
       anchor: const Offset(0.5, 1.0),
       zIndexInt: containsFavorite ? 10 : 1,
-      onTap: () {
+      onTap: gesturesEnabled ? () {
         // Zoom suave al tocar un grupo
         AppLogger.debug(
           'Zoom in suave al cluster: ${currentZoom + 2.0}',
@@ -87,7 +89,7 @@ mixin MapClusterMixin<T extends StatefulWidget> on State<T> {
         );
         // El mapController lo maneja el State principal a través del mixin
         onClusterTap(typedCluster.location, currentZoom + 2.0);
-      },
+      } : null,
     );
   }
 
