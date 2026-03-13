@@ -37,16 +37,16 @@ class GasolineraListWidget extends StatelessWidget {
               children: [
                 if (g.gasolina95 > 0) ...[
                   _smallPriceIndicator(
-                      '95', g.gasolina95, const Color(0xFF2ECC71)),
+                      context, '95', g.gasolina95, const Color(0xFF2ECC71)),
                   const SizedBox(width: 12),
                 ],
                 if (g.gasoleoA > 0)
                   _smallPriceIndicator(
-                      'Diesel', g.gasoleoA, const Color(0xFF34495E)),
+                      context, 'Diesel', g.gasoleoA, const Color(0xFF34495E)),
               ],
             ),
           ),
-          trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+          trailing: Icon(Icons.chevron_right_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
           onTap: () {
             onItemTap?.call();
           },
@@ -55,7 +55,7 @@ class GasolineraListWidget extends StatelessWidget {
     );
   }
 
-  Widget _smallPriceIndicator(String label, double price, Color color) {
+  Widget _smallPriceIndicator(BuildContext context, String label, double price, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -67,8 +67,8 @@ class GasolineraListWidget extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '$label: ',
-          style: const TextStyle(
-              fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
+          style: TextStyle(
+              fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
         ),
         Text(
           '${price.toStringAsFixed(3)}€',

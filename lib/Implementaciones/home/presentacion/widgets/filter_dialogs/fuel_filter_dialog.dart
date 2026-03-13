@@ -9,11 +9,11 @@ class FuelFilterDialog extends StatefulWidget {
     this.valorActual,
   });
 
-  static Future<String?> show(
+  static Future<Map<String, dynamic>?> show(
     BuildContext context, {
     required String? valorActual,
   }) async {
-    return await showDialog<String>(
+    return await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => FuelFilterDialog(valorActual: valorActual),
     );
@@ -131,7 +131,7 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context, _valorTemporal),
+                  onPressed: () => Navigator.pop(context, {'applied': true, 'value': _valorTemporal}),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
                     foregroundColor: isDark ? Colors.black : Colors.white,

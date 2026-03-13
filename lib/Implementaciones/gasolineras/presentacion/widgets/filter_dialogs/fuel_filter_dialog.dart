@@ -9,11 +9,11 @@ class FuelFilterDialog extends StatefulWidget {
     this.valorActual,
   });
 
-  static Future<String?> show(
+  static Future<Map<String, dynamic>?> show(
     BuildContext context, {
     required String? valorActual,
   }) async {
-    return await showDialog<String>(
+    return await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => FuelFilterDialog(valorActual: valorActual),
     );
@@ -36,19 +36,19 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(8),
       ),
       child: CheckboxListTile(
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
         value: _valorTemporal == value,
         onChanged: (bool? checked) {
           setState(() {
             _valorTemporal = checked == true ? value : null;
           });
         },
-        activeColor: Colors.white,
-        checkColor: const Color(0xFFFF9350),
+        activeColor: Theme.of(context).colorScheme.primary,
+        checkColor: Theme.of(context).colorScheme.onPrimary,
         controlAffinity: ListTileControlAffinity.leading,
       ),
     );
@@ -67,9 +67,10 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
     };
 
     return Dialog(
-      backgroundColor: const Color(0xFFFF9350),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -79,10 +80,10 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
           children: [
             Text(
               l10n.tiposCombustible,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 20),
@@ -97,15 +98,15 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     l10n.cancelar,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context, _valorTemporal),
+                  onPressed: () => Navigator.pop(context, {'applied': true, 'value': _valorTemporal}),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFFFF9350),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

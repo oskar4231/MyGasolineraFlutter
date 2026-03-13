@@ -69,8 +69,8 @@ class _LayouthomeState extends State<Layouthome> {
 
     if (mounted) setState(() => _dialogsOpenCount--);
 
-    if (result != null && mounted) {
-      await app.filterProvider.setTipoCombustible(result);
+    if (result != null && mounted && (result['applied'] as bool?) == true) {
+      await app.filterProvider.setTipoCombustible(result['value'] as String?);
     }
   }
 
@@ -83,8 +83,8 @@ class _LayouthomeState extends State<Layouthome> {
 
     if (mounted) setState(() => _dialogsOpenCount--);
 
-    if (result != null && mounted) {
-      await app.filterProvider.setTipoApertura(result);
+    if (result != null && mounted && (result['applied'] as bool?) == true) {
+      await app.filterProvider.setTipoApertura(result['value'] as String?);
     }
   }
 

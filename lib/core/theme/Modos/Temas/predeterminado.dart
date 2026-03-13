@@ -4,32 +4,86 @@ ThemeData temaPredeterminado() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFFFF9350), // Naranja original
+      seedColor: const Color(0xFFFF9350),
       brightness: Brightness.light,
+
+      // — Principal —
       primary: const Color(0xFFFF9350),
-      onPrimary:
-          const Color(0xFF492714), // Marrón oscuro para texto sobre naranja
-      surface:
-          const Color(0xFFFFE8DA), // Color crema para fondo de cards/sheets
-      onSurface: const Color(0xFF492714), // Marrón oscuro para texto general
+      onPrimary: const Color(0xFF2D1509), // Marrón muy oscuro (reemplaza negro puro)
+      primaryContainer: const Color(0xFFFFC285), // Naranja claro para containers
+      onPrimaryContainer: const Color(0xFF2D1509),
+
+      // — Secundario (naranja oscuro) —
+      secondary: const Color(0xFFE07030),
+      onSecondary: const Color(0xFFFFFFFF),
+      secondaryContainer: const Color(0xFFFFD5BC),
+      onSecondaryContainer: const Color(0xFF2D1509),
+
+      // — Superficie con jerarquía —
+      surface: const Color(0xFFFFE8DA),        // Cards nivel 1
+      onSurface: const Color(0xFF2D1509),       // Texto primario
+      surfaceContainerLow: const Color(0xFFFFF8F2),   // Scaffold (fondo)
+      surfaceContainerHigh: const Color(0xFFFFD5BC),  // Elevated / Bottom sheets
+      onSurfaceVariant: const Color(0xFF7A4020),       // Texto secundario/muted
+
+      // — Semánticos —
+      error: const Color(0xFFD63B1F),
+      onError: const Color(0xFFFFFFFF),
+      errorContainer: const Color(0xFFFFDAD4),
+      onErrorContainer: const Color(0xFF5C1308),
+
+      // — Outline —
+      outline: const Color(0xFFC08060),        // Borders/dividers cálidos
+      outlineVariant: const Color(0xFFFFD5BC), // Borders sutiles
     ),
-    scaffoldBackgroundColor: const Color(
-        0xFFFFE8DA), // Fondo crema general (cambiado de naranja a crema para coincidir con Inicio)
+
+    scaffoldBackgroundColor: const Color(0xFFFFF8F2), // Surface 0 — fondo más limpio
+
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFFFF9350),
-      foregroundColor: Colors.black,
-      iconTheme: IconThemeData(color: Colors.black),
+      foregroundColor: Color(0xFF2D1509), // Marrón oscuro — eliminamos el negro puro
+      iconTheme: IconThemeData(color: Color(0xFF2D1509)),
       titleTextStyle: TextStyle(
-        color: Colors.black,
+        color: Color(0xFF2D1509),
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     ),
-    cardTheme: CardThemeData(
-      color: const Color(0xFFFFE8DA), // Color crema de las cards
-      elevation: 2,
+
+    cardTheme: const CardThemeData(
+      color: Color(0xFFFFE8DA), // Surface 1
+      elevation: 0,             // Sin sombra — el borde diferencia la card del fondo
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        side: BorderSide(color: Color(0x1A2D1509), width: 0.5), // Borde sutil cálido
+      ),
     ),
-    // Definimos colores semánticos extra si es necesario
+
+    textTheme: const TextTheme(
+      titleLarge:  TextStyle(color: Color(0xFF2D1509), fontWeight: FontWeight.w600),
+      titleMedium: TextStyle(color: Color(0xFF2D1509), fontWeight: FontWeight.w500),
+      bodyLarge:   TextStyle(color: Color(0xFF2D1509)),
+      bodyMedium:  TextStyle(color: Color(0xFF7A4020)), // Texto secundario
+      bodySmall:   TextStyle(color: Color(0xFFC08060)), // Texto disabled/hints
+      labelLarge:  TextStyle(color: Color(0xFF2D1509), fontWeight: FontWeight.w500),
+    ),
+
     extensions: const <ThemeExtension<dynamic>>[],
   );
+}
+
+// — Colores semánticos de conveniencia —
+// Úsalos en la app con MyGasolineraColors.success, etc.
+abstract final class MyGasolineraColors {
+  static const success        = Color(0xFF3D7A52);
+  static const onSuccess      = Color(0xFFFFFFFF);
+  static const successContainer = Color(0xFFB7F0CE);
+
+  static const warning        = Color(0xFFF0A500);
+  static const onWarning      = Color(0xFF2D1509);
+  static const warningContainer = Color(0xFFFFEAB0);
+
+  static const error          = Color(0xFFD63B1F);
+  static const onError        = Color(0xFFFFFFFF);
+  static const errorContainer = Color(0xFFFFDAD4);
 }

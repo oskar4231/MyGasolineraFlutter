@@ -65,30 +65,33 @@ class _FiltersDialogState extends State<FiltersDialog>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context)!;
-    final fuelSelected = app.filterProvider.tipoCombustibleSeleccionado != null;
+    return ListenableBuilder(
+      listenable: app.filterProvider,
+      builder: (context, _) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+        final l10n = AppLocalizations.of(context)!;
+        final fuelSelected = app.filterProvider.tipoCombustibleSeleccionado != null;
 
-    // Detener animación si ya hay algo seleccionado
-    if (fuelSelected && _blinkController.isAnimating) {
-      _blinkController.stop();
-      _blinkController.value = 0; // Opacidad completa (begin: 1.0)
-    } else if (!fuelSelected && !_blinkController.isAnimating) {
-      _blinkController.repeat(reverse: true);
-    }
+        // Detener animación si ya hay algo seleccionado
+        if (fuelSelected && _blinkController.isAnimating) {
+          _blinkController.stop();
+          _blinkController.value = 0; // Opacidad completa (begin: 1.0)
+        } else if (!fuelSelected && !_blinkController.isAnimating) {
+          _blinkController.repeat(reverse: true);
+        }
 
-    final dialogBg =
-        isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
-    final headerBg = isDark ? dialogBg : theme.colorScheme.primary;
-    final headerText = isDark ? Colors.white : theme.colorScheme.onPrimary;
-    final textColor =
-        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
-    final accentColor =
-        isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
-    final dividerColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
+        final dialogBg =
+            isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
+        final headerBg = isDark ? dialogBg : theme.colorScheme.primary;
+        final headerText = isDark ? theme.colorScheme.onSurface : theme.colorScheme.onPrimary;
+        final textColor =
+            isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
+        final accentColor =
+            isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
+        final dividerColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 
-    return Dialog(
+        return Dialog(
       backgroundColor: dialogBg,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(
@@ -133,8 +136,8 @@ class _FiltersDialogState extends State<FiltersDialog>
           _buildFilterTile(
             icon: Icons.attach_money_rounded,
             title: l10n.precio,
-            textColor: fuelSelected ? textColor : Colors.grey,
-            accentColor: fuelSelected ? accentColor : Colors.grey,
+            textColor: fuelSelected ? textColor : theme.disabledColor,
+            accentColor: fuelSelected ? accentColor : theme.disabledColor,
             dividerColor: dividerColor,
             onTap: fuelSelected
                 ? () {
@@ -190,7 +193,7 @@ class _FiltersDialogState extends State<FiltersDialog>
                       app.filterProvider.precioDesde != null ||
                       app.filterProvider.precioHasta != null ||
                       app.filterProvider.tipoAperturaSeleccionado != null)
-                  ? Colors.redAccent
+                  ? theme.colorScheme.error
                   : theme.dividerColor,
             ),
             title: Text(
@@ -200,7 +203,7 @@ class _FiltersDialogState extends State<FiltersDialog>
                         app.filterProvider.precioDesde != null ||
                         app.filterProvider.precioHasta != null ||
                         app.filterProvider.tipoAperturaSeleccionado != null)
-                    ? Colors.redAccent
+                    ? theme.colorScheme.error
                     : theme.disabledColor,
                 fontWeight: FontWeight.bold,
               ),
@@ -224,6 +227,8 @@ class _FiltersDialogState extends State<FiltersDialog>
           const SizedBox(height: 8),
         ],
       ),
+    );
+      },
     );
   }
 
