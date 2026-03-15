@@ -369,7 +369,7 @@ class _CocheFormState extends State<CocheForm> {
                     ),
                     value: _tiposCombustible[key],
                     activeColor: checkColor,
-                    checkColor: isDark ? Colors.black : Colors.white,
+                    checkColor: theme.colorScheme.onPrimary,
                     onChanged: (v) =>
                         setState(() => _tiposCombustible[key] = v ?? false),
                     controlAffinity: ListTileControlAffinity.leading,
@@ -470,19 +470,19 @@ class _CocheFormState extends State<CocheForm> {
           onPressed: widget.isLoading ? null : () => _confirmar(l10n),
           style: ElevatedButton.styleFrom(
             backgroundColor: accentColor,
-            foregroundColor: isDark ? Colors.black : Colors.white,
+            foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
           ),
           child: widget.isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onPrimary),
                   ),
                 )
               : Text(l10n.guardar),

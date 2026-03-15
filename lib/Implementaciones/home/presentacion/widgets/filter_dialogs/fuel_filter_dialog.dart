@@ -134,7 +134,7 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
                   onPressed: () => Navigator.pop(context, {'applied': true, 'value': _valorTemporal}),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),

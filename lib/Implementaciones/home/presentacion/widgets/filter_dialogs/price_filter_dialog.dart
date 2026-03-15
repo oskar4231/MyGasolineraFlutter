@@ -296,7 +296,7 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
                         ? accentColor
                         : (isDark ? const Color(0xFF38383A) : Colors.grey[300]),
                     foregroundColor: _isValid
-                        ? (isDark ? Colors.black : Colors.white)
+                        ? theme.colorScheme.onPrimary
                         : (isDark ? const Color(0xFF9E9E9E) : Colors.grey[600]),
                     elevation: 0,
                     shape: RoundedRectangleBorder(

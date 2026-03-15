@@ -505,9 +505,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       )
                     ],
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.local_gas_station_rounded,
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                     size: 28,
                   ),
                 ),

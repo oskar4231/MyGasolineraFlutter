@@ -16,6 +16,8 @@ class ConnectionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -40,7 +42,7 @@ class ConnectionSection extends StatelessWidget {
                 // 1. Botón Actualizar Servidor
                 Row(
                   children: [
-                    Icon(Icons.sync, color: theme.colorScheme.primary),
+                    Icon(Icons.sync, color: primaryColor),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -70,8 +72,8 @@ class ConnectionSection extends StatelessWidget {
                     ElevatedButton(
                       onPressed: actualizandoUrl ? null : onRefreshUrl,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                        foregroundColor: theme.colorScheme.primary,
+                        backgroundColor: primaryColor.withValues(alpha: 0.15),
+                        foregroundColor: primaryColor,
                         elevation: 0,
                       ),
                       child: actualizandoUrl
@@ -81,7 +83,7 @@ class ConnectionSection extends StatelessWidget {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  theme.colorScheme.primary,
+                                  primaryColor,
                                 ),
                               ),
                             )

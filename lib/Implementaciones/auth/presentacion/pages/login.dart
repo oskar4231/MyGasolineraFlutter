@@ -375,7 +375,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             });
                                           },
                                           activeColor: accentColor,
-                                          checkColor: Colors.white,
+                                          checkColor: theme.colorScheme.onPrimary,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(6),

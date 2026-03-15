@@ -142,7 +142,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     // Colores adaptativos (patrón Accesibilidad/Facturas)
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
@@ -383,7 +383,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 
@@ -524,7 +524,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 
@@ -660,7 +660,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 

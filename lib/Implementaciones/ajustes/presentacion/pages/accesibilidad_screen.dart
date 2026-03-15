@@ -77,7 +77,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
-        : theme.primaryColor;
+        : const Color(0xFFFF8200);
 
     final borderColor = isDark
         ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde
@@ -483,7 +483,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
-        : theme.primaryColor;
+        : const Color(0xFFFF8200);
 
     final borderColor = isDark
         ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde
@@ -571,7 +571,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
-        : theme.primaryColor;
+        : const Color(0xFFFF8200);
 
     final borderColor = isDark
         ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde

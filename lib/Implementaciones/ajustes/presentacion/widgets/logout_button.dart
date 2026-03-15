@@ -12,7 +12,7 @@ class LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final onPrimary = isDark ? Colors.black : theme.colorScheme.onPrimary;
 
     return Center(

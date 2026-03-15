@@ -19,7 +19,7 @@ class AjustesDialogs {
     final titleColor = isDark ? Colors.white : theme.colorScheme.onSurface;
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
-    final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final accentColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     showDialog(
       context: context,
@@ -107,7 +107,7 @@ class AjustesDialogs {
     final titleColor = isDark ? Colors.white : theme.colorScheme.onSurface;
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
-    final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final accentColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     showDialog(
       context: context,
@@ -150,7 +150,7 @@ class AjustesDialogs {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: accentColor,
-                foregroundColor: isDark ? Colors.black : Colors.white,
+                foregroundColor: theme.colorScheme.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -195,7 +195,7 @@ class AjustesDialogs {
             final dialogBackgroundColor =
                 isDark ? const Color(0xFF323236) : theme.colorScheme.surface;
             final titleColor =
-                isDark ? const Color(0xFFFF8235) : theme.colorScheme.onSurface;
+                isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
             final textColor =
                 isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
@@ -220,7 +220,7 @@ class AjustesDialogs {
                     CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(isDark
                           ? const Color(0xFFFF8235)
-                          : theme.primaryColor),
+                          : const Color(0xFFFF8200)),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -239,7 +239,7 @@ class AjustesDialogs {
                       style: TextStyle(
                         color: isDark
                             ? const Color(0xFF9E9E9E)
-                            : theme.colorScheme.primary,
+                            : const Color(0xFFFF8200),
                       ),
                     ),
                   ),
@@ -254,10 +254,8 @@ class AjustesDialogs {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDark
                           ? const Color(0xFFFF8235)
-                          : theme.colorScheme.error,
-                      foregroundColor: isDark
-                          ? const Color(0xFF151517)
-                          : theme.colorScheme.onError,
+                          : const Color(0xFFFF8200),
+                      foregroundColor: theme.colorScheme.onPrimary,
                     ),
                     child: Text(AppLocalizations.of(context)!.eliminar),
                   ),

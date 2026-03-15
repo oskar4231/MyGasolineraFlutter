@@ -345,7 +345,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: accentColor,
-                                foregroundColor: Colors.white,
+                                foregroundColor: theme.colorScheme.onPrimary,
                                 shadowColor:
                                     accentColor.withValues(alpha: 0.22),
                                 elevation: 4,

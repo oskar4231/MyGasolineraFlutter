@@ -67,7 +67,7 @@ class CocheCard extends StatelessWidget {
                   child: BrandLogo(
                     brandName: coche.marca,
                     size: 32,
-                    fallbackColor: isDark ? accentColor : Colors.white,
+                    fallbackColor: isDark ? accentColor : theme.colorScheme.onPrimary,
                   ),
                 ),
                 const SizedBox(width: 16),

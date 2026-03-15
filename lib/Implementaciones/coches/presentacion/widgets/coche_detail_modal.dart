@@ -119,12 +119,19 @@ class CocheDetailModal extends StatelessWidget {
         ),
       ),
       actions: [
-        TextButton(
+        ElevatedButton(
           onPressed: () => Navigator.of(context).pop(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: accentColor,
+            foregroundColor: theme.colorScheme.onPrimary,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
           child: Text(
             l10n.cerrar,
-            style: TextStyle(
-              color: accentColor,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
             ),

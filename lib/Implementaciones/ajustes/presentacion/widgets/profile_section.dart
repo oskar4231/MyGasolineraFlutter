@@ -46,7 +46,7 @@ class _ProfileSectionState extends State<ProfileSection> {
     final lighterCardColor = isDark
         ? const Color(0xFF3E3E42)
         : Color.lerp(cardColor, Colors.white, 0.25);
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 

@@ -248,7 +248,7 @@ class _AllFiltersDialogState extends State<AllFiltersDialog> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: accentColor,
-                          foregroundColor: Colors.white,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 18),
                           elevation: 0,
                           shadowColor: accentColor.withValues(alpha: 0.3),
@@ -336,7 +336,7 @@ class _AllFiltersDialogState extends State<AllFiltersDialog> {
               e.value,
               style: TextStyle(
                 color: isSelected
-                    ? Colors.white
+                    ? Theme.of(context).colorScheme.onPrimary
                     : textColor.withValues(alpha: 0.8),
                 fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
                 fontSize: 14,
@@ -462,7 +462,7 @@ class _AllFiltersDialogState extends State<AllFiltersDialog> {
                     e.value,
                     style: TextStyle(
                       color: isSelected
-                          ? Colors.white
+                          ? Theme.of(context).colorScheme.onPrimary
                           : textColor.withValues(alpha: 0.8),
                       fontWeight:
                           isSelected ? FontWeight.w900 : FontWeight.w600,
@@ -523,7 +523,7 @@ class _AllFiltersDialogState extends State<AllFiltersDialog> {
               e.value,
               style: TextStyle(
                 color: isSelected
-                    ? Colors.white
+                    ? Theme.of(context).colorScheme.onPrimary
                     : textColor.withValues(alpha: 0.8),
                 fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
                 fontSize: 14,
