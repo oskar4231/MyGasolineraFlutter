@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
-import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
-import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class AjustesHeader extends StatelessWidget {
-  const AjustesHeader({super.key});
+  final ThemeData theme;
+  final AppLocalizations l10n;
+
+  const AjustesHeader({
+    super.key,
+    required this.theme,
+    required this.l10n,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
 
     final appBarContentColor =
@@ -21,15 +24,6 @@ class AjustesHeader extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Botón Atrás (Alineado a la izquierda)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: HoverBackButton(
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const Layouthome()),
-              ),
-            ),
-          ),
           // Título (Centrado)
           Text(
             l10n.ajustesTitulo,

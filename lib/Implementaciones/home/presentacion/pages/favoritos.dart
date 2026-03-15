@@ -385,7 +385,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           padding: const EdgeInsets.only(bottom: 24),
                           itemCount: _gasolinerasFavoritas.length,
                           itemBuilder: (context, index) => _buildGasolineraItem(
-                              _gasolinerasFavoritas[index], l10n),
+                            _gasolinerasFavoritas[index],
+                            l10n,
+                            theme,
+                            isDark,
+                            accentColor,
+                          ),
                         ),
             ),
           ],
@@ -414,14 +419,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     );
   }
 
-  Widget _buildGasolineraItem(Gasolinera g, AppLocalizations l10n) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
-    final cardColor = isDark ? const Color(0xFF232326) : Colors.white;
+  Widget _buildGasolineraItem(
+    Gasolinera g,
+    AppLocalizations l10n,
+    ThemeData theme,
+    bool isDark,
+    Color accentColor,
+  ) {
     final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
     final subtextColor = isDark ? Colors.white70 : Colors.black54;
+    final cardColor = isDark ? const Color(0xFF232326) : Colors.white;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/map_widget.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
-import 'package:my_gasolinera/Implementaciones/coches/presentacion/pages/coches.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/favoritos.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
@@ -10,7 +8,6 @@ import 'package:my_gasolinera/main.dart' as app;
 
 // Importar los nuevos widgets
 import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/home_header.dart';
-import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/home_bottom_bar.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/presentacion/widgets/filters_drawer.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/price_filter_dialog.dart';
 import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/fuel_filter_dialog.dart';
@@ -22,10 +19,10 @@ class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
 
   @override
-  State<Layouthome> createState() => _LayouthomeState();
+  State<Layouthome> createState() => LayouthomeState();
 }
 
-class _LayouthomeState extends State<Layouthome> {
+class LayouthomeState extends State<Layouthome> {
   late GasolinerasCacheService _cacheService;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -35,6 +32,14 @@ class _LayouthomeState extends State<Layouthome> {
   List<Gasolinera> _gasolinerasCargadas = [];
   geo.Position? _currentPosition;
   bool _showMap = true;
+
+  bool get isMapMode => _showMap;
+
+  void toggleMapList() {
+    setState(() {
+      _showMap = !_showMap;
+    });
+  }
 
   @override
   void initState() {
@@ -202,32 +207,6 @@ class _LayouthomeState extends State<Layouthome> {
                 },
               ),
             ),
-
-            // Barra inferior con botones
-            HomeBottomBar(
-              onCochesPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CochesScreen(),
-                  ),
-                );
-              },
-              onMapListTogglePressed: () {
-                setState(() {
-                  _showMap = !_showMap;
-                });
-              },
-              onAjustesPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AjustesScreen(),
-                  ),
-                );
-              },
-              isMapMode: _showMap,
-            ),
           ],
         ),
       ),
@@ -293,7 +272,7 @@ class _GasolinerasListView extends StatelessWidget {
     }
 
     // ✅ OPTIMIZACIÓN: Ordenar la lista según el precio o cercanía
-    List<Gasolinera> listReady = List.from(gasolineras);
+    final List<Gasolinera> listReady = List.from(gasolineras);
     if (filter.ordenPrecio != null) {
       listReady.sort((a, b) {
         if (filter.ordenPrecio == 'distance') {
@@ -489,6 +468,55 @@ class _GasolinerasListView extends StatelessWidget {
     );
   }
 
+  // ✅ OPTIMIZACIÓN: Los helpers ahora son estáticos o no dependen del contexto directamente para evitar lookups redundantes
+  static Widget _buildPrecioChip(String label, double precio, Color color) {
+    return Chip(
+      label: Text(
+        '$label: ${precio.toStringAsFixed(3)}€',
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      backgroundColor: color.withValues(alpha: 0.1),
+      side: BorderSide(color: color, width: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    );
+  }
+
+  static Widget _buildDistanceLabel(
+      Gasolinera g, geo.Position currentPos, ThemeData theme) {
+    final distanceMeters = geo.Geolocator.distanceBetween(
+      currentPos.latitude,
+      currentPos.longitude,
+      g.lat,
+      g.lng,
+    );
+
+    String distanceText = '';
+    if (distanceMeters < 1000) {
+      distanceText = '${distanceMeters.toStringAsFixed(0)} m';
+    } else {
+      distanceText = '${(distanceMeters / 1000).toStringAsFixed(1)} km';
+    }
+
+    return Row(
+      children: [
+        Icon(Icons.location_on,
+            size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+        const SizedBox(width: 4),
+        Text(
+          'a $distanceText de ti',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _abrirGoogleMaps(double lat, double lng) async {
     final Uri mapsWebUri = Uri.parse(
       'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving',
@@ -523,54 +551,6 @@ class _GasolinerasListView extends StatelessWidget {
       g.glp,
     ].where((p) => p > 0).toList();
     return precios.isEmpty ? 999.0 : precios.reduce((a, b) => a < b ? a : b);
-  }
-
-  Widget _buildPrecioChip(String label, double precio, Color color) {
-    return Chip(
-      label: Text(
-        '$label: ${precio.toStringAsFixed(3)}€',
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      backgroundColor: color.withValues(alpha: 0.1),
-      side: BorderSide(color: color, width: 1),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    );
-  }
-
-  Widget _buildDistanceLabel(
-      Gasolinera g, geo.Position currentPos, ThemeData theme) {
-    final distanceMeters = geo.Geolocator.distanceBetween(
-      currentPos.latitude,
-      currentPos.longitude,
-      g.lat,
-      g.lng,
-    );
-
-    String distanceText = '';
-    if (distanceMeters < 1000) {
-      distanceText = '${distanceMeters.toStringAsFixed(0)} m';
-    } else {
-      distanceText = '${(distanceMeters / 1000).toStringAsFixed(1)} km';
-    }
-
-    return Row(
-      children: [
-        Icon(Icons.location_on,
-            size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
-        const SizedBox(width: 4),
-        Text(
-          'a $distanceText de ti',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: theme.colorScheme.primary,
-          ),
-        ),
-      ],
-    );
   }
 }
 

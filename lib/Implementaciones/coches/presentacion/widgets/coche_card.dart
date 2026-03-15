@@ -8,18 +8,23 @@ class CocheCard extends StatelessWidget {
   final Coche coche;
   final VoidCallback onDelete;
 
+  final AppLocalizations l10n;
+  final ThemeData theme;
+  final bool isDark;
+  final Color accentColor;
+
   const CocheCard({
     super.key,
     required this.coche,
     required this.onDelete,
+    required this.l10n,
+    required this.theme,
+    required this.isDark,
+    required this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     final cardColor = isDark
         ? const Color(0xFF3E3E42)
         : (theme.cardTheme.color ?? theme.cardColor);
@@ -28,7 +33,7 @@ class CocheCard extends StatelessWidget {
     final subtextColor = isDark
         ? const Color(0xFFEBEBEB).withValues(alpha: 0.6)
         : theme.colorScheme.onSurface.withValues(alpha: 0.5);
-    final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+
     final chipBg = isDark
         ? accentColor.withValues(alpha: 0.15)
         : accentColor.withValues(alpha: 0.2);

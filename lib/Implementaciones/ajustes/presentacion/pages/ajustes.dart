@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 // Widgets & Controllers
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_header.dart';
-import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_footer.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/profile_section.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/options_menu.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/logout_button.dart';
@@ -90,6 +90,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
   Widget build(BuildContext context) {
     // Obtenemos el tema actual
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     // AjustesHeader maneja internamente la navegación y estilos específicos
     return Scaffold(
@@ -97,7 +98,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const AjustesHeader(),
+            AjustesHeader(theme: theme, l10n: l10n),
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
@@ -137,7 +138,6 @@ class _AjustesScreenState extends State<AjustesScreen> {
                 ),
               ),
             ),
-            const AjustesFooter(),
           ],
         ),
       ),

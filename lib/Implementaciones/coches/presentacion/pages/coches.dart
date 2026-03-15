@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/pages/ajustes.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/controllers/coches_controller.dart';
 import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/coche_card.dart';
 import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/coche_estado_vacio.dart';
 import 'package:my_gasolinera/Implementaciones/coches/presentacion/widgets/coche_form.dart';
-import 'package:my_gasolinera/Implementaciones/home/presentacion/pages/layouthome.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/services/car_data_service.dart';
-import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class CochesScreen extends StatefulWidget {
   const CochesScreen({super.key});
@@ -73,14 +70,6 @@ class _CochesScreenState extends State<CochesScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: HoverBackButton(
-                      onPressed: () => Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (_) => const Layouthome()),
-                      ),
-                    ),
-                  ),
                   Text(
                     l10n.cochesTitulo,
                     style: TextStyle(
@@ -110,56 +99,13 @@ class _CochesScreenState extends State<CochesScreen> {
                             return CocheCard(
                               coche: coche,
                               onDelete: () => _controller.eliminar(coche),
+                              l10n: l10n,
+                              theme: theme,
+                              isDark: isDark,
+                              accentColor: accentColor,
                             );
                           },
                         ),
-            ),
-
-            // ── Footer ──────────────────────────────────────────────────
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: accentColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    onPressed: null, // Ya estamos en Coches
-                    icon: Icon(Icons.directions_car,
-                        size: 40,
-                        color: isDark
-                            ? Colors.black
-                            : theme.colorScheme.onPrimary),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const Layouthome()),
-                    ),
-                    icon: Icon(Icons.pin_drop,
-                        size: 40,
-                        color: isDark
-                            ? Colors.black.withValues(alpha: 0.5)
-                            : theme.colorScheme.onPrimary
-                                .withValues(alpha: 0.5)),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const AjustesScreen()),
-                    ),
-                    icon: Icon(Icons.settings,
-                        size: 40,
-                        color: isDark
-                            ? Colors.black.withValues(alpha: 0.5)
-                            : theme.colorScheme.onPrimary
-                                .withValues(alpha: 0.5)),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
