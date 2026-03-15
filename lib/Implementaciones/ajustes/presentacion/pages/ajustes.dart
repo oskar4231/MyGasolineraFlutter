@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 // Widgets & Controllers
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_header.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_footer.dart';
@@ -79,7 +80,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(exito ? '✅ Foto actualizada' : '❌ Error al subir'),
-            backgroundColor: exito ? Colors.green : Colors.red,
+            backgroundColor: exito ? MyGasolineraColors.success : MyGasolineraColors.error,
           ),
         );
       }

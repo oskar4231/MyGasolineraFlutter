@@ -5,6 +5,7 @@ import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/passwor
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/widgets/premium_gradient_button.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class NuevaPasswordScreen extends StatefulWidget {
   final String email;
@@ -87,7 +88,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
               verifyResponse['message'] ??
                   AppLocalizations.of(context)!.codigoInvalido,
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
         setState(() => _isLoading = false);
@@ -106,7 +107,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.passwordActualizada),
-            backgroundColor: Colors.green,
+            backgroundColor: MyGasolineraColors.success,
           ),
         );
 
@@ -122,14 +123,14 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
             content: Text(
               resetResponse['message'] ?? 'Error al cambiar contraseña',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Error: $e'), backgroundColor: MyGasolineraColors.error),
       );
     } finally {
       if (mounted) {

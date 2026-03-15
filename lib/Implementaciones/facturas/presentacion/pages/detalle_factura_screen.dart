@@ -179,7 +179,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
+                                  color: const Color(0xFF2D1509).withValues(alpha: 0.1),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -236,7 +236,7 @@ class DetalleFacturaScreen extends StatelessWidget {
                                     return Container(
                                       color: isDark
                                           ? const Color(0xFF38383A)
-                                          : Colors.grey[300],
+                                          : const Color(0xFFC08060).withValues(alpha: 0.2),
                                       child: const Icon(Icons.broken_image,
                                           size: 50),
                                     );

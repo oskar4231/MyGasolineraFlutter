@@ -13,8 +13,8 @@ class PasswordRequirements extends StatelessWidget {
     required this.password,
     required this.isVisible,
     this.primaryColor,
-    this.successColor = Colors.green,
-    this.errorColor = Colors.red,
+    this.successColor = const Color(0xFF3D7A52),
+    this.errorColor = const Color(0xFFD63B1F),
     this.backgroundColor,
   });
 
@@ -49,7 +49,7 @@ class PasswordRequirements extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: effectiveBackgroundColor,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[300]!),
+                  border: Border.all(color: const Color(0xFFC08060).withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

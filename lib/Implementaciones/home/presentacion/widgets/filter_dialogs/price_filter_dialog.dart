@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class PriceFilterDialog extends StatefulWidget {
   final double? precioDesde;
@@ -102,8 +103,9 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final accentColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
-    final inputBgColor =
-        isDark ? const Color(0xFF323236) : Colors.grey.withValues(alpha: 0.1);
+    final inputBgColor = isDark
+        ? const Color(0xFF323236)
+        : const Color(0xFFC08060).withValues(alpha: 0.2);
 
     // Validación: requiere tipo de combustible
     if (widget.tipoCombustible == null) {
@@ -264,7 +266,7 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
                 child: Text(
                   _errorMessage!,
                   style: const TextStyle(
-                    color: Colors.red,
+                    color: MyGasolineraColors.error,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),

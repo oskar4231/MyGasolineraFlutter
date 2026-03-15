@@ -17,6 +17,7 @@ import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_
 import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/opening_filter_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -190,7 +191,7 @@ class _LayouthomeState extends State<Layouthome> {
                                   shadows: [
                                     Shadow(
                                       color:
-                                          Colors.black.withValues(alpha: 0.3),
+                                          const Color(0xFF2D1509).withValues(alpha: 0.3),
                                       blurRadius: 4,
                                       offset: const Offset(1, 1),
                                     ),
@@ -472,13 +473,13 @@ class _GasolinerasListView extends StatelessWidget {
                             _buildPrecioChip(
                               'G95',
                               gasolinera.gasolina95,
-                              Colors.green.shade700,
+                              MyGasolineraColors.success,
                             ),
                           if (gasolinera.gasoleoA > 0)
                             _buildPrecioChip(
                               'Diesel',
                               gasolinera.gasoleoA,
-                              Colors.black87,
+                              const Color(0xFF2D1509),
                             ),
                           if (gasolinera.gasolina98 > 0)
                             _buildPrecioChip(
@@ -490,7 +491,7 @@ class _GasolinerasListView extends StatelessWidget {
                             _buildPrecioChip(
                               'GLP',
                               gasolinera.glp,
-                              Colors.orange.shade700,
+                              MyGasolineraColors.warning,
                             ),
                         ],
                       ),

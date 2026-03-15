@@ -213,7 +213,7 @@ class _ShadowFieldWrapperState extends State<ShadowFieldWrapper> {
               BoxShadow(
                 color: _hasFocus
                     ? Theme.of(context).primaryColor.withValues(alpha: 0.15)
-                    : Colors.black.withValues(alpha: _isHovered ? 0.15 : 0.05),
+                    : const Color(0xFF2D1509).withValues(alpha: _isHovered ? 0.15 : 0.05),
                 blurRadius: _hasFocus ? 12 : (_isHovered ? 8 : 4),
                 offset: _hasFocus ? const Offset(0, 4) : const Offset(0, 2),
               ),

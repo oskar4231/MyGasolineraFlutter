@@ -28,9 +28,9 @@ class FacturaImageWidget extends StatefulWidget {
       context,
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: const Color(0xFF2D1509),
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: const Color(0xFF2D1509),
             elevation: 0,
             iconTheme: const IconThemeData(color: Colors.white),
             leading: IconButton(
@@ -184,7 +184,7 @@ class _FacturaImageWidgetState extends State<FacturaImageWidget> {
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey[200],
+      color: const Color(0xFFC08060).withValues(alpha: 0.1),
       child: const Center(
           child: SizedBox(
               width: 20,
@@ -197,9 +197,9 @@ class _FacturaImageWidgetState extends State<FacturaImageWidget> {
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey[300],
+      color: const Color(0xFFC08060).withValues(alpha: 0.2),
       child: Icon(Icons.broken_image,
-          size: (widget.height ?? 30) * 0.5, color: Colors.grey[600]),
+          size: (widget.height ?? 30) * 0.5, color: const Color(0xFF7A4020)),
     );
   }
 }

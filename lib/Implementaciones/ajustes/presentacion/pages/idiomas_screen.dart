@@ -4,6 +4,7 @@ import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilid
 import 'package:my_gasolinera/main.dart'; // Para languageProvider
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class IdiomasScreen extends StatefulWidget {
   const IdiomasScreen({super.key});
@@ -208,7 +209,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                           BoxShadow(
                             color: isDark
                                 ? Colors.black.withValues(alpha: 0.3)
-                                : Colors.grey.withValues(alpha: 0.2),
+                                : const Color(0x1A2D1509),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -308,7 +309,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                             localizations.idiomaGuardado,
                                           ),
                                           duration: const Duration(seconds: 2),
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: MyGasolineraColors.success,
                                         ),
                                       );
                                       navigator.pop();
@@ -324,7 +325,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                             '❌ Error al guardar: ${e.toString()}',
                                           ),
                                           duration: const Duration(seconds: 3),
-                                          backgroundColor: Colors.red,
+                                          backgroundColor: MyGasolineraColors.error,
                                         ),
                                       );
                                     }

@@ -20,9 +20,9 @@ class HomeBottomBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary,
-        borderRadius: const BorderRadius.only(
+      decoration: const BoxDecoration(
+        color: Color(0xFFFF9350), // igual que AppBar
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),

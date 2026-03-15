@@ -10,6 +10,7 @@ import 'package:my_gasolinera/core/utils/local_image_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart'; // For navigation in delete
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart'; // For BuildContext and SnackBar
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class AjustesController {
   final UsuarioService _usuarioService = UsuarioService();
@@ -106,7 +107,7 @@ class AjustesController {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('✅ URL actualizada'), backgroundColor: Colors.green),
+            content: Text('✅ URL actualizada'), backgroundColor: MyGasolineraColors.success),
       );
     } catch (e) {
       if (!context.mounted) return;
@@ -135,7 +136,7 @@ class AjustesController {
     } catch (e) {
       navigator.pop(); // Close dialog if open?
       messenger.showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Error: $e'), backgroundColor: MyGasolineraColors.error),
       );
     }
   }

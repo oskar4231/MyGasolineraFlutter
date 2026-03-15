@@ -45,7 +45,7 @@ class CocheCard extends StatelessWidget {
           BoxShadow(
             color: isDark
                 ? Colors.black.withValues(alpha: 0.3)
-                : Colors.grey.withValues(alpha: 0.15),
+                : const Color(0xFF2D1509).withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),

@@ -44,7 +44,7 @@ class GasolineraBottomSheet extends StatelessWidget {
     final lighterCardColor = isDark
         ? const Color(0xFF2A2A2E)
         : Color.lerp(cardColor, Colors.white, 0.3);
-    final borderColor = isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.18);
+    final borderColor = isDark ? Colors.white10 : const Color(0xFFC08060).withValues(alpha: 0.18);
     final textPrimary =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final textSecondary = isDark

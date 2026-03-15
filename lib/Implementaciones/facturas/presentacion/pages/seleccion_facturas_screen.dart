@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/data/services/export_service.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class SeleccionFacturasScreen extends StatefulWidget {
   final List<Map<String, dynamic>> facturas;
@@ -100,12 +101,12 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.table_chart, color: Colors.green),
+              leading: const Icon(Icons.table_chart, color: MyGasolineraColors.success),
               title: Text(l10n.exportarExcel),
               onTap: () => Navigator.pop(context, 'excel'),
             ),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+              leading: const Icon(Icons.picture_as_pdf, color: MyGasolineraColors.error),
               title: Text(l10n.exportarPdf),
               onTap: () => Navigator.pop(context, 'pdf'),
             ),

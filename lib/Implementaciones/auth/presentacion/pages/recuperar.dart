@@ -4,6 +4,7 @@ import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.d
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 import 'package:my_gasolinera/core/widgets/premium_gradient_button.dart'; // Added import
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 // Pantalla para solicitar la recuperacion de la contraseña
 // Muestra un formulario con un campo de correo y un boton de envío
@@ -43,7 +44,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.codigoEnviado),
-            backgroundColor: Colors.green,
+            backgroundColor: MyGasolineraColors.success,
             duration: const Duration(seconds: 3),
           ),
         );
@@ -63,14 +64,14 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
             content: Text(
               response['message'] ?? 'Error al solicitar recuperación',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text('Error: $e'), backgroundColor: MyGasolineraColors.error),
       );
     } finally {
       if (mounted) {

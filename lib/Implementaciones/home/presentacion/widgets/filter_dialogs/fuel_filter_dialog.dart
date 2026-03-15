@@ -39,7 +39,7 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF323236)
-            : Colors.grey.withValues(alpha: 0.1),
+            : const Color(0xFFC08060).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark ? const Color(0xFF38383A) : Colors.transparent,
@@ -57,7 +57,7 @@ class _FuelFilterDialogState extends State<FuelFilterDialog> {
         activeColor: accentColor,
         checkColor: isDark ? Colors.black : Colors.white,
         side: BorderSide(
-          color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+          color: isDark ? Colors.grey.shade600 : const Color(0xFFC08060),
         ),
         controlAffinity: ListTileControlAffinity.leading,
       ),

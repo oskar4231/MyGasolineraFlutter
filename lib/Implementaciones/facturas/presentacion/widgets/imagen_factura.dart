@@ -83,9 +83,9 @@ class ImagenFactura extends StatelessWidget {
                           top: 8,
                           right: 8,
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.black54,
+                              color: const Color(0xFF2D1509).withValues(alpha: 0.54),
                             ),
                             child: IconButton(
                               icon: const Icon(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/services/car_data_service.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 /// Datos que devuelve el formulario al confirmar.
 class DatosCoche {
@@ -142,7 +143,7 @@ class _CocheFormState extends State<CocheForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.seleccionaCombustibleError),
-          backgroundColor: Colors.orange,
+          backgroundColor: MyGasolineraColors.warning,
         ),
       );
       return;
@@ -516,11 +517,11 @@ class _CocheFormState extends State<CocheForm> {
         hintStyle: TextStyle(color: textColor.withValues(alpha: 0.4)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? Colors.grey),
+          borderSide: BorderSide(color: borderColor ?? const Color(0xFFC08060)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? Colors.grey.shade400),
+          borderSide: BorderSide(color: borderColor ?? const Color(0xFFC08060).withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

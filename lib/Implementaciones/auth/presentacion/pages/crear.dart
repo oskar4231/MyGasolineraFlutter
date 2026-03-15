@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/password_requirements.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
@@ -70,7 +71,7 @@ class _CrearScreenState extends State<CrearScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.passwordRequisitos),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
         return;
@@ -95,7 +96,7 @@ class _CrearScreenState extends State<CrearScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.registroExitoso),
-              backgroundColor: Colors.green,
+              backgroundColor: MyGasolineraColors.success,
             ),
           );
 
@@ -112,7 +113,7 @@ class _CrearScreenState extends State<CrearScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
-              backgroundColor: Colors.red,
+              backgroundColor: MyGasolineraColors.error,
             ),
           );
         }
@@ -123,7 +124,7 @@ class _CrearScreenState extends State<CrearScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Error de conexión o problema inesperado.'),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
       } finally {
