@@ -30,7 +30,7 @@ class _HoverBackButtonState extends State<HoverBackButton> {
         : Color.lerp(cardColor, Colors.white, 0.25)!;
 
     // 2. Definimos el color primario
-    final orangeColor = theme.primaryColor;
+    final orangeColor = isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
 
     // 3. Calculamos el color final para el Hover
     final hoverColor = isDark

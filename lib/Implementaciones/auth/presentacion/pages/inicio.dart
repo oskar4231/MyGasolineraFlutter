@@ -103,7 +103,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
 
     final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF5F5F0);
     final accentColor =
-        isDark ? const Color(0xFFE87A3E) : const Color(0xFFD36226);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final textColor = isDark ? Colors.white : const Color(0xFF1D1D1F);
     final subtextColor = const Color(0xFF86868B);
 

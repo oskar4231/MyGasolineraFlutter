@@ -463,7 +463,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
             Container(
               color: Colors.black26,
               child: const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+                child: CircularProgressIndicator(color: Color(0xFFFF8200)),
               ),
             ),
         ],

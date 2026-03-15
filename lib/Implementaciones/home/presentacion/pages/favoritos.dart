@@ -372,7 +372,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -453,7 +453,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final cardColor = isDark ? const Color(0xFF232326) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF2D1509);
     final subtextColor = isDark ? Colors.white70 : const Color(0xFF7A4020);

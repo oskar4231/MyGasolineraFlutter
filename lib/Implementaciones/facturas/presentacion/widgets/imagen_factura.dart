@@ -74,7 +74,7 @@ class ImagenFactura extends StatelessWidget {
                             }
                             return const Center(
                               child: CircularProgressIndicator(
-                                color: Color(0xFFFF9350),
+                                color: Color(0xFFFF8200),
                               ),
                             );
                           },

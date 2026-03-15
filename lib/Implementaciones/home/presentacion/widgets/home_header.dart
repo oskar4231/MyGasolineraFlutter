@@ -15,6 +15,8 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final barColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -22,7 +24,7 @@ class HomeHeader extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary,
+          color: barColor,
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(20),
             bottomRight: Radius.circular(20),

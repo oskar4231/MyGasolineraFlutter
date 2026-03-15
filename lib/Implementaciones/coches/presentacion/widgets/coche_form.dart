@@ -185,7 +185,7 @@ class _CocheFormState extends State<CocheForm> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final inputFillColor = isDark ? const Color(0xFF3E3E42) : null;
     final borderColor = isDark ? const Color(0xFF38383A) : null;
     final checkColor = isDark ? accentColor : theme.primaryColor;

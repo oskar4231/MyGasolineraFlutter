@@ -4,11 +4,11 @@ ThemeData temaPredeterminado() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFFFF9350),
+      seedColor: const Color(0xFFFF8200),
       brightness: Brightness.light,
 
       // — Principal —
-      primary: const Color(0xFFFF9350),
+      primary: const Color(0xFFFF8200),
       onPrimary:
           const Color(0xFF2D1509), // Marrón muy oscuro (reemplaza negro puro)
       primaryContainer:
@@ -43,7 +43,7 @@ ThemeData temaPredeterminado() {
         const Color(0xFFFFF8F2), // Surface 0 — fondo más limpio
 
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFFFF9350),
+      backgroundColor: Color(0xFFFF8200),
       foregroundColor:
           Color(0xFF2D1509), // Marrón oscuro — eliminamos el negro puro
       iconTheme: IconThemeData(color: Color(0xFF2D1509)),
@@ -65,7 +65,7 @@ ThemeData temaPredeterminado() {
     ),
 
     navigationBarTheme: const NavigationBarThemeData(
-      backgroundColor: Color(0xFFFF9350),
+      backgroundColor: Color(0xFFFF8200),
       indicatorColor: Color(0xFFFFD5BC),
       iconTheme: WidgetStatePropertyAll(
         IconThemeData(color: Color(0xFF2D1509)),
@@ -80,7 +80,7 @@ ThemeData temaPredeterminado() {
     ),
 
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFFFF9350),
+      backgroundColor: Color(0xFFFF8200),
       selectedItemColor: Color(0xFF2D1509),
       unselectedItemColor: Color(0xFF7A4020),
     ),
@@ -105,7 +105,7 @@ ThemeData temaPredeterminado() {
 // Úsalos en la app con MyGasolineraColors.success, etc.
 abstract final class MyGasolineraColors {
   // Principales
-  static const primary = Color(0xFFFF9350);
+  static const primary = Color(0xFFFF8200);
   static const onPrimary = Color(0xFF2D1509);
   static const primaryContainer = Color(0xFFFFC285);
   static const onPrimaryContainer = Color(0xFF2D1509);

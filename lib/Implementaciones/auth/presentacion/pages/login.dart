@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFE87A3E) : const Color(0xFFD36226);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final cardColor = isDark ? const Color(0xFF1C1C1E) : Colors.white;
     final bgColor = isDark
         ? const Color(0xFF000000)
