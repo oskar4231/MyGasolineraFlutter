@@ -1925,6 +1925,42 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Despues de hacerlo, vuelve a la app y recarga el mapa.'**
   String get permisoUbicacionNotaVolver;
+
+  /// No description provided for @anadirAFavoritos.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir a favoritos'**
+  String get anadirAFavoritos;
+
+  /// No description provided for @eliminarDeFavoritos.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar de favoritos'**
+  String get eliminarDeFavoritos;
+
+  /// No description provided for @repostaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Repostaje'**
+  String get repostaje;
+
+  /// No description provided for @comoLlegar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cómo llegar'**
+  String get comoLlegar;
+
+  /// No description provided for @cercania.
+  ///
+  /// In es, this message translates to:
+  /// **'Cercanía'**
+  String get cercania;
+
+  /// No description provided for @aDistanciaDeTi.
+  ///
+  /// In es, this message translates to:
+  /// **'a {distance} de ti'**
+  String aDistanciaDeTi(Object distance);
 }
 
 class _AppLocalizationsDelegate

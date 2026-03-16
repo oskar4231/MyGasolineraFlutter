@@ -302,5 +302,11 @@
   "permisoUbicacionBotonAjustesSistema": "Open system settings",
   "permisoUbicacionBotonAjustesApp": "Open app settings",
   "permisoUbicacionBotonPermitir": "Allow access",
-  "permisoUbicacionNotaVolver": "After doing so, come back to the app and reload the map."
+  "permisoUbicacionNotaVolver": "After doing so, come back to the app and reload the map.",
+  "anadirAFavoritos": "Add to favorites",
+  "eliminarDeFavoritos": "Remove from favorites",
+  "repostaje": "Fuel up",
+  "comoLlegar": "How to get there",
+  "cercania" : "Nearness",
+  "aDistanciaDeTi": "a {distance} from you"
 }

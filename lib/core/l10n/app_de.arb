@@ -367,5 +367,11 @@
   "permisoUbicacionBotonAjustesSistema": "Systemeinstellungen öffnen",
   "permisoUbicacionBotonAjustesApp": "App-Einstellungen öffnen",
   "permisoUbicacionBotonPermitir": "Zugriff erlauben",
-  "permisoUbicacionNotaVolver": "Kehren Sie danach zur App zurück und laden Sie die Karte neu."
+  "permisoUbicacionNotaVolver": "Kehren Sie danach zur App zurück und laden Sie die Karte neu.",
+  "anadirAFavoritos": "Zu Favoriten hinzufügen",
+  "eliminarDeFavoritos": "Aus Favoriten entfernen",
+  "repostaje": "Tanken",
+  "comoLlegar": "Wie komme ich hin",
+  "cercania" : "Nähe",
+  "aDistanciaDeTi": "{distance} von dir entfernt"
 }

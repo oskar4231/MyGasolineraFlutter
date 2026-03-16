@@ -965,4 +965,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get permisoUbicacionNotaVolver =>
       'Après avoir fait cela, revenez à l\'application et rechargez la carte.';
+
+  @override
+  String get anadirAFavoritos => 'Ajouter aux favoris';
+
+  @override
+  String get eliminarDeFavoritos => 'Supprimer des favoris';
+
+  @override
+  String get repostaje => 'Ravitaillement';
+
+  @override
+  String get comoLlegar => 'Comment y aller';
+
+  @override
+  String get cercania => 'Proximité';
+
+  @override
+  String aDistanciaDeTi(Object distance) {
+    return 'a $distance de vous';
+  }
 }
