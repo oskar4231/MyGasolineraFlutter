@@ -48,6 +48,7 @@ void main() {
 
       // Buscar el botón de iniciar sesión y pulsarlo
       final loginButton = find.byType(ElevatedButton).first;
+      await tester.ensureVisible(loginButton); // ⬅️ Asegurar visibilidad
       await tester.tap(loginButton);
       await tester.pumpAndSettle();
 
