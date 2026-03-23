@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/coches/data/services/car_data_service.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 /// Datos que devuelve el formulario al confirmar.
 class DatosCoche {
@@ -142,7 +143,7 @@ class _CocheFormState extends State<CocheForm> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.seleccionaCombustibleError),
-          backgroundColor: Colors.orange,
+          backgroundColor: MyGasolineraColors.warning,
         ),
       );
       return;
@@ -184,7 +185,7 @@ class _CocheFormState extends State<CocheForm> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final inputFillColor = isDark ? const Color(0xFF3E3E42) : null;
     final borderColor = isDark ? const Color(0xFF38383A) : null;
     final checkColor = isDark ? accentColor : theme.primaryColor;
@@ -368,7 +369,7 @@ class _CocheFormState extends State<CocheForm> {
                     ),
                     value: _tiposCombustible[key],
                     activeColor: checkColor,
-                    checkColor: isDark ? Colors.black : Colors.white,
+                    checkColor: theme.colorScheme.onPrimary,
                     onChanged: (v) =>
                         setState(() => _tiposCombustible[key] = v ?? false),
                     controlAffinity: ListTileControlAffinity.leading,
@@ -469,19 +470,19 @@ class _CocheFormState extends State<CocheForm> {
           onPressed: widget.isLoading ? null : () => _confirmar(l10n),
           style: ElevatedButton.styleFrom(
             backgroundColor: accentColor,
-            foregroundColor: isDark ? Colors.black : Colors.white,
+            foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
           ),
           child: widget.isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onPrimary),
                   ),
                 )
               : Text(l10n.guardar),
@@ -516,11 +517,11 @@ class _CocheFormState extends State<CocheForm> {
         hintStyle: TextStyle(color: textColor.withValues(alpha: 0.4)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? Colors.grey),
+          borderSide: BorderSide(color: borderColor ?? const Color(0xFFC08060)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? Colors.grey.shade400),
+          borderSide: BorderSide(color: borderColor ?? const Color(0xFFC08060).withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

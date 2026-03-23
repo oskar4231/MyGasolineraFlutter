@@ -3,6 +3,7 @@ import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilid
 import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/theme_manager.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
 
 class AccesibilidadScreen extends StatefulWidget {
@@ -76,7 +77,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
-        : theme.primaryColor;
+        : const Color(0xFFFF8200);
 
     final borderColor = isDark
         ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde
@@ -148,7 +149,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           BoxShadow(
                             color: isDark
                                 ? Colors.black.withValues(alpha: 0.3)
-                                : Colors.grey.withValues(alpha: 0.2),
+                                : const Color(0x1A2D1509),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -417,7 +418,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                         const SnackBar(
                                           content: Text(
                                               '✅ Configuración guardada correctamente'),
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: MyGasolineraColors.success,
                                         ),
                                       );
                                       navigator.pop();
@@ -431,7 +432,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                         SnackBar(
                                           content: Text(
                                               '❌ Error al guardar: ${e.toString()}'),
-                                          backgroundColor: Colors.red,
+                                          backgroundColor: MyGasolineraColors.error,
                                         ),
                                       );
                                     }
@@ -482,7 +483,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
-        : theme.primaryColor;
+        : const Color(0xFFFF8200);
 
     final borderColor = isDark
         ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde
@@ -570,7 +571,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
     final primaryColor = isDark
         ? const Color(0xFFFF8235) // ModoOscuroAccesibilidad.colorAcento
-        : theme.primaryColor;
+        : const Color(0xFFFF8200);
 
     final borderColor = isDark
         ? const Color(0xFF38383A) // ModoOscuroAccesibilidad.colorBorde

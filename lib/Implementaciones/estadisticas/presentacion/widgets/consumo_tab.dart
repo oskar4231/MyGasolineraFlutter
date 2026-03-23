@@ -3,6 +3,7 @@ import 'package:my_gasolinera/Implementaciones/estadisticas/data/services/estadi
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class ConsumoTab extends StatefulWidget {
   const ConsumoTab({super.key});
@@ -198,7 +199,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                       BoxShadow(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.black.withValues(alpha: 0.3)
-                            : Colors.grey.withValues(alpha: 0.1),
+                            : const Color(0xFFC08060).withValues(alpha: 0.1),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -262,7 +263,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
     // Determinar color basado en el costo (más barato = mejor)
     Color getCostoColor(double costo) {
       if (costo < 0.08) return Theme.of(context).primaryColor;
-      if (costo < 0.12) return Colors.orange;
+      if (costo < 0.12) return MyGasolineraColors.warning;
       return Theme.of(context).colorScheme.error;
     }
 
@@ -283,7 +284,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.black.withValues(alpha: 0.3)
-                : Colors.grey.withValues(alpha: 0.2),
+                : const Color(0xFFC08060).withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -327,7 +328,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                         children: [
                           Icon(
                             Icons.local_gas_station,
-                            color: Colors.grey.shade600,
+                            color: const Color(0xFFC08060),
                             size: 16,
                           ),
                           const SizedBox(width: 4),
@@ -359,7 +360,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                 horizontal: BorderSide(
                   color: Theme.of(context).brightness == Brightness.dark
                       ? const Color(0xFF38383A)
-                      : Colors.grey.shade200,
+                      : const Color(0xFFC08060).withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -433,7 +434,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: MyGasolineraColors.success,
                           ),
                         ),
                       ],
@@ -444,7 +445,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           width: 100,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: const Color(0xFFC08060).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
@@ -453,7 +454,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                                 flex: (costoMin * 1000).round(),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.green,
+                                    color: MyGasolineraColors.success,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -462,7 +463,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                                 flex: ((costoMax - costoMin) * 1000).round(),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.red,
+                                    color: MyGasolineraColors.error,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
@@ -501,7 +502,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                            color: MyGasolineraColors.error,
                           ),
                         ),
                       ],
@@ -518,19 +519,19 @@ class _ConsumoTabState extends State<ConsumoTab> {
                       icon: Icons.car_crash,
                       label: AppLocalizations.of(context)!.kilometraje,
                       value: '$kmTotales km',
-                      color: Color(0xFFFF9350),
+                      color: Color(0xFFFF8200),
                     ),
                     _buildStatItem(
                       icon: Icons.euro,
                       label: AppLocalizations.of(context)!.gastoTotal,
                       value: '€${_formatNumber(gastoTotal)}',
-                      color: const Color(0xFFFF9350),
+                      color: const Color(0xFFFF8200),
                     ),
                     _buildStatItem(
                       icon: Icons.attach_money,
                       label: AppLocalizations.of(context)!.costo100km,
                       value: '€${_formatNumber(costoProm * 100)}',
-                      color: Color(0xFFFF9350),
+                      color: Color(0xFFFF8200),
                     ),
                   ],
                 ),
@@ -623,7 +624,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 80, color: Colors.red),
+          const Icon(Icons.error_outline, size: 80, color: MyGasolineraColors.error),
           const SizedBox(height: 20),
           Text(
             '${AppLocalizations.of(context)!.error}: $error',
@@ -652,7 +653,7 @@ class _ConsumoTabState extends State<ConsumoTab> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.directions_car_outlined,
-              size: 80, color: Colors.grey),
+              size: 80, color: Color(0xFFC08060)),
           const SizedBox(height: 20),
           Text(
             AppLocalizations.of(context)!.noDatosConsumo,
@@ -696,9 +697,9 @@ class _ConsumoTabState extends State<ConsumoTab> {
   }
 
   Color _getEficienciaColor(double costoPorKm) {
-    if (costoPorKm < 0.08) return Colors.green;
-    if (costoPorKm < 0.12) return Colors.orange;
-    return Colors.red;
+    if (costoPorKm < 0.08) return MyGasolineraColors.success;
+    if (costoPorKm < 0.12) return MyGasolineraColors.warning;
+    return MyGasolineraColors.error;
   }
 
   IconData _getEficienciaIcon(double costoPorKm) {

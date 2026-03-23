@@ -8,6 +8,7 @@ import 'package:my_gasolinera/Implementaciones/auth/data/services/usuario_servic
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Login exitoso'),
-                  backgroundColor: Colors.green,
+                  backgroundColor: MyGasolineraColors.success,
                 ),
               );
 
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
-                backgroundColor: Colors.red,
+                backgroundColor: MyGasolineraColors.error,
               ),
             );
           }
@@ -124,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
               content: Text(
                 'Error de conexión. Asegúrate de que el servidor esté corriendo. ($error)',
               ),
-              backgroundColor: Colors.red,
+              backgroundColor: MyGasolineraColors.error,
               duration: const Duration(seconds: 4),
             ),
           );
@@ -156,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFE87A3E) : const Color(0xFFD36226);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final cardColor = isDark ? const Color(0xFF1C1C1E) : Colors.white;
     final bgColor = isDark
         ? const Color(0xFF000000)
@@ -374,7 +375,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             });
                                           },
                                           activeColor: accentColor,
-                                          checkColor: Colors.white,
+                                          checkColor: theme.colorScheme.onPrimary,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(6),

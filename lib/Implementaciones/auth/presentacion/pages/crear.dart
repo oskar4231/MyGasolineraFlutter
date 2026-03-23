@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/widgets/password_requirements.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
@@ -70,7 +71,7 @@ class _CrearScreenState extends State<CrearScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.passwordRequisitos),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
         return;
@@ -95,7 +96,7 @@ class _CrearScreenState extends State<CrearScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.registroExitoso),
-              backgroundColor: Colors.green,
+              backgroundColor: MyGasolineraColors.success,
             ),
           );
 
@@ -112,7 +113,7 @@ class _CrearScreenState extends State<CrearScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
-              backgroundColor: Colors.red,
+              backgroundColor: MyGasolineraColors.error,
             ),
           );
         }
@@ -123,7 +124,7 @@ class _CrearScreenState extends State<CrearScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Error de conexión o problema inesperado.'),
-            backgroundColor: Colors.red,
+            backgroundColor: MyGasolineraColors.error,
           ),
         );
       } finally {
@@ -224,7 +225,7 @@ class _CrearScreenState extends State<CrearScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFE87A3E) : const Color(0xFFD36226);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final cardColor = isDark ? const Color(0xFF1C1C1E) : Colors.white;
     final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF7F7F5);
 

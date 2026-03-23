@@ -102,13 +102,13 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
             content: Text(
               l10n.seleccioneCombustibleAlert,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFFFF9350),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.symmetric(
               horizontal: 20,
@@ -125,9 +125,10 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
     }
 
     return Dialog(
-      backgroundColor: const Color(0xFFFF9350),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -137,18 +138,18 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
           children: [
             Text(
               l10n.filtrarPrecio,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 20),
             Text(
               l10n.desde,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -165,12 +166,16 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
               ],
               decoration: InputDecoration(
                 hintText: l10n.ejemploPrecio,
-                hintStyle: TextStyle(color: Colors.grey[400]),
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -181,9 +186,9 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
             const SizedBox(height: 16),
             Text(
               l10n.hasta,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -204,12 +209,16 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
               ],
               decoration: InputDecoration(
                 hintText: l10n.ejemploPrecio,
-                hintStyle: TextStyle(color: Colors.grey[400]),
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -222,8 +231,8 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
                   _errorMessage!,
-                  style: const TextStyle(
-                    color: Colors.red,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -237,15 +246,19 @@ class _PriceFilterDialogState extends State<PriceFilterDialog> {
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
                     l10n.cancelar,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _isValid ? _aplicarFiltro : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isValid ? Colors.white : Colors.grey[300],
-                    foregroundColor: const Color(0xFFFF9350),
+                    backgroundColor: _isValid
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surfaceVariant,
+                    foregroundColor: _isValid
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

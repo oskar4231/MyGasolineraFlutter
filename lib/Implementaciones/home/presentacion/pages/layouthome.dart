@@ -17,6 +17,7 @@ import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_
 import 'package:my_gasolinera/Implementaciones/home/presentacion/widgets/filter_dialogs/opening_filter_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class Layouthome extends StatefulWidget {
   const Layouthome({super.key});
@@ -35,6 +36,7 @@ class _LayouthomeState extends State<Layouthome> {
   List<Gasolinera> _gasolinerasCargadas = [];
   geo.Position? _currentPosition;
   bool _showMap = true;
+  int _dialogsOpenCount = 0;
 
   @override
   void initState() {
@@ -43,12 +45,15 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroPrecio() async {
+    setState(() => _dialogsOpenCount++);
     final result = await PriceFilterDialog.show(
       context,
       precioDesde: app.filterProvider.precioDesde,
       precioHasta: app.filterProvider.precioHasta,
       tipoCombustible: app.filterProvider.tipoCombustibleSeleccionado,
     );
+
+    if (mounted) setState(() => _dialogsOpenCount--);
 
     if (result != null && mounted) {
       await app.filterProvider
@@ -57,24 +62,30 @@ class _LayouthomeState extends State<Layouthome> {
   }
 
   void _mostrarFiltroCombustible() async {
+    setState(() => _dialogsOpenCount++);
     final result = await FuelFilterDialog.show(
       context,
       valorActual: app.filterProvider.tipoCombustibleSeleccionado,
     );
 
-    if (result != null && mounted) {
-      await app.filterProvider.setTipoCombustible(result);
+    if (mounted) setState(() => _dialogsOpenCount--);
+
+    if (result != null && mounted && (result['applied'] as bool?) == true) {
+      await app.filterProvider.setTipoCombustible(result['value'] as String?);
     }
   }
 
   void _mostrarFiltroApertura() async {
+    setState(() => _dialogsOpenCount++);
     final result = await OpeningFilterDialog.show(
       context,
       valorActual: app.filterProvider.tipoAperturaSeleccionado,
     );
 
-    if (result != null && mounted) {
-      await app.filterProvider.setTipoApertura(result);
+    if (mounted) setState(() => _dialogsOpenCount--);
+
+    if (result != null && mounted && (result['applied'] as bool?) == true) {
+      await app.filterProvider.setTipoApertura(result['value'] as String?);
     }
   }
 
@@ -99,13 +110,15 @@ class _LayouthomeState extends State<Layouthome> {
                 );
               },
               onPriceFilterPressed: _mostrarFiltroPrecio,
-              onOpenDrawer: () {
-                FiltersDialog.show(
+              onOpenDrawer: () async {
+                setState(() => _dialogsOpenCount++);
+                await FiltersDialog.show(
                   context,
                   onPriceFilterPressed: _mostrarFiltroPrecio,
                   onFuelFilterPressed: _mostrarFiltroCombustible,
                   onOpeningFilterPressed: _mostrarFiltroApertura,
                 );
+                if (mounted) setState(() => _dialogsOpenCount--);
               },
             ),
 
@@ -120,11 +133,14 @@ class _LayouthomeState extends State<Layouthome> {
                     index: _showMap ? 0 : 1,
                     children: [
                       // El mapa ahora se mantiene en memoria y se pinta con la marca de agua
-                      Stack(
-                        children: [
-                          MapWidget(
+                      AbsorbPointer(
+                        absorbing: _dialogsOpenCount > 0,
+                        child: Stack(
+                          children: [
+                            MapWidget(
                             key: const PageStorageKey<String>('map_widget_key'),
                             cacheService: _cacheService,
+                            gesturesEnabled: _dialogsOpenCount == 0,
                             combustibleSeleccionado:
                                 app.filterProvider.tipoCombustibleSeleccionado,
                             precioDesde: app.filterProvider.precioDesde,
@@ -175,7 +191,7 @@ class _LayouthomeState extends State<Layouthome> {
                                   shadows: [
                                     Shadow(
                                       color:
-                                          Colors.black.withValues(alpha: 0.3),
+                                          const Color(0xFF2D1509).withValues(alpha: 0.3),
                                       blurRadius: 4,
                                       offset: const Offset(1, 1),
                                     ),
@@ -185,6 +201,7 @@ class _LayouthomeState extends State<Layouthome> {
                             ),
                           ),
                         ],
+                      ),
                       ),
                       // La lista filtrada
                       _GasolinerasListView(
@@ -456,13 +473,13 @@ class _GasolinerasListView extends StatelessWidget {
                             _buildPrecioChip(
                               'G95',
                               gasolinera.gasolina95,
-                              Colors.green.shade700,
+                              MyGasolineraColors.success,
                             ),
                           if (gasolinera.gasoleoA > 0)
                             _buildPrecioChip(
                               'Diesel',
                               gasolinera.gasoleoA,
-                              Colors.black87,
+                              const Color(0xFF2D1509),
                             ),
                           if (gasolinera.gasolina98 > 0)
                             _buildPrecioChip(
@@ -474,7 +491,7 @@ class _GasolinerasListView extends StatelessWidget {
                             _buildPrecioChip(
                               'GLP',
                               gasolinera.glp,
-                              Colors.orange.shade700,
+                              MyGasolineraColors.warning,
                             ),
                         ],
                       ),

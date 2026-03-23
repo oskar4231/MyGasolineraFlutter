@@ -9,6 +9,7 @@ import 'package:my_gasolinera/Implementaciones/facturas/presentacion/widgets/fac
 import 'package:intl/intl.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class FacturasScreen extends StatefulWidget {
   const FacturasScreen({super.key});
@@ -268,7 +269,7 @@ class _FacturasScreenState extends State<FacturasScreen>
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(AppLocalizations.of(context)!.eliminar,
-                style: const TextStyle(color: Colors.red)),
+                style: const TextStyle(color: MyGasolineraColors.error)),
           ),
         ],
       ),
@@ -340,7 +341,7 @@ class _FacturasScreenState extends State<FacturasScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: const Color(0xFF2D1509).withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),

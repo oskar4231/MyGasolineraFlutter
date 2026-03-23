@@ -45,7 +45,7 @@ class CocheCard extends StatelessWidget {
           BoxShadow(
             color: isDark
                 ? Colors.black.withValues(alpha: 0.3)
-                : Colors.grey.withValues(alpha: 0.15),
+                : const Color(0xFF2D1509).withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -67,7 +67,7 @@ class CocheCard extends StatelessWidget {
                   child: BrandLogo(
                     brandName: coche.marca,
                     size: 32,
-                    fallbackColor: isDark ? accentColor : Colors.white,
+                    fallbackColor: isDark ? accentColor : theme.colorScheme.onPrimary,
                   ),
                 ),
                 const SizedBox(width: 16),

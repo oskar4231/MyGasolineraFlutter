@@ -103,7 +103,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
 
     final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF5F5F0);
     final accentColor =
-        isDark ? const Color(0xFFE87A3E) : const Color(0xFFD36226);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final textColor = isDark ? Colors.white : const Color(0xFF1D1D1F);
     final subtextColor = const Color(0xFF86868B);
 
@@ -345,7 +345,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: accentColor,
-                                foregroundColor: Colors.white,
+                                foregroundColor: theme.colorScheme.onPrimary,
                                 shadowColor:
                                     accentColor.withValues(alpha: 0.22),
                                 elevation: 4,
@@ -376,7 +376,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                                 child: Divider(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.1)
-                                      : Colors.black.withValues(alpha: 0.08),
+                                      : const Color(0xFFC08060).withValues(alpha: 0.3), // cálido divider
                                 ),
                               ),
                               Padding(
@@ -394,7 +394,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                                 child: Divider(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.1)
-                                      : Colors.black.withValues(alpha: 0.08),
+                                      : const Color(0xFFC08060).withValues(alpha: 0.3), // cálido divider
                                 ),
                               ),
                             ],
@@ -480,17 +480,18 @@ class _FeaturePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.05)
-            : Colors.black.withValues(alpha: 0.03),
+            : theme.colorScheme.onSurface.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
               ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.05),
+              : theme.colorScheme.onSurface.withValues(alpha: 0.05),
         ),
       ),
       child: Row(
@@ -505,7 +506,7 @@ class _FeaturePill extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: isDark
                   ? Colors.white.withValues(alpha: 0.7)
-                  : Colors.black.withValues(alpha: 0.75),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.75),
             ),
           ),
         ],

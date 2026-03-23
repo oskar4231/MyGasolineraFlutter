@@ -137,7 +137,7 @@ class _OptionItem extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 

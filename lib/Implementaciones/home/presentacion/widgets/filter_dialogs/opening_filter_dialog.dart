@@ -9,11 +9,11 @@ class OpeningFilterDialog extends StatefulWidget {
     this.valorActual,
   });
 
-  static Future<String?> show(
+  static Future<Map<String, dynamic>?> show(
     BuildContext context, {
     required String? valorActual,
   }) async {
-    return await showDialog<String>(
+    return await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => OpeningFilterDialog(valorActual: valorActual),
     );
@@ -39,7 +39,7 @@ class _OpeningFilterDialogState extends State<OpeningFilterDialog> {
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF323236)
-            : Colors.grey.withValues(alpha: 0.1),
+            : const Color(0xFFC08060).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark ? const Color(0xFF38383A) : Colors.transparent,
@@ -57,7 +57,7 @@ class _OpeningFilterDialogState extends State<OpeningFilterDialog> {
         activeColor: accentColor,
         checkColor: isDark ? Colors.black : Colors.white,
         side: BorderSide(
-          color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+          color: isDark ? Colors.grey.shade600 : const Color(0xFFC08060),
         ),
         controlAffinity: ListTileControlAffinity.leading,
       ),
@@ -130,10 +130,10 @@ class _OpeningFilterDialogState extends State<OpeningFilterDialog> {
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context, _valorTemporal),
+                  onPressed: () => Navigator.pop(context, {'applied': true, 'value': _valorTemporal}),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),

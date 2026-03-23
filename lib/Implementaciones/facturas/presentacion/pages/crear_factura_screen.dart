@@ -422,7 +422,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                       Brightness.dark
                                   ? const Color(0xFFFF8235)
                                   : Theme.of(context).primaryColor,
-                              foregroundColor: Colors.black,
+                              foregroundColor: const Color(0xFF2D1509),
                               padding: const EdgeInsets.symmetric(vertical: 18),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -436,7 +436,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                     child: CircularProgressIndicator(
                                       strokeWidth: 3,
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.black,
+                                        const Color(0xFF2D1509),
                                       ),
                                     ),
                                   )
@@ -446,7 +446,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: Color(0xFF2D1509),
                                     ),
                                   ),
                           ),
@@ -463,7 +463,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
             Container(
               color: Colors.black26,
               child: const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFF9350)),
+                child: CircularProgressIndicator(color: Color(0xFFFF8200)),
               ),
             ),
         ],

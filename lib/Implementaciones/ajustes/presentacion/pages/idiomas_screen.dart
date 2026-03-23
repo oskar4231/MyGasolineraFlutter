@@ -4,6 +4,7 @@ import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilid
 import 'package:my_gasolinera/main.dart'; // Para languageProvider
 import 'package:my_gasolinera/core/utils/app_logger.dart';
 import 'package:my_gasolinera/core/widgets/back_button_hover.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class IdiomasScreen extends StatefulWidget {
   const IdiomasScreen({super.key});
@@ -141,7 +142,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     // Colores adaptativos (patrón Accesibilidad/Facturas)
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
@@ -208,7 +209,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                           BoxShadow(
                             color: isDark
                                 ? Colors.black.withValues(alpha: 0.3)
-                                : Colors.grey.withValues(alpha: 0.2),
+                                : const Color(0x1A2D1509),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -308,7 +309,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                             localizations.idiomaGuardado,
                                           ),
                                           duration: const Duration(seconds: 2),
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: MyGasolineraColors.success,
                                         ),
                                       );
                                       navigator.pop();
@@ -324,7 +325,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                                             '❌ Error al guardar: ${e.toString()}',
                                           ),
                                           duration: const Duration(seconds: 3),
-                                          backgroundColor: Colors.red,
+                                          backgroundColor: MyGasolineraColors.error,
                                         ),
                                       );
                                     }
@@ -382,14 +383,9 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
-
-    final lighterCardColor = isDark
-        ? const Color(0xFF3E3E42)
-        : Color.lerp(
-            theme.cardTheme.color ?? theme.cardColor, Colors.white, 0.25);
 
     final Map<String, List<String>> idiomasConVariantes = {
       'Español': ['Español'],
@@ -417,7 +413,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
               Text(
                 AppLocalizations.of(context)!.seleccionarIdioma,
                 style: TextStyle(
-                  color: isDark ? Colors.white : primaryColor,
+                  color: textColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -426,77 +422,88 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
           ),
           content: SizedBox(
             width: double.maxFinite,
-            height: 400,
-            child: ListView.builder(
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               shrinkWrap: true,
               itemCount: idiomasConVariantes.keys.length,
+              separatorBuilder: (context, index) => Divider(
+                color: borderColor.withValues(alpha: 0.3),
+                height: 1,
+                indent: 16,
+                endIndent: 16,
+              ),
               itemBuilder: (context, index) {
                 final idioma = idiomasConVariantes.keys.elementAt(index);
                 final esSeleccionado = _idiomaSeleccionado.startsWith(idioma);
 
                 final backgroundColor =
-                    esSeleccionado ? primaryColor : lighterCardColor;
-                final itemTextColor = esSeleccionado
-                    ? (isDark ? Colors.black : theme.colorScheme.onPrimary)
-                    : textColor;
+                    esSeleccionado ? primaryColor.withValues(alpha: 0.15) : Colors.transparent;
+                final itemTextColor = esSeleccionado ? primaryColor : textColor;
 
-                return Card(
-                  elevation: esSeleccionado ? 0 : 0,
-                  color: backgroundColor,
-                  margin: const EdgeInsets.symmetric(vertical: 6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: esSeleccionado
-                        ? BorderSide(color: primaryColor, width: 2)
-                        : BorderSide(color: borderColor, width: 1),
-                  ),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.only(
-                      left: idioma == 'Valencià' ? 8 : 16,
-                      right: 16,
-                      top: 0,
-                      bottom: 0,
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    final variantes = idiomasConVariantes[idioma]!;
+
+                    if (variantes.length == 1) {
+                      _confirmarCambioIdioma(variantes[0]);
+                    } else {
+                      _mostrarVariantesIdioma(idioma, variantes);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    leading: _buildFlagWidget(idioma,
-                        size: idioma == 'Valencià' ? 50 : 32),
-                    title: Text(
-                      idioma,
-                      style: TextStyle(
-                        fontWeight: esSeleccionado
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: itemTextColor,
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.only(
+                        left: idioma == 'Valencià' ? 8 : 16,
+                        right: 16,
+                        top: 0,
+                        bottom: 0,
+                      ),
+                      leading: _buildFlagWidget(idioma,
+                          size: idioma == 'Valencià' ? 50 : 32),
+                      title: Text(
+                        idioma,
+                        style: TextStyle(
+                          fontWeight: esSeleccionado
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: itemTextColor,
+                        ),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: esSeleccionado
+                            ? primaryColor
+                            : textColor.withValues(alpha: 0.3),
                       ),
                     ),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: esSeleccionado
-                          ? (isDark
-                              ? Colors.black
-                              : theme.colorScheme.onPrimary)
-                          : textColor.withValues(alpha: 0.5),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      final variantes = idiomasConVariantes[idioma]!;
-
-                      if (variantes.length == 1) {
-                        _confirmarCambioIdioma(variantes[0]);
-                      } else {
-                        _mostrarVariantesIdioma(idioma, variantes);
-                      }
-                    },
                   ),
                 );
               },
             ),
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: isDark ? Colors.black : theme.colorScheme.onPrimary,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
               child: Text(
                 AppLocalizations.of(context)!.cancelar,
-                style: TextStyle(color: textColor),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -517,7 +524,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 
@@ -551,7 +558,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                 child: Text(
                   idiomaBase,
                   style: TextStyle(
-                    color: isDark ? Colors.white : primaryColor,
+                    color: textColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -561,7 +568,6 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
           ),
           content: SizedBox(
             width: double.maxFinite,
-            height: variantes.length > 5 ? 400 : null,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: variantes.length,
@@ -586,6 +592,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
                         : BorderSide(color: borderColor, width: 1),
                   ),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                     leading: Icon(
                       esSeleccionado
                           ? Icons.check_circle
@@ -614,14 +621,26 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
               },
             ),
           ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _mostrarPopupIdioma();
               },
-              child: Text(AppLocalizations.of(context)!.atras,
-                  style: TextStyle(color: textColor)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: isDark ? Colors.black : theme.colorScheme.onPrimary,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.atras,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -641,7 +660,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     final borderColor = isDark ? const Color(0xFF38383A) : theme.dividerColor;
 

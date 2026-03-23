@@ -180,13 +180,15 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
-    final dialogBg = isDark ? const Color(0xFF212124) : const Color(0xFFFF9350);
+    final dialogBg = isDark ? const Color(0xFF212124) : theme.colorScheme.surface;
+    final headerBg = isDark ? dialogBg : theme.colorScheme.primary;
+    final headerText =
+        isDark ? theme.colorScheme.onSurface : theme.colorScheme.onPrimary;
     final cardColor = isDark ? const Color(0xFF3E3E42) : Colors.white;
     final textColor =
-        isDark ? const Color(0xFFEBEBEB) : const Color(0xFF3E2723);
+        isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
     final borderColor = isDark ? const Color(0xFF38383A) : Colors.transparent;
 
     // Valores temporales para el diálogo basados en el proveedor global
@@ -208,101 +210,133 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             return Dialog(
               backgroundColor: dialogBg,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 side: BorderSide(color: borderColor, width: isDark ? 1 : 0),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.filtros,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: headerBg,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      l10n.tipoCombustible,
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildDropdown(
-                        combustibleTemp,
-                        [
-                          l10n.todos,
-                          'Gasolina 95',
-                          'Gasolina 98',
-                          'Diesel',
-                          'Diesel Premium',
-                          'Gas',
-                        ],
-                        (v) => setStateDialog(() => combustibleTemp = v),
-                        cardColor,
-                        textColor),
-                    const SizedBox(height: 20),
-                    Text(
-                      l10n.filtrarPor,
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildDropdown(
-                        ordenTemp,
-                        [
-                          l10n.nombre,
-                          l10n.precioAscendente,
-                          l10n.precioDescendente,
-                        ],
-                        (v) => setStateDialog(() => ordenTemp = v),
-                        cardColor,
-                        textColor),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(l10n.cancelar,
-                              style: const TextStyle(color: Colors.white)),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final nav = Navigator.of(context);
-                            final nuevoCombustible =
-                                (combustibleTemp == l10n.todos)
-                                    ? null
-                                    : combustibleTemp;
-
-                            await app.filterProvider
-                                .setTipoCombustible(nuevoCombustible);
-
-                            setState(() {
-                              if (ordenTemp == l10n.nombre) {
-                                _ordenSeleccionado = 'nombre';
-                              } else if (ordenTemp == l10n.precioAscendente) {
-                                _ordenSeleccionado = 'precio_asc';
-                              } else if (ordenTemp == l10n.precioDescendente) {
-                                _ordenSeleccionado = 'precio_desc';
-                              }
-                              _aplicarOrden();
-                            });
-                            nav.pop();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: accentColor,
-                            foregroundColor: Colors.white,
+                        Text(
+                          l10n.filtros,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: headerText,
                           ),
-                          child: Text(l10n.aplicar),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: headerText),
+                          onPressed: () => Navigator.of(context).pop(),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+
+                  // Content
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.tipoCombustible,
+                          style: TextStyle(
+                              color: textColor.withValues(alpha: 0.7), fontSize: 13),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildDropdown(
+                            combustibleTemp,
+                            [
+                              l10n.todos,
+                              'Gasolina 95',
+                              'Gasolina 98',
+                              'Diesel',
+                              'Diesel Premium',
+                              'Gas',
+                            ],
+                            (v) => setStateDialog(() => combustibleTemp = v),
+                            cardColor,
+                            textColor),
+                        const SizedBox(height: 20),
+                        Text(
+                          l10n.filtrarPor,
+                          style: TextStyle(
+                              color: textColor.withValues(alpha: 0.7), fontSize: 13),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildDropdown(
+                            ordenTemp,
+                            [
+                              l10n.nombre,
+                              l10n.precioAscendente,
+                              l10n.precioDescendente,
+                            ],
+                            (v) => setStateDialog(() => ordenTemp = v),
+                            cardColor,
+                            textColor),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(l10n.cancelar,
+                                  style: TextStyle(color: textColor)),
+                            ),
+                            const SizedBox(width: 12),
+                            ElevatedButton(
+                              onPressed: () async {
+                                final nav = Navigator.of(context);
+                                final nuevoCombustible =
+                                    (combustibleTemp == l10n.todos)
+                                        ? null
+                                        : combustibleTemp;
+
+                                await app.filterProvider
+                                    .setTipoCombustible(nuevoCombustible);
+
+                                setState(() {
+                                  if (ordenTemp == l10n.nombre) {
+                                    _ordenSeleccionado = 'nombre';
+                                  } else if (ordenTemp == l10n.precioAscendente) {
+                                    _ordenSeleccionado = 'precio_asc';
+                                  } else if (ordenTemp == l10n.precioDescendente) {
+                                    _ordenSeleccionado = 'precio_desc';
+                                  }
+                                  _aplicarOrden();
+                                });
+                                nav.pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: accentColor,
+                                foregroundColor:
+                                    isDark ? Colors.white : theme.colorScheme.onPrimary,
+                              ),
+                              child: Text(l10n.aplicar),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -320,6 +354,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
+          dropdownColor: bg,
           isExpanded: true,
           items: items
               .map((it) => DropdownMenuItem(
@@ -337,7 +372,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -361,7 +396,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: isDark ? Colors.white : const Color(0xFF2D1509),
                     ),
                   ),
                   Align(
@@ -401,14 +436,14 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.star_border,
-              size: 80, color: Colors.grey.withValues(alpha: 0.5)),
+              size: 80, color: const Color(0xFFC08060).withValues(alpha: 0.5)),
           const SizedBox(height: 16),
           Text(l10n.noHayFavoritos,
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Text(l10n.seleccionaGasolinerasEnMapa,
-              style: const TextStyle(color: Colors.grey)),
+              style: const TextStyle(color: Color(0xFFC08060))),
         ],
       ),
     );
@@ -418,10 +453,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final accentColor =
-        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF9350);
+        isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final cardColor = isDark ? const Color(0xFF232326) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
-    final subtextColor = isDark ? Colors.white70 : Colors.black54;
+    final textColor = isDark ? Colors.white : const Color(0xFF2D1509);
+    final subtextColor = isDark ? Colors.white70 : const Color(0xFF7A4020);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -432,13 +467,13 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           BoxShadow(
             color: isDark
                 ? Colors.black.withValues(alpha: 0.4)
-                : Colors.grey.withValues(alpha: 0.12),
+                : const Color(0xFFC08060).withValues(alpha: 0.12),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           if (!isDark)
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: const Color(0xFFC08060).withValues(alpha: 0.1),
               blurRadius: 1,
               spreadRadius: 1,
             ),
@@ -470,9 +505,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       )
                     ],
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.local_gas_station_rounded,
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                     size: 28,
                   ),
                 ),

@@ -52,22 +52,22 @@ class PremiumGradientButton extends StatelessWidget {
             elevation: 0,
           ),
           child: isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   height: 24,
                   width: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white,
+                      Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 )
               : Text(
                   text,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     letterSpacing: 0.5,
                   ),
                 ),

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
+import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 
 class ProfileSection extends StatefulWidget {
   final Uint8List? profileImageBytes;
@@ -45,7 +46,7 @@ class _ProfileSectionState extends State<ProfileSection> {
     final lighterCardColor = isDark
         ? const Color(0xFF3E3E42)
         : Color.lerp(cardColor, Colors.white, 0.25);
-    final primaryColor = isDark ? const Color(0xFFFF8235) : theme.primaryColor;
+    final primaryColor = isDark ? const Color(0xFFFF8235) : const Color(0xFFFF8200);
     final textColor =
         isDark ? const Color(0xFFEBEBEB) : theme.colorScheme.onSurface;
 
@@ -57,7 +58,7 @@ class _ProfileSectionState extends State<ProfileSection> {
           BoxShadow(
             color: isDark
                 ? Colors.black.withValues(alpha: 0.3)
-                : Colors.grey.withValues(alpha: 0.2),
+                : const Color(0x1A2D1509),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -76,7 +77,7 @@ class _ProfileSectionState extends State<ProfileSection> {
                     child: Container(
                       width: 80,
                       height: 80,
-                      color: Colors.grey,
+                      color: const Color(0xFFFFD5BC), // secondaryContainer
                       child: widget.profileImageBytes != null
                           ? Image.memory(
                               widget.profileImageBytes!,
@@ -101,7 +102,7 @@ class _ProfileSectionState extends State<ProfileSection> {
                                             const SnackBar(
                                               content: Text(
                                                   'Error: No se ha podido encontrar la foto de perfil'),
-                                              backgroundColor: Colors.orange,
+                                              backgroundColor: MyGasolineraColors.warning,
                                               behavior:
                                                   SnackBarBehavior.floating,
                                             ),
