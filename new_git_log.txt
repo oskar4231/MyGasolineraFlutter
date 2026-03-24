@@ -1,5 +1,0 @@
-﻿1370786 Merge pull request #43 from oskar4231/CleanCode
-6ffe2bb arreglo bug detalles de gasolinera
-6dafb43 Merge branch 'main' of https://github.com/oskar4231/MyGasolineraFlutter into CleanCode
-14288d6 Merge pull request #42 from oskar4231/OptimizacionesCPUyRAM
-79169f2 Merge branch 'main' of https://github.com/oskar4231/MyGasolineraFlutter into OptimizacionesCPUyRAM
