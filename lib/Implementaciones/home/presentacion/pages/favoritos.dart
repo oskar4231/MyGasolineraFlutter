@@ -47,9 +47,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     setState(() => _loading = true);
 
     try {
-      // 1. Obtener IDs de favoritos
-      final prefs = await SharedPreferences.getInstance();
-      final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
+      // 1. Obtener IDs de favoritos desde el MapController (ya cargados en memoria)
+      final idsFavoritos = List<String>.from(app.mapController.favoritosIds);
 
       if (idsFavoritos.isEmpty) {
         if (mounted) setState(() => _loading = false);
