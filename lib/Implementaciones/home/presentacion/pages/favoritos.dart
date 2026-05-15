@@ -528,8 +528,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    await app.mapController.toggleFavorito(g.id,
-                        idProvincia: g.idProvincia);
+                    await app.mapController.toggleFavorito(g);
                     // _onFavoritosChanged se encarga de recargar la lista
                   },
                   icon: Icon(

@@ -280,8 +280,8 @@ class MapController extends ChangeNotifier {
   Future<List<Gasolinera>> obtenerGasolinerasFavoritas() =>
       _gasolineraLogic.obtenerGasolinerasFavoritas();
 
-  Future<void> toggleFavorito(String id, {String idProvincia = ''}) async {
-    await _gasolineraLogic.toggleFavorito(id, idProvincia: idProvincia);
+  Future<void> toggleFavorito(Gasolinera gasolinera) async {
+    await _gasolineraLogic.toggleFavorito(gasolinera);
     notifyListeners();
   }
 

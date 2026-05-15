@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/api_gasolinera.dart'
@@ -32,21 +33,45 @@ class GasolineraLogic {
     _favoritosIds = ids;
   }
 
-  /// Devuelve las gasolineras favoritas: primero intenta Isar, luego la API
-  /// usando el mapa id→provinciaId almacenado en SharedPreferences.
+  /// Devuelve las gasolineras favoritas.
+  /// Prioridad: datos completos en SharedPreferences → cache Isar → API por provincia.
   Future<List<Gasolinera>> obtenerGasolinerasFavoritas() async {
     if (_favoritosIds.isEmpty) return [];
 
-    // 1. Buscar en cache local
-    final cached = await _cacheService.getGasolinerasByIds(_favoritosIds);
-    final cachedIds = cached.map((g) => g.id).toSet();
-    final missingIds =
-        _favoritosIds.where((id) => !cachedIds.contains(id)).toList();
-
-    if (missingIds.isEmpty) return cached;
-
-    // 2. Fallback: obtener provincias desde SharedPreferences y llamar la API
     final prefs = await SharedPreferences.getInstance();
+
+    // 1. Datos completos almacenados al marcar favorito (fuente más fiable)
+    final dataMap = _leerFavoritasData(prefs);
+    final fromData = <Gasolinera>[];
+    final missingIds = <String>[];
+    for (final id in _favoritosIds) {
+      final json = dataMap[id];
+      if (json != null) {
+        try {
+          fromData.add(Gasolinera.fromJson(json));
+        } catch (e) {
+          AppLogger.warning('Error decodificando favorito $id',
+              tag: 'GasolineraLogic', error: e);
+          missingIds.add(id);
+        }
+      } else {
+        missingIds.add(id);
+      }
+    }
+
+    if (missingIds.isEmpty) return fromData;
+
+    // 2. Cache Isar para los que falten
+    final cached = await _cacheService.getGasolinerasByIds(missingIds);
+    final cachedIds = cached.map((g) => g.id).toSet();
+    final stillMissingIds =
+        missingIds.where((id) => !cachedIds.contains(id)).toList();
+
+    if (stillMissingIds.isEmpty) {
+      return [...fromData, ...cached];
+    }
+
+    // 3. Fallback API por provincia (puede fallar si backend no disponible)
     final provinciaMap = Map<String, String>.fromEntries(
       (prefs.getStringList('favoritas_provincias') ?? []).map((e) {
         final parts = e.split('|');
@@ -54,7 +79,7 @@ class GasolineraLogic {
       }),
     );
 
-    final provinciaIds = missingIds
+    final provinciaIds = stillMissingIds
         .map((id) => provinciaMap[id] ?? '')
         .where((p) => p.isNotEmpty)
         .toSet();
@@ -63,7 +88,8 @@ class GasolineraLogic {
     for (final provinciaId in provinciaIds) {
       try {
         final gasolineras = await api.fetchGasolinerasByProvincia(provinciaId);
-        fromApi.addAll(gasolineras.where((g) => missingIds.contains(g.id)));
+        fromApi
+            .addAll(gasolineras.where((g) => stillMissingIds.contains(g.id)));
       } catch (e) {
         AppLogger.warning(
           'Error cargando favoritas desde API para provincia $provinciaId',
@@ -73,17 +99,34 @@ class GasolineraLogic {
       }
     }
 
-    return [...cached, ...fromApi];
+    return [...fromData, ...cached, ...fromApi];
   }
 
-  /// Alterna el estado de favorito de una gasolinera
-  Future<void> toggleFavorito(String gasolineraId,
-      {String idProvincia = ''}) async {
+  Map<String, Map<String, dynamic>> _leerFavoritasData(SharedPreferences prefs) {
+    final raw = prefs.getString('favoritas_data');
+    if (raw == null || raw.isEmpty) return {};
+    try {
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      return decoded
+          .map((key, value) => MapEntry(key, value as Map<String, dynamic>));
+    } catch (e) {
+      AppLogger.warning('favoritas_data corrupto, ignorando',
+          tag: 'GasolineraLogic', error: e);
+      return {};
+    }
+  }
+
+  /// Alterna el estado de favorito de una gasolinera.
+  /// Guarda el objeto completo en SharedPreferences para poder restaurarlo
+  /// sin depender de Isar ni del backend.
+  Future<void> toggleFavorito(Gasolinera gasolinera) async {
     final prefs = await SharedPreferences.getInstance();
     final idsFavoritos = prefs.getStringList('favoritas_ids') ?? [];
+    final dataMap = _leerFavoritasData(prefs);
 
-    if (idsFavoritos.contains(gasolineraId)) {
-      idsFavoritos.remove(gasolineraId);
+    if (idsFavoritos.contains(gasolinera.id)) {
+      idsFavoritos.remove(gasolinera.id);
+      dataMap.remove(gasolinera.id);
 
       // Eliminar también de la persistencia de provincias
       final provinciaMap = Map<String, String>.fromEntries(
@@ -92,27 +135,28 @@ class GasolineraLogic {
           return MapEntry(parts[0], parts.length > 1 ? parts[1] : '');
         }),
       );
-      provinciaMap.remove(gasolineraId);
+      provinciaMap.remove(gasolinera.id);
       await prefs.setStringList('favoritas_provincias',
           provinciaMap.entries.map((e) => '${e.key}|${e.value}').toList());
     } else {
-      idsFavoritos.add(gasolineraId);
+      idsFavoritos.add(gasolinera.id);
+      dataMap[gasolinera.id] = gasolinera.toJson();
 
-      // Guardar también la provincia para uso en Web
-      if (idProvincia.isNotEmpty) {
+      if (gasolinera.idProvincia.isNotEmpty) {
         final provinciaMap = Map<String, String>.fromEntries(
           (prefs.getStringList('favoritas_provincias') ?? []).map((e) {
             final parts = e.split('|');
             return MapEntry(parts[0], parts.length > 1 ? parts[1] : '');
           }),
         );
-        provinciaMap[gasolineraId] = idProvincia;
+        provinciaMap[gasolinera.id] = gasolinera.idProvincia;
         await prefs.setStringList('favoritas_provincias',
             provinciaMap.entries.map((e) => '${e.key}|${e.value}').toList());
       }
     }
 
     await prefs.setStringList('favoritas_ids', idsFavoritos);
+    await prefs.setString('favoritas_data', jsonEncode(dataMap));
     _favoritosIds = idsFavoritos;
   }
 

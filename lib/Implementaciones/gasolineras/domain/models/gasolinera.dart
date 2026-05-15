@@ -116,6 +116,29 @@ class Gasolinera implements cluster_manager.ClusterItem {
     );
   }
 
+  /// Serializa a JSON usando las mismas claves que [fromJson] reconoce,
+  /// así un round-trip JSON↔️objeto preserva todos los precios.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'rotulo': rotulo,
+        'direccion': direccion,
+        'lat': lat,
+        'lng': lng,
+        'horario': horario,
+        'Precio Gasolina 95 E5': gasolina95,
+        'Precio Gasolina 95 E10': gasolina95E10,
+        'Precio Gasolina 98 E5': gasolina98,
+        'Precio Gasoleo A': gasoleoA,
+        'Precio Gasoleo Premium': gasoleoPremium,
+        'Precio Gases licuados del petróleo': glp,
+        'Precio Biodiesel': biodiesel,
+        'Precio Bioetanol': bioetanol,
+        'Precio Éster metílico': esterMetilico,
+        'Precio Hidrogeno': hidrogeno,
+        'provincia': provincia,
+        'idProvincia': idProvincia,
+      };
+
   // 📍 Getter para usar en Google Maps
   LatLng get position => LatLng(lat, lng);
 
