@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 
@@ -31,6 +30,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     super.initState();
     _cacheService = app.gasolineraCacheService;
     _cargarDatos();
+    app.mapController.addListener(_onFavoritosChanged);
+  }
+
+  void _onFavoritosChanged() {
+    // Solo recargar si la lista de IDs favoritos ha cambiado de verdad
+    final newIds = (app.mapController.favoritosIds..sort()).join(',');
+    final currentIds = (_gasolinerasFavoritas.map((g) => g.id).toList()..sort()).join(',');
+    if (newIds != currentIds) {
+      _cargarDatos();
+    }
   }
 
   Future<void> _cargarDatos() async {
@@ -174,6 +183,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     final preciosValidos = precios.where((p) => p > 0).toList();
     if (preciosValidos.isEmpty) return 0.0;
     return preciosValidos.reduce((a, b) => a + b) / preciosValidos.length;
+  }
+
+  @override
+  void dispose() {
+    app.mapController.removeListener(_onFavoritosChanged);
+    super.dispose();
   }
 
   void _mostrarFiltros() {
@@ -541,12 +556,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    final ids = prefs.getStringList('favoritas_ids') ?? [];
-                    ids.remove(g.id);
-                    await prefs.setStringList('favoritas_ids', ids);
-                    setState(() => _gasolinerasFavoritas
-                        .removeWhere((item) => item.id == g.id));
+                    await app.mapController.toggleFavorito(g.id,
+                        idProvincia: g.idProvincia);
+                    // _onFavoritosChanged se encarga de recargar la lista
                   },
                   icon: Icon(
                     Icons.star_rounded,

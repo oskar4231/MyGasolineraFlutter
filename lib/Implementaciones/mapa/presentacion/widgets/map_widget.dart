@@ -250,7 +250,10 @@ class _MapWidgetState extends State<MapWidget>
           onToggleFavorito: () async {
             await _controller.toggleFavorito(gasolinera.id,
                 idProvincia: gasolinera.idProvincia);
-            if (mounted) setState(() {});
+            if (mounted) {
+              clusterManager?.updateMap();
+              setState(() {});
+            }
           },
         ),
       ),
