@@ -145,7 +145,7 @@ class _FiltersDialogState extends State<FiltersDialog>
                   }
                 : () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Seleccione combustible primero")),
+                      SnackBar(content: Text(l10n.seleccioneCombustiblePrimero)),
                     );
                   },
           ),
@@ -197,7 +197,7 @@ class _FiltersDialogState extends State<FiltersDialog>
                   : theme.dividerColor,
             ),
             title: Text(
-              'Limpiar filtros',
+              l10n.limpiarFiltros,
               style: TextStyle(
                 color: (fuelSelected ||
                         app.filterProvider.precioDesde != null ||
@@ -216,9 +216,9 @@ class _FiltersDialogState extends State<FiltersDialog>
                     app.filterProvider.clearFilters();
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Filtros eliminados'),
-                        duration: Duration(seconds: 1),
+                      SnackBar(
+                        content: Text(l10n.filtrosEliminados),
+                        duration: const Duration(seconds: 1),
                       ),
                     );
                   }

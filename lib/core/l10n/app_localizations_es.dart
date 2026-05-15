@@ -1030,4 +1030,75 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get repostajeEscaneado => 'Repostaje Escaneado';
+
+  @override
+  String get encontrarGasolina => 'Encuentra la gasolina\nmás barata';
+
+  @override
+  String get cercaTiSegundos => 'Cerca de ti, en segundos.';
+
+  @override
+  String get cercaDeTi => 'Cerca de ti';
+
+  @override
+  String get mejorPrecio => 'Mejor precio';
+
+  @override
+  String get tiempoReal => 'Tiempo real';
+
+  @override
+  String get masGasolineras => 'Más de 10.000 gasolineras en España';
+
+  @override
+  String get datosActualizados => 'Datos actualizados en tiempo real';
+
+  @override
+  String get uneteGratis => 'Únete a MyGasolinera gratis';
+
+  @override
+  String get sinActualizar => 'Sin actualizar';
+
+  @override
+  String errorCargarFacturas(String error) {
+    return 'Error al cargar facturas: $error';
+  }
+
+  @override
+  String get noGasolinerasDisponibles => 'No hay gasolineras disponibles';
+
+  @override
+  String get seleccioneCombustiblePrimero => 'Seleccione combustible primero';
+
+  @override
+  String get limpiarFiltros => 'Limpiar filtros';
+
+  @override
+  String get filtrosEliminados => 'Filtros eliminados';
+
+  @override
+  String get seleccioneMarcaPrimero => 'Por favor, selecciona una marca primero.';
+
+  @override
+  String get motorizacion => 'Motorización';
+
+  @override
+  String get seleccionaMotorizacion => 'Selecciona una motorización';
+
+  @override
+  String get seleccioneMotorizacion => 'Seleccione una motorización';
+
+  @override
+  String get soloNumerosEnteros => 'Solo números enteros';
+
+  @override
+  String get noPuedeSerNegativo => 'No puede ser negativo';
+
+  @override
+  String get maximoKm => 'Máximo 1.000.000 km';
+
+  @override
+  String get maxTanque => 'El tanque no puede superar los 300L';
+
+  @override
+  String get maxConsumo => 'El consumo no puede superar los 50.0';
 }

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/crear.dart';
 import 'package:my_gasolinera/Implementaciones/auth/presentacion/pages/login.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -100,6 +101,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF5F5F0);
     final accentColor =
@@ -250,7 +252,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                               children: [
                                 // Headline
                                 Text(
-                                  'Encuentra la gasolina\nmás barata',
+                                  l10n.encontrarGasolina,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 34,
@@ -265,7 +267,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
 
                                 // Subheadline
                                 Text(
-                                  'Cerca de ti, en segundos.',
+                                  l10n.cercaTiSegundos,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 17,
@@ -283,21 +285,21 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                                   children: [
                                     _FeaturePill(
                                       icon: Icons.location_on,
-                                      label: 'Cerca de ti',
+                                      label: l10n.cercaDeTi,
                                       accentColor: accentColor,
                                       isDark: isDark,
                                     ),
                                     const SizedBox(width: 8),
                                     _FeaturePill(
                                       icon: Icons.trending_down,
-                                      label: 'Mejor precio',
+                                      label: l10n.mejorPrecio,
                                       accentColor: accentColor,
                                       isDark: isDark,
                                     ),
                                     const SizedBox(width: 8),
                                     _FeaturePill(
                                       icon: Icons.bolt,
-                                      label: 'Tiempo real',
+                                      label: l10n.tiempoReal,
                                       accentColor: accentColor,
                                       isDark: isDark,
                                     ),
@@ -320,7 +322,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                         children: [
                           // Social proof
                           Text(
-                            'Más de 10.000 gasolineras en España',
+                            l10n.masGasolineras,
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
@@ -356,9 +358,9 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
-                              child: const Text(
-                                'Crear cuenta',
-                                style: TextStyle(
+                              child: Text(
+                                l10n.crearCuenta,
+                                style: const TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: -0.4,
@@ -425,9 +427,9 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
-                              child: const Text(
-                                'Iniciar sesión',
-                                style: TextStyle(
+                              child: Text(
+                                l10n.iniciarSesion,
+                                style: const TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: -0.4,
@@ -440,7 +442,7 @@ class _InicioState extends State<Inicio> with TickerProviderStateMixin {
 
                           // Caption
                           Text(
-                            'Datos actualizados en tiempo real',
+                            l10n.datosActualizados,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

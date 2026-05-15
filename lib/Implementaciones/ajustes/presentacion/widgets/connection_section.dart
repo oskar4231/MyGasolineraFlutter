@@ -58,7 +58,7 @@ class ConnectionSection extends StatelessWidget {
                           Text(
                             lastUrlUpdate != null
                                 ? 'Act: ${lastUrlUpdate!.hour.toString().padLeft(2, '0')}:${lastUrlUpdate!.minute.toString().padLeft(2, '0')}'
-                                : 'Sin actualizar',
+                                : AppLocalizations.of(context)!.sinActualizar,
                             style: TextStyle(
                               fontSize: 12,
                               color: theme.colorScheme.onSurface.withValues(

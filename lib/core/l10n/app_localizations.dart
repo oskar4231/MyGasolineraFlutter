@@ -2029,6 +2029,144 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Repostaje Escaneado'**
   String get repostajeEscaneado;
+
+  /// No description provided for @encontrarGasolina.
+  ///
+  /// In es, this message translates to:
+  /// **'Encuentra la gasolina\nmás barata'**
+  String get encontrarGasolina;
+
+  /// No description provided for @cercaTiSegundos.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerca de ti, en segundos.'**
+  String get cercaTiSegundos;
+
+  /// No description provided for @cercaDeTi.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerca de ti'**
+  String get cercaDeTi;
+
+  /// No description provided for @mejorPrecio.
+  ///
+  /// In es, this message translates to:
+  /// **'Mejor precio'**
+  String get mejorPrecio;
+
+  /// No description provided for @tiempoReal.
+  ///
+  /// In es, this message translates to:
+  /// **'Tiempo real'**
+  String get tiempoReal;
+
+  /// No description provided for @masGasolineras.
+  ///
+  /// In es, this message translates to:
+  /// **'Más de 10.000 gasolineras en España'**
+  String get masGasolineras;
+
+  /// No description provided for @datosActualizados.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos actualizados en tiempo real'**
+  String get datosActualizados;
+
+  /// No description provided for @uneteGratis.
+  ///
+  /// In es, this message translates to:
+  /// **'Únete a MyGasolinera gratis'**
+  String get uneteGratis;
+
+  /// No description provided for @sinActualizar.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin actualizar'**
+  String get sinActualizar;
+
+  /// No description provided for @errorCargarFacturas.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al cargar facturas: {error}'**
+  String errorCargarFacturas(String error);
+
+  /// No description provided for @noGasolinerasDisponibles.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay gasolineras disponibles'**
+  String get noGasolinerasDisponibles;
+
+  /// No description provided for @seleccioneCombustiblePrimero.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccione combustible primero'**
+  String get seleccioneCombustiblePrimero;
+
+  /// No description provided for @limpiarFiltros.
+  ///
+  /// In es, this message translates to:
+  /// **'Limpiar filtros'**
+  String get limpiarFiltros;
+
+  /// No description provided for @filtrosEliminados.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros eliminados'**
+  String get filtrosEliminados;
+
+  /// No description provided for @seleccioneMarcaPrimero.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor, selecciona una marca primero.'**
+  String get seleccioneMarcaPrimero;
+
+  /// No description provided for @motorizacion.
+  ///
+  /// In es, this message translates to:
+  /// **'Motorización'**
+  String get motorizacion;
+
+  /// No description provided for @seleccionaMotorizacion.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una motorización'**
+  String get seleccionaMotorizacion;
+
+  /// No description provided for @seleccioneMotorizacion.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccione una motorización'**
+  String get seleccioneMotorizacion;
+
+  /// No description provided for @soloNumerosEnteros.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo números enteros'**
+  String get soloNumerosEnteros;
+
+  /// No description provided for @noPuedeSerNegativo.
+  ///
+  /// In es, this message translates to:
+  /// **'No puede ser negativo'**
+  String get noPuedeSerNegativo;
+
+  /// No description provided for @maximoKm.
+  ///
+  /// In es, this message translates to:
+  /// **'Máximo 1.000.000 km'**
+  String get maximoKm;
+
+  /// No description provided for @maxTanque.
+  ///
+  /// In es, this message translates to:
+  /// **'El tanque no puede superar los 300L'**
+  String get maxTanque;
+
+  /// No description provided for @maxConsumo.
+  ///
+  /// In es, this message translates to:
+  /// **'El consumo no puede superar los 50.0'**
+  String get maxConsumo;
 }
 
 class _AppLocalizationsDelegate

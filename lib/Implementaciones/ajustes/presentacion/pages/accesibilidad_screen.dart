@@ -73,6 +73,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
     // Obtenemos el tema actual
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     // Colores base adaptables
 
@@ -112,7 +113,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     ),
                   ),
                   Text(
-                    'Accesibilidad',
+                    l10n.accesibilidad,
                     style: TextStyle(
                       fontFamily: 'Roboto',
                       fontSize: 28,
@@ -131,7 +132,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Configuración de Accesibilidad',
+                      l10n.accesibilidadConfig,
                       style: TextStyle(
                         color: textColor,
                         fontSize: 18,
@@ -164,7 +165,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                               Icon(Icons.text_fields, color: textColor),
                               const SizedBox(width: 12),
                               Text(
-                                'Tamaño de Fuente',
+                                l10n.tamanoFuente,
                                 style: TextStyle(
                                   color: textColor,
                                   fontSize: 16,
@@ -178,11 +179,11 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                           // Botones de Tamaño
                           Row(
                             children: [
-                              _buildSizeOption('Pequeño'),
+                              _buildSizeOption('Pequeño', l10n.pequeno),
                               const SizedBox(width: 12),
-                              _buildSizeOption('Mediano'),
+                              _buildSizeOption('Mediano', l10n.mediano),
                               const SizedBox(width: 12),
-                              _buildSizeOption('Grande'),
+                              _buildSizeOption('Grande', l10n.grande),
                             ],
                           ),
                           const SizedBox(height: 12),
@@ -226,7 +227,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                           size: 20),
                                       const SizedBox(width: 8),
                                       Text(
-                                        'Personalizado${_tamanoFuente == 'Personalizada' ? ' (${_tamanoFuentePersonalizado.round()}px)' : ''}',
+                                        '${l10n.personalizado}${_tamanoFuente == 'Personalizada' ? ' (${_tamanoFuentePersonalizado.round()}px)' : ''}',
                                         style: TextStyle(
                                           color: _tamanoFuente ==
                                                   'Personalizada'
@@ -276,7 +277,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                               Icon(Icons.palette, color: textColor),
                               const SizedBox(width: 12),
                               Text(
-                                'Tema',
+                                l10n.tema,
                                 style: TextStyle(
                                   color: textColor,
                                   fontSize: 16,
@@ -347,18 +348,18 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                               items: [
                                                 _buildDropdownItem(
                                                     0,
-                                                    'Predeterminado (Naranja)',
+                                                    l10n.predeterminadoNaranja,
                                                     textColor),
                                                 _buildDropdownItem(1,
-                                                    'Modo Oscuro', textColor),
+                                                    l10n.modoOscuro, textColor),
                                                 _buildDropdownItem(
-                                                    2, 'Protanopia', textColor),
+                                                    2, l10n.protanopia, textColor),
                                                 _buildDropdownItem(3,
-                                                    'Deuteranopia', textColor),
+                                                    l10n.deuteranopia, textColor),
                                                 _buildDropdownItem(
-                                                    4, 'Tritanopia', textColor),
+                                                    4, l10n.tritanopia, textColor),
                                                 _buildDropdownItem(5,
-                                                    'Achromatopsia', textColor),
+                                                    l10n.achromatopsia, textColor),
                                               ],
                                               onChanged: (int? newValue) {
                                                 if (newValue != null) {
@@ -459,9 +460,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                         Colors.black),
                                   ),
                                 )
-                              : const Text(
-                                  'Guardar Cambios',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                              : Text(
+                                  l10n.guardarCambios,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                         ),
                       ),
@@ -476,9 +477,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
     ); // Scaffold
   }
 
-  Widget _buildSizeOption(String text) {
+  Widget _buildSizeOption(String key, String label) {
     final theme = Theme.of(context);
-    final isActive = _tamanoFuente == text;
+    final isActive = _tamanoFuente == key;
     final isDark = theme.brightness == Brightness.dark;
 
     final primaryColor = isDark
@@ -518,9 +519,9 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
           child: InkWell(
             onTap: () {
               setState(() {
-                _tamanoFuente = text;
+                _tamanoFuente = key;
               });
-              app.fontSizeProvider.changeFontSizeByPreset(text);
+              app.fontSizeProvider.changeFontSizeByPreset(key);
             },
             hoverColor: hoverColor,
             splashColor: splashColor,
@@ -530,7 +531,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Center(
                 child: Text(
-                  text,
+                  label,
                   style: TextStyle(
                     color: isActive ? activeTextColor : textColor,
                     fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
@@ -560,6 +561,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
     double tempTamano = _tamanoFuentePersonalizado;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     final cardColor = isDark
         ? const Color(0xFF212124) // ModoOscuroAccesibilidad.fondoTarjeta
@@ -600,7 +602,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       color: isDark ? Colors.white : primaryColor),
                   const SizedBox(width: 8),
                   Text(
-                    'Tamaño Personalizado',
+                    l10n.tamanoPersonalizado,
                     style: TextStyle(
                       color: isDark ? Colors.white : primaryColor,
                       fontWeight: FontWeight.bold,
@@ -620,7 +622,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        'Ejemplo de texto',
+                        l10n.ejemploTexto,
                         style: TextStyle(
                           fontSize: tempTamano,
                           color: textColor,
@@ -669,7 +671,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    'Cancelar',
+                    l10n.cancelar,
                     style: TextStyle(color: textColor),
                   ),
                 ),
@@ -690,7 +692,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text('Aplicar'),
+                  child: Text(l10n.aplicar),
                 ),
               ],
             );

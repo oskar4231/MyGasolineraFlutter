@@ -419,5 +419,31 @@
   "fotoActualizada": "✅ Foto actualizada",
   "errorSubirFoto": "❌ Error al subir",
   "urlActualizada": "✅ URL actualizada",
-  "repostajeEscaneado": "Repostaje Escaneado"
+  "repostajeEscaneado": "Repostaje Escaneado",
+  "encontrarGasolina": "Encuentra la gasolina\nmás barata",
+  "cercaTiSegundos": "Cerca de ti, en segundos.",
+  "cercaDeTi": "Cerca de ti",
+  "mejorPrecio": "Mejor precio",
+  "tiempoReal": "Tiempo real",
+  "masGasolineras": "Más de 10.000 gasolineras en España",
+  "datosActualizados": "Datos actualizados en tiempo real",
+  "uneteGratis": "Únete a MyGasolinera gratis",
+  "sinActualizar": "Sin actualizar",
+  "errorCargarFacturas": "Error al cargar facturas: {error}",
+  "@errorCargarFacturas": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "noGasolinerasDisponibles": "No hay gasolineras disponibles",
+  "seleccioneCombustiblePrimero": "Seleccione combustible primero",
+  "limpiarFiltros": "Limpiar filtros",
+  "filtrosEliminados": "Filtros eliminados",
+  "seleccioneMarcaPrimero": "Por favor, selecciona una marca primero.",
+  "motorizacion": "Motorización",
+  "seleccionaMotorizacion": "Selecciona una motorización",
+  "seleccioneMotorizacion": "Seleccione una motorización",
+  "soloNumerosEnteros": "Solo números enteros",
+  "noPuedeSerNegativo": "No puede ser negativo",
+  "maximoKm": "Máximo 1.000.000 km",
+  "maxTanque": "El tanque no puede superar los 300L",
+  "maxConsumo": "El consumo no puede superar los 50.0"
 }

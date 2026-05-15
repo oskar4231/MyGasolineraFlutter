@@ -1022,4 +1022,75 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repostajeEscaneado => 'Scanned Refueling';
+
+  @override
+  String get encontrarGasolina => 'Find the cheapest\nfuel';
+
+  @override
+  String get cercaTiSegundos => 'Near you, in seconds.';
+
+  @override
+  String get cercaDeTi => 'Near you';
+
+  @override
+  String get mejorPrecio => 'Best price';
+
+  @override
+  String get tiempoReal => 'Real time';
+
+  @override
+  String get masGasolineras => 'Over 10,000 gas stations in Spain';
+
+  @override
+  String get datosActualizados => 'Real-time data updates';
+
+  @override
+  String get uneteGratis => 'Join MyGasolinera for free';
+
+  @override
+  String get sinActualizar => 'Not updated';
+
+  @override
+  String errorCargarFacturas(String error) {
+    return 'Error loading invoices: $error';
+  }
+
+  @override
+  String get noGasolinerasDisponibles => 'No gas stations available';
+
+  @override
+  String get seleccioneCombustiblePrimero => 'Select a fuel type first';
+
+  @override
+  String get limpiarFiltros => 'Clear filters';
+
+  @override
+  String get filtrosEliminados => 'Filters cleared';
+
+  @override
+  String get seleccioneMarcaPrimero => 'Please select a brand first.';
+
+  @override
+  String get motorizacion => 'Engine Type';
+
+  @override
+  String get seleccionaMotorizacion => 'Select an engine type';
+
+  @override
+  String get seleccioneMotorizacion => 'Please select an engine type';
+
+  @override
+  String get soloNumerosEnteros => 'Integers only';
+
+  @override
+  String get noPuedeSerNegativo => 'Cannot be negative';
+
+  @override
+  String get maximoKm => 'Maximum 1,000,000 km';
+
+  @override
+  String get maxTanque => 'Tank cannot exceed 300L';
+
+  @override
+  String get maxConsumo => 'Consumption cannot exceed 50.0';
 }

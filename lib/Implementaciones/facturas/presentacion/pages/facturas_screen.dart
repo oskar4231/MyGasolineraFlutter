@@ -96,7 +96,7 @@ class _FacturasScreenState extends State<FacturasScreen>
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'Error al cargar facturas: $e';
+          _errorMessage = AppLocalizations.of(context)!.errorCargarFacturas(e.toString());
           _isLoading = false;
           _isLoadingMore = false;
         });

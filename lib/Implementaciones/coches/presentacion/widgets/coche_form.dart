@@ -301,9 +301,7 @@ class _CocheFormState extends State<CocheForm> {
                 validator: (v) => v == null ? l10n.ingresaModelo : null,
                 onTap: _selectedMarcaId == null
                     ? () => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Por favor, seleccione una marca primero.')))
+                        SnackBar(content: Text(l10n.seleccioneMarcaPrimero)))
                     : null,
               ),
               const SizedBox(height: 16),
@@ -312,10 +310,10 @@ class _CocheFormState extends State<CocheForm> {
               if (_selectedModeloId != null) ...[
                 DropdownButtonFormField<dynamic>(
                   decoration: InputDecoration(
-                    labelText: 'Motorización',
+                    labelText: l10n.motorizacion,
                     labelStyle:
                         TextStyle(color: textColor.withValues(alpha: 0.7)),
-                    hintText: 'Selecciona una motorización',
+                    hintText: l10n.seleccionaMotorizacion,
                     hintStyle:
                         TextStyle(color: textColor.withValues(alpha: 0.4)),
                     border: OutlineInputBorder(
@@ -349,7 +347,7 @@ class _CocheFormState extends State<CocheForm> {
                       .toList(),
                   onChanged: _onMotorizacionChanged,
                   validator: (v) =>
-                      v == null ? 'Seleccione una motorización' : null,
+                      v == null ? l10n.seleccioneMotorizacion : null,
                 ),
                 const SizedBox(height: 16),
               ],
@@ -392,9 +390,9 @@ class _CocheFormState extends State<CocheForm> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return null;
                   final valor = int.tryParse(v);
-                  if (valor == null) return "Solo números enteros";
-                  if (valor < 0) return "No puede ser negativo";
-                  if (valor > 1000000) return "Máximo 1.000.000 km";
+                  if (valor == null) return l10n.soloNumerosEnteros;
+                  if (valor < 0) return l10n.noPuedeSerNegativo;
+                  if (valor > 1000000) return l10n.maximoKm;
                   return null;
                 },
               ),
@@ -417,9 +415,9 @@ class _CocheFormState extends State<CocheForm> {
                   if (v == null || v.isEmpty) return null;
                   final cleanValue = v.replaceAll(',', '.');
                   final valor = double.tryParse(cleanValue);
-                  if (valor == null) return "Formato inválido";
-                  if (valor < 0) return "No puede ser negativo";
-                  if (valor > 300) return "El tanque no puede superar los 300L";
+                  if (valor == null) return l10n.formatoInvalido;
+                  if (valor < 0) return l10n.noPuedeSerNegativo;
+                  if (valor > 300) return l10n.maxTanque;
                   return null;
                 },
               ),
@@ -444,9 +442,9 @@ class _CocheFormState extends State<CocheForm> {
                   final cleanValue = v.replaceAll(',', '.');
                   final valor = double.tryParse(cleanValue);
 
-                  if (valor == null) return "Formato inválido";
-                  if (valor < 0) return "No puede ser negativo";
-                  if (valor > 50) return "El consumo no puede superar los 50.0";
+                  if (valor == null) return l10n.formatoInvalido;
+                  if (valor < 0) return l10n.noPuedeSerNegativo;
+                  if (valor > 50) return l10n.maxConsumo;
 
                   return null;
                 },

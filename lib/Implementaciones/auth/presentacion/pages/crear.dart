@@ -123,7 +123,7 @@ class _CrearScreenState extends State<CrearScreen> {
             tag: 'CrearScreen', error: e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Error de conexión o problema inesperado.'),
+            content: Text(AppLocalizations.of(context)!.errorConexion),
             backgroundColor: MyGasolineraColors.error,
           ),
         );
@@ -303,7 +303,7 @@ class _CrearScreenState extends State<CrearScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Únete a MyGasolinera gratis',
+                                AppLocalizations.of(context)!.uneteGratis,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,

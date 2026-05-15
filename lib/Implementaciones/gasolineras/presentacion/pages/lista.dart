@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class GasolineraListWidget extends StatelessWidget {
   final List<Gasolinera> gasolineras;
@@ -13,7 +14,7 @@ class GasolineraListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (gasolineras.isEmpty) {
-      return const Center(child: Text('No hay gasolineras disponibles'));
+      return Center(child: Text(AppLocalizations.of(context)!.noGasolinerasDisponibles));
     }
 
     final gasolinerasLimitadas = gasolineras.take(50).toList();

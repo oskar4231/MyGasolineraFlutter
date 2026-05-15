@@ -354,5 +354,31 @@
   "fotoActualizada": "✅ Photo updated",
   "errorSubirFoto": "❌ Error uploading",
   "urlActualizada": "✅ URL updated",
-  "repostajeEscaneado": "Scanned Refueling"
+  "repostajeEscaneado": "Scanned Refueling",
+  "encontrarGasolina": "Find the cheapest\nfuel",
+  "cercaTiSegundos": "Near you, in seconds.",
+  "cercaDeTi": "Near you",
+  "mejorPrecio": "Best price",
+  "tiempoReal": "Real time",
+  "masGasolineras": "Over 10,000 gas stations in Spain",
+  "datosActualizados": "Real-time data updates",
+  "uneteGratis": "Join MyGasolinera for free",
+  "sinActualizar": "Not updated",
+  "errorCargarFacturas": "Error loading invoices: {error}",
+  "@errorCargarFacturas": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "noGasolinerasDisponibles": "No gas stations available",
+  "seleccioneCombustiblePrimero": "Select a fuel type first",
+  "limpiarFiltros": "Clear filters",
+  "filtrosEliminados": "Filters cleared",
+  "seleccioneMarcaPrimero": "Please select a brand first.",
+  "motorizacion": "Engine Type",
+  "seleccionaMotorizacion": "Select an engine type",
+  "seleccioneMotorizacion": "Please select an engine type",
+  "soloNumerosEnteros": "Integers only",
+  "noPuedeSerNegativo": "Cannot be negative",
+  "maximoKm": "Maximum 1,000,000 km",
+  "maxTanque": "Tank cannot exceed 300L",
+  "maxConsumo": "Consumption cannot exceed 50.0"
 }
