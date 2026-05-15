@@ -42,19 +42,15 @@ class MapController extends ChangeNotifier {
   StreamSubscription<Position>? _positionStreamSub;
   Timer? _debounceTimer;
 
-  // Callbacks hacia el widget
-  final void Function(List<Gasolinera>)? onGasolinerasLoaded;
-  final void Function(String provincia)? onProvinciaUpdate;
-  final void Function(Position pos)? onPositionChanged;
-  final void Function(Position pos)? onLocationChanged;
+  // Callbacks actualizables por el widget activo
+  void Function(List<Gasolinera>)? onGasolinerasLoaded;
+  void Function(String provincia)? onProvinciaUpdate;
+  void Function(Position pos)? onPositionChanged;
+  void Function(Position pos)? onLocationChanged;
 
-  MapController({
-    required this.cacheService,
-    this.onGasolinerasLoaded,
-    this.onProvinciaUpdate,
-    this.onPositionChanged,
-    this.onLocationChanged,
-  }) {
+  bool _initialized = false;
+
+  MapController({required this.cacheService}) {
     _gasolineraLogic = GasolineraLogic(cacheService);
   }
 
@@ -69,12 +65,16 @@ class MapController extends ChangeNotifier {
     double? precioHasta,
     String? tipoAperturaSeleccionado,
   }) async {
-    await markerHelper.loadGasStationIcons();
-    AppLogger.info('Iconos de marcadores cargados', tag: 'MapController');
+    if (_initialized) return;
+    _initialized = true;
 
-    await _gasolineraLogic.cargarFavoritos();
+    // Cargar iconos y favoritos en paralelo
+    await Future.wait([
+      markerHelper.loadGasStationIcons(),
+      _gasolineraLogic.cargarFavoritos(),
+    ]);
     AppLogger.info(
-      'Favoritos cargados (${_gasolineraLogic.favoritosIds.length})',
+      'Iconos y favoritos cargados (${_gasolineraLogic.favoritosIds.length} favoritos)',
       tag: 'MapController',
     );
 
@@ -129,7 +129,7 @@ class MapController extends ChangeNotifier {
     permissionState = LocationPermissionState.granted;
     notifyListeners();
 
-    // 1. Última ubicación conocida (rápido)
+    // 1. Última ubicación conocida (inmediata)
     try {
       final lastKnown = await Geolocator.getLastKnownPosition();
       if (lastKnown != null) {
@@ -148,47 +148,13 @@ class MapController extends ChangeNotifier {
           tipoAperturaSeleccionado: tipoAperturaSeleccionado,
         );
         await _actualizarProvincia(lastKnown.latitude, lastKnown.longitude);
-      }
-    } catch (e) {
-      AppLogger.warning('Error obteniendo última ubicación conocida',
-          tag: 'MapController', error: e);
-    }
-
-    // 2. Ubicación precisa (lento, timeout 5s)
-    try {
-      AppLogger.debug('Solicitando ubicación precisa...', tag: 'MapController');
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings:
-            const LocationSettings(accuracy: LocationAccuracy.high),
-      ).timeout(
-        const Duration(seconds: 5),
-        onTimeout: () => throw TimeoutException('GPS timeout'),
-      );
-
-      AppLogger.info(
-        'Ubicación precisa: ${position.latitude}, ${position.longitude}',
-        tag: 'MapController',
-      );
-      _setPosition(position);
-      await cargarGasolineras(
-        position.latitude,
-        position.longitude,
-        isInitialLoad: true,
-        combustibleSeleccionado: combustibleSeleccionado,
-        precioDesde: precioDesde,
-        precioHasta: precioHasta,
-        tipoAperturaSeleccionado: tipoAperturaSeleccionado,
-      );
-      await _actualizarProvincia(position.latitude, position.longitude);
-    } catch (e) {
-      AppLogger.warning('Error obteniendo ubicación precisa o timeout',
-          tag: 'MapController', error: e);
-
-      // Fallback: Valencia centro
-      if (ubicacionActual == null) {
+      } else {
+        // Sin ubicación previa — fallback a Madrid centro hasta que el stream dé posición real
+        AppLogger.info('Sin última posición conocida, usando fallback Madrid',
+            tag: 'MapController');
         final defaultPos = Position(
-          latitude: 39.4699,
-          longitude: -0.3763,
+          latitude: 40.4168,
+          longitude: -3.7038,
           timestamp: DateTime.now(),
           accuracy: 0,
           altitude: 0,
@@ -209,13 +175,17 @@ class MapController extends ChangeNotifier {
           tipoAperturaSeleccionado: tipoAperturaSeleccionado,
         );
       }
+    } catch (e) {
+      AppLogger.warning('Error obteniendo última ubicación conocida',
+          tag: 'MapController', error: e);
     }
 
-    // 3. Stream continuo de posición
+    // 2. Stream continuo — proporciona posición precisa sin bloquear
     AppLogger.info('Iniciando stream GPS...', tag: 'MapController');
+    await _positionStreamSub?.cancel();
     _positionStreamSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
+        accuracy: LocationAccuracy.medium,
         distanceFilter: 5,
       ),
     ).listen((pos) {

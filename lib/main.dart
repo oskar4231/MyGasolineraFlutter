@@ -14,6 +14,8 @@ import 'package:my_gasolinera/core/database/isar_service.dart';
 import 'package:my_gasolinera/core/sync/sync_manager.dart';
 
 import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/data/controllers/map_controller.dart';
+import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
 
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/providers/language_provider.dart';
@@ -27,6 +29,8 @@ late IsarService isarService;
 late SyncManager syncManager;
 late GasolinerasCacheService gasolineraCacheService;
 late BackgroundRefreshService backgroundRefreshService;
+late MapController mapController;
+final MarkerHelper markerHelper = MarkerHelper();
 
 final LanguageProvider languageProvider = LanguageProvider();
 final FontSizeProvider fontSizeProvider = FontSizeProvider();
@@ -83,6 +87,7 @@ Future<void> _initApp() async {
   // 2. Inicializar servicios dependientes
   gasolineraCacheService = GasolinerasCacheService(isarService);
   syncManager = SyncManager(isarService: isarService);
+  mapController = MapController(cacheService: gasolineraCacheService);
 
   // 3. Inicializar servicio de background refresh
   backgroundRefreshService = BackgroundRefreshService(syncManager);

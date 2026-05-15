@@ -140,6 +140,7 @@ class _LayouthomeState extends State<Layouthome> {
                             MapWidget(
                             key: const PageStorageKey<String>('map_widget_key'),
                             cacheService: _cacheService,
+                            controller: app.mapController,
                             gesturesEnabled: _dialogsOpenCount == 0,
                             combustibleSeleccionado:
                                 app.filterProvider.tipoCombustibleSeleccionado,

@@ -6,6 +6,7 @@ import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolin
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/controllers/map_controller.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/data/services/map_helpers.dart';
+import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/gasolinera_bottom.dart';
 import 'package:my_gasolinera/Implementaciones/mapa/presentacion/widgets/map_cluster.dart';
 import 'package:my_gasolinera/core/utils/app_logger.dart';
@@ -13,6 +14,7 @@ import 'package:my_gasolinera/widgets/location_permission_denied.dart';
 
 class MapWidget extends StatefulWidget {
   final GasolinerasCacheService cacheService;
+  final MapController controller;
   final Function(String provincia)? onProvinciaUpdate;
   final Function(List<Gasolinera> gasolineras)? onGasolinerasLoaded;
   final Function(Position position)? onLocationChanged;
@@ -28,6 +30,7 @@ class MapWidget extends StatefulWidget {
   const MapWidget({
     super.key,
     required this.cacheService,
+    required this.controller,
     this.onProvinciaUpdate,
     this.onGasolinerasLoaded,
     this.onLocationChanged,
@@ -50,7 +53,6 @@ class _MapWidgetState extends State<MapWidget>
 
   // ── Dependencias ───────────────────────────────────────────────────────────
   late final MapController _controller;
-  final MarkerHelper _markerHelper = MarkerHelper();
 
   // ── Estado del mapa ────────────────────────────────────────────────────────
   GoogleMapController? _mapController;
@@ -62,7 +64,7 @@ class _MapWidgetState extends State<MapWidget>
 
   // ── MapClusterMixin: getters requeridos ────────────────────────────────────
   @override
-  MarkerHelper get markerHelper => _markerHelper;
+  MarkerHelper get markerHelper => app.markerHelper;
   @override
   List<String> get favoritosIds => _controller.favoritosIds;
   @override
@@ -117,45 +119,53 @@ class _MapWidgetState extends State<MapWidget>
   void initState() {
     super.initState();
 
-    _controller = MapController(
-      cacheService: widget.cacheService,
-      onProvinciaUpdate: widget.onProvinciaUpdate,
-      onGasolinerasLoaded: (gasolineras) {
-        widget.onGasolinerasLoaded?.call(gasolineras);
-        if (mounted) {
-          clusterManager?.setItems(gasolineras);
-          clusterManager?.updateMap();
-          AppLogger.info(
-            'ClusterManager actualizado con ${gasolineras.length} gasolineras',
-            tag: 'MapWidget',
-          );
-        }
-      },
-      onLocationChanged: (pos) {
-        widget.onLocationChanged?.call(pos);
-      },
-      onPositionChanged: (pos) {
-        if (mounted) {
-          setState(() {
-            _userMarker
-              ..clear()
-              ..add(_buildUserMarker(pos.latitude, pos.longitude));
-          });
-        }
-      },
-    );
+    // Usar el singleton — no crear un nuevo controller
+    _controller = widget.controller;
 
-    // Inicializar cluster y luego el controlador (GPS + datos)
+    // Registrar callbacks de este widget en el controller compartido
+    _controller.onGasolinerasLoaded = (gasolineras) {
+      widget.onGasolinerasLoaded?.call(gasolineras);
+      if (mounted) {
+        clusterManager?.setItems(gasolineras);
+        clusterManager?.updateMap();
+        AppLogger.info(
+          'ClusterManager actualizado con ${gasolineras.length} gasolineras',
+          tag: 'MapWidget',
+        );
+      }
+    };
+    _controller.onProvinciaUpdate = widget.onProvinciaUpdate;
+    _controller.onLocationChanged = (pos) {
+      widget.onLocationChanged?.call(pos);
+    };
+    _controller.onPositionChanged = (pos) {
+      if (mounted) {
+        setState(() {
+          _userMarker
+            ..clear()
+            ..add(_buildUserMarker(pos.latitude, pos.longitude));
+        });
+      }
+    };
+
+    // Inicializar cluster y luego el controlador (idempotente — solo corre la primera vez)
     initClusterManager();
     _controller.initialize(
-      _markerHelper,
+      app.markerHelper,
       combustibleSeleccionado: widget.combustibleSeleccionado,
       precioDesde: widget.precioDesde,
       precioHasta: widget.precioHasta,
       tipoAperturaSeleccionado: widget.tipoAperturaSeleccionado,
     );
 
-    // Escuchar cambios del controlador para redibujar
+    // Sincronizar cluster con gasolineras ya cargadas (si el controller ya estaba vivo)
+    if (_controller.gasolinerasCargadas.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        clusterManager?.setItems(_controller.gasolinerasCargadas);
+        clusterManager?.updateMap();
+      });
+    }
+
     _controller.addListener(_onControllerUpdate);
   }
 
@@ -201,8 +211,11 @@ class _MapWidgetState extends State<MapWidget>
 
   @override
   void dispose() {
+    _controller.onGasolinerasLoaded = null;
+    _controller.onProvinciaUpdate = null;
+    _controller.onLocationChanged = null;
+    _controller.onPositionChanged = null;
     _controller.removeListener(_onControllerUpdate);
-    _controller.dispose();
     _cameraDebounceTimer?.cancel();
     super.dispose();
   }

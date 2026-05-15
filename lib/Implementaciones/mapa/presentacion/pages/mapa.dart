@@ -52,6 +52,7 @@ class _MapaTiempoRealState extends State<MapaTiempoReal> {
       body: MapWidget(
         key: _mapKey,
         cacheService: _cacheService,
+        controller: app.mapController,
         onProvinciaUpdate: (String provincia) {
           // 🆕 Callback para actualizar provincia en el AppBar
           _actualizarProvincia(provincia);
