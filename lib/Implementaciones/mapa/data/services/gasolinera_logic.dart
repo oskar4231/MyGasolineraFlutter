@@ -32,6 +32,50 @@ class GasolineraLogic {
     _favoritosIds = ids;
   }
 
+  /// Devuelve las gasolineras favoritas: primero intenta Isar, luego la API
+  /// usando el mapa id→provinciaId almacenado en SharedPreferences.
+  Future<List<Gasolinera>> obtenerGasolinerasFavoritas() async {
+    if (_favoritosIds.isEmpty) return [];
+
+    // 1. Buscar en cache local
+    final cached = await _cacheService.getGasolinerasByIds(_favoritosIds);
+    final cachedIds = cached.map((g) => g.id).toSet();
+    final missingIds =
+        _favoritosIds.where((id) => !cachedIds.contains(id)).toList();
+
+    if (missingIds.isEmpty) return cached;
+
+    // 2. Fallback: obtener provincias desde SharedPreferences y llamar la API
+    final prefs = await SharedPreferences.getInstance();
+    final provinciaMap = Map<String, String>.fromEntries(
+      (prefs.getStringList('favoritas_provincias') ?? []).map((e) {
+        final parts = e.split('|');
+        return MapEntry(parts[0], parts.length > 1 ? parts[1] : '');
+      }),
+    );
+
+    final provinciaIds = missingIds
+        .map((id) => provinciaMap[id] ?? '')
+        .where((p) => p.isNotEmpty)
+        .toSet();
+
+    final fromApi = <Gasolinera>[];
+    for (final provinciaId in provinciaIds) {
+      try {
+        final gasolineras = await api.fetchGasolinerasByProvincia(provinciaId);
+        fromApi.addAll(gasolineras.where((g) => missingIds.contains(g.id)));
+      } catch (e) {
+        AppLogger.warning(
+          'Error cargando favoritas desde API para provincia $provinciaId',
+          tag: 'GasolineraLogic',
+          error: e,
+        );
+      }
+    }
+
+    return [...cached, ...fromApi];
+  }
+
   /// Alterna el estado de favorito de una gasolinera
   Future<void> toggleFavorito(String gasolineraId,
       {String idProvincia = ''}) async {

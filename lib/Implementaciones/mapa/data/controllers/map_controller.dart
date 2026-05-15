@@ -269,6 +269,17 @@ class MapController extends ChangeNotifier {
 
   // ── Favoritos ──────────────────────────────────────────────────────────────
 
+  /// Carga los IDs de favoritos desde SharedPreferences sin inicializar el mapa.
+  /// Llamar desde main.dart para que FavoritosScreen funcione sin abrir el mapa.
+  Future<void> precargarFavoritos() async {
+    await _gasolineraLogic.cargarFavoritos();
+    notifyListeners();
+  }
+
+  /// Devuelve las gasolineras favoritas (Isar + fallback API si faltan).
+  Future<List<Gasolinera>> obtenerGasolinerasFavoritas() =>
+      _gasolineraLogic.obtenerGasolinerasFavoritas();
+
   Future<void> toggleFavorito(String id, {String idProvincia = ''}) async {
     await _gasolineraLogic.toggleFavorito(id, idProvincia: idProvincia);
     notifyListeners();

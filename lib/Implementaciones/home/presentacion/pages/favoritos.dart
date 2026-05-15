@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
-import 'package:my_gasolinera/Implementaciones/gasolineras/data/services/gasolinera_cache_service.dart';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:my_gasolinera/core/l10n/app_localizations.dart';
@@ -19,7 +18,6 @@ class FavoritosScreen extends StatefulWidget {
 class _FavoritosScreenState extends State<FavoritosScreen> {
   List<Gasolinera> _gasolinerasFavoritas = [];
   bool _loading = true;
-  late final GasolinerasCacheService _cacheService;
 
   // Filtros
   // Filtros ahora se usan desde app.filterProvider
@@ -28,7 +26,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   @override
   void initState() {
     super.initState();
-    _cacheService = app.gasolineraCacheService;
     _cargarDatos();
     app.mapController.addListener(_onFavoritosChanged);
   }
@@ -47,51 +44,27 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     setState(() => _loading = true);
 
     try {
-      // 1. Obtener IDs de favoritos desde el MapController (ya cargados en memoria)
-      final idsFavoritos = List<String>.from(app.mapController.favoritosIds);
+      // Obtener gasolineras favoritas: Isar primero, API como fallback
+      _gasolinerasFavoritas = await app.mapController.obtenerGasolinerasFavoritas();
 
-      if (idsFavoritos.isEmpty) {
+      if (_gasolinerasFavoritas.isEmpty) {
         if (mounted) setState(() => _loading = false);
         return;
       }
 
-      // 2. Cargar gasolineras desde DB local (Globalmente)
-      _gasolinerasFavoritas =
-          await _cacheService.getGasolinerasByIds(idsFavoritos);
-
-      // 3. Intentar obtener ubicación para calcular distancias (Opcional)
-      // Corregimos el error de tipo en Web usando un manejo más robusto
-      try {
-        Position? position;
-        LocationPermission permission = await Geolocator.checkPermission();
-        if (permission == LocationPermission.always ||
-            permission == LocationPermission.whileInUse) {
-          position = await Geolocator.getCurrentPosition(
-            locationSettings:
-                const LocationSettings(accuracy: LocationAccuracy.low),
-          ).timeout(const Duration(seconds: 3));
-        }
-
-        if (position != null) {
-          final pos = position;
-          // Si tenemos posición, podemos ordenar por cercanía si no hay otro criterio
-          if (_ordenSeleccionado == null) {
-            _gasolinerasFavoritas.sort((a, b) {
-              final distA = Geolocator.distanceBetween(
-                  pos.latitude, pos.longitude, a.lat, a.lng);
-              final distB = Geolocator.distanceBetween(
-                  pos.latitude, pos.longitude, b.lat, b.lng);
-              return distA.compareTo(distB);
-            });
-          }
-        }
-      } catch (e) {
-        AppLogger.warning('Error obteniendo ubicación en favoritos: $e');
+      // Ordenar por cercanía usando la última posición conocida del controller
+      final pos = app.mapController.ubicacionActual;
+      if (pos != null && _ordenSeleccionado == null) {
+        _gasolinerasFavoritas.sort((a, b) {
+          final distA = Geolocator.distanceBetween(
+              pos.latitude, pos.longitude, a.lat, a.lng);
+          final distB = Geolocator.distanceBetween(
+              pos.latitude, pos.longitude, b.lat, b.lng);
+          return distA.compareTo(distB);
+        });
       }
 
-      // 4. Actualizar precios en segundo plano para las provincias implicadas
       _actualizarPreciosBackground(_gasolinerasFavoritas);
-
       _aplicarOrden();
     } catch (e) {
       AppLogger.error('Error cargando favoritos: $e');
@@ -110,7 +83,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     for (final provinciaId in provinciasIds) {
       try {
         // Refrescamos caché
-        final nuevas = await _cacheService.getGasolineras(provinciaId);
+        final nuevas = await app.gasolineraCacheService.getGasolineras(provinciaId);
 
         // Si la pantalla sigue abierta, actualizamos los precios en la lista actual
         if (mounted && nuevas.isNotEmpty) {

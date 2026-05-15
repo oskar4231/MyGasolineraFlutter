@@ -88,6 +88,7 @@ Future<void> _initApp() async {
   gasolineraCacheService = GasolinerasCacheService(isarService);
   syncManager = SyncManager(isarService: isarService);
   mapController = MapController(cacheService: gasolineraCacheService);
+  await mapController.precargarFavoritos();
 
   // 3. Inicializar servicio de background refresh
   backgroundRefreshService = BackgroundRefreshService(syncManager);
