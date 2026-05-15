@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/data/services/perfil_service.dart';
 import 'package:my_gasolinera/Implementaciones/auth/data/services/auth_service.dart';
@@ -106,13 +107,13 @@ class AjustesController {
       await ConfigService.forceRefresh();
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('✅ URL actualizada'), backgroundColor: MyGasolineraColors.success),
+        SnackBar(
+            content: Text(AppLocalizations.of(context)!.urlActualizada), backgroundColor: MyGasolineraColors.success),
       );
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Error: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errorGenerico(e.toString()))),
       );
       rethrow;
     }

@@ -91,8 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Login exitoso'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!.loginExitoso),
                   backgroundColor: MyGasolineraColors.success,
                 ),
               );
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Login fallido (400, 401, 500)
           if (mounted) {
             String errorMessage =
-                response['message'] ?? 'Error al iniciar sesión';
+                response['message'] ?? AppLocalizations.of(context)!.errorLogin;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Error de conexión. Asegúrate de que el servidor esté corriendo. ($error)',
+                '${AppLocalizations.of(context)!.errorConexion} ($error)',
               ),
               backgroundColor: MyGasolineraColors.error,
               duration: const Duration(seconds: 4),

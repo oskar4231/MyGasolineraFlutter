@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/Implementaciones/ajustes/data/services/accesibilidad_service.dart';
 import 'package:my_gasolinera/main.dart' as app;
 import 'package:my_gasolinera/core/utils/app_logger.dart';
@@ -390,6 +391,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                   final messenger =
                                       ScaffoldMessenger.of(context);
                                   final navigator = Navigator.of(context);
+                                  final l10n = AppLocalizations.of(context)!;
                                   try {
                                     setState(() {
                                       _cargando = true;
@@ -415,9 +417,8 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
 
                                     if (exito) {
                                       messenger.showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              '✅ Configuración guardada correctamente'),
+                                        SnackBar(
+                                          content: Text(l10n.configuracionGuardada),
                                           backgroundColor: MyGasolineraColors.success,
                                         ),
                                       );
@@ -430,8 +431,7 @@ class _AccesibilidadScreenState extends State<AccesibilidadScreen> {
                                       });
                                       messenger.showSnackBar(
                                         SnackBar(
-                                          content: Text(
-                                              '❌ Error al guardar: ${e.toString()}'),
+                                          content: Text(l10n.errorGuardar(e.toString())),
                                           backgroundColor: MyGasolineraColors.error,
                                         ),
                                       );

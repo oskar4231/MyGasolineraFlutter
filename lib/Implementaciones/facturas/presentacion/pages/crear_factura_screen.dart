@@ -110,7 +110,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
           tag: 'CrearFacturaScreen', error: e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al cargar coches: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.errorCargarCoches}: $e')),
         );
       }
     }
@@ -126,7 +126,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
             ListTile(
               leading: Icon(Icons.photo_library,
                   color: Theme.of(context).colorScheme.onSurface),
-              title: Text('Galería',
+              title: Text(AppLocalizations.of(context)!.galeria,
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface)),
               onTap: () {
@@ -137,7 +137,7 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
             ListTile(
               leading: Icon(Icons.camera_alt,
                   color: Theme.of(context).colorScheme.onSurface),
-              title: Text('Cámara',
+              title: Text(AppLocalizations.of(context)!.camara,
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface)),
               onTap: () {
@@ -246,24 +246,25 @@ class _CrearFacturaScreenState extends State<CrearFacturaScreen> {
         if (data['precio_litro'] != null) {
           _precioLitroController.text = data['precio_litro'].toString();
         }
+        final prefijo = AppLocalizations.of(context)!.repostajeEscaneado;
         if (data['gasolinera'] != null && _tituloController.text.isEmpty) {
-          _tituloController.text = "Repostaje ${data['gasolinera']}";
+          _tituloController.text = "$prefijo ${data['gasolinera']}";
         } else if (_tituloController.text.isEmpty) {
-          _tituloController.text = "Repostaje Escaneado";
+          _tituloController.text = prefijo;
         }
         _isLoading = false;
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ Datos escaneados.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.datosEscaneados)),
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al escanear: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorEscanear(e.toString()))),
         );
       }
     }

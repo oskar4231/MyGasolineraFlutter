@@ -330,5 +330,29 @@
         "type": "String"
       }
     }
-  }
+  },
+  "datosEscaneados": "✅ Data scanned successfully.",
+  "errorEscanear": "Error scanning: {error}",
+  "@errorEscanear": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "errorCambiarPassword": "Error changing password",
+  "codigoDebeTener6Digitos": "The code must be 6 digits",
+  "codigoEnviadoA": "Code sent to: {email}",
+  "@codigoEnviadoA": {
+    "placeholders": {"email": {"type": "String"}}
+  },
+  "errorGenerico": "Error: {error}",
+  "@errorGenerico": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "configuracionGuardada": "✅ Configuration saved successfully",
+  "errorGuardar": "❌ Error saving: {error}",
+  "@errorGuardar": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "fotoActualizada": "✅ Photo updated",
+  "errorSubirFoto": "❌ Error uploading",
+  "urlActualizada": "✅ URL updated",
+  "repostajeEscaneado": "Scanned Refueling"
 }

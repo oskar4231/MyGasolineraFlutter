@@ -978,4 +978,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorEliminarFactura(String error) {
     return 'Error deleting invoice: $error';
   }
+
+  @override
+  String get datosEscaneados => '✅ Data scanned successfully.';
+
+  @override
+  String errorEscanear(String error) {
+    return 'Error scanning: $error';
+  }
+
+  @override
+  String get errorCambiarPassword => 'Error changing password';
+
+  @override
+  String get codigoDebeTener6Digitos => 'The code must be 6 digits';
+
+  @override
+  String codigoEnviadoA(String email) {
+    return 'Code sent to: $email';
+  }
+
+  @override
+  String errorGenerico(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get configuracionGuardada => '✅ Configuration saved successfully';
+
+  @override
+  String errorGuardar(String error) {
+    return '❌ Error saving: $error';
+  }
+
+  @override
+  String get fotoActualizada => '✅ Photo updated';
+
+  @override
+  String get errorSubirFoto => '❌ Error uploading';
+
+  @override
+  String get urlActualizada => '✅ URL updated';
+
+  @override
+  String get repostajeEscaneado => 'Scanned Refueling';
 }

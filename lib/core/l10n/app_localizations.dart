@@ -5,13 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_ca.dart';
-import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
-import 'app_localizations_fr.dart';
-import 'app_localizations_it.dart';
-import 'app_localizations_pt.dart';
 
 // ignore_for_file: type=lint
 
@@ -99,13 +94,8 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('ca'),
-    Locale('de'),
     Locale('en'),
-    Locale('es'),
-    Locale('fr'),
-    Locale('it'),
-    Locale('pt')
+    Locale('es')
   ];
 
   /// No description provided for @idioma.
@@ -1967,6 +1957,78 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Error al eliminar factura: {error}'**
   String errorEliminarFactura(String error);
+
+  /// No description provided for @datosEscaneados.
+  ///
+  /// In es, this message translates to:
+  /// **'✅ Datos escaneados.'**
+  String get datosEscaneados;
+
+  /// No description provided for @errorEscanear.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al escanear: {error}'**
+  String errorEscanear(String error);
+
+  /// No description provided for @errorCambiarPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al cambiar contraseña'**
+  String get errorCambiarPassword;
+
+  /// No description provided for @codigoDebeTener6Digitos.
+  ///
+  /// In es, this message translates to:
+  /// **'El código debe tener 6 dígitos'**
+  String get codigoDebeTener6Digitos;
+
+  /// No description provided for @codigoEnviadoA.
+  ///
+  /// In es, this message translates to:
+  /// **'Código enviado a: {email}'**
+  String codigoEnviadoA(String email);
+
+  /// No description provided for @errorGenerico.
+  ///
+  /// In es, this message translates to:
+  /// **'Error: {error}'**
+  String errorGenerico(String error);
+
+  /// No description provided for @configuracionGuardada.
+  ///
+  /// In es, this message translates to:
+  /// **'✅ Configuración guardada correctamente'**
+  String get configuracionGuardada;
+
+  /// No description provided for @errorGuardar.
+  ///
+  /// In es, this message translates to:
+  /// **'❌ Error al guardar: {error}'**
+  String errorGuardar(String error);
+
+  /// No description provided for @fotoActualizada.
+  ///
+  /// In es, this message translates to:
+  /// **'✅ Foto actualizada'**
+  String get fotoActualizada;
+
+  /// No description provided for @errorSubirFoto.
+  ///
+  /// In es, this message translates to:
+  /// **'❌ Error al subir'**
+  String get errorSubirFoto;
+
+  /// No description provided for @urlActualizada.
+  ///
+  /// In es, this message translates to:
+  /// **'✅ URL actualizada'**
+  String get urlActualizada;
+
+  /// No description provided for @repostajeEscaneado.
+  ///
+  /// In es, this message translates to:
+  /// **'Repostaje Escaneado'**
+  String get repostajeEscaneado;
 }
 
 class _AppLocalizationsDelegate
@@ -1979,15 +2041,8 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) => <String>[
-        'ca',
-        'de',
-        'en',
-        'es',
-        'fr',
-        'it',
-        'pt'
-      ].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1996,20 +2051,10 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca':
-      return AppLocalizationsCa();
-    case 'de':
-      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
-    case 'fr':
-      return AppLocalizationsFr();
-    case 'it':
-      return AppLocalizationsIt();
-    case 'pt':
-      return AppLocalizationsPt();
   }
 
   throw FlutterError(

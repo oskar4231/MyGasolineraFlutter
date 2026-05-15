@@ -30,20 +30,9 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
   // Mapeo inverso: de código ISO a nombre completo
   String _getLanguageNameFromCode(String code) {
     switch (code) {
-      case 'es':
-        return 'Español';
       case 'en':
         return 'English';
-      case 'de':
-        return 'Deutsch';
-      case 'pt':
-        return 'Português';
-      case 'it':
-        return 'Italiano';
-      case 'fr':
-        return 'Français';
-      case 'ca':
-        return 'Valencià';
+      case 'es':
       default:
         return 'Español';
     }
@@ -52,48 +41,20 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
   // Mapeo de idioma a bandera
   String _getFlagForLanguage(String languageName) {
     switch (languageName) {
-      case 'Español':
-        return '🇪🇸';
       case 'English':
         return '🇬🇧';
-      case 'Deutsch':
-        return '🇩🇪';
-      case 'Português':
-        return '🇵🇹';
-      case 'Italiano':
-        return '🇮🇹';
-      case 'Français':
-        return '🇫🇷';
-      case 'Valencià':
-        return 'CUSTOM_VALENCIA';
-      case 'Català':
-        return '🇪🇸';
+      case 'Español':
       default:
-        return '🌐';
+        return '🇪🇸';
     }
   }
 
   // Widget para mostrar bandera (emoji o imagen)
   Widget _buildFlagWidget(String languageName, {double size = 28}) {
-    final flag = _getFlagForLanguage(languageName);
-
-    if (flag == 'CUSTOM_VALENCIA') {
-      return SizedBox(
-        width: size,
-        height: size,
-        child: Image.asset(
-          'assets/images/iconoValencia.png',
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
-      );
-    } else {
-      return Text(
-        flag,
-        style: TextStyle(fontSize: size),
-      );
-    }
+    return Text(
+      _getFlagForLanguage(languageName),
+      style: TextStyle(fontSize: size),
+    );
   }
 
   /// Carga la configuración desde el backend
@@ -389,12 +350,7 @@ class _IdiomasScreenState extends State<IdiomasScreen> {
 
     final Map<String, List<String>> idiomasConVariantes = {
       'Español': ['Español'],
-      'Português': ['Português'],
-      'Deutsch': ['Deutsch'],
-      'Italiano': ['Italiano'],
       'English': ['English'],
-      'Français': ['Français'],
-      'Valencià': ['Valencià', 'Català'],
     };
 
     showDialog(

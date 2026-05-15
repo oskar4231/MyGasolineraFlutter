@@ -59,7 +59,7 @@ class _CrearScreenState extends State<CrearScreen> {
     final password = _passwordController.text;
     final hasMinLength = password.length >= 8;
     final hasNumber = password.contains(RegExp(r'[0-9]'));
-    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
+    final hasSpecialChar = password.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%\-.,ñÑ#$?¿]'));
     final hasUppercase = password.contains(RegExp(r'[A-Z]'));
 
     return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;

@@ -62,7 +62,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              response['message'] ?? 'Error al solicitar recuperación',
+              response['message'] ?? AppLocalizations.of(context)!.error,
             ),
             backgroundColor: MyGasolineraColors.error,
           ),
@@ -71,7 +71,7 @@ class _RecuperarPasswordState extends State<RecuperarPassword> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: MyGasolineraColors.error),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errorGenerico(e.toString())), backgroundColor: MyGasolineraColors.error),
       );
     } finally {
       if (mounted) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:my_gasolinera/core/theme/Modos/Temas/predeterminado.dart';
 // Widgets & Controllers
 import 'package:my_gasolinera/Implementaciones/ajustes/presentacion/widgets/ajustes_header.dart';
@@ -77,9 +78,10 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (mounted) {
         setState(() => _subiendoFoto = false);
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(exito ? '✅ Foto actualizada' : '❌ Error al subir'),
+            content: Text(exito ? l10n.fotoActualizada : l10n.errorSubirFoto),
             backgroundColor: exito ? MyGasolineraColors.success : MyGasolineraColors.error,
           ),
         );

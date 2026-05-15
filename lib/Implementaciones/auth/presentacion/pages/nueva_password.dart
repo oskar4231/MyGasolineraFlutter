@@ -52,7 +52,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
     final password = _passwordController.text;
     final hasMinLength = password.length >= 8;
     final hasNumber = password.contains(RegExp(r'[0-9]'));
-    final hasSpecialChar = password.contains(RegExp(r'[#$?¿]'));
+    final hasSpecialChar = password.contains(RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%\-.,ñÑ#$?¿]'));
     final hasUppercase = password.contains(RegExp(r'[A-Z]'));
 
     return hasMinLength && hasNumber && hasSpecialChar && hasUppercase;
@@ -121,7 +121,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              resetResponse['message'] ?? 'Error al cambiar contraseña',
+              resetResponse['message'] ?? AppLocalizations.of(context)!.errorCambiarPassword,
             ),
             backgroundColor: MyGasolineraColors.error,
           ),
@@ -130,7 +130,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: MyGasolineraColors.error),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errorGenerico(e.toString())), backgroundColor: MyGasolineraColors.error),
       );
     } finally {
       if (mounted) {
@@ -226,7 +226,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                               const SizedBox(height: 16),
 
                               Text(
-                                'Código enviado a: ${widget.email}',
+                                AppLocalizations.of(context)!.codigoEnviadoA(widget.email),
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -288,7 +288,7 @@ class _NuevaPasswordScreenState extends State<NuevaPasswordScreen> {
                                         .ingresaTuCodigo;
                                   }
                                   if (v.length != 6) {
-                                    return 'El código debe tener 6 dígitos';
+                                    return AppLocalizations.of(context)!.codigoDebeTener6Digitos;
                                   }
                                   return null;
                                 },

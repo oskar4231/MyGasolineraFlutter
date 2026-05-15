@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class LogoutButton extends StatelessWidget {
   final VoidCallback onLogout;
@@ -24,7 +25,7 @@ class LogoutButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         icon: const Icon(Icons.logout),
-        label: const Text('Cerrar Sesión'),
+        label: Text(AppLocalizations.of(context)!.cerrarSesion),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 
 class PasswordRequirements extends StatelessWidget {
   final String password;
@@ -55,7 +56,7 @@ class PasswordRequirements extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Requisitos de contraseña:',
+                      AppLocalizations.of(context)!.requisitosPassword,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -63,15 +64,15 @@ class PasswordRequirements extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildRequirementItem('Al menos 8 caracteres', hasMinLength,
+                    _buildRequirementItem(AppLocalizations.of(context)!.minimo8Caracteres, hasMinLength,
                         effectivePrimaryColor),
-                    _buildRequirementItem('Al menos un número (0-9)', hasNumber,
+                    _buildRequirementItem(AppLocalizations.of(context)!.unNumero, hasNumber,
                         effectivePrimaryColor),
                     _buildRequirementItem(
-                        'Al menos un carácter especial (., #, ñ, ...)',
+                        AppLocalizations.of(context)!.caracterEspecial,
                         hasSpecialChar,
                         effectivePrimaryColor),
-                    _buildRequirementItem('Al menos una mayúscula (A-Z)',
+                    _buildRequirementItem(AppLocalizations.of(context)!.mayuscula,
                         hasUppercase, effectivePrimaryColor),
                   ],
                 ),

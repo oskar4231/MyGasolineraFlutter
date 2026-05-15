@@ -395,5 +395,29 @@
         "type": "String"
       }
     }
-  }
+  },
+  "datosEscaneados": "✅ Datos escaneados.",
+  "errorEscanear": "Error al escanear: {error}",
+  "@errorEscanear": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "errorCambiarPassword": "Error al cambiar contraseña",
+  "codigoDebeTener6Digitos": "El código debe tener 6 dígitos",
+  "codigoEnviadoA": "Código enviado a: {email}",
+  "@codigoEnviadoA": {
+    "placeholders": {"email": {"type": "String"}}
+  },
+  "errorGenerico": "Error: {error}",
+  "@errorGenerico": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "configuracionGuardada": "✅ Configuración guardada correctamente",
+  "errorGuardar": "❌ Error al guardar: {error}",
+  "@errorGuardar": {
+    "placeholders": {"error": {"type": "String"}}
+  },
+  "fotoActualizada": "✅ Foto actualizada",
+  "errorSubirFoto": "❌ Error al subir",
+  "urlActualizada": "✅ URL actualizada",
+  "repostajeEscaneado": "Repostaje Escaneado"
 }
