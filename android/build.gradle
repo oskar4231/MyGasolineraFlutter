@@ -18,6 +18,12 @@ subprojects {
                     namespace project.group
                 }
             }
+            // isar_flutter_libs uses an outdated compileSdk that lacks android:attr/lStar (API 31+)
+            if (project.name == 'isar_flutter_libs') {
+                project.android {
+                    compileSdkVersion 34
+                }
+            }
         }
     }
 }
