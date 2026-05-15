@@ -961,4 +961,31 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get permisoUbicacionNotaVolver =>
       'Kehren Sie danach zur App zurück und laden Sie die Karte neu.';
+
+  @override
+  String get importar => 'Importieren';
+
+  @override
+  String get exportar => 'Exportieren';
+
+  @override
+  String importacionExito(int count) {
+    return '$count Rechnungen erfolgreich importiert';
+  }
+
+  @override
+  String get importacionSinFacturas => 'Keine Rechnungen in der Datei gefunden';
+
+  @override
+  String errorImportar(String error) {
+    return 'Fehler beim Importieren: $error';
+  }
+
+  @override
+  String get facturaEliminada => 'Rechnung erfolgreich gelöscht';
+
+  @override
+  String errorEliminarFactura(String error) {
+    return 'Fehler beim Löschen der Rechnung: $error';
+  }
 }

@@ -311,6 +311,9 @@ class _MapWidgetState extends State<MapWidget>
             controller.animateCamera(
               CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
             );
+            // Forzar actualización del cluster por si las gasolineras
+            // ya estaban cargadas antes de que el mapa estuviera listo
+            clusterManager?.updateMap();
           },
           onCameraMove: (position) {
             _currentCameraPosition = position;

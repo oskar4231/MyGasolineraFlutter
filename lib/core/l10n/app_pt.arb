@@ -367,5 +367,33 @@
   "permisoUbicacionBotonAjustesSistema": "Abrir configurações do sistema",
   "permisoUbicacionBotonAjustesApp": "Abrir configurações do app",
   "permisoUbicacionBotonPermitir": "Permitir acesso",
-  "permisoUbicacionNotaVolver": "Após fazer isso, volte ao app e recarregue o mapa."
+  "permisoUbicacionNotaVolver": "Após fazer isso, volte ao app e recarregue o mapa.",
+  "importar": "Importar",
+  "exportar": "Exportar",
+  "importacionExito": "{count} faturas importadas com sucesso",
+  "@importacionExito": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importacionSinFacturas": "Nenhuma fatura encontrada no arquivo",
+  "errorImportar": "Erro ao importar: {error}",
+  "@errorImportar": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facturaEliminada": "Fatura excluída com sucesso",
+  "errorEliminarFactura": "Erro ao excluir fatura: {error}",
+  "@errorEliminarFactura": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -965,4 +965,31 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get permisoUbicacionNotaVolver =>
       'Après avoir fait cela, revenez à l\'application et rechargez la carte.';
+
+  @override
+  String get importar => 'Importer';
+
+  @override
+  String get exportar => 'Exporter';
+
+  @override
+  String importacionExito(int count) {
+    return '$count factures importées avec succès';
+  }
+
+  @override
+  String get importacionSinFacturas => 'Aucune facture trouvée dans le fichier';
+
+  @override
+  String errorImportar(String error) {
+    return 'Erreur d\'importation: $error';
+  }
+
+  @override
+  String get facturaEliminada => 'Facture supprimée avec succès';
+
+  @override
+  String errorEliminarFactura(String error) {
+    return 'Erreur lors de la suppression de la facture: $error';
+  }
 }

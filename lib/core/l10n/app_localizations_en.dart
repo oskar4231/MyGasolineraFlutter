@@ -951,4 +951,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get permisoUbicacionNotaVolver =>
       'After doing so, come back to the app and reload the map.';
+
+  @override
+  String get importar => 'Import';
+
+  @override
+  String get exportar => 'Export';
+
+  @override
+  String importacionExito(int count) {
+    return '$count invoices imported successfully';
+  }
+
+  @override
+  String get importacionSinFacturas => 'No invoices found in the file';
+
+  @override
+  String errorImportar(String error) {
+    return 'Error importing: $error';
+  }
+
+  @override
+  String get facturaEliminada => 'Invoice deleted successfully';
+
+  @override
+  String errorEliminarFactura(String error) {
+    return 'Error deleting invoice: $error';
+  }
 }

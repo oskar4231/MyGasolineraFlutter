@@ -367,5 +367,33 @@
   "permisoUbicacionBotonAjustesSistema": "Obrir configuració del sistema",
   "permisoUbicacionBotonAjustesApp": "Obrir configuració de l'app",
   "permisoUbicacionBotonPermitir": "Permetre accés",
-  "permisoUbicacionNotaVolver": "Després de fer-ho, torna a l'app i recarrega el mapa."
+  "permisoUbicacionNotaVolver": "Després de fer-ho, torna a l'app i recarrega el mapa.",
+  "importar": "Importar",
+  "exportar": "Exportar",
+  "importacionExito": "S'han importat {count} factures correctament",
+  "@importacionExito": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importacionSinFacturas": "No s'han trobat factures al fitxer",
+  "errorImportar": "Error en importar: {error}",
+  "@errorImportar": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facturaEliminada": "Factura eliminada correctament",
+  "errorEliminarFactura": "Error en eliminar factura: {error}",
+  "@errorEliminarFactura": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

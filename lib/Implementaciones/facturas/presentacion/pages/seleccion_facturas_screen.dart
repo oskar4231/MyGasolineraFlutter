@@ -175,7 +175,7 @@ class _SeleccionFacturasScreenState extends State<SeleccionFacturasScreen> {
                     l10n.seleccionarFacturas,
                     style: TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: 28,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color:
                           isDark ? Colors.white : theme.colorScheme.onSurface,

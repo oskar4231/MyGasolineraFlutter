@@ -1925,6 +1925,48 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Despues de hacerlo, vuelve a la app y recarga el mapa.'**
   String get permisoUbicacionNotaVolver;
+
+  /// No description provided for @importar.
+  ///
+  /// In es, this message translates to:
+  /// **'Importar'**
+  String get importar;
+
+  /// No description provided for @exportar.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar'**
+  String get exportar;
+
+  /// No description provided for @importacionExito.
+  ///
+  /// In es, this message translates to:
+  /// **'Se importaron {count} facturas correctamente'**
+  String importacionExito(int count);
+
+  /// No description provided for @importacionSinFacturas.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron facturas en el archivo'**
+  String get importacionSinFacturas;
+
+  /// No description provided for @errorImportar.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al importar: {error}'**
+  String errorImportar(String error);
+
+  /// No description provided for @facturaEliminada.
+  ///
+  /// In es, this message translates to:
+  /// **'Factura eliminada correctamente'**
+  String get facturaEliminada;
+
+  /// No description provided for @errorEliminarFactura.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al eliminar factura: {error}'**
+  String errorEliminarFactura(String error);
 }
 
 class _AppLocalizationsDelegate

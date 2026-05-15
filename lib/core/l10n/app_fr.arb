@@ -367,5 +367,33 @@
   "permisoUbicacionBotonAjustesSistema": "Ouvrir les paramètres système",
   "permisoUbicacionBotonAjustesApp": "Ouvrir les paramètres de l'app",
   "permisoUbicacionBotonPermitir": "Autoriser l'accès",
-  "permisoUbicacionNotaVolver": "Après avoir fait cela, revenez à l'application et rechargez la carte."
+  "permisoUbicacionNotaVolver": "Après avoir fait cela, revenez à l'application et rechargez la carte.",
+  "importar": "Importer",
+  "exportar": "Exporter",
+  "importacionExito": "{count} factures importées avec succès",
+  "@importacionExito": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importacionSinFacturas": "Aucune facture trouvée dans le fichier",
+  "errorImportar": "Erreur d'importation: {error}",
+  "@errorImportar": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facturaEliminada": "Facture supprimée avec succès",
+  "errorEliminarFactura": "Erreur lors de la suppression de la facture: {error}",
+  "@errorEliminarFactura": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

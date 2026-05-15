@@ -302,5 +302,33 @@
   "permisoUbicacionBotonAjustesSistema": "Open system settings",
   "permisoUbicacionBotonAjustesApp": "Open app settings",
   "permisoUbicacionBotonPermitir": "Allow access",
-  "permisoUbicacionNotaVolver": "After doing so, come back to the app and reload the map."
+  "permisoUbicacionNotaVolver": "After doing so, come back to the app and reload the map.",
+  "importar": "Import",
+  "exportar": "Export",
+  "importacionExito": "{count} invoices imported successfully",
+  "@importacionExito": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importacionSinFacturas": "No invoices found in the file",
+  "errorImportar": "Error importing: {error}",
+  "@errorImportar": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facturaEliminada": "Invoice deleted successfully",
+  "errorEliminarFactura": "Error deleting invoice: {error}",
+  "@errorEliminarFactura": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

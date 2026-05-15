@@ -219,22 +219,22 @@ class _FacturasScreenState extends State<FacturasScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('Se importaron $count facturas correctamente')),
+                content: Text(AppLocalizations.of(context)!.importacionExito(count))),
           );
         }
         _cargarFacturas(); // Recargar
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('No se encontraron facturas en el archivo')),
+            SnackBar(
+                content: Text(AppLocalizations.of(context)!.importacionSinFacturas)),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al importar: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorImportar(e.toString()))),
         );
       }
     } finally {
@@ -280,14 +280,14 @@ class _FacturasScreenState extends State<FacturasScreen>
         await FacturaService.eliminarFactura(idFactura);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Factura eliminada correctamente')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.facturaEliminada)),
           );
           _cargarFacturas(); // Recargar
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al eliminar factura: $e')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorEliminarFactura(e.toString()))),
           );
         }
       }
@@ -391,7 +391,7 @@ class _FacturasScreenState extends State<FacturasScreen>
                                   color: theme.brightness == Brightness.dark
                                       ? theme.colorScheme.primary
                                       : null),
-                              title: const Text('Exportar'),
+                              title: Text(l10n.exportar),
                               textColor: theme.brightness == Brightness.dark
                                   ? theme.colorScheme.onSurface
                                   : null,
@@ -404,7 +404,7 @@ class _FacturasScreenState extends State<FacturasScreen>
                                   color: theme.brightness == Brightness.dark
                                       ? theme.colorScheme.primary
                                       : null),
-                              title: const Text('Importar'),
+                              title: Text(l10n.importar),
                               textColor: theme.brightness == Brightness.dark
                                   ? theme.colorScheme.onSurface
                                   : null,
@@ -594,7 +594,7 @@ class _FacturasScreenState extends State<FacturasScreen>
               foregroundColor: theme.brightness == Brightness.dark
                   ? Colors.white
                   : theme.colorScheme.primary,
-              label: const Text('Importar'),
+              label: Text(l10n.importar),
               icon: Icon(Icons.upload_file,
                   color: theme.brightness == Brightness.dark
                       ? theme.colorScheme.primary
@@ -613,7 +613,7 @@ class _FacturasScreenState extends State<FacturasScreen>
               foregroundColor: theme.brightness == Brightness.dark
                   ? Colors.white
                   : theme.colorScheme.primary,
-              label: const Text('Exportar'),
+              label: Text(l10n.exportar),
               icon: Icon(Icons.download,
                   color: theme.brightness == Brightness.dark
                       ? theme.colorScheme.primary
