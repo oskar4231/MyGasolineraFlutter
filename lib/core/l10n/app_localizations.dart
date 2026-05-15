@@ -2167,6 +2167,10 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El consumo no puede superar los 50.0'**
   String get maxConsumo;
+  String get eliminarDeFavoritos;
+  String get anadirAFavoritos;
+  String get repostaje;
+  String get comoLlegar;
 }
 
 class _AppLocalizationsDelegate

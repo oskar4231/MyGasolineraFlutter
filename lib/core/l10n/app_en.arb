@@ -380,5 +380,9 @@
   "noPuedeSerNegativo": "Cannot be negative",
   "maximoKm": "Maximum 1,000,000 km",
   "maxTanque": "Tank cannot exceed 300L",
-  "maxConsumo": "Consumption cannot exceed 50.0"
+  "maxConsumo": "Consumption cannot exceed 50.0",
+  "eliminarDeFavoritos": "Remove from favorites",
+  "anadirAFavoritos": "Add to favorites",
+  "repostaje": "Refuel",
+  "comoLlegar": "Get directions"
 }

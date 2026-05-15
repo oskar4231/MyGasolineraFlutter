@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_gasolinera/Implementaciones/facturas/presentacion/pages/crear_factura_screen.dart';
 import 'package:my_gasolinera/Implementaciones/gasolineras/domain/models/gasolinera.dart';
+import 'package:my_gasolinera/core/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
@@ -35,6 +36,7 @@ class GasolineraBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     final primaryColor =
         isDark ? const Color(0xFFFF8235) : theme.colorScheme.primary;
@@ -147,7 +149,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                     if (gasolinera.gasolina95 > 0) ...[
                       _PrecioRow(
                         icon: Icons.local_gas_station_rounded,
-                        nombre: 'Gasolina 95',
+                        nombre: l10n.gasolina95,
                         precio: gasolinera.gasolina95,
                         iconColor: const Color(0xFF2ECC71), // Emerald
                         primaryColor: primaryColor,
@@ -159,7 +161,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                     if (gasolinera.gasoleoA > 0) ...[
                       _PrecioRow(
                         icon: Icons.directions_car_rounded,
-                        nombre: 'Diesel',
+                        nombre: l10n.diesel,
                         precio: gasolinera.gasoleoA,
                         iconColor: isDark
                             ? const Color(0xFF95A5A6)
@@ -173,7 +175,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                     if (gasolinera.gasolina98 > 0) ...[
                       _PrecioRow(
                         icon: Icons.local_gas_station_rounded,
-                        nombre: 'Gasolina 98',
+                        nombre: l10n.gasolina98,
                         precio: gasolinera.gasolina98,
                         iconColor: const Color(0xFF27AE60), // Green
                         primaryColor: primaryColor,
@@ -185,7 +187,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                     if (gasolinera.gasoleoPremium > 0) ...[
                       _PrecioRow(
                         icon: Icons.workspace_premium_rounded,
-                        nombre: 'Diesel Premium',
+                        nombre: l10n.dieselPremium,
                         precio: gasolinera.gasoleoPremium,
                         iconColor: const Color(0xFFF1C40F), // Gold
                         primaryColor: primaryColor,
@@ -197,7 +199,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                     if (gasolinera.glp > 0)
                       _PrecioRow(
                         icon: Icons.local_fire_department_rounded,
-                        nombre: 'GLP',
+                        nombre: l10n.glp,
                         precio: gasolinera.glp,
                         iconColor: const Color(0xFFE67E22), // Orange
                         primaryColor: primaryColor,
@@ -226,7 +228,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                   size: 20,
                 ),
                 label: Text(
-                  esFavorita ? 'Eliminar de favoritos' : 'Añadir a favoritos',
+                  esFavorita ? l10n.eliminarDeFavoritos : l10n.anadirAFavoritos,
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.w600),
                 ),
@@ -262,10 +264,10 @@ class GasolineraBottomSheet extends StatelessWidget {
                       }
                     },
                     icon: const Icon(Icons.flash_on, size: 18),
-                    label: const Text(
-                      'Repostaje',
+                    label: Text(
+                      l10n.repostaje,
                       style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
@@ -281,7 +283,7 @@ class GasolineraBottomSheet extends StatelessWidget {
                         _abrirGoogleMaps(gasolinera.lat, gasolinera.lng),
                     icon: Icon(Icons.directions, size: 18, color: primaryColor),
                     label: Text(
-                      'Cómo llegar',
+                      l10n.comoLlegar,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

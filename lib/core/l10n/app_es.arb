@@ -445,5 +445,9 @@
   "noPuedeSerNegativo": "No puede ser negativo",
   "maximoKm": "Máximo 1.000.000 km",
   "maxTanque": "El tanque no puede superar los 300L",
-  "maxConsumo": "El consumo no puede superar los 50.0"
+  "maxConsumo": "El consumo no puede superar los 50.0",
+  "eliminarDeFavoritos": "Eliminar de favoritos",
+  "anadirAFavoritos": "Añadir a favoritos",
+  "repostaje": "Repostaje",
+  "comoLlegar": "Cómo llegar"
 }

@@ -1076,7 +1076,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filtrosEliminados => 'Filtros eliminados';
 
   @override
-  String get seleccioneMarcaPrimero => 'Por favor, selecciona una marca primero.';
+  String get seleccioneMarcaPrimero =>
+      'Por favor, selecciona una marca primero.';
 
   @override
   String get motorizacion => 'Motorización';
@@ -1101,4 +1102,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get maxConsumo => 'El consumo no puede superar los 50.0';
+  @override
+  String get eliminarDeFavoritos => 'Eliminar de favoritos';
+  @override
+  String get anadirAFavoritos => 'Añadir a favoritos';
+  @override
+  String get repostaje => 'Repostaje';
+  @override
+  String get comoLlegar => 'Cómo llegar';
 }

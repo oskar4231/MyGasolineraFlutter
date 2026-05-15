@@ -1093,4 +1093,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maxConsumo => 'Consumption cannot exceed 50.0';
+  @override
+  String get eliminarDeFavoritos => 'Remove from favorites';
+  @override
+  String get anadirAFavoritos => 'Add to favorites';
+  @override
+  String get repostaje => 'Refuel';
+  @override
+  String get comoLlegar => 'Get directions';
 }
