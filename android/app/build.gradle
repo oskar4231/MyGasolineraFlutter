@@ -11,6 +11,12 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
     namespace = "com.example.my_gasolinera"
     compileSdk = 36
@@ -43,6 +49,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders = [
+            GOOGLE_MAPS_API_KEY: localProperties.getProperty('GOOGLE_MAPS_API_KEY', ''),
+            applicationName: "io.flutter.app.FlutterApplication"
+        ]
     }
 
 

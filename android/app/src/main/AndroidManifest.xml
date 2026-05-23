@@ -40,7 +40,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBlcyKab5d7o0R5PXM3DGRQ-AYsMSjejHc"/>
+            android:value="${GOOGLE_MAPS_API_KEY}"/>
         
         <!-- Configuración de la ubicación (opcional pero recomendado) -->
         <meta-data
