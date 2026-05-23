@@ -2167,9 +2167,29 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El consumo no puede superar los 50.0'**
   String get maxConsumo;
+
+  /// No description provided for @eliminarDeFavoritos.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar de favoritos'**
   String get eliminarDeFavoritos;
+
+  /// No description provided for @anadirAFavoritos.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir a favoritos'**
   String get anadirAFavoritos;
+
+  /// No description provided for @repostaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Repostaje'**
   String get repostaje;
+
+  /// No description provided for @comoLlegar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cómo llegar'**
   String get comoLlegar;
 }
 
