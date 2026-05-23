@@ -102,6 +102,9 @@ class ApiConfig {
   /// URL para el endpoint de accesibilidad
   static String get accesibilidadUrl => getUrl('/accesibilidad');
 
+  /// Google Maps API key loaded from dotenv
+  static String get mapsApiKey => dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
+
   /// Headers base para todas las peticiones
   ///
   /// Incluye el header para saltar el aviso de ngrok
