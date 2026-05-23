@@ -52,3 +52,8 @@ app.*.map.json
 *.7z
 /apk debug/
 /apk release/
+
+# Secrets — never commit
+.env
+android/local.properties
+web/index.html
